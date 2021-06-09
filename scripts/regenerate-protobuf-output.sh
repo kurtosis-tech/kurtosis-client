@@ -28,7 +28,7 @@ FILE_EXTENSIONS["${GOLANG_DIRNAME}"]=".go"
 
 # Per-lang output locations for core API bindings, RELATIVE TO THE LANG ROOT!
 declare -A CORE_API_OUTPUT_REL_DIRPATHS
-CORE_API_OUTPUT_REL_DIRPATHS["${GOLANG_DIRNAME}"]="bindings"
+CORE_API_OUTPUT_REL_DIRPATHS["${GOLANG_DIRNAME}"]="core_api_bindings"
 
 # Maps path to directories containing Protobuf files RELATIVE TO REPO ROOT -> the name of the map variable containing the per-lang output directories
 declare -A INPUT_REL_DIRPATHS
