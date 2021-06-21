@@ -1,7 +1,6 @@
 #!/usr/bin/env bash
 
-# This script regenerates Go bindings corresponding to all .proto files inside this project
-# It requires the Golang Protobuf extension to the 'protoc' compiler, as well as the Golang gRPC extension
+# This script regenerates bindings for the API container in the various languages that this repo supports
 
 set -euo pipefail
 script_dirpath="$(cd "$(dirname "${BASH_SOURCE[0]}")"; pwd)"
@@ -15,6 +14,7 @@ GOLANG_DIRNAME="golang"
 # =============================== MAIN LOGIC =======================================================
 input_dirpath="${root_dirpath}/${CORE_API_DIRNAME}"
 
+# Golang
 go_output_dirpath="${root_dirpath}/${GOLANG_DIRNAME}/core_api_bindings"
 if ! GO_MOD_FILEPATH="${root_dirpath}/${GOLANG_DIRNAME}/go.mod" "${GENERATOR_SCRIPT_FILENAME}" "${input_dirpath}" "${go_output_dirpath}" golang; then
     echo "Error: An error occurred generating Go bindings in directory '${go_output_dirpath}'" >&2
