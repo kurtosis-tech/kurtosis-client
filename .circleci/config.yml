@@ -28,7 +28,8 @@ jobs:
             bash .circleci/check-markdown-links.sh
 
   check_golang:
-    executor: circleci:golang/1.15.13
+    docker:
+      - image: circleci:golang/1.15.13
     steps:
       - checkout
 
