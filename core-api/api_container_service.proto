@@ -21,6 +21,9 @@ service ApiContainerService {
 
   // Executes the given command inside a running container
   rpc ExecCommand(ExecCommandArgs) returns (ExecCommandResponse) {};
+
+  // Executes multiple commands at once
+  rpc BulkExecuteCommands(BulkExecuteCommandsArgs) returns (google.protobuf.Empty) {};
 }
 
 // ==============================================================================================
@@ -161,4 +164,20 @@ message ExecCommandArgs {
 message ExecCommandResponse {
   int32 exit_code = 1;
   bytes log_output = 2;
+}
+
+// ==============================================================================================
+//                                      Bulk Execute Commands
+// ==============================================================================================
+message BulkExecuteCommandsArgs {
+  enum SchemaVersion {
+    V0 = 0;
+  }
+
+  // Used to indicate the version of the JSON schema
+  SchemaVersion schema_version = 1;
+
+  // Commands, serialized as JSON
+  string serialized_commands = 2;
+
 }

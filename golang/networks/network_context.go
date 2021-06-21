@@ -25,6 +25,8 @@ const (
 	// This value - where the suite execution volume will be mounted on the testsuite container - is
 	//  hardcoded inside Kurtosis Core
 	suiteExVolMountpoint = "/suite-execution"
+
+	defaultBulkExecutionSchemaVersion = core_api_bindings.BulkExecuteCommandsArgs_V0
 )
 
 // Docs available at https://docs.kurtosistech.com/kurtosis-libs/lib-documentation
@@ -265,3 +267,19 @@ func (networkCtx *NetworkContext) RepartitionNetwork(
 	}
 	return nil
 }
+
+func (networkCtx *NetworkContext) BulkExecuteCommands(bulkExecutionInstructionsJson string) error {
+	// TODO kill this mutex for networkcontext - it doesn't make sense
+	networkCtx.mutex.Lock()
+	defer networkCtx.mutex.Unlock()
+
+	args := &core_api_bindings.BulkExecuteCommandsArgs{
+		SchemaVersion:      defaultBulkExecutionSchemaVersion,
+		SerializedCommands: bulkExecutionInstructionsJson,
+	}
+	if _, err := networkCtx.client.BulkExecuteCommands(context.Background(), args); err != nil {
+		return stacktrace.Propagate(err, "An error occurred executing the following bulk execution instructions: %v", bulkExecutionInstructionsJson)
+	}
+	return nil
+}
+
