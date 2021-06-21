@@ -1,4 +1,5 @@
 # TBD
+* Replaced the core of `regenerate-protobuf-bindings.sh` with the script from the devtools repo
 
 # 0.1.1
 * Add a `core_api_consts` package with the API container's listen port & protocol
