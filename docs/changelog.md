@@ -1,4 +1,6 @@
 # TBD
+
+# 0.2.0
 ### Changes
 * Replaced the core of `regenerate-protobuf-bindings.sh` with the script from the devtools repo
 * Added a `go_package` option to the Protobuf file, to be compatible with the newest version of `generate-protobuf-bindings`
