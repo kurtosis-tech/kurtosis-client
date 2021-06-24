@@ -24,6 +24,9 @@ service ApiContainerService {
 
   // Executes the given command inside a running container
   rpc ExecCommand(ExecCommandArgs) returns (ExecCommandResponse) {};
+
+  //Checks service availability
+  rpc CheckAvailability(CheckAvailabilityArgs) returns (google.protobuf.Empty) {};
 }
 
 // ==============================================================================================
@@ -164,4 +167,17 @@ message ExecCommandArgs {
 message ExecCommandResponse {
   int32 exit_code = 1;
   bytes log_output = 2;
+}
+
+// ==============================================================================================
+//                                          Wait
+// ==============================================================================================
+message CheckAvailabilityArgs {
+  string service_id = 1;
+  string port = 2;
+  string path = 3;
+  int32 initial_delay_seconds = 4;
+  int32 retries = 5;
+  int32 retries_delay_milliseconds = 6;
+  string body_text = 7;
 }

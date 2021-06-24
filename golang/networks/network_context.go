@@ -265,3 +265,25 @@ func (networkCtx *NetworkContext) RepartitionNetwork(
 	}
 	return nil
 }
+
+//TODO do we have to update lid-documentation with this method?
+func (networkCtx *NetworkContext) CheckServiceAvailability(serviceId services.ServiceID, port string, path string, initialDelaySeconds int, retries int, retriesDelayMilliseconds int, bodyText string) error {
+	availabilityArgs := &core_api_bindings.CheckAvailabilityArgs{
+		ServiceId: string(serviceId),
+		Port: port,
+		Path: path,
+		InitialDelaySeconds: int32(initialDelaySeconds),
+		Retries: int32(retries),
+		RetriesDelayMilliseconds: int32(retriesDelayMilliseconds),
+		BodyText: bodyText,
+	}
+	if _, err := networkCtx.client.CheckAvailability(context.Background(), availabilityArgs); err != nil {
+		return stacktrace.NewError(
+			"Service '%v' did not become available despite polling %v times with %v between polls",
+			serviceId,
+			retries,
+			retriesDelayMilliseconds)
+	}
+
+	return nil
+}
