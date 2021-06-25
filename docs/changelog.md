@@ -1,4 +1,6 @@
 # TBD
+### Features
+* Added a new method `CheckServiceAvailability` in network context, it can be used to check if a service is running well
 
 # 0.2.0
 ### Changes
