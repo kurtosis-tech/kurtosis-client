@@ -267,7 +267,7 @@ func (networkCtx *NetworkContext) RepartitionNetwork(
 }
 
 // Docs available at https://docs.kurtosistech.com/kurtosis-libs/lib-documentation
-func (networkCtx *NetworkContext) CheckServiceAvailability(serviceId services.ServiceID, port uint32, path string, initialDelaySeconds uint32, retries uint32, retriesDelayMilliseconds uint32, bodyText string) error {
+func (networkCtx *NetworkContext) WaitForEndpointAvailability(serviceId services.ServiceID, port uint32, path string, initialDelaySeconds uint32, retries uint32, retriesDelayMilliseconds uint32, bodyText string) error {
 	availabilityArgs := &core_api_bindings.WaitForEndpointAvailabilityArgs{
 		ServiceId: string(serviceId),
 		Port: port,
