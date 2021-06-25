@@ -1,5 +1,5 @@
 # TBD
-###Changes
+### Changes
 * Added TypeScript case to regenerate-protobuf-bindings.sh so that now it considers TypeScript within the shell script
 * Generated TypeScript bindings which can now be ouputted by the wrapper script which calls down to developer-tools
 
