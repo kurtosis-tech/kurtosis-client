@@ -268,16 +268,16 @@ func (networkCtx *NetworkContext) RepartitionNetwork(
 
 // Docs available at https://docs.kurtosistech.com/kurtosis-libs/lib-documentation
 func (networkCtx *NetworkContext) CheckServiceAvailability(serviceId services.ServiceID, port string, path string, initialDelaySeconds int, retries int, retriesDelayMilliseconds int, bodyText string) error {
-	availabilityArgs := &core_api_bindings.CheckAvailabilityArgs{
+	availabilityArgs := &core_api_bindings.WaitForEndpointAvailabilityArgs{
 		ServiceId: string(serviceId),
 		Port: port,
 		Path: path,
-		InitialDelaySeconds: int32(initialDelaySeconds),
-		Retries: int32(retries),
-		RetriesDelayMilliseconds: int32(retriesDelayMilliseconds),
+		InitialDelaySeconds: uint32(initialDelaySeconds),
+		Retries: uint32(retries),
+		RetriesDelayMilliseconds: uint32(retriesDelayMilliseconds),
 		BodyText: bodyText,
 	}
-	if _, err := networkCtx.client.CheckAvailability(context.Background(), availabilityArgs); err != nil {
+	if _, err := networkCtx.client.WaitForEndpointAvailability(context.Background(), availabilityArgs); err != nil {
 		return stacktrace.NewError(
 			"Service '%v' did not become available despite polling %v times with %v between polls",
 			serviceId,
