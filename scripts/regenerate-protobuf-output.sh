@@ -10,6 +10,7 @@ root_dirpath="$(dirname "${script_dirpath}")"
 GENERATOR_SCRIPT_FILENAME="generate-protobuf-bindings.sh"  # Must be on the PATH
 CORE_API_DIRNAME="core-api"
 GOLANG_DIRNAME="golang"
+TYPESCRIPT_DIRNAME="typescript"
 
 # =============================== MAIN LOGIC =======================================================
 input_dirpath="${root_dirpath}/${CORE_API_DIRNAME}"
@@ -21,3 +22,11 @@ if ! GO_MOD_FILEPATH="${root_dirpath}/${GOLANG_DIRNAME}/go.mod" "${GENERATOR_SCR
     exit 1
 fi
 echo "Successfully generated Go bindings in directory '${go_output_dirpath}'"
+
+#TypeScript
+typescript_output_dirpath="${root_dirpath}/${TYPESCRIPT_DIRNAME}/core_api_bindings"
+if ! "${GENERATOR_SCRIPT_FILENAME}" "${input_dirpath}" "${typescript_output_dirpath}" typescript; then
+    echo "Error: An error occurred generating TypeScript bindings in directory '${typescript_output_dirpath}'" >&2
+    exit 1
+fi
+echo "Successfully generated TypeScript bindings in directory '${typescript_output_dirpath}'"
