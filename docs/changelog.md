@@ -1,6 +1,6 @@
 # TBD
 ### Features
-* Added a new method `WaitForEndpointAvailability` in NetworkContext that can be used to wait until a service's endpoint becomes available
+* Added a new method `WaitForEndpointAvailability` in NetworkContext that can be used to wait until a service's endpoint becomes available 
 
 ### Changes
 * Added TypeScript case to regenerate-protobuf-bindings.sh so that now it considers TypeScript within the shell script
