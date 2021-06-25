@@ -31,8 +31,8 @@ type ApiContainerServiceClient interface {
 	Repartition(ctx context.Context, in *RepartitionArgs, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	// Executes the given command inside a running container
 	ExecCommand(ctx context.Context, in *ExecCommandArgs, opts ...grpc.CallOption) (*ExecCommandResponse, error)
-	//Checks service availability
-	CheckAvailability(ctx context.Context, in *CheckAvailabilityArgs, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	//Wait for and endpoint in order to know if a service is available
+	WaitForEndpointAvailability(ctx context.Context, in *WaitForEndpointAvailabilityArgs, opts ...grpc.CallOption) (*emptypb.Empty, error)
 }
 
 type apiContainerServiceClient struct {
@@ -97,9 +97,9 @@ func (c *apiContainerServiceClient) ExecCommand(ctx context.Context, in *ExecCom
 	return out, nil
 }
 
-func (c *apiContainerServiceClient) CheckAvailability(ctx context.Context, in *CheckAvailabilityArgs, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+func (c *apiContainerServiceClient) WaitForEndpointAvailability(ctx context.Context, in *WaitForEndpointAvailabilityArgs, opts ...grpc.CallOption) (*emptypb.Empty, error) {
 	out := new(emptypb.Empty)
-	err := c.cc.Invoke(ctx, "/api_container_api.ApiContainerService/CheckAvailability", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/api_container_api.ApiContainerService/WaitForEndpointAvailability", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -122,8 +122,8 @@ type ApiContainerServiceServer interface {
 	Repartition(context.Context, *RepartitionArgs) (*emptypb.Empty, error)
 	// Executes the given command inside a running container
 	ExecCommand(context.Context, *ExecCommandArgs) (*ExecCommandResponse, error)
-	//Checks service availability
-	CheckAvailability(context.Context, *CheckAvailabilityArgs) (*emptypb.Empty, error)
+	//Wait for and endpoint in order to know if a service is available
+	WaitForEndpointAvailability(context.Context, *WaitForEndpointAvailabilityArgs) (*emptypb.Empty, error)
 	mustEmbedUnimplementedApiContainerServiceServer()
 }
 
@@ -149,8 +149,8 @@ func (UnimplementedApiContainerServiceServer) Repartition(context.Context, *Repa
 func (UnimplementedApiContainerServiceServer) ExecCommand(context.Context, *ExecCommandArgs) (*ExecCommandResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ExecCommand not implemented")
 }
-func (UnimplementedApiContainerServiceServer) CheckAvailability(context.Context, *CheckAvailabilityArgs) (*emptypb.Empty, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method CheckAvailability not implemented")
+func (UnimplementedApiContainerServiceServer) WaitForEndpointAvailability(context.Context, *WaitForEndpointAvailabilityArgs) (*emptypb.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method WaitForEndpointAvailability not implemented")
 }
 func (UnimplementedApiContainerServiceServer) mustEmbedUnimplementedApiContainerServiceServer() {}
 
@@ -273,20 +273,20 @@ func _ApiContainerService_ExecCommand_Handler(srv interface{}, ctx context.Conte
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ApiContainerService_CheckAvailability_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(CheckAvailabilityArgs)
+func _ApiContainerService_WaitForEndpointAvailability_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(WaitForEndpointAvailabilityArgs)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(ApiContainerServiceServer).CheckAvailability(ctx, in)
+		return srv.(ApiContainerServiceServer).WaitForEndpointAvailability(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/api_container_api.ApiContainerService/CheckAvailability",
+		FullMethod: "/api_container_api.ApiContainerService/WaitForEndpointAvailability",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ApiContainerServiceServer).CheckAvailability(ctx, req.(*CheckAvailabilityArgs))
+		return srv.(ApiContainerServiceServer).WaitForEndpointAvailability(ctx, req.(*WaitForEndpointAvailabilityArgs))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -323,8 +323,8 @@ var ApiContainerService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _ApiContainerService_ExecCommand_Handler,
 		},
 		{
-			MethodName: "CheckAvailability",
-			Handler:    _ApiContainerService_CheckAvailability_Handler,
+			MethodName: "WaitForEndpointAvailability",
+			Handler:    _ApiContainerService_WaitForEndpointAvailability_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

@@ -1,6 +1,6 @@
 # TBD
 ### Features
-* Added a new method `CheckServiceAvailability` in network context, it can be used to check if a service is running well
+* Added a new method `WaitForEndpointAvailability` in NetworkContext that can be used to wait until a service's endpoint becomes available
 
 # 0.2.0
 ### Changes
