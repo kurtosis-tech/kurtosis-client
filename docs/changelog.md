@@ -1,5 +1,4 @@
 # TBD
-<<<<<<< HEAD
 ### Features
 * Added a new method `WaitForEndpointAvailability` in NetworkContext that can be used to wait until a service's endpoint becomes available
 

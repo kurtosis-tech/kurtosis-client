@@ -944,16 +944,16 @@ type WaitForEndpointAvailabilityArgs struct {
 	//The ID of the service to check.
 	ServiceId string `protobuf:"bytes,1,opt,name=service_id,json=serviceId,proto3" json:"service_id,omitempty"`
 	//The port of the service to check. For instance 8080
-	Port string `protobuf:"bytes,2,opt,name=port,proto3" json:"port,omitempty"`
+	Port uint32 `protobuf:"varint,2,opt,name=port,proto3" json:"port,omitempty"`
 	//The path of the service to check. It mustn't start with the first slash. For instance `service/health`
 	Path string `protobuf:"bytes,3,opt,name=path,proto3" json:"path,omitempty"`
-	//The number of seconds to wait until executes the first HTTP call
+	//The number of seconds to wait until executing the first HTTP call
 	InitialDelaySeconds uint32 `protobuf:"varint,4,opt,name=initial_delay_seconds,json=initialDelaySeconds,proto3" json:"initial_delay_seconds,omitempty"`
-	//Max number of HTTP call attempts that this will execute until it get a success response from the service
+	//Max number of HTTP call attempts that this will execute until giving up and returning an error
 	Retries uint32 `protobuf:"varint,5,opt,name=retries,proto3" json:"retries,omitempty"`
 	//Number of milliseconds to wait between retries
 	RetriesDelayMilliseconds uint32 `protobuf:"varint,6,opt,name=retries_delay_milliseconds,json=retriesDelayMilliseconds,proto3" json:"retries_delay_milliseconds,omitempty"`
-	//The body text that has to be used to compare the body response from the service. For instance `Hello World`.
+	//If the endpoint returns this value, the service will be marked as available (e.g. Hello World).
 	BodyText string `protobuf:"bytes,7,opt,name=body_text,json=bodyText,proto3" json:"body_text,omitempty"`
 }
 
@@ -996,11 +996,11 @@ func (x *WaitForEndpointAvailabilityArgs) GetServiceId() string {
 	return ""
 }
 
-func (x *WaitForEndpointAvailabilityArgs) GetPort() string {
+func (x *WaitForEndpointAvailabilityArgs) GetPort() uint32 {
 	if x != nil {
 		return x.Port
 	}
-	return ""
+	return 0
 }
 
 func (x *WaitForEndpointAvailabilityArgs) GetPath() string {
@@ -1255,7 +1255,7 @@ var file_api_container_service_proto_rawDesc = []byte{
 	0x6c, 0x69, 0x74, 0x79, 0x41, 0x72, 0x67, 0x73, 0x12, 0x1d, 0x0a, 0x0a, 0x73, 0x65, 0x72, 0x76,
 	0x69, 0x63, 0x65, 0x5f, 0x69, 0x64, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x09, 0x73, 0x65,
 	0x72, 0x76, 0x69, 0x63, 0x65, 0x49, 0x64, 0x12, 0x12, 0x0a, 0x04, 0x70, 0x6f, 0x72, 0x74, 0x18,
-	0x02, 0x20, 0x01, 0x28, 0x09, 0x52, 0x04, 0x70, 0x6f, 0x72, 0x74, 0x12, 0x12, 0x0a, 0x04, 0x70,
+	0x02, 0x20, 0x01, 0x28, 0x0d, 0x52, 0x04, 0x70, 0x6f, 0x72, 0x74, 0x12, 0x12, 0x0a, 0x04, 0x70,
 	0x61, 0x74, 0x68, 0x18, 0x03, 0x20, 0x01, 0x28, 0x09, 0x52, 0x04, 0x70, 0x61, 0x74, 0x68, 0x12,
 	0x32, 0x0a, 0x15, 0x69, 0x6e, 0x69, 0x74, 0x69, 0x61, 0x6c, 0x5f, 0x64, 0x65, 0x6c, 0x61, 0x79,
 	0x5f, 0x73, 0x65, 0x63, 0x6f, 0x6e, 0x64, 0x73, 0x18, 0x04, 0x20, 0x01, 0x28, 0x0d, 0x52, 0x13,

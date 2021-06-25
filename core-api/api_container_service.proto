@@ -176,15 +176,15 @@ message WaitForEndpointAvailabilityArgs {
   //The ID of the service to check.
   string service_id = 1;
   //The port of the service to check. For instance 8080
-  string port = 2;
+  uint32 port = 2;
   //The path of the service to check. It mustn't start with the first slash. For instance `service/health`
   string path = 3;
-  //The number of seconds to wait until executes the first HTTP call
+  //The number of seconds to wait until executing the first HTTP call
   uint32 initial_delay_seconds = 4;
-  //Max number of HTTP call attempts that this will execute until it get a success response from the service
+  //Max number of HTTP call attempts that this will execute until giving up and returning an error
   uint32 retries = 5;
   //Number of milliseconds to wait between retries
   uint32 retries_delay_milliseconds = 6;
-  //The body text that has to be used to compare the body response from the service. For instance `Hello World`.
+  //If the endpoint returns this value, the service will be marked as available (e.g. Hello World).
   string body_text = 7;
 }
