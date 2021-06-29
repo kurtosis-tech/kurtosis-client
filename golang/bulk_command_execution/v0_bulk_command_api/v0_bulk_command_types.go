@@ -6,9 +6,9 @@ import (
 	"github.com/palantir/stacktrace"
 )
 
-type V0commandType string
+type V0CommandType string
 const (
-	RegisterServiceCommandType V0commandType = "REGISTER_SERVICE"
+	RegisterServiceCommandType V0CommandType = "REGISTER_SERVICE"
 	StartServiceCommandType                  = "START_SERVICE"
 	RemoveServiceCommandType                 = "REMOVE_SERVICE"
 	// TODO Generate files
@@ -22,14 +22,14 @@ type V0BulkCommands struct {
 
 // Used for serializing
 type V0SerializableCommand struct {
-	Type V0commandType `json:"type"`
+	Type V0CommandType `json:"type"`
 
 	// The only allowed objects here are from the bindings generated from the .proto file
 	Args interface{}	`json:"args"`
 }
 func (cmd *V0SerializableCommand) UnmarshalJSON(bytes []byte) error {
 	interstitialStruct := struct {
-		Type      V0commandType   `json:"type"`
+		Type      V0CommandType   `json:"type"`
 		ArgsBytes json.RawMessage `json:"args"`
 	}{}
 
@@ -61,11 +61,4 @@ func (cmd *V0SerializableCommand) UnmarshalJSON(bytes []byte) error {
 		return stacktrace.NewError("Unrecognized command type '%v' when deserializing command", interstitialStruct.Type)
 	}
 	return nil
-}
-
-// Visitor for doing logic associated with each command
-type V0BulkCommandVisitor interface {
-	VisitRegisterServiceCommand(args *core_api_bindings.RegisterServiceArgs) error
-	VisitStartServiceCommand(args *core_api_bindings.StartServiceArgs) error
-	VisitRemoveServiceCommand(args  *core_api_bindings.RemoveServiceArgs) error
 }
