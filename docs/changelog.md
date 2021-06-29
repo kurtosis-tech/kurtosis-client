@@ -1,7 +1,6 @@
 # TBD
 ### Features
 * Added an `ExecuteBulkCommands` endpoint to the API that accepts JSON-serialized bulk command information and executes it against the API container
-    * NOTE: Only the register service, start service, and stop service commands are implemented right now
 
 # 0.2.1
 ### Features
