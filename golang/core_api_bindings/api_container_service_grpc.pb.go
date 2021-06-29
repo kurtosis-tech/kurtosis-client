@@ -32,7 +32,7 @@ type ApiContainerServiceClient interface {
 	// Executes the given command inside a running container
 	ExecCommand(ctx context.Context, in *ExecCommandArgs, opts ...grpc.CallOption) (*ExecCommandResponse, error)
 	// Executes multiple commands at once
-	BulkExecuteCommands(ctx context.Context, in *BulkExecuteCommandsArgs, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	ExecuteBulkCommands(ctx context.Context, in *ExecuteBulkCommandsArgs, opts ...grpc.CallOption) (*emptypb.Empty, error)
 }
 
 type apiContainerServiceClient struct {
@@ -97,9 +97,9 @@ func (c *apiContainerServiceClient) ExecCommand(ctx context.Context, in *ExecCom
 	return out, nil
 }
 
-func (c *apiContainerServiceClient) BulkExecuteCommands(ctx context.Context, in *BulkExecuteCommandsArgs, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+func (c *apiContainerServiceClient) ExecuteBulkCommands(ctx context.Context, in *ExecuteBulkCommandsArgs, opts ...grpc.CallOption) (*emptypb.Empty, error) {
 	out := new(emptypb.Empty)
-	err := c.cc.Invoke(ctx, "/api_container_api.ApiContainerService/BulkExecuteCommands", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/api_container_api.ApiContainerService/ExecuteBulkCommands", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -123,7 +123,7 @@ type ApiContainerServiceServer interface {
 	// Executes the given command inside a running container
 	ExecCommand(context.Context, *ExecCommandArgs) (*ExecCommandResponse, error)
 	// Executes multiple commands at once
-	BulkExecuteCommands(context.Context, *BulkExecuteCommandsArgs) (*emptypb.Empty, error)
+	ExecuteBulkCommands(context.Context, *ExecuteBulkCommandsArgs) (*emptypb.Empty, error)
 	mustEmbedUnimplementedApiContainerServiceServer()
 }
 
@@ -149,8 +149,8 @@ func (UnimplementedApiContainerServiceServer) Repartition(context.Context, *Repa
 func (UnimplementedApiContainerServiceServer) ExecCommand(context.Context, *ExecCommandArgs) (*ExecCommandResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ExecCommand not implemented")
 }
-func (UnimplementedApiContainerServiceServer) BulkExecuteCommands(context.Context, *BulkExecuteCommandsArgs) (*emptypb.Empty, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method BulkExecuteCommands not implemented")
+func (UnimplementedApiContainerServiceServer) ExecuteBulkCommands(context.Context, *ExecuteBulkCommandsArgs) (*emptypb.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ExecuteBulkCommands not implemented")
 }
 func (UnimplementedApiContainerServiceServer) mustEmbedUnimplementedApiContainerServiceServer() {}
 
@@ -273,20 +273,20 @@ func _ApiContainerService_ExecCommand_Handler(srv interface{}, ctx context.Conte
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ApiContainerService_BulkExecuteCommands_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(BulkExecuteCommandsArgs)
+func _ApiContainerService_ExecuteBulkCommands_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ExecuteBulkCommandsArgs)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(ApiContainerServiceServer).BulkExecuteCommands(ctx, in)
+		return srv.(ApiContainerServiceServer).ExecuteBulkCommands(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/api_container_api.ApiContainerService/BulkExecuteCommands",
+		FullMethod: "/api_container_api.ApiContainerService/ExecuteBulkCommands",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ApiContainerServiceServer).BulkExecuteCommands(ctx, req.(*BulkExecuteCommandsArgs))
+		return srv.(ApiContainerServiceServer).ExecuteBulkCommands(ctx, req.(*ExecuteBulkCommandsArgs))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -323,8 +323,8 @@ var ApiContainerService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _ApiContainerService_ExecCommand_Handler,
 		},
 		{
-			MethodName: "BulkExecuteCommands",
-			Handler:    _ApiContainerService_BulkExecuteCommands_Handler,
+			MethodName: "ExecuteBulkCommands",
+			Handler:    _ApiContainerService_ExecuteBulkCommands_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

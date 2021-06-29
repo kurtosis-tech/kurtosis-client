@@ -26,7 +26,7 @@ service ApiContainerService {
   rpc ExecCommand(ExecCommandArgs) returns (ExecCommandResponse) {};
 
   // Executes multiple commands at once
-  rpc BulkExecuteCommands(BulkExecuteCommandsArgs) returns (google.protobuf.Empty) {};
+  rpc ExecuteBulkCommands(ExecuteBulkCommandsArgs) returns (google.protobuf.Empty) {};
 }
 
 // ==============================================================================================
@@ -172,15 +172,7 @@ message ExecCommandResponse {
 // ==============================================================================================
 //                                      Bulk Execute Commands
 // ==============================================================================================
-message BulkExecuteCommandsArgs {
-  enum SchemaVersion {
-    V0 = 0;
-  }
-
-  // Used to indicate the version of the JSON schema
-  SchemaVersion schema_version = 1;
-
+message ExecuteBulkCommandsArgs {
   // Commands, serialized as JSON
-  string serialized_commands = 2;
-
+  string serialized_commands = 1;
 }
