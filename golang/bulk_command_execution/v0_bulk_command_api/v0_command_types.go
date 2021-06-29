@@ -6,10 +6,14 @@ import "github.com/palantir/stacktrace"
 //  1) all enum cases can be exhaustively handled
 //  2) any changes in the enum will result in a compile break
 type V0CommandTypeVisitor interface {
-	VisitRegisterServiceCommand() error
-	VisitGenerateFilesCommand() error
-	VisitStartServiceCommand() error
-	VisitRemoveServiceCommand() error
+	VisitRegisterService() error
+	VisitGenerateFiles() error
+	VisitStartService() error
+	VisitRemoveService() error
+	VisitRepartition() error
+	VisitExecCommand() error
+	VisitWaitForEndpointAvailability() error
+	VisitExecuteBulkCommands() error
 }
 
 type V0CommandType string
@@ -19,21 +23,31 @@ const (
 	GenerateFilesCommandType				 = "GENERATE_FILES"
 	StartServiceCommandType                  = "START_SERVICE"
 	RemoveServiceCommandType                 = "REMOVE_SERVICE"
-	// TODO repartition
-	// TODO exec command
+	RepartitionCommandType					 = "REPARTITION"
+	ExecCommandCommandType					 = "EXEC_COMMAND"
+	WaitForEndpointAvailabilityCommandType   = "WAIT_FOR_ENDPOINT_AVAILABILITY"
+	ExecuteBulkCommandsCommandType			 = "EXECUTE_BULK_COMMANDS"
 	// ^^^^^^^^^^^^^^^^^^^^ Update the visitor whenever you add an enum value!!! ^^^^^^^^^^^^^^^^^^^^^^^^^^^
 )
 func (commandType V0CommandType) AcceptVisitor(visitor V0CommandTypeVisitor) error {
 	var err error
 	switch commandType {
 	case RegisterServiceCommandType:
-		err = visitor.VisitRegisterServiceCommand()
+		err = visitor.VisitRegisterService()
 	case GenerateFilesCommandType:
-		err = visitor.VisitGenerateFilesCommand()
+		err = visitor.VisitGenerateFiles()
 	case StartServiceCommandType:
-		err = visitor.VisitStartServiceCommand()
+		err = visitor.VisitStartService()
 	case RemoveServiceCommandType:
-		err = visitor.VisitRemoveServiceCommand()
+		err = visitor.VisitRemoveService()
+	case RepartitionCommandType:
+		err = visitor.VisitRepartition()
+	case ExecCommandCommandType:
+		err = visitor.VisitExecCommand()
+	case WaitForEndpointAvailabilityCommandType:
+		err = visitor.VisitWaitForEndpointAvailability()
+	case ExecuteBulkCommandsCommandType:
+		err = visitor.VisitExecuteBulkCommands()
 	default:
 		return stacktrace.NewError("Unrecognized command type '%v'", commandType)
 	}
