@@ -10,7 +10,7 @@ const (
 	latestSchemaVersion = V0
 )
 
-type serializableBulkCommandsDocument struct {
+type SerializableBulkCommandsDocument struct {
 	SchemaVersion SchemaVersion	`json:"schemaVersion"`
 	Body	interface{}			`json:"body"`
 }
@@ -22,7 +22,7 @@ func NewBulkCommandSerializer() *BulkCommandSerializer {
 }
 
 func (serializer BulkCommandSerializer) Serialize(bulkCommands v0_bulk_command_api.V0BulkCommands) ([]byte, error) {
-	toSerialize := serializableBulkCommandsDocument{
+	toSerialize := SerializableBulkCommandsDocument{
 		SchemaVersion: latestSchemaVersion,
 		Body:          bulkCommands,
 	}
