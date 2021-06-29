@@ -193,7 +193,7 @@ message WaitForEndpointAvailabilityArgs {
 }
 
 // ==============================================================================================
-//                                      Bulk Execute Commands
+//                                      Execute Bulk Commands
 // ==============================================================================================
 message ExecuteBulkCommandsArgs {
   // Commands, serialized as JSON
