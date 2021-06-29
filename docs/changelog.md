@@ -1,4 +1,6 @@
 # TBD
+### Features
+* Added an `ExecuteBulkCommands` endpoint that accepts JSON-serialized bulk command information and executes it against the API container
 
 # 0.2.1
 ### Features
