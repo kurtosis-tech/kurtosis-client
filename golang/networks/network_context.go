@@ -266,6 +266,29 @@ func (networkCtx *NetworkContext) RepartitionNetwork(
 	return nil
 }
 
+// Docs available at https://docs.kurtosistech.com/kurtosis-libs/lib-documentation
+func (networkCtx *NetworkContext) WaitForEndpointAvailability(serviceId services.ServiceID, port uint32, path string, initialDelaySeconds uint32, retries uint32, retriesDelayMilliseconds uint32, bodyText string) error {
+	availabilityArgs := &core_api_bindings.WaitForEndpointAvailabilityArgs{
+		ServiceId: string(serviceId),
+		Port: port,
+		Path: path,
+		InitialDelaySeconds: initialDelaySeconds,
+		Retries: retries,
+		RetriesDelayMilliseconds: retriesDelayMilliseconds,
+		BodyText: bodyText,
+	}
+	if _, err := networkCtx.client.WaitForEndpointAvailability(context.Background(), availabilityArgs); err != nil {
+		return stacktrace.NewError(
+			"Service '%v' did not become available despite polling %v times with %v between polls",
+			serviceId,
+			retries,
+			retriesDelayMilliseconds)
+	}
+
+	return nil
+}
+
+// Docs available at https://docs.kurtosistech.com/kurtosis-libs/lib-documentation
 func (networkCtx *NetworkContext) ExecuteBulkCommands(bulkCommandsJson string) error {
 	// TODO kill this mutex for networkcontext - it doesn't make sense
 	networkCtx.mutex.Lock()
@@ -279,4 +302,3 @@ func (networkCtx *NetworkContext) ExecuteBulkCommands(bulkCommandsJson string) e
 	}
 	return nil
 }
-
