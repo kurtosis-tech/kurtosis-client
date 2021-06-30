@@ -1,4 +1,7 @@
 # TBD
+### Changes
+* Updated TypeScript binding file
+* Generated JavaScript binding files which were added  after calling down to developer-tools
 
 # 0.2.1
 ### Features
