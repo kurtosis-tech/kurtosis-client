@@ -120,7 +120,7 @@ func (cmd *V0SerializableCommand) UnmarshalJSON(bytes []byte) error {
 
 	cmdArgDeserializingVisitor := newCmdArgDeserializingVisitor(interstitialStruct.ArgsBytes)
 	if err := cmd.Type.AcceptVisitor(cmdArgDeserializingVisitor); err != nil {
-		return stacktrace.Propagate(err, "An error occurred accepting the command arg-deserializing visitor")
+		return stacktrace.Propagate(err, "An error occurred deserializing command with the following JSON: %v", string(bytes))
 	}
 	cmd.Args = cmdArgDeserializingVisitor.GetDeserializedCommandArgs()
 
