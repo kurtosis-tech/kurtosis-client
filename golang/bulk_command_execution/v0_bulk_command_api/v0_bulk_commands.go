@@ -119,9 +119,11 @@ func (cmd *V0SerializableCommand) UnmarshalJSON(bytes []byte) error {
 	}
 
 	cmdArgDeserializingVisitor := newCmdArgDeserializingVisitor(interstitialStruct.ArgsBytes)
-	if err := cmd.Type.AcceptVisitor(cmdArgDeserializingVisitor); err != nil {
-		return stacktrace.Propagate(err, "An error occurred deserializing command with the following JSON: %v", string(bytes))
+	if err := interstitialStruct.Type.AcceptVisitor(cmdArgDeserializingVisitor); err != nil {
+		return stacktrace.Propagate(err, "An error occurred deserializing command with the following JSON:\n%v", string(bytes))
 	}
+
+	cmd.Type = interstitialStruct.Type
 	cmd.Args = cmdArgDeserializingVisitor.GetDeserializedCommandArgs()
 
 	return nil
