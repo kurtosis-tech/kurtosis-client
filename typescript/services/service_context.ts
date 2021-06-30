@@ -25,19 +25,29 @@ interface ServiceContext {
 	testVolumeMountpointOnServiceContainer:   string;
 }
 
-func NewServiceContext(
-		client core_api_bindings.ApiContainerServiceClient,
-		serviceId ServiceID,
-		ipAddress string,
-		testVolumeMountpointOnTestsuiteContainer string,
-		testVolumeMountpointOnServiceContainer string) *ServiceContext {
-	return &ServiceContext{
-		client:                                   client,
-		serviceId:                                serviceId,
-		ipAddress:                                ipAddress,
-		testVolumeMountpointOnTestsuiteContainer: testVolumeMountpointOnTestsuiteContainer,
-		testVolumeMountpointOnServiceContainer: testVolumeMountpointOnServiceContainer,
-	}
+function NewServiceContext (
+		//client core_api_bindings.ApiContainerServiceClient,
+		serviceId: ServiceID,
+		ipAddress: string,
+		testVolumeMountpointOnTestsuiteContainer: string,
+		testVolumeMountpointOnServiceContainer: string) {
+	
+    let NewServiceContext = {
+        //client:                                   client,
+        serviceId:                                serviceId,
+        ipAddress:                                ipAddress,
+        testVolumeMountpointOnTestsuiteContainer: testVolumeMountpointOnTestsuiteContainer,
+        testVolumeMountpointOnServiceContainer: testVolumeMountpointOnServiceContainer,
+    }
+    return NewServiceContext;
+
+    // return ServiceContext{
+	// 	client:                                   client,
+	// 	serviceId:                                serviceId,
+	// 	ipAddress:                                ipAddress,
+	// 	testVolumeMountpointOnTestsuiteContainer: testVolumeMountpointOnTestsuiteContainer,
+	// 	testVolumeMountpointOnServiceContainer: testVolumeMountpointOnServiceContainer,
+	// }
 }
 
 // Docs available at https://docs.kurtosistech.com/kurtosis-libs/lib-documentation
