@@ -1,4 +1,6 @@
 # TBD
+### Fixes
+* Don't panic when a user passes in a null partition connections map to `NetworkContxt.repartitionNetwork`
 
 # 0.2.1
 ### Features
