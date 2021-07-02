@@ -1,4 +1,8 @@
 # TBD
+### Changes
+* Updated TypeScript binding file
+* Generated JavaScript binding files which were added  after calling down to developer-tools
+
 ### Fixes
 * Don't panic when a user passes in a null partition connections map to `NetworkContxt.repartitionNetwork`
 
@@ -8,7 +12,7 @@
 
 ### Changes
 * Added TypeScript case to regenerate-protobuf-bindings.sh so that now it considers TypeScript within the shell script
-* Generated TypeScript bindings which can now be ouputted by the wrapper script which calls down to developer-tools
+* Generated TypeScript bindings which can now be outputted by the wrapper script which calls down to developer-tools
 
 # 0.2.0
 ### Changes
