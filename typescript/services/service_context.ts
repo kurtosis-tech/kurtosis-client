@@ -3,13 +3,12 @@
 //TODO TODO TODO - fix imports
 
 /*import (
-	"context" //might not need this
-	"github.com/kurtosis-tech/kurtosis-client/golang/core_api_bindings" //import from core_api_bindings....
+	"context"
 	"github.com/palantir/stacktrace" //
 	"path"
 )*/
 
-//import "github.com/kurtosis-tech/kurtosis-client/typescript/core_api_bindings";
+import * as core_api_bindings from '../core_api_bindings'; //TODO - package.json?
 //import stacktrace = require('github.com/palantir/stacktrace');
 
 // Docs available at https://docs.kurtosistech.com/kurtosis-libs/lib-documentation
@@ -54,19 +53,19 @@ interface GeneratedFileFilepaths {
 
 class ServiceContext {
     
-    //client: core_api_bindings.ApiContainerServiceClient;
+    client: core_api_bindings.ApiContainerServiceClient;
     serviceId: ServiceID;
 	ipAddress: string;
 	testVolumeMountpointOnTestsuiteContainer: string;
 	testVolumeMountpointOnServiceContainer: string;
 
     constructor(
-        //client core_api_bindings.ApiContainerServiceClient,
+        client: core_api_bindings.ApiContainerServiceClient,
 		serviceId: ServiceID,
 		ipAddress: string,
 		testVolumeMountpointOnTestsuiteContainer: string,
 		testVolumeMountpointOnServiceContainer: string) {
-            //this.client = client;
+            this.client = client;
             this.serviceId = serviceId;
             this.ipAddress = ipAddress;
             this.testVolumeMountpointOnTestsuiteContainer = testVolumeMountpointOnTestsuiteContainer;
@@ -86,19 +85,19 @@ class ServiceContext {
     // Docs available at https://docs.kurtosistech.com/kurtosis-libs/lib-documentation
     public ExecCommand(command: string[]) {
         let serviceId = this.serviceId;
-        // let args := &core_api_bindings.ExecCommandArgs{
-        //     ServiceId: string(serviceId),
+        // let args = core_api_bindings.ExecCommandArgs{ //TODO -> pointer - &core_
+        //     ServiceId: String(serviceId),
         //     CommandArgs: command,
         // }
-        //let resp, err = this.client.ExecCommand(context.Background(), args) //context.Background() = WeakMap
-        // if err != nil {
-        //     return 0, nil, stacktrace.Propagate(
-        //         err,
-        //         "An error occurred executing command '%v' on service '%v'",
-        //         command,
-        //         serviceId)
-        // }
-        // return resp.ExitCode, &resp.LogOutput, nil
+        let resp, err = this.client.ExecCommand(context.Background(), args) //context.Background() = WeakMap
+        if (err != null) {
+            return 0, null, stacktrace.Propagate(
+                err,
+                "An error occurred executing command '%v' on service '%v'",
+                command,
+                serviceId);
+        }
+        return resp.ExitCode, resp.LogOutput, null; //TODO -> pointer - &resp.LogOutput
     }
 
     // Docs available at https://docs.kurtosistech.com/kurtosis-libs/lib-documentation
