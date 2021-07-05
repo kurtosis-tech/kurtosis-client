@@ -43,6 +43,10 @@ func (config *ContainerCreationConfig) GetFilesArtifactMountpoints() map[FilesAr
 	return config.filesArtifactMountpoints
 }
 
+func (config *ContainerCreationConfig) GetStaticFilesMountpoints() map[StaticFileID]string {
+	return config.
+}
+
 
 // ====================================================================================================
 //                                        Builder
