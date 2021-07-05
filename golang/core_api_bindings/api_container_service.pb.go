@@ -1039,7 +1039,7 @@ func (x *WaitForEndpointAvailabilityArgs) GetBodyText() string {
 }
 
 // ==============================================================================================
-//                                      Bulk Execute Commands
+//                                      Execute Bulk Commands
 // ==============================================================================================
 type ExecuteBulkCommandsArgs struct {
 	state         protoimpl.MessageState
