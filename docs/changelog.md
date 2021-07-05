@@ -1,7 +1,7 @@
 # TBD
 ### Changes
-* Updated TypeScript binding file
-* Generated JavaScript binding files which were added  after calling down to developer-tools
+* Updated TypeScript binding file to ensure that it considers the new method `WaitForEndpointAvailability` in NetworkContext
+* Generated all necessary JavaScript/TypeScript binding files which were added after calling down to developer-tools
 
 # 0.2.1
 ### Features
