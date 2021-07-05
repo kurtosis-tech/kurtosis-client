@@ -370,3 +370,67 @@ export namespace ExecCommandResponse {
   }
 }
 
+export class WaitForEndpointAvailabilityArgs extends jspb.Message {
+  getServiceId(): string;
+  setServiceId(value: string): void;
+
+  getPort(): number;
+  setPort(value: number): void;
+
+  getPath(): string;
+  setPath(value: string): void;
+
+  getInitialDelaySeconds(): number;
+  setInitialDelaySeconds(value: number): void;
+
+  getRetries(): number;
+  setRetries(value: number): void;
+
+  getRetriesDelayMilliseconds(): number;
+  setRetriesDelayMilliseconds(value: number): void;
+
+  getBodyText(): string;
+  setBodyText(value: string): void;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): WaitForEndpointAvailabilityArgs.AsObject;
+  static toObject(includeInstance: boolean, msg: WaitForEndpointAvailabilityArgs): WaitForEndpointAvailabilityArgs.AsObject;
+  static extensions: {[key: number]: jspb.ExtensionFieldInfo<jspb.Message>};
+  static extensionsBinary: {[key: number]: jspb.ExtensionFieldBinaryInfo<jspb.Message>};
+  static serializeBinaryToWriter(message: WaitForEndpointAvailabilityArgs, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): WaitForEndpointAvailabilityArgs;
+  static deserializeBinaryFromReader(message: WaitForEndpointAvailabilityArgs, reader: jspb.BinaryReader): WaitForEndpointAvailabilityArgs;
+}
+
+export namespace WaitForEndpointAvailabilityArgs {
+  export type AsObject = {
+    serviceId: string,
+    port: number,
+    path: string,
+    initialDelaySeconds: number,
+    retries: number,
+    retriesDelayMilliseconds: number,
+    bodyText: string,
+  }
+}
+
+export class ExecuteBulkCommandsArgs extends jspb.Message {
+  getSerializedCommands(): string;
+  setSerializedCommands(value: string): void;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): ExecuteBulkCommandsArgs.AsObject;
+  static toObject(includeInstance: boolean, msg: ExecuteBulkCommandsArgs): ExecuteBulkCommandsArgs.AsObject;
+  static extensions: {[key: number]: jspb.ExtensionFieldInfo<jspb.Message>};
+  static extensionsBinary: {[key: number]: jspb.ExtensionFieldBinaryInfo<jspb.Message>};
+  static serializeBinaryToWriter(message: ExecuteBulkCommandsArgs, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): ExecuteBulkCommandsArgs;
+  static deserializeBinaryFromReader(message: ExecuteBulkCommandsArgs, reader: jspb.BinaryReader): ExecuteBulkCommandsArgs;
+}
+
+export namespace ExecuteBulkCommandsArgs {
+  export type AsObject = {
+    serializedCommands: string,
+  }
+}
+
