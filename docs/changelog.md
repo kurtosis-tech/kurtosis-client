@@ -1,4 +1,6 @@
 # TBD
+
+# 0.2.2
 ### Changes
 * Updated TypeScript binding file to ensure that it considers the new method `WaitForEndpointAvailability` in NetworkContext
 * Generated all necessary JavaScript/TypeScript binding files which were added after calling down to developer-tools
