@@ -5,6 +5,7 @@
 
 ### Features
 * Added an `ExecuteBulkCommands` endpoint to the API that accepts JSON-serialized bulk command information and executes it against the API container
+* Added `release.sh` script
 
 ### Fixes
 * Don't panic when a user passes in a null partition connections map to `NetworkContxt.repartitionNetwork`
