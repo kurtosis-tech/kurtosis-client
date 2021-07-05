@@ -11,6 +11,7 @@ import (
 	"github.com/kurtosis-tech/kurtosis-client/golang/services"
 	"github.com/palantir/stacktrace"
 	"github.com/sirupsen/logrus"
+	"net"
 	"os"
 	"sync"
 )
@@ -278,7 +279,8 @@ func (networkCtx *NetworkContext) WaitForEndpointAvailability(serviceId services
 		BodyText: bodyText,
 	}
 	if _, err := networkCtx.client.WaitForEndpointAvailability(context.Background(), availabilityArgs); err != nil {
-		return stacktrace.NewError(
+		return stacktrace.Propagate(
+			err,
 			"Service '%v' did not become available despite polling %v times with %v between polls",
 			serviceId,
 			retries,
@@ -286,4 +288,23 @@ func (networkCtx *NetworkContext) WaitForEndpointAvailability(serviceId services
 	}
 
 	return nil
+}
+
+// Docs available at https://docs.kurtosistech.com/kurtosis-libs/lib-documentation
+func (networkCtx *NetworkContext) GetServiceInfo(serviceId services.ServiceID) (*services.ServiceInfo, error) {
+	getServiceInfoArgs := &core_api_bindings.GetServiceInfoArgs{
+		ServiceId: string(serviceId),
+	}
+	serviceResponse, err := networkCtx.client.GetServiceInfo(context.Background(), getServiceInfoArgs)
+	if err != nil {
+		return nil, stacktrace.Propagate(
+			err,
+			"An error occurred when trying to get info from service '%v'",
+			serviceId)
+	}
+
+	serviceInfo := &services.ServiceInfo{
+			IPAddress: net.ParseIP(serviceResponse.GetIpAddr()),
+	}
+	return serviceInfo, nil
 }
