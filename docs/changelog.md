@@ -3,6 +3,9 @@
 * Updated TypeScript binding file
 * Generated JavaScript binding files which were added  after calling down to developer-tools
 
+### Fixes
+* Don't panic when a user passes in a null partition connections map to `NetworkContxt.repartitionNetwork`
+
 # 0.2.1
 ### Features
 * Added a new method `WaitForEndpointAvailability` in NetworkContext that can be used to wait until a service's endpoint becomes available 
