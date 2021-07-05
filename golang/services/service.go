@@ -16,7 +16,15 @@ type ServiceID string
 Importan info related to the service.
 */
 type ServiceInfo struct {
-	IPAddress net.IP
+	ipAddress net.IP
+}
+
+func NewServiceInfo(ipAddress string) *ServiceInfo {
+	return &ServiceInfo{ipAddress: net.ParseIP(ipAddress)}
+}
+
+func (serviceInfo *ServiceInfo) GetIPAddress() net.IP {
+	return serviceInfo.ipAddress
 }
 
 // Docs available at https://docs.kurtosistech.com/kurtosis-libs/lib-documentation
