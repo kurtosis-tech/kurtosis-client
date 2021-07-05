@@ -299,3 +299,18 @@ func (networkCtx *NetworkContext) WaitForEndpointAvailability(serviceId services
 
 	return nil
 }
+
+// Docs available at https://docs.kurtosistech.com/kurtosis-libs/lib-documentation
+func (networkCtx *NetworkContext) ExecuteBulkCommands(bulkCommandsJson string) error {
+	// TODO kill this mutex for networkcontext - it doesn't make sense
+	networkCtx.mutex.Lock()
+	defer networkCtx.mutex.Unlock()
+
+	args := &core_api_bindings.ExecuteBulkCommandsArgs{
+		SerializedCommands: bulkCommandsJson,
+	}
+	if _, err := networkCtx.client.ExecuteBulkCommands(context.Background(), args); err != nil {
+		return stacktrace.Propagate(err, "An error occurred executing the following bulk commands: %v", bulkCommandsJson)
+	}
+	return nil
+}

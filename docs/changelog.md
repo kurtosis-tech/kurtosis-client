@@ -3,6 +3,9 @@
 * Updated TypeScript binding file
 * Generated JavaScript binding files which were added  after calling down to developer-tools
 
+### Features
+* Added an `ExecuteBulkCommands` endpoint to the API that accepts JSON-serialized bulk command information and executes it against the API container
+
 ### Fixes
 * Don't panic when a user passes in a null partition connections map to `NetworkContxt.repartitionNetwork`
 

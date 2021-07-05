@@ -414,3 +414,23 @@ export namespace WaitForEndpointAvailabilityArgs {
   }
 }
 
+export class ExecuteBulkCommandsArgs extends jspb.Message {
+  getSerializedCommands(): string;
+  setSerializedCommands(value: string): void;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): ExecuteBulkCommandsArgs.AsObject;
+  static toObject(includeInstance: boolean, msg: ExecuteBulkCommandsArgs): ExecuteBulkCommandsArgs.AsObject;
+  static extensions: {[key: number]: jspb.ExtensionFieldInfo<jspb.Message>};
+  static extensionsBinary: {[key: number]: jspb.ExtensionFieldBinaryInfo<jspb.Message>};
+  static serializeBinaryToWriter(message: ExecuteBulkCommandsArgs, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): ExecuteBulkCommandsArgs;
+  static deserializeBinaryFromReader(message: ExecuteBulkCommandsArgs, reader: jspb.BinaryReader): ExecuteBulkCommandsArgs;
+}
+
+export namespace ExecuteBulkCommandsArgs {
+  export type AsObject = {
+    serializedCommands: string,
+  }
+}
+
