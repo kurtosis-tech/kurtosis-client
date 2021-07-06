@@ -26,9 +26,3 @@ func NewServiceInfo(ipAddress string) *ServiceInfo {
 func (serviceInfo *ServiceInfo) GetIPAddress() net.IP {
 	return serviceInfo.ipAddress
 }
-
-// Docs available at https://docs.kurtosistech.com/kurtosis-libs/lib-documentation
-type Service interface {
-	// Docs available at https://docs.kurtosistech.com/kurtosis-libs/lib-documentation
-	IsAvailable() bool
-}

@@ -12,7 +12,6 @@ import (
 	"github.com/palantir/stacktrace"
 	"github.com/sirupsen/logrus"
 	"os"
-	"sync"
 )
 
 type PartitionID string
@@ -32,11 +31,6 @@ type NetworkContext struct {
 	client core_api_bindings.ApiContainerServiceClient
 
 	filesArtifactUrls map[services.FilesArtifactID]string
-
-	// Mutex protecting access to the services map
-	mutex *sync.Mutex
-
-	services map[services.ServiceID]services.Service
 }
 
 
@@ -51,10 +45,8 @@ func NewNetworkContext(
 		client core_api_bindings.ApiContainerServiceClient,
 		filesArtifactUrls map[services.FilesArtifactID]string) *NetworkContext {
 	return &NetworkContext{
-		mutex: &sync.Mutex{},
 		client: client,
 		filesArtifactUrls: filesArtifactUrls,
-		services: map[services.ServiceID]services.Service{},
 	}
 }
 
@@ -79,11 +71,8 @@ func (networkCtx *NetworkContext) AddServiceToPartition(
 		serviceId services.ServiceID,
 		partitionId PartitionID,
 		configFactory services.ContainerConfigFactory) (*services.ServiceInfo, map[string]*core_api_bindings.PortBinding, error) {
-	networkCtx.mutex.Lock()
-	defer networkCtx.mutex.Unlock()
 
 	ctx := context.Background()
-
 
 	logrus.Tracef("Registering new service ID with Kurtosis API...")
 	registerServiceArgs := &core_api_bindings.RegisterServiceArgs{
@@ -183,8 +172,6 @@ func (networkCtx *NetworkContext) AddServiceToPartition(
 
 // Docs available at https://docs.kurtosistech.com/kurtosis-libs/lib-documentation
 func (networkCtx *NetworkContext) RemoveService(serviceId services.ServiceID, containerStopTimeoutSeconds uint64) error {
-	networkCtx.mutex.Lock()
-	defer networkCtx.mutex.Unlock()
 
 	logrus.Debugf("Removing service '%v'...", serviceId)
 	args := &core_api_bindings.RemoveServiceArgs{
@@ -197,8 +184,7 @@ func (networkCtx *NetworkContext) RemoveService(serviceId services.ServiceID, co
 	if _, err := networkCtx.client.RemoveService(context.Background(), args); err != nil {
 		return stacktrace.Propagate(err, "An error occurred removing service '%v' from the network", serviceId)
 	}
-	delete(networkCtx.services, serviceId)
-	logrus.Debugf("Successfully removed service ID %v", serviceId)
+
 	return nil
 }
 
@@ -207,8 +193,6 @@ func (networkCtx *NetworkContext) RepartitionNetwork(
 		partitionServices map[PartitionID]map[services.ServiceID]bool,
 		partitionConnections map[PartitionID]map[PartitionID]*core_api_bindings.PartitionConnectionInfo,
 		defaultConnection *core_api_bindings.PartitionConnectionInfo) error {
-	networkCtx.mutex.Lock()
-	defer networkCtx.mutex.Unlock()
 
 	reqPartitionServices := map[string]*core_api_bindings.PartitionServices{}
 	for partitionId, serviceIdSet := range partitionServices {
