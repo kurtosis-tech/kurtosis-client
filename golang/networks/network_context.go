@@ -169,6 +169,41 @@ func (networkCtx *NetworkContext) AddServiceToPartition(
 }
 
 // Docs available at https://docs.kurtosistech.com/kurtosis-libs/lib-documentation
+func (networkCtx *NetworkContext) GetServiceContext(serviceId services.ServiceID, configFactory services.ContainerConfigFactory) (*services.ServiceContext, error) {
+	getServiceInfoArgs := &core_api_bindings.GetServiceInfoArgs{
+		ServiceId: string(serviceId),
+	}
+	serviceResponse, err := networkCtx.client.GetServiceInfo(context.Background(), getServiceInfoArgs)
+	if err != nil {
+		return nil, stacktrace.Propagate(
+			err,
+			"An error occurred when trying to get info from service '%v'",
+			serviceId)
+	}
+
+	if serviceResponse.GetIpAddr() == "" {
+		return nil, stacktrace.Propagate(
+			err,
+			"An error occurred when trying to get the IP address from service '%v'",
+			serviceId)
+	}
+
+	containerCreationConfig, err := configFactory.GetCreationConfig(serviceResponse.GetIpAddr())
+	if err != nil {
+		return nil, stacktrace.Propagate(err, "An error occurred getting the container creation config")
+	}
+
+	serviceContext := services.NewServiceContext(
+		networkCtx.client,
+		serviceId,
+		serviceResponse.GetIpAddr(),
+		suiteExVolMountpoint,
+		containerCreationConfig.GetTestVolumeMountpoint())
+
+	return serviceContext, nil
+}
+
+// Docs available at https://docs.kurtosistech.com/kurtosis-libs/lib-documentation
 func (networkCtx *NetworkContext) RemoveService(serviceId services.ServiceID, containerStopTimeoutSeconds uint64) error {
 
 	logrus.Debugf("Removing service '%v'...", serviceId)
@@ -253,27 +288,3 @@ func (networkCtx *NetworkContext) WaitForEndpointAvailability(serviceId services
 	return nil
 }
 
-// Docs available at https://docs.kurtosistech.com/kurtosis-libs/lib-documentation
-func (networkCtx *NetworkContext) GetServiceInfo(serviceId services.ServiceID) (*services.ServiceInfo, error) {
-	getServiceInfoArgs := &core_api_bindings.GetServiceInfoArgs{
-		ServiceId: string(serviceId),
-	}
-	serviceResponse, err := networkCtx.client.GetServiceInfo(context.Background(), getServiceInfoArgs)
-	if err != nil {
-		return nil, stacktrace.Propagate(
-			err,
-			"An error occurred when trying to get info from service '%v'",
-			serviceId)
-	}
-
-	serviceInfo := services.NewServiceInfo(serviceResponse.GetIpAddr())
-
-	if serviceInfo.GetIPAddress() == nil {
-		return nil, stacktrace.Propagate(
-			err,
-			"An error occurred when trying to get the IP address from service '%v'",
-			serviceId)
-	}
-
-	return serviceInfo, nil
-}

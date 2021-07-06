@@ -5,24 +5,7 @@
 
 package services
 
-import "net"
-
 /*
 The identifier used for services with the network.
 */
 type ServiceID string
-
-/*
-Importan info related to the service.
-*/
-type ServiceInfo struct {
-	ipAddress net.IP
-}
-
-func NewServiceInfo(ipAddress string) *ServiceInfo {
-	return &ServiceInfo{ipAddress: net.ParseIP(ipAddress)}
-}
-
-func (serviceInfo *ServiceInfo) GetIPAddress() net.IP {
-	return serviceInfo.ipAddress
-}
