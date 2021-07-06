@@ -7,11 +7,6 @@ option go_package = "github.com/kurtosis-tech/kurtosis-client/golang/core_api_bi
 import "google/protobuf/empty.proto";
 
 service ApiContainerService {
-  // Tells the API container that the client has some static files that it wants the API container to be able to use 
-  //  when launching services. The API container will note this and return a path, relative to the root of the suite 
-  //  execution volume, where the client must put the static files.
-  rpc RegisterStaticFiles(RegisterStaticFilesArgs) returns (RegisterStaticFilesResponse) {};
-
   // Registers a service with the API container but doesn't start the container for it
   rpc RegisterService(RegisterServiceArgs) returns (RegisterServiceResponse) {};
 
@@ -85,21 +80,6 @@ message GenerateFilesResponse {
 }
 
 // ==============================================================================================
-//                                       Register Static Files
-// ==============================================================================================
-message RegisterStaticFilesArgs {
-  // "Set" of static file identifiers that the client desires to be made available during service startup
-  map<string, bool> static_files_to_register = 1;
-}
-
-message RegisterStaticFilesResponse {
-  // Mapping of static_file_id -> relative_filepath where the API container expects the client to put the files,
-  //  where static_file_id corresponds to the IDs passed in in args and relative_filepath is a filepath, relative
-  //  to the suite execution volume root, where the client should put the file.
-  map<string, string> static_file_relative_filepaths = 1;
-}
-
-// ==============================================================================================
 //                                         Load Static Files
 // ==============================================================================================
 message LoadStaticFilesArgs {
@@ -107,6 +87,7 @@ message LoadStaticFilesArgs {
   string service_id = 1;
 
   // The "set" of static files, identified by a user-defined ID key, that should be copied into the service's file namespace
+  //  The user-defined ID key should correspond to the keys of the static files declared in the testsuite's getStaticFiles() function
   map<string, bool> static_files = 2;
 }
 

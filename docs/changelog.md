@@ -1,9 +1,7 @@
 # TBD
 ### Features
 * Port over the relevant bits of documentation from `kurtosis-libs`
-* Added functionality to the API container's API and `NetworkContext` for:
-    * Registering static files with the API container
-    * Using those static files when starting a service
+* Added functionality to the API container's API and `NetworkContext` for copying static files to a service's filespace
 
 # 0.2.2
 ### Changes

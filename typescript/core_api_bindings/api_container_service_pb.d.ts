@@ -116,44 +116,6 @@ export namespace GenerateFilesResponse {
   }
 }
 
-export class RegisterStaticFilesArgs extends jspb.Message {
-  getStaticFilesToRegisterMap(): jspb.Map<string, boolean>;
-  clearStaticFilesToRegisterMap(): void;
-  serializeBinary(): Uint8Array;
-  toObject(includeInstance?: boolean): RegisterStaticFilesArgs.AsObject;
-  static toObject(includeInstance: boolean, msg: RegisterStaticFilesArgs): RegisterStaticFilesArgs.AsObject;
-  static extensions: {[key: number]: jspb.ExtensionFieldInfo<jspb.Message>};
-  static extensionsBinary: {[key: number]: jspb.ExtensionFieldBinaryInfo<jspb.Message>};
-  static serializeBinaryToWriter(message: RegisterStaticFilesArgs, writer: jspb.BinaryWriter): void;
-  static deserializeBinary(bytes: Uint8Array): RegisterStaticFilesArgs;
-  static deserializeBinaryFromReader(message: RegisterStaticFilesArgs, reader: jspb.BinaryReader): RegisterStaticFilesArgs;
-}
-
-export namespace RegisterStaticFilesArgs {
-  export type AsObject = {
-    staticFilesToRegisterMap: Array<[string, boolean]>,
-  }
-}
-
-export class RegisterStaticFilesResponse extends jspb.Message {
-  getStaticFileRelativeFilepathsMap(): jspb.Map<string, string>;
-  clearStaticFileRelativeFilepathsMap(): void;
-  serializeBinary(): Uint8Array;
-  toObject(includeInstance?: boolean): RegisterStaticFilesResponse.AsObject;
-  static toObject(includeInstance: boolean, msg: RegisterStaticFilesResponse): RegisterStaticFilesResponse.AsObject;
-  static extensions: {[key: number]: jspb.ExtensionFieldInfo<jspb.Message>};
-  static extensionsBinary: {[key: number]: jspb.ExtensionFieldBinaryInfo<jspb.Message>};
-  static serializeBinaryToWriter(message: RegisterStaticFilesResponse, writer: jspb.BinaryWriter): void;
-  static deserializeBinary(bytes: Uint8Array): RegisterStaticFilesResponse;
-  static deserializeBinaryFromReader(message: RegisterStaticFilesResponse, reader: jspb.BinaryReader): RegisterStaticFilesResponse;
-}
-
-export namespace RegisterStaticFilesResponse {
-  export type AsObject = {
-    staticFileRelativeFilepathsMap: Array<[string, string]>,
-  }
-}
-
 export class LoadStaticFilesArgs extends jspb.Message {
   getServiceId(): string;
   setServiceId(value: string): void;

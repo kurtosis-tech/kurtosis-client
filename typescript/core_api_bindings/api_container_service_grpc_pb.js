@@ -104,28 +104,6 @@ function deserialize_api_container_api_RegisterServiceResponse(buffer_arg) {
   return api_container_service_pb.RegisterServiceResponse.deserializeBinary(new Uint8Array(buffer_arg));
 }
 
-function serialize_api_container_api_RegisterStaticFilesArgs(arg) {
-  if (!(arg instanceof api_container_service_pb.RegisterStaticFilesArgs)) {
-    throw new Error('Expected argument of type api_container_api.RegisterStaticFilesArgs');
-  }
-  return Buffer.from(arg.serializeBinary());
-}
-
-function deserialize_api_container_api_RegisterStaticFilesArgs(buffer_arg) {
-  return api_container_service_pb.RegisterStaticFilesArgs.deserializeBinary(new Uint8Array(buffer_arg));
-}
-
-function serialize_api_container_api_RegisterStaticFilesResponse(arg) {
-  if (!(arg instanceof api_container_service_pb.RegisterStaticFilesResponse)) {
-    throw new Error('Expected argument of type api_container_api.RegisterStaticFilesResponse');
-  }
-  return Buffer.from(arg.serializeBinary());
-}
-
-function deserialize_api_container_api_RegisterStaticFilesResponse(buffer_arg) {
-  return api_container_service_pb.RegisterStaticFilesResponse.deserializeBinary(new Uint8Array(buffer_arg));
-}
-
 function serialize_api_container_api_RemoveServiceArgs(arg) {
   if (!(arg instanceof api_container_service_pb.RemoveServiceArgs)) {
     throw new Error('Expected argument of type api_container_api.RemoveServiceArgs');
@@ -194,20 +172,6 @@ function deserialize_google_protobuf_Empty(buffer_arg) {
 
 
 var ApiContainerServiceService = exports.ApiContainerServiceService = {
-  // Tells the API container that the client has some static files that it wants the API container to be able to use 
-//  when launching services. The API container will note this and return a path, relative to the root of the suite 
-//  execution volume, where the client must put the static files.
-registerStaticFiles: {
-    path: '/api_container_api.ApiContainerService/RegisterStaticFiles',
-    requestStream: false,
-    responseStream: false,
-    requestType: api_container_service_pb.RegisterStaticFilesArgs,
-    responseType: api_container_service_pb.RegisterStaticFilesResponse,
-    requestSerialize: serialize_api_container_api_RegisterStaticFilesArgs,
-    requestDeserialize: deserialize_api_container_api_RegisterStaticFilesArgs,
-    responseSerialize: serialize_api_container_api_RegisterStaticFilesResponse,
-    responseDeserialize: deserialize_api_container_api_RegisterStaticFilesResponse,
-  },
   // Registers a service with the API container but doesn't start the container for it
 registerService: {
     path: '/api_container_api.ApiContainerService/RegisterService',
