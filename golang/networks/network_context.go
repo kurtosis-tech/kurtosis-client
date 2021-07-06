@@ -53,9 +53,9 @@ func NewNetworkContext(
 // Docs available at https://docs.kurtosistech.com/kurtosis-libs/lib-documentation
 func (networkCtx *NetworkContext) AddService(
 		serviceId services.ServiceID,
-		configFactory services.ContainerConfigFactory) (*services.ServiceInfo, map[string]*core_api_bindings.PortBinding, error) {
-	// Go mutexes aren't re-entrant, so we lock the mutex inside this call
-	serviceInfo, hostPortBindings, err := networkCtx.AddServiceToPartition(
+		configFactory services.ContainerConfigFactory) (*services.ServiceContext, map[string]*core_api_bindings.PortBinding, error) {
+
+	serviceContext, hostPortBindings, err := networkCtx.AddServiceToPartition(
 		serviceId,
 		defaultPartitionId,
 		configFactory)
@@ -63,14 +63,14 @@ func (networkCtx *NetworkContext) AddService(
 		return nil, nil, stacktrace.Propagate(err, "An error occurred adding service '%v' to the network in the default partition", serviceId)
 	}
 
-	return serviceInfo, hostPortBindings, nil
+	return serviceContext, hostPortBindings, nil
 }
 
 // Docs available at https://docs.kurtosistech.com/kurtosis-libs/lib-documentation
 func (networkCtx *NetworkContext) AddServiceToPartition(
 		serviceId services.ServiceID,
 		partitionId PartitionID,
-		configFactory services.ContainerConfigFactory) (*services.ServiceInfo, map[string]*core_api_bindings.PortBinding, error) {
+		configFactory services.ContainerConfigFactory) (*services.ServiceContext, map[string]*core_api_bindings.PortBinding, error) {
 
 	ctx := context.Background()
 
@@ -165,9 +165,7 @@ func (networkCtx *NetworkContext) AddServiceToPartition(
 	}
 	logrus.Tracef("Successfully started service with Kurtosis API")
 
-	serviceInfo := services.NewServiceInfo(serviceIpAddr)
-
-	return serviceInfo, resp.UsedPortsHostPortBindings,  nil
+	return serviceContext, resp.UsedPortsHostPortBindings,  nil
 }
 
 // Docs available at https://docs.kurtosistech.com/kurtosis-libs/lib-documentation
@@ -253,23 +251,6 @@ func (networkCtx *NetworkContext) WaitForEndpointAvailability(serviceId services
 	}
 
 	return nil
-}
-
-// Docs available at https://docs.kurtosistech.com/kurtosis-libs/lib-documentation
-func (networkCtx *NetworkContext) ExecCommand(serviceId services.ServiceID, command []string) (int32, *[]byte, error) {
-	args := &core_api_bindings.ExecCommandArgs{
-		ServiceId: string(serviceId),
-		CommandArgs: command,
-	}
-	resp, err := networkCtx.client.ExecCommand(context.Background(), args)
-	if err != nil {
-		return 0, nil, stacktrace.Propagate(
-			err,
-			"An error occurred executing command '%v' on service '%v'",
-			command,
-			serviceId)
-	}
-	return resp.ExitCode, &resp.LogOutput, nil
 }
 
 // Docs available at https://docs.kurtosistech.com/kurtosis-libs/lib-documentation
