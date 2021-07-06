@@ -23,10 +23,6 @@ const (
 	// This will alwyas resolve to the default partition ID (regardless of whether such a partition exists in the network,
 	//  or it was repartitioned away)
 	defaultPartitionId PartitionID = ""
-
-	// This value - where the suite execution volume will be mounted on the testsuite container - is
-	//  hardcoded inside Kurtosis Core
-	suiteExVolMountpoint = "/suite-execution"
 )
 
 // Docs available at https://docs.kurtosistech.com/kurtosis-libs/lib-documentation
@@ -39,24 +35,21 @@ type NetworkContext struct {
 	mutex *sync.Mutex
 
 	services map[services.ServiceID]services.Service
+
+	// The location on the filesystem where this code is running where the suite execution volume is mounted
+	suiteExVolMountpoint string
 }
 
-
-/*
-Creates a new NetworkContext object with the given parameters.
-
-Args:
-	client: The Kurtosis API client that the NetworkContext will use for modifying the state of the testnet
-	filesArtifactUrls: The mapping of filesArtifactId -> URL for the artifacts that the testsuite will use
-*/
 func NewNetworkContext(
 		client core_api_bindings.ApiContainerServiceClient,
-		filesArtifactUrls map[services.FilesArtifactID]string) *NetworkContext {
+		filesArtifactUrls map[services.FilesArtifactID]string,
+		suiteExVolMountpoint string) *NetworkContext {
 	return &NetworkContext{
 		mutex: &sync.Mutex{},
 		client: client,
 		filesArtifactUrls: filesArtifactUrls,
 		services: map[services.ServiceID]services.Service{},
+		suiteExVolMountpoint: suiteExVolMountpoint,
 	}
 }
 
@@ -108,7 +101,7 @@ func (networkCtx *NetworkContext) AddServiceToPartition(
 		networkCtx.client,
 		serviceId,
 		serviceIpAddr,
-		suiteExVolMountpoint,
+		networkCtx.suiteExVolMountpoint,
 		containerCreationConfig.GetTestVolumeMountpoint())
 	logrus.Tracef("New service successfully registered with Kurtosis API")
 
@@ -354,7 +347,7 @@ func (networkCtx *NetworkContext) RegisterStaticFiles(ctx context.Context, stati
 			// This should never happen!
 			return stacktrace.NewError("Static file ID '%v' returned by the Kurtosis API should be in the source file map, but wasn't - this is definitely a bug in Kurtosis!")
 		}
-		destAbsFilepathOnTestsuite := path.Join(suiteExVolMountpoint, destRelativeFilepath)
+		destAbsFilepathOnTestsuite := path.Join(networkCtx.suiteExVolMountpoint, destRelativeFilepath)
 		if _, err := os.Stat(destAbsFilepathOnTestsuite); err == nil {
 			return stacktrace.NewError("When registering static file '%v', the Kurtosis API returned a path '%v' in the suite execution volume where a file already exists - this is a bug in Kurtosis!", staticFileId, destRelativeFilepath)
 		}

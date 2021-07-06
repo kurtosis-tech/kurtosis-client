@@ -194,6 +194,20 @@ function deserialize_google_protobuf_Empty(buffer_arg) {
 
 
 var ApiContainerServiceService = exports.ApiContainerServiceService = {
+  // Tells the API container that the client has some static files that it wants the API container to be able to use 
+//  when launching services. The API container will note this and return a path, relative to the root of the suite 
+//  execution volume, where the client must put the static files.
+registerStaticFiles: {
+    path: '/api_container_api.ApiContainerService/RegisterStaticFiles',
+    requestStream: false,
+    responseStream: false,
+    requestType: api_container_service_pb.RegisterStaticFilesArgs,
+    responseType: api_container_service_pb.RegisterStaticFilesResponse,
+    requestSerialize: serialize_api_container_api_RegisterStaticFilesArgs,
+    requestDeserialize: deserialize_api_container_api_RegisterStaticFilesArgs,
+    responseSerialize: serialize_api_container_api_RegisterStaticFilesResponse,
+    responseDeserialize: deserialize_api_container_api_RegisterStaticFilesResponse,
+  },
   // Registers a service with the API container but doesn't start the container for it
 registerService: {
     path: '/api_container_api.ApiContainerService/RegisterService',
@@ -217,20 +231,6 @@ generateFiles: {
     requestDeserialize: deserialize_api_container_api_GenerateFilesArgs,
     responseSerialize: serialize_api_container_api_GenerateFilesResponse,
     responseDeserialize: deserialize_api_container_api_GenerateFilesResponse,
-  },
-  // Tells the API container that the client has some static files that it wants the API container to be able to use 
-//  when launching services. The API container will note this and return a path, relative to the root of the suite 
-//  execution volume, where the client must put the static files.
-registerStaticFiles: {
-    path: '/api_container_api.ApiContainerService/RegisterStaticFiles',
-    requestStream: false,
-    responseStream: false,
-    requestType: api_container_service_pb.RegisterStaticFilesArgs,
-    responseType: api_container_service_pb.RegisterStaticFilesResponse,
-    requestSerialize: serialize_api_container_api_RegisterStaticFilesArgs,
-    requestDeserialize: deserialize_api_container_api_RegisterStaticFilesArgs,
-    responseSerialize: serialize_api_container_api_RegisterStaticFilesResponse,
-    responseDeserialize: deserialize_api_container_api_RegisterStaticFilesResponse,
   },
   // Copies static files that have been registered with the API container into the file namespace of the given service
 loadStaticFiles: {
