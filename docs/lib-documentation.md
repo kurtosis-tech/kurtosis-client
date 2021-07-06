@@ -73,6 +73,8 @@ Waits until a service endpoint is available by making requests to the endpoint u
 * `retriesDelayMilliseconds`: Number of milliseconds to wait between retries
 * `bodyText`: If this value is non-empty, the endpoint will not be marked as available until this value is returned (e.g. `Hello World`). If this value is emptystring, no body text comparison will be done.
 
+### TODO TODO TODO registerStaticFiles TODO
+
 PartitionConnectionInfo
 -----------------------
 This class is a plain old object defining the state between two partitions (e.g. whether network traffic is blocked or not). It is auto-generated from a gRPC API, so exploring it in code is the best way to view its properties. 
@@ -227,6 +229,8 @@ Generates files inside the suite execution volume, which is mounted on both the 
 **Returns**
 
 A map of the file IDs (corresponding to the set passed in as input) mapped to a [GeneratedFileFilepaths][generatedfilefilepaths] object containing the filepaths on a) the testsuite container and b) the service container where the generated file was created.
+
+### TODO loadStaticFiles TODO TODO
 
 GeneratedFileFilepaths
 ----------------------

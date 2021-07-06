@@ -11,7 +11,9 @@ import (
 	"github.com/kurtosis-tech/kurtosis-client/golang/services"
 	"github.com/palantir/stacktrace"
 	"github.com/sirupsen/logrus"
+	"io"
 	"os"
+	"path"
 	"sync"
 )
 
@@ -110,25 +112,13 @@ func (networkCtx *NetworkContext) AddServiceToPartition(
 		containerCreationConfig.GetTestVolumeMountpoint())
 	logrus.Tracef("New service successfully registered with Kurtosis API")
 
-	logrus.Trace("Copying static files...")
-	staticFilesToCopy := containerCreationConfig.GetUsedStaticFiles()
-	staticFilesToCopyStringSet := map[string]bool{}
-	for staticFileId := range staticFilesToCopy {
-		staticFilesToCopyStringSet[string(staticFileId)] = true
-	}
-	loadStaticFilesArgs := &core_api_bindings.LoadStaticFilesArgs{
-		ServiceId:   string(serviceId),
-		StaticFiles: staticFilesToCopyStringSet,
-	}
-	loadStaticFilesResp, err := networkCtx.client.LoadStaticFiles(ctx, loadStaticFilesArgs)
+	logrus.Trace("Loading static files into new service namespace...")
+	usedStaticFiles := containerCreationConfig.GetUsedStaticFiles()
+	staticFileAbsFilepathsOnService, err := serviceContext.LoadStaticFiles(usedStaticFiles)
 	if err != nil {
-		return nil, nil, nil, stacktrace.Propagate(err, "An error occurred loading the requested static files into the namespace of service '%v'", serviceId)
+		return nil, nil, nil, stacktrace.Propagate(err, "An error occurred loading the following static files to service '%v': %+v", serviceId, usedStaticFiles)
 	}
-	staticFileFilepathsOnNewService := map[services.StaticFileID]string{}
-	for staticFileId, filepathRelativeToExVolRoot := range loadStaticFilesResp.CopiedStaticFileRelativeFilepaths {
-		absFilepathOnServiceToLaunch
-		staticFileFilepathsOnNewService[services.StaticFileID(staticFileId)] =
-	}
+	logrus.Trace("Successfully loaded static files")
 
 	logrus.Trace("Initializing generated files...")
 	filesToGenerate := map[string]bool{}
@@ -159,7 +149,7 @@ func (networkCtx *NetworkContext) AddServiceToPartition(
 	}
 	logrus.Trace("Successfully initialized generated files in suite execution volume")
 
-	containerRunConfig, err := configFactory.GetRunConfig(serviceIpAddr, generatedFileAbsFilepathsOnService)
+	containerRunConfig, err := configFactory.GetRunConfig(serviceIpAddr, generatedFileAbsFilepathsOnService, staticFileAbsFilepathsOnService)
 	if err != nil {
 		return nil, nil, nil, stacktrace.Propagate(err, "An error occurred getting the container run config")
 	}
@@ -332,5 +322,56 @@ func (networkCtx *NetworkContext) ExecuteBulkCommands(bulkCommandsJson string) e
 	if _, err := networkCtx.client.ExecuteBulkCommands(context.Background(), args); err != nil {
 		return stacktrace.Propagate(err, "An error occurred executing the following bulk commands: %v", bulkCommandsJson)
 	}
+	return nil
+}
+
+// Docs available at https://docs.kurtosistech.com/kurtosis-libs/lib-documentation
+func (networkCtx *NetworkContext) RegisterStaticFiles(ctx context.Context, staticFileFilepaths map[services.StaticFileID]string) error {
+	// Sanity-check that the filepaths exist
+	for staticFileId, absFilepathOnTestsuite := range staticFileFilepaths {
+		if _, err := os.Stat(absFilepathOnTestsuite); os.IsNotExist(err) {
+			return stacktrace.NewError("Filepath '%v' associated with static file '%v' doesn't exist", absFilepathOnTestsuite, staticFileId)
+		}
+	}
+
+	staticFileIdStrsToRegister := map[string]bool{}
+	for staticFileId := range staticFileFilepaths {
+		staticFileIdStrsToRegister[string(staticFileId)] = true
+	}
+	args := &core_api_bindings.RegisterStaticFilesArgs{
+		StaticFilesToRegister: staticFileIdStrsToRegister,
+	}
+	resp, err := networkCtx.client.RegisterStaticFiles(ctx, args)
+	if err != nil {
+		return stacktrace.Propagate(err, "An error occurred registering static file IDs: %+v", staticFileIdStrsToRegister)
+	}
+
+	// Now that we have destinations where the files should live, copy them there
+	for staticFileIdStr, destRelativeFilepath := range resp.StaticFileRelativeFilepaths {
+		staticFileId := services.StaticFileID(staticFileIdStr)
+		srcAbsFilepathOnTestsuite, found := staticFileFilepaths[staticFileId]
+		if !found {
+			// This should never happen!
+			return stacktrace.NewError("Static file ID '%v' returned by the Kurtosis API should be in the source file map, but wasn't - this is definitely a bug in Kurtosis!")
+		}
+		destAbsFilepathOnTestsuite := path.Join(suiteExVolMountpoint, destRelativeFilepath)
+		if _, err := os.Stat(destAbsFilepathOnTestsuite); err == nil {
+			return stacktrace.NewError("When registering static file '%v', the Kurtosis API returned a path '%v' in the suite execution volume where a file already exists - this is a bug in Kurtosis!", staticFileId, destRelativeFilepath)
+		}
+		destFp, err := os.Create(destAbsFilepathOnTestsuite)
+		if err != nil {
+			return stacktrace.Propagate(err, "An error occurred opening static file '%v' destination file '%v' for writing", staticFileId, destAbsFilepathOnTestsuite)
+		}
+		defer destFp.Close()
+		srcFp, err := os.Open(srcAbsFilepathOnTestsuite)
+		if err != nil {
+			return stacktrace.Propagate(err, "An error occurred opening static file '%v' source file '%v' for reading", staticFileId, srcAbsFilepathOnTestsuite)
+		}
+		defer srcFp.Close()
+		if _, err := io.Copy(destFp, srcFp); err != nil {
+			return stacktrace.Propagate(err, "An error occurred copying all the bytes from static file '%v' source filepath '%v' to destination filepath '%v'", staticFileId, srcAbsFilepathOnTestsuite, destAbsFilepathOnTestsuite)
+		}
+	}
+
 	return nil
 }
