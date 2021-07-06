@@ -23,6 +23,12 @@ type ApiContainerServiceClient interface {
 	RegisterService(ctx context.Context, in *RegisterServiceArgs, opts ...grpc.CallOption) (*RegisterServiceResponse, error)
 	// Generates files inside the test volume on the filesystem for a container
 	GenerateFiles(ctx context.Context, in *GenerateFilesArgs, opts ...grpc.CallOption) (*GenerateFilesResponse, error)
+	// Tells the API container that the client has some static files that it wants the API container to be able to use
+	//  when launching services. The API container will note this and return a path, relative to the root of the suite
+	//  execution volume, where the client must put the static files.
+	RegisterStaticFiles(ctx context.Context, in *RegisterStaticFilesArgs, opts ...grpc.CallOption) (*RegisterStaticFilesResponse, error)
+	// Copies static files that have been registered with the API container into the file namespace of the given service
+	LoadStaticFiles(ctx context.Context, in *LoadStaticFilesArgs, opts ...grpc.CallOption) (*LoadStaticFilesArgs, error)
 	// Starts a previously-registered service by creating a Docker container for it
 	StartService(ctx context.Context, in *StartServiceArgs, opts ...grpc.CallOption) (*StartServiceResponse, error)
 	// Instructs the API container to remove the given service
@@ -57,6 +63,24 @@ func (c *apiContainerServiceClient) RegisterService(ctx context.Context, in *Reg
 func (c *apiContainerServiceClient) GenerateFiles(ctx context.Context, in *GenerateFilesArgs, opts ...grpc.CallOption) (*GenerateFilesResponse, error) {
 	out := new(GenerateFilesResponse)
 	err := c.cc.Invoke(ctx, "/api_container_api.ApiContainerService/GenerateFiles", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *apiContainerServiceClient) RegisterStaticFiles(ctx context.Context, in *RegisterStaticFilesArgs, opts ...grpc.CallOption) (*RegisterStaticFilesResponse, error) {
+	out := new(RegisterStaticFilesResponse)
+	err := c.cc.Invoke(ctx, "/api_container_api.ApiContainerService/RegisterStaticFiles", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *apiContainerServiceClient) LoadStaticFiles(ctx context.Context, in *LoadStaticFilesArgs, opts ...grpc.CallOption) (*LoadStaticFilesArgs, error) {
+	out := new(LoadStaticFilesArgs)
+	err := c.cc.Invoke(ctx, "/api_container_api.ApiContainerService/LoadStaticFiles", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -125,6 +149,12 @@ type ApiContainerServiceServer interface {
 	RegisterService(context.Context, *RegisterServiceArgs) (*RegisterServiceResponse, error)
 	// Generates files inside the test volume on the filesystem for a container
 	GenerateFiles(context.Context, *GenerateFilesArgs) (*GenerateFilesResponse, error)
+	// Tells the API container that the client has some static files that it wants the API container to be able to use
+	//  when launching services. The API container will note this and return a path, relative to the root of the suite
+	//  execution volume, where the client must put the static files.
+	RegisterStaticFiles(context.Context, *RegisterStaticFilesArgs) (*RegisterStaticFilesResponse, error)
+	// Copies static files that have been registered with the API container into the file namespace of the given service
+	LoadStaticFiles(context.Context, *LoadStaticFilesArgs) (*LoadStaticFilesArgs, error)
 	// Starts a previously-registered service by creating a Docker container for it
 	StartService(context.Context, *StartServiceArgs) (*StartServiceResponse, error)
 	// Instructs the API container to remove the given service
@@ -149,6 +179,12 @@ func (UnimplementedApiContainerServiceServer) RegisterService(context.Context, *
 }
 func (UnimplementedApiContainerServiceServer) GenerateFiles(context.Context, *GenerateFilesArgs) (*GenerateFilesResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GenerateFiles not implemented")
+}
+func (UnimplementedApiContainerServiceServer) RegisterStaticFiles(context.Context, *RegisterStaticFilesArgs) (*RegisterStaticFilesResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method RegisterStaticFiles not implemented")
+}
+func (UnimplementedApiContainerServiceServer) LoadStaticFiles(context.Context, *LoadStaticFilesArgs) (*LoadStaticFilesArgs, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method LoadStaticFiles not implemented")
 }
 func (UnimplementedApiContainerServiceServer) StartService(context.Context, *StartServiceArgs) (*StartServiceResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method StartService not implemented")
@@ -213,6 +249,42 @@ func _ApiContainerService_GenerateFiles_Handler(srv interface{}, ctx context.Con
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(ApiContainerServiceServer).GenerateFiles(ctx, req.(*GenerateFilesArgs))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ApiContainerService_RegisterStaticFiles_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(RegisterStaticFilesArgs)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ApiContainerServiceServer).RegisterStaticFiles(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/api_container_api.ApiContainerService/RegisterStaticFiles",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ApiContainerServiceServer).RegisterStaticFiles(ctx, req.(*RegisterStaticFilesArgs))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ApiContainerService_LoadStaticFiles_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(LoadStaticFilesArgs)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ApiContainerServiceServer).LoadStaticFiles(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/api_container_api.ApiContainerService/LoadStaticFiles",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ApiContainerServiceServer).LoadStaticFiles(ctx, req.(*LoadStaticFilesArgs))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -339,6 +411,14 @@ var ApiContainerService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GenerateFiles",
 			Handler:    _ApiContainerService_GenerateFiles_Handler,
+		},
+		{
+			MethodName: "RegisterStaticFiles",
+			Handler:    _ApiContainerService_RegisterStaticFiles_Handler,
+		},
+		{
+			MethodName: "LoadStaticFiles",
+			Handler:    _ApiContainerService_LoadStaticFiles_Handler,
 		},
 		{
 			MethodName: "StartService",

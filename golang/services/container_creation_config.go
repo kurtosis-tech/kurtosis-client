@@ -16,6 +16,7 @@ type ContainerCreationConfig struct {
 	usedPortsSet                 map[string]bool
 	serviceCreatingFunc          func(*ServiceContext) Service
 	fileGeneratingFuncs          map[string]func(*os.File) error
+	usedStaticFilesSet		     map[StaticFileID]bool
 	filesArtifactMountpoints     map[FilesArtifactID]string
 }
 
@@ -43,8 +44,8 @@ func (config *ContainerCreationConfig) GetFilesArtifactMountpoints() map[FilesAr
 	return config.filesArtifactMountpoints
 }
 
-func (config *ContainerCreationConfig) GetStaticFilesMountpoints() map[StaticFileID]string {
-	return config.
+func (config *ContainerCreationConfig) GetUsedStaticFiles() map[StaticFileID]bool {
+	return config.usedStaticFilesSet
 }
 
 
@@ -58,6 +59,7 @@ type ContainerCreationConfigBuilder struct {
 	testVolumeMountpoint     string
 	usedPortsSet             map[string]bool
 	serviceCreatingFunc      func(*ServiceContext) Service
+	usedStaticFilesSet       map[StaticFileID]bool
 	fileGeneratingFuncs      map[string]func(*os.File) error
 	filesArtifactMountpoints map[FilesArtifactID]string
 }
@@ -83,6 +85,11 @@ func (builder *ContainerCreationConfigBuilder) WithGeneratedFiles(fileGenerating
 	return builder
 }
 
+func (builder *ContainerCreationConfigBuilder) WithStaticFiles(usedStaticFilesSet map[StaticFileID]bool) *ContainerCreationConfigBuilder {
+	builder.usedStaticFilesSet = usedStaticFilesSet
+	return builder
+}
+
 func (builder *ContainerCreationConfigBuilder) WithFilesArtifacts(filesArtifactMountpoints map[FilesArtifactID]string) *ContainerCreationConfigBuilder {
 	builder.filesArtifactMountpoints = filesArtifactMountpoints
 	return builder
@@ -96,6 +103,7 @@ func (builder *ContainerCreationConfigBuilder) Build() *ContainerCreationConfig 
 		usedPortsSet:                 builder.usedPortsSet,
 		serviceCreatingFunc:          builder.serviceCreatingFunc,
 		fileGeneratingFuncs:          builder.fileGeneratingFuncs,
+		usedStaticFilesSet:           builder.usedStaticFilesSet,
 		filesArtifactMountpoints:     builder.filesArtifactMountpoints,
 	}
 }

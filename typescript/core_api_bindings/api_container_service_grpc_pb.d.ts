@@ -10,11 +10,14 @@ import * as grpc from "grpc";
 interface IApiContainerServiceService extends grpc.ServiceDefinition<grpc.UntypedServiceImplementation> {
   registerService: grpc.MethodDefinition<api_container_service_pb.RegisterServiceArgs, api_container_service_pb.RegisterServiceResponse>;
   generateFiles: grpc.MethodDefinition<api_container_service_pb.GenerateFilesArgs, api_container_service_pb.GenerateFilesResponse>;
+  registerStaticFiles: grpc.MethodDefinition<api_container_service_pb.RegisterStaticFilesArgs, api_container_service_pb.RegisterStaticFilesResponse>;
+  loadStaticFiles: grpc.MethodDefinition<api_container_service_pb.LoadStaticFilesArgs, api_container_service_pb.LoadStaticFilesArgs>;
   startService: grpc.MethodDefinition<api_container_service_pb.StartServiceArgs, api_container_service_pb.StartServiceResponse>;
   removeService: grpc.MethodDefinition<api_container_service_pb.RemoveServiceArgs, google_protobuf_empty_pb.Empty>;
   repartition: grpc.MethodDefinition<api_container_service_pb.RepartitionArgs, google_protobuf_empty_pb.Empty>;
   execCommand: grpc.MethodDefinition<api_container_service_pb.ExecCommandArgs, api_container_service_pb.ExecCommandResponse>;
   waitForEndpointAvailability: grpc.MethodDefinition<api_container_service_pb.WaitForEndpointAvailabilityArgs, google_protobuf_empty_pb.Empty>;
+  executeBulkCommands: grpc.MethodDefinition<api_container_service_pb.ExecuteBulkCommandsArgs, google_protobuf_empty_pb.Empty>;
 }
 
 export const ApiContainerServiceService: IApiContainerServiceService;
@@ -22,11 +25,14 @@ export const ApiContainerServiceService: IApiContainerServiceService;
 export interface IApiContainerServiceServer extends grpc.UntypedServiceImplementation {
   registerService: grpc.handleUnaryCall<api_container_service_pb.RegisterServiceArgs, api_container_service_pb.RegisterServiceResponse>;
   generateFiles: grpc.handleUnaryCall<api_container_service_pb.GenerateFilesArgs, api_container_service_pb.GenerateFilesResponse>;
+  registerStaticFiles: grpc.handleUnaryCall<api_container_service_pb.RegisterStaticFilesArgs, api_container_service_pb.RegisterStaticFilesResponse>;
+  loadStaticFiles: grpc.handleUnaryCall<api_container_service_pb.LoadStaticFilesArgs, api_container_service_pb.LoadStaticFilesArgs>;
   startService: grpc.handleUnaryCall<api_container_service_pb.StartServiceArgs, api_container_service_pb.StartServiceResponse>;
   removeService: grpc.handleUnaryCall<api_container_service_pb.RemoveServiceArgs, google_protobuf_empty_pb.Empty>;
   repartition: grpc.handleUnaryCall<api_container_service_pb.RepartitionArgs, google_protobuf_empty_pb.Empty>;
   execCommand: grpc.handleUnaryCall<api_container_service_pb.ExecCommandArgs, api_container_service_pb.ExecCommandResponse>;
   waitForEndpointAvailability: grpc.handleUnaryCall<api_container_service_pb.WaitForEndpointAvailabilityArgs, google_protobuf_empty_pb.Empty>;
+  executeBulkCommands: grpc.handleUnaryCall<api_container_service_pb.ExecuteBulkCommandsArgs, google_protobuf_empty_pb.Empty>;
 }
 
 export class ApiContainerServiceClient extends grpc.Client {
@@ -37,6 +43,12 @@ export class ApiContainerServiceClient extends grpc.Client {
   generateFiles(argument: api_container_service_pb.GenerateFilesArgs, callback: grpc.requestCallback<api_container_service_pb.GenerateFilesResponse>): grpc.ClientUnaryCall;
   generateFiles(argument: api_container_service_pb.GenerateFilesArgs, metadataOrOptions: grpc.Metadata | grpc.CallOptions | null, callback: grpc.requestCallback<api_container_service_pb.GenerateFilesResponse>): grpc.ClientUnaryCall;
   generateFiles(argument: api_container_service_pb.GenerateFilesArgs, metadata: grpc.Metadata | null, options: grpc.CallOptions | null, callback: grpc.requestCallback<api_container_service_pb.GenerateFilesResponse>): grpc.ClientUnaryCall;
+  registerStaticFiles(argument: api_container_service_pb.RegisterStaticFilesArgs, callback: grpc.requestCallback<api_container_service_pb.RegisterStaticFilesResponse>): grpc.ClientUnaryCall;
+  registerStaticFiles(argument: api_container_service_pb.RegisterStaticFilesArgs, metadataOrOptions: grpc.Metadata | grpc.CallOptions | null, callback: grpc.requestCallback<api_container_service_pb.RegisterStaticFilesResponse>): grpc.ClientUnaryCall;
+  registerStaticFiles(argument: api_container_service_pb.RegisterStaticFilesArgs, metadata: grpc.Metadata | null, options: grpc.CallOptions | null, callback: grpc.requestCallback<api_container_service_pb.RegisterStaticFilesResponse>): grpc.ClientUnaryCall;
+  loadStaticFiles(argument: api_container_service_pb.LoadStaticFilesArgs, callback: grpc.requestCallback<api_container_service_pb.LoadStaticFilesArgs>): grpc.ClientUnaryCall;
+  loadStaticFiles(argument: api_container_service_pb.LoadStaticFilesArgs, metadataOrOptions: grpc.Metadata | grpc.CallOptions | null, callback: grpc.requestCallback<api_container_service_pb.LoadStaticFilesArgs>): grpc.ClientUnaryCall;
+  loadStaticFiles(argument: api_container_service_pb.LoadStaticFilesArgs, metadata: grpc.Metadata | null, options: grpc.CallOptions | null, callback: grpc.requestCallback<api_container_service_pb.LoadStaticFilesArgs>): grpc.ClientUnaryCall;
   startService(argument: api_container_service_pb.StartServiceArgs, callback: grpc.requestCallback<api_container_service_pb.StartServiceResponse>): grpc.ClientUnaryCall;
   startService(argument: api_container_service_pb.StartServiceArgs, metadataOrOptions: grpc.Metadata | grpc.CallOptions | null, callback: grpc.requestCallback<api_container_service_pb.StartServiceResponse>): grpc.ClientUnaryCall;
   startService(argument: api_container_service_pb.StartServiceArgs, metadata: grpc.Metadata | null, options: grpc.CallOptions | null, callback: grpc.requestCallback<api_container_service_pb.StartServiceResponse>): grpc.ClientUnaryCall;
@@ -52,4 +64,7 @@ export class ApiContainerServiceClient extends grpc.Client {
   waitForEndpointAvailability(argument: api_container_service_pb.WaitForEndpointAvailabilityArgs, callback: grpc.requestCallback<google_protobuf_empty_pb.Empty>): grpc.ClientUnaryCall;
   waitForEndpointAvailability(argument: api_container_service_pb.WaitForEndpointAvailabilityArgs, metadataOrOptions: grpc.Metadata | grpc.CallOptions | null, callback: grpc.requestCallback<google_protobuf_empty_pb.Empty>): grpc.ClientUnaryCall;
   waitForEndpointAvailability(argument: api_container_service_pb.WaitForEndpointAvailabilityArgs, metadata: grpc.Metadata | null, options: grpc.CallOptions | null, callback: grpc.requestCallback<google_protobuf_empty_pb.Empty>): grpc.ClientUnaryCall;
+  executeBulkCommands(argument: api_container_service_pb.ExecuteBulkCommandsArgs, callback: grpc.requestCallback<google_protobuf_empty_pb.Empty>): grpc.ClientUnaryCall;
+  executeBulkCommands(argument: api_container_service_pb.ExecuteBulkCommandsArgs, metadataOrOptions: grpc.Metadata | grpc.CallOptions | null, callback: grpc.requestCallback<google_protobuf_empty_pb.Empty>): grpc.ClientUnaryCall;
+  executeBulkCommands(argument: api_container_service_pb.ExecuteBulkCommandsArgs, metadata: grpc.Metadata | null, options: grpc.CallOptions | null, callback: grpc.requestCallback<google_protobuf_empty_pb.Empty>): grpc.ClientUnaryCall;
 }
