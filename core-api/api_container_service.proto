@@ -16,6 +16,9 @@ service ApiContainerService {
   // Starts a previously-registered service by creating a Docker container for it
   rpc StartService(StartServiceArgs) returns (StartServiceResponse) {};
 
+  //Returns info related to the service, as the IP address
+  rpc GetServiceInfo(GetServiceInfoArgs) returns (GetServiceInfoResponse) {};
+
   // Instructs the API container to remove the given service
   rpc RemoveService(RemoveServiceArgs) returns (google.protobuf.Empty) {};
 
@@ -27,9 +30,6 @@ service ApiContainerService {
 
   //Wait for and endpoint in order to know if a service is available
   rpc WaitForEndpointAvailability(WaitForEndpointAvailabilityArgs) returns (google.protobuf.Empty) {};
-
-  //Returns info related to the service, as the IP address
-  rpc GetServiceInfo(GetServiceInfoArgs) returns (GetServiceInfoResponse) {};
 }
 
 // ==============================================================================================
@@ -119,6 +119,19 @@ message PortBinding {
 }
 
 // ==============================================================================================
+//                                       Get Service Info
+// ==============================================================================================
+message GetServiceInfoArgs {
+  //The service ID to get the info from
+  string service_id = 1;
+}
+
+message GetServiceInfoResponse {
+  // The IP address of the service
+  string ip_addr = 1;
+}
+
+// ==============================================================================================
 //                                        Remove Service
 // ==============================================================================================
 message RemoveServiceArgs {
@@ -190,17 +203,4 @@ message WaitForEndpointAvailabilityArgs {
   uint32 retries_delay_milliseconds = 6;
   //If the endpoint returns this value, the service will be marked as available (e.g. Hello World).
   string body_text = 7;
-}
-
-// ==============================================================================================
-//                                       Get Service Info
-// ==============================================================================================
-message GetServiceInfoArgs {
-  //The service ID to get the info from
-  string service_id = 1;
-}
-
-message GetServiceInfoResponse {
-  // The IP address of the service
-  string ip_addr = 1;
 }

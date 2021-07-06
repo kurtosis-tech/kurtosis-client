@@ -25,6 +25,8 @@ type ApiContainerServiceClient interface {
 	GenerateFiles(ctx context.Context, in *GenerateFilesArgs, opts ...grpc.CallOption) (*GenerateFilesResponse, error)
 	// Starts a previously-registered service by creating a Docker container for it
 	StartService(ctx context.Context, in *StartServiceArgs, opts ...grpc.CallOption) (*StartServiceResponse, error)
+	//Returns info related to the service, as the IP address
+	GetServiceInfo(ctx context.Context, in *GetServiceInfoArgs, opts ...grpc.CallOption) (*GetServiceInfoResponse, error)
 	// Instructs the API container to remove the given service
 	RemoveService(ctx context.Context, in *RemoveServiceArgs, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	// Instructs the API container to repartition the test network
@@ -33,8 +35,6 @@ type ApiContainerServiceClient interface {
 	ExecCommand(ctx context.Context, in *ExecCommandArgs, opts ...grpc.CallOption) (*ExecCommandResponse, error)
 	//Wait for and endpoint in order to know if a service is available
 	WaitForEndpointAvailability(ctx context.Context, in *WaitForEndpointAvailabilityArgs, opts ...grpc.CallOption) (*emptypb.Empty, error)
-	//Returns info related to the service, as the IP address
-	GetServiceInfo(ctx context.Context, in *GetServiceInfoArgs, opts ...grpc.CallOption) (*GetServiceInfoResponse, error)
 }
 
 type apiContainerServiceClient struct {
@@ -66,6 +66,15 @@ func (c *apiContainerServiceClient) GenerateFiles(ctx context.Context, in *Gener
 func (c *apiContainerServiceClient) StartService(ctx context.Context, in *StartServiceArgs, opts ...grpc.CallOption) (*StartServiceResponse, error) {
 	out := new(StartServiceResponse)
 	err := c.cc.Invoke(ctx, "/api_container_api.ApiContainerService/StartService", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *apiContainerServiceClient) GetServiceInfo(ctx context.Context, in *GetServiceInfoArgs, opts ...grpc.CallOption) (*GetServiceInfoResponse, error) {
+	out := new(GetServiceInfoResponse)
+	err := c.cc.Invoke(ctx, "/api_container_api.ApiContainerService/GetServiceInfo", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -108,15 +117,6 @@ func (c *apiContainerServiceClient) WaitForEndpointAvailability(ctx context.Cont
 	return out, nil
 }
 
-func (c *apiContainerServiceClient) GetServiceInfo(ctx context.Context, in *GetServiceInfoArgs, opts ...grpc.CallOption) (*GetServiceInfoResponse, error) {
-	out := new(GetServiceInfoResponse)
-	err := c.cc.Invoke(ctx, "/api_container_api.ApiContainerService/GetServiceInfo", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
 // ApiContainerServiceServer is the server API for ApiContainerService service.
 // All implementations must embed UnimplementedApiContainerServiceServer
 // for forward compatibility
@@ -127,6 +127,8 @@ type ApiContainerServiceServer interface {
 	GenerateFiles(context.Context, *GenerateFilesArgs) (*GenerateFilesResponse, error)
 	// Starts a previously-registered service by creating a Docker container for it
 	StartService(context.Context, *StartServiceArgs) (*StartServiceResponse, error)
+	//Returns info related to the service, as the IP address
+	GetServiceInfo(context.Context, *GetServiceInfoArgs) (*GetServiceInfoResponse, error)
 	// Instructs the API container to remove the given service
 	RemoveService(context.Context, *RemoveServiceArgs) (*emptypb.Empty, error)
 	// Instructs the API container to repartition the test network
@@ -135,8 +137,6 @@ type ApiContainerServiceServer interface {
 	ExecCommand(context.Context, *ExecCommandArgs) (*ExecCommandResponse, error)
 	//Wait for and endpoint in order to know if a service is available
 	WaitForEndpointAvailability(context.Context, *WaitForEndpointAvailabilityArgs) (*emptypb.Empty, error)
-	//Returns info related to the service, as the IP address
-	GetServiceInfo(context.Context, *GetServiceInfoArgs) (*GetServiceInfoResponse, error)
 	mustEmbedUnimplementedApiContainerServiceServer()
 }
 
@@ -153,6 +153,9 @@ func (UnimplementedApiContainerServiceServer) GenerateFiles(context.Context, *Ge
 func (UnimplementedApiContainerServiceServer) StartService(context.Context, *StartServiceArgs) (*StartServiceResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method StartService not implemented")
 }
+func (UnimplementedApiContainerServiceServer) GetServiceInfo(context.Context, *GetServiceInfoArgs) (*GetServiceInfoResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetServiceInfo not implemented")
+}
 func (UnimplementedApiContainerServiceServer) RemoveService(context.Context, *RemoveServiceArgs) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method RemoveService not implemented")
 }
@@ -164,9 +167,6 @@ func (UnimplementedApiContainerServiceServer) ExecCommand(context.Context, *Exec
 }
 func (UnimplementedApiContainerServiceServer) WaitForEndpointAvailability(context.Context, *WaitForEndpointAvailabilityArgs) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method WaitForEndpointAvailability not implemented")
-}
-func (UnimplementedApiContainerServiceServer) GetServiceInfo(context.Context, *GetServiceInfoArgs) (*GetServiceInfoResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetServiceInfo not implemented")
 }
 func (UnimplementedApiContainerServiceServer) mustEmbedUnimplementedApiContainerServiceServer() {}
 
@@ -231,6 +231,24 @@ func _ApiContainerService_StartService_Handler(srv interface{}, ctx context.Cont
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(ApiContainerServiceServer).StartService(ctx, req.(*StartServiceArgs))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ApiContainerService_GetServiceInfo_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetServiceInfoArgs)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ApiContainerServiceServer).GetServiceInfo(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/api_container_api.ApiContainerService/GetServiceInfo",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ApiContainerServiceServer).GetServiceInfo(ctx, req.(*GetServiceInfoArgs))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -307,24 +325,6 @@ func _ApiContainerService_WaitForEndpointAvailability_Handler(srv interface{}, c
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ApiContainerService_GetServiceInfo_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GetServiceInfoArgs)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(ApiContainerServiceServer).GetServiceInfo(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/api_container_api.ApiContainerService/GetServiceInfo",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ApiContainerServiceServer).GetServiceInfo(ctx, req.(*GetServiceInfoArgs))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
 // ApiContainerService_ServiceDesc is the grpc.ServiceDesc for ApiContainerService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -345,6 +345,10 @@ var ApiContainerService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _ApiContainerService_StartService_Handler,
 		},
 		{
+			MethodName: "GetServiceInfo",
+			Handler:    _ApiContainerService_GetServiceInfo_Handler,
+		},
+		{
 			MethodName: "RemoveService",
 			Handler:    _ApiContainerService_RemoveService_Handler,
 		},
@@ -359,10 +363,6 @@ var ApiContainerService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "WaitForEndpointAvailability",
 			Handler:    _ApiContainerService_WaitForEndpointAvailability_Handler,
-		},
-		{
-			MethodName: "GetServiceInfo",
-			Handler:    _ApiContainerService_GetServiceInfo_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
