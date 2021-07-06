@@ -1,10 +1,15 @@
 # TBD
+### Features
+* Port over the relevant bits of documentation from `kurtosis-libs`
+
+# 0.2.2
 ### Changes
 * Updated TypeScript binding file to ensure that it considers the new method `WaitForEndpointAvailability` in NetworkContext
 * Generated all necessary JavaScript/TypeScript binding files which were added after calling down to developer-tools
 
 ### Features
 * Added an `ExecuteBulkCommands` endpoint to the API that accepts JSON-serialized bulk command information and executes it against the API container
+* Added `release.sh` script
 
 ### Fixes
 * Don't panic when a user passes in a null partition connections map to `NetworkContxt.repartitionNetwork`
