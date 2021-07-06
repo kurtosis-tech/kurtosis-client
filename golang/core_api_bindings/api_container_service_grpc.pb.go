@@ -28,7 +28,7 @@ type ApiContainerServiceClient interface {
 	//  execution volume, where the client must put the static files.
 	RegisterStaticFiles(ctx context.Context, in *RegisterStaticFilesArgs, opts ...grpc.CallOption) (*RegisterStaticFilesResponse, error)
 	// Copies static files that have been registered with the API container into the file namespace of the given service
-	LoadStaticFiles(ctx context.Context, in *LoadStaticFilesArgs, opts ...grpc.CallOption) (*LoadStaticFilesArgs, error)
+	LoadStaticFiles(ctx context.Context, in *LoadStaticFilesArgs, opts ...grpc.CallOption) (*LoadStaticFilesResponse, error)
 	// Starts a previously-registered service by creating a Docker container for it
 	StartService(ctx context.Context, in *StartServiceArgs, opts ...grpc.CallOption) (*StartServiceResponse, error)
 	// Instructs the API container to remove the given service
@@ -78,8 +78,8 @@ func (c *apiContainerServiceClient) RegisterStaticFiles(ctx context.Context, in 
 	return out, nil
 }
 
-func (c *apiContainerServiceClient) LoadStaticFiles(ctx context.Context, in *LoadStaticFilesArgs, opts ...grpc.CallOption) (*LoadStaticFilesArgs, error) {
-	out := new(LoadStaticFilesArgs)
+func (c *apiContainerServiceClient) LoadStaticFiles(ctx context.Context, in *LoadStaticFilesArgs, opts ...grpc.CallOption) (*LoadStaticFilesResponse, error) {
+	out := new(LoadStaticFilesResponse)
 	err := c.cc.Invoke(ctx, "/api_container_api.ApiContainerService/LoadStaticFiles", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -154,7 +154,7 @@ type ApiContainerServiceServer interface {
 	//  execution volume, where the client must put the static files.
 	RegisterStaticFiles(context.Context, *RegisterStaticFilesArgs) (*RegisterStaticFilesResponse, error)
 	// Copies static files that have been registered with the API container into the file namespace of the given service
-	LoadStaticFiles(context.Context, *LoadStaticFilesArgs) (*LoadStaticFilesArgs, error)
+	LoadStaticFiles(context.Context, *LoadStaticFilesArgs) (*LoadStaticFilesResponse, error)
 	// Starts a previously-registered service by creating a Docker container for it
 	StartService(context.Context, *StartServiceArgs) (*StartServiceResponse, error)
 	// Instructs the API container to remove the given service
@@ -183,7 +183,7 @@ func (UnimplementedApiContainerServiceServer) GenerateFiles(context.Context, *Ge
 func (UnimplementedApiContainerServiceServer) RegisterStaticFiles(context.Context, *RegisterStaticFilesArgs) (*RegisterStaticFilesResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method RegisterStaticFiles not implemented")
 }
-func (UnimplementedApiContainerServiceServer) LoadStaticFiles(context.Context, *LoadStaticFilesArgs) (*LoadStaticFilesArgs, error) {
+func (UnimplementedApiContainerServiceServer) LoadStaticFiles(context.Context, *LoadStaticFilesArgs) (*LoadStaticFilesResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method LoadStaticFiles not implemented")
 }
 func (UnimplementedApiContainerServiceServer) StartService(context.Context, *StartServiceArgs) (*StartServiceResponse, error) {

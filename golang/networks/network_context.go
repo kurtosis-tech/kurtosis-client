@@ -110,6 +110,26 @@ func (networkCtx *NetworkContext) AddServiceToPartition(
 		containerCreationConfig.GetTestVolumeMountpoint())
 	logrus.Tracef("New service successfully registered with Kurtosis API")
 
+	logrus.Trace("Copying static files...")
+	staticFilesToCopy := containerCreationConfig.GetUsedStaticFiles()
+	staticFilesToCopyStringSet := map[string]bool{}
+	for staticFileId := range staticFilesToCopy {
+		staticFilesToCopyStringSet[string(staticFileId)] = true
+	}
+	loadStaticFilesArgs := &core_api_bindings.LoadStaticFilesArgs{
+		ServiceId:   string(serviceId),
+		StaticFiles: staticFilesToCopyStringSet,
+	}
+	loadStaticFilesResp, err := networkCtx.client.LoadStaticFiles(ctx, loadStaticFilesArgs)
+	if err != nil {
+		return nil, nil, nil, stacktrace.Propagate(err, "An error occurred loading the requested static files into the namespace of service '%v'", serviceId)
+	}
+	staticFileFilepathsOnNewService := map[services.StaticFileID]string{}
+	for staticFileId, filepathRelativeToExVolRoot := range loadStaticFilesResp.CopiedStaticFileRelativeFilepaths {
+		absFilepathOnServiceToLaunch
+		staticFileFilepathsOnNewService[services.StaticFileID(staticFileId)] =
+	}
+
 	logrus.Trace("Initializing generated files...")
 	filesToGenerate := map[string]bool{}
 	for fileId := range containerCreationConfig.GetFileGeneratingFuncs() {

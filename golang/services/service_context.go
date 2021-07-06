@@ -101,3 +101,6 @@ func (self *ServiceContext) GenerateFiles(filesToGenerateSet map[string]bool) (m
 	}
 	return result, nil
 }
+
+// Docs available at https://docs.kurtosistech.com/kurtosis-libs/lib-documentation
+func (self *ServiceContext) LoadStaticFiles(usedStaticFilesSet map[StaticFileID]bool) (map[StaticFileID]string, error) {

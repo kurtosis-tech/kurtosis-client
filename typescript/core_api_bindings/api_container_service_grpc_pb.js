@@ -71,6 +71,17 @@ function deserialize_api_container_api_LoadStaticFilesArgs(buffer_arg) {
   return api_container_service_pb.LoadStaticFilesArgs.deserializeBinary(new Uint8Array(buffer_arg));
 }
 
+function serialize_api_container_api_LoadStaticFilesResponse(arg) {
+  if (!(arg instanceof api_container_service_pb.LoadStaticFilesResponse)) {
+    throw new Error('Expected argument of type api_container_api.LoadStaticFilesResponse');
+  }
+  return Buffer.from(arg.serializeBinary());
+}
+
+function deserialize_api_container_api_LoadStaticFilesResponse(buffer_arg) {
+  return api_container_service_pb.LoadStaticFilesResponse.deserializeBinary(new Uint8Array(buffer_arg));
+}
+
 function serialize_api_container_api_RegisterServiceArgs(arg) {
   if (!(arg instanceof api_container_service_pb.RegisterServiceArgs)) {
     throw new Error('Expected argument of type api_container_api.RegisterServiceArgs');
@@ -227,11 +238,11 @@ loadStaticFiles: {
     requestStream: false,
     responseStream: false,
     requestType: api_container_service_pb.LoadStaticFilesArgs,
-    responseType: api_container_service_pb.LoadStaticFilesArgs,
+    responseType: api_container_service_pb.LoadStaticFilesResponse,
     requestSerialize: serialize_api_container_api_LoadStaticFilesArgs,
     requestDeserialize: deserialize_api_container_api_LoadStaticFilesArgs,
-    responseSerialize: serialize_api_container_api_LoadStaticFilesArgs,
-    responseDeserialize: deserialize_api_container_api_LoadStaticFilesArgs,
+    responseSerialize: serialize_api_container_api_LoadStaticFilesResponse,
+    responseDeserialize: deserialize_api_container_api_LoadStaticFilesResponse,
   },
   // Starts a previously-registered service by creating a Docker container for it
 startService: {

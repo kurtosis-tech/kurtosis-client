@@ -19,7 +19,7 @@ service ApiContainerService {
   rpc RegisterStaticFiles(RegisterStaticFilesArgs) returns (RegisterStaticFilesResponse) {};
 
   // Copies static files that have been registered with the API container into the file namespace of the given service
-  rpc LoadStaticFiles(LoadStaticFilesArgs) returns (LoadStaticFilesArgs) {};
+  rpc LoadStaticFiles(LoadStaticFilesArgs) returns (LoadStaticFilesResponse) {};
 
   // Starts a previously-registered service by creating a Docker container for it
   rpc StartService(StartServiceArgs) returns (StartServiceResponse) {};
