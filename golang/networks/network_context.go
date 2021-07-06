@@ -256,6 +256,23 @@ func (networkCtx *NetworkContext) WaitForEndpointAvailability(serviceId services
 }
 
 // Docs available at https://docs.kurtosistech.com/kurtosis-libs/lib-documentation
+func (networkCtx *NetworkContext) ExecCommand(serviceId services.ServiceID, command []string) (int32, *[]byte, error) {
+	args := &core_api_bindings.ExecCommandArgs{
+		ServiceId: string(serviceId),
+		CommandArgs: command,
+	}
+	resp, err := networkCtx.client.ExecCommand(context.Background(), args)
+	if err != nil {
+		return 0, nil, stacktrace.Propagate(
+			err,
+			"An error occurred executing command '%v' on service '%v'",
+			command,
+			serviceId)
+	}
+	return resp.ExitCode, &resp.LogOutput, nil
+}
+
+// Docs available at https://docs.kurtosistech.com/kurtosis-libs/lib-documentation
 func (networkCtx *NetworkContext) GetServiceInfo(serviceId services.ServiceID) (*services.ServiceInfo, error) {
 	getServiceInfoArgs := &core_api_bindings.GetServiceInfoArgs{
 		ServiceId: string(serviceId),

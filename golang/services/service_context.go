@@ -48,24 +48,6 @@ func (self *ServiceContext) GetIPAddress() string {
 }
 
 // Docs available at https://docs.kurtosistech.com/kurtosis-libs/lib-documentation
-func (self *ServiceContext) ExecCommand(command []string) (int32, *[]byte, error) {
-	serviceId := self.serviceId
-	args := &core_api_bindings.ExecCommandArgs{
-		ServiceId: string(serviceId),
-		CommandArgs: command,
-	}
-	resp, err := self.client.ExecCommand(context.Background(), args)
-	if err != nil {
-		return 0, nil, stacktrace.Propagate(
-			err,
-			"An error occurred executing command '%v' on service '%v'",
-			command,
-			serviceId)
-	}
-	return resp.ExitCode, &resp.LogOutput, nil
-}
-
-// Docs available at https://docs.kurtosistech.com/kurtosis-libs/lib-documentation
 func (self *ServiceContext) GenerateFiles(filesToGenerateSet map[string]bool) (map[string]*GeneratedFileFilepaths, error) {
 	serviceId := self.serviceId
 	fileGenerationOpts := map[string]*core_api_bindings.FileGenerationOptions{}
