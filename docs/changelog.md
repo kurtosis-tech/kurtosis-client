@@ -1,4 +1,6 @@
 # TBD
+### Features
+* Port over the relevant bits of documentation from `kurtosis-libs`
 
 # 0.2.2
 ### Changes
