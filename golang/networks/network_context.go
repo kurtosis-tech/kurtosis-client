@@ -291,11 +291,15 @@ func (networkCtx *NetworkContext) WaitForEndpointAvailability(serviceId services
 		BodyText: bodyText,
 	}
 	if _, err := networkCtx.client.WaitForEndpointAvailability(context.Background(), availabilityArgs); err != nil {
-		return stacktrace.NewError(
-			"Service '%v' did not become available despite polling %v times with %v between polls",
+		return stacktrace.Propagate(
+			err,
+			"Endpoint '%v' on port '%v' for service '%v' did not become available despite polling %v times with %v between polls",
+			path,
+			port,
 			serviceId,
 			retries,
-			retriesDelayMilliseconds)
+			retriesDelayMilliseconds,
+		)
 	}
 
 	return nil
