@@ -239,6 +239,18 @@ func (networkCtx *NetworkContext) RepartitionNetwork(
 		partitionConnections = map[PartitionID]map[PartitionID]*core_api_bindings.PartitionConnectionInfo{}
 	}
 
+	if partitionServices == nil {
+		return stacktrace.NewError("Partition services map cannot be nil")
+	}
+	if defaultConnection != nil {
+		return stacktrace.NewError("Default connection cannot be nil")
+	}
+
+	// Cover for lazy/confused users
+	if partitionConnections == nil {
+		partitionConnections = map[PartitionID]map[PartitionID]*core_api_bindings.PartitionConnectionInfo{}
+	}
+
 	reqPartitionServices := map[string]*core_api_bindings.PartitionServices{}
 	for partitionId, serviceIdSet := range partitionServices {
 		serviceIdStrPseudoSet := map[string]bool{}
@@ -311,3 +323,4 @@ func (networkCtx *NetworkContext) ExecuteBulkCommands(bulkCommandsJson string) e
 	}
 	return nil
 }
+

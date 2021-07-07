@@ -139,6 +139,9 @@ Kurtosis uses a Docker volume to keep track of test state, and needs to mount th
 ### Set\<String\> usedPorts
 The set of ports that the container will be listening on, in the format `NUM/PROTOCOL` (e.g. `80/tcp`, `9090/udp`, etc.).
 
+### Func([ServiceContext][servicecontext]) -\> S serviceCreatingFunc
+A function that will wrap Kurtosis' internal representation of the running container, the [ServiceContext][servicecontext], with your custom [Service][service] type to make it as simple as possible for your tests to interact with your service.
+
 ### Map\<String, Func(File)\> fileGeneratingFuncs
 Declares the files that will be generated before your service starts and made available on the container's filesystem, as well as the logic for generating their contents. The file keys declared here (which can be any string you like) will be the same keys used to identify the files in the map arg to [ContainerConfigFactory.getRunConfig][containerconfigfactory_getrunconfig].
 
