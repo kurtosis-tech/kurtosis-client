@@ -16,7 +16,7 @@ service ApiContainerService {
   // Starts a previously-registered service by creating a Docker container for it
   rpc StartService(StartServiceArgs) returns (StartServiceResponse) {};
 
-  //Returns info related to the service, as the IP address
+  //Returns relevant information about the service
   rpc GetServiceInfo(GetServiceInfoArgs) returns (GetServiceInfoResponse) {};
 
   // Instructs the API container to remove the given service
