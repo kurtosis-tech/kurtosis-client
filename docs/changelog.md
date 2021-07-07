@@ -1,17 +1,28 @@
 # TBD
 ### Features
+* Port over the relevant bits of documentation from `kurtosis-libs`
 * Added new method `GetServiceInfo` in `api_container_service.proto` file
 * Added new method `GetServiceContext` in `NetworkContext` which returns relevant information about the service
 
 ### Changes
-* Updated TypeScript binding file
-* Generated JavaScript binding files which were added after calling down to developer-tools
 * Removed the services map from `NetworkContext` which converts it in stateless
 
 ### Breaking Changes
 * Removed `Service` interface
 * Removed `GetService` from `NetworkContext` users can use `GetServiceContext` to get relevant service's information
 * Replaced `Service` interface with `ServiceContext` in `AddService` and `AddServiceToPartition`
+
+# 0.2.2
+### Changes
+* Updated TypeScript binding file to ensure that it considers the new method `WaitForEndpointAvailability` in NetworkContext
+* Generated all necessary JavaScript/TypeScript binding files which were added after calling down to developer-tools
+
+### Features
+* Added an `ExecuteBulkCommands` endpoint to the API that accepts JSON-serialized bulk command information and executes it against the API container
+* Added `release.sh` script
+
+### Fixes
+* Don't panic when a user passes in a null partition connections map to `NetworkContxt.repartitionNetwork`
 
 # 0.2.1
 ### Features

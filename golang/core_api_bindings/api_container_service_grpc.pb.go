@@ -25,7 +25,7 @@ type ApiContainerServiceClient interface {
 	GenerateFiles(ctx context.Context, in *GenerateFilesArgs, opts ...grpc.CallOption) (*GenerateFilesResponse, error)
 	// Starts a previously-registered service by creating a Docker container for it
 	StartService(ctx context.Context, in *StartServiceArgs, opts ...grpc.CallOption) (*StartServiceResponse, error)
-	//Returns info related to the service, as the IP address
+	//Returns relevant information about the service
 	GetServiceInfo(ctx context.Context, in *GetServiceInfoArgs, opts ...grpc.CallOption) (*GetServiceInfoResponse, error)
 	// Instructs the API container to remove the given service
 	RemoveService(ctx context.Context, in *RemoveServiceArgs, opts ...grpc.CallOption) (*emptypb.Empty, error)
@@ -33,8 +33,10 @@ type ApiContainerServiceClient interface {
 	Repartition(ctx context.Context, in *RepartitionArgs, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	// Executes the given command inside a running container
 	ExecCommand(ctx context.Context, in *ExecCommandArgs, opts ...grpc.CallOption) (*ExecCommandResponse, error)
-	//Wait for and endpoint in order to know if a service is available
+	// Block until the given HTTP endpoint returns available
 	WaitForEndpointAvailability(ctx context.Context, in *WaitForEndpointAvailabilityArgs, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	// Executes multiple commands at once
+	ExecuteBulkCommands(ctx context.Context, in *ExecuteBulkCommandsArgs, opts ...grpc.CallOption) (*emptypb.Empty, error)
 }
 
 type apiContainerServiceClient struct {
@@ -117,6 +119,15 @@ func (c *apiContainerServiceClient) WaitForEndpointAvailability(ctx context.Cont
 	return out, nil
 }
 
+func (c *apiContainerServiceClient) ExecuteBulkCommands(ctx context.Context, in *ExecuteBulkCommandsArgs, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, "/api_container_api.ApiContainerService/ExecuteBulkCommands", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // ApiContainerServiceServer is the server API for ApiContainerService service.
 // All implementations must embed UnimplementedApiContainerServiceServer
 // for forward compatibility
@@ -127,7 +138,7 @@ type ApiContainerServiceServer interface {
 	GenerateFiles(context.Context, *GenerateFilesArgs) (*GenerateFilesResponse, error)
 	// Starts a previously-registered service by creating a Docker container for it
 	StartService(context.Context, *StartServiceArgs) (*StartServiceResponse, error)
-	//Returns info related to the service, as the IP address
+	//Returns relevant information about the service
 	GetServiceInfo(context.Context, *GetServiceInfoArgs) (*GetServiceInfoResponse, error)
 	// Instructs the API container to remove the given service
 	RemoveService(context.Context, *RemoveServiceArgs) (*emptypb.Empty, error)
@@ -135,8 +146,10 @@ type ApiContainerServiceServer interface {
 	Repartition(context.Context, *RepartitionArgs) (*emptypb.Empty, error)
 	// Executes the given command inside a running container
 	ExecCommand(context.Context, *ExecCommandArgs) (*ExecCommandResponse, error)
-	//Wait for and endpoint in order to know if a service is available
+	// Block until the given HTTP endpoint returns available
 	WaitForEndpointAvailability(context.Context, *WaitForEndpointAvailabilityArgs) (*emptypb.Empty, error)
+	// Executes multiple commands at once
+	ExecuteBulkCommands(context.Context, *ExecuteBulkCommandsArgs) (*emptypb.Empty, error)
 	mustEmbedUnimplementedApiContainerServiceServer()
 }
 
@@ -167,6 +180,9 @@ func (UnimplementedApiContainerServiceServer) ExecCommand(context.Context, *Exec
 }
 func (UnimplementedApiContainerServiceServer) WaitForEndpointAvailability(context.Context, *WaitForEndpointAvailabilityArgs) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method WaitForEndpointAvailability not implemented")
+}
+func (UnimplementedApiContainerServiceServer) ExecuteBulkCommands(context.Context, *ExecuteBulkCommandsArgs) (*emptypb.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ExecuteBulkCommands not implemented")
 }
 func (UnimplementedApiContainerServiceServer) mustEmbedUnimplementedApiContainerServiceServer() {}
 
@@ -325,6 +341,24 @@ func _ApiContainerService_WaitForEndpointAvailability_Handler(srv interface{}, c
 	return interceptor(ctx, in, info, handler)
 }
 
+func _ApiContainerService_ExecuteBulkCommands_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ExecuteBulkCommandsArgs)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ApiContainerServiceServer).ExecuteBulkCommands(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/api_container_api.ApiContainerService/ExecuteBulkCommands",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ApiContainerServiceServer).ExecuteBulkCommands(ctx, req.(*ExecuteBulkCommandsArgs))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // ApiContainerService_ServiceDesc is the grpc.ServiceDesc for ApiContainerService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -363,6 +397,10 @@ var ApiContainerService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "WaitForEndpointAvailability",
 			Handler:    _ApiContainerService_WaitForEndpointAvailability_Handler,
+		},
+		{
+			MethodName: "ExecuteBulkCommands",
+			Handler:    _ApiContainerService_ExecuteBulkCommands_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

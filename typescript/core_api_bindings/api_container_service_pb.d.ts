@@ -208,6 +208,46 @@ export namespace PortBinding {
   }
 }
 
+export class GetServiceInfoArgs extends jspb.Message {
+  getServiceId(): string;
+  setServiceId(value: string): void;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): GetServiceInfoArgs.AsObject;
+  static toObject(includeInstance: boolean, msg: GetServiceInfoArgs): GetServiceInfoArgs.AsObject;
+  static extensions: {[key: number]: jspb.ExtensionFieldInfo<jspb.Message>};
+  static extensionsBinary: {[key: number]: jspb.ExtensionFieldBinaryInfo<jspb.Message>};
+  static serializeBinaryToWriter(message: GetServiceInfoArgs, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): GetServiceInfoArgs;
+  static deserializeBinaryFromReader(message: GetServiceInfoArgs, reader: jspb.BinaryReader): GetServiceInfoArgs;
+}
+
+export namespace GetServiceInfoArgs {
+  export type AsObject = {
+    serviceId: string,
+  }
+}
+
+export class GetServiceInfoResponse extends jspb.Message {
+  getIpAddr(): string;
+  setIpAddr(value: string): void;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): GetServiceInfoResponse.AsObject;
+  static toObject(includeInstance: boolean, msg: GetServiceInfoResponse): GetServiceInfoResponse.AsObject;
+  static extensions: {[key: number]: jspb.ExtensionFieldInfo<jspb.Message>};
+  static extensionsBinary: {[key: number]: jspb.ExtensionFieldBinaryInfo<jspb.Message>};
+  static serializeBinaryToWriter(message: GetServiceInfoResponse, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): GetServiceInfoResponse;
+  static deserializeBinaryFromReader(message: GetServiceInfoResponse, reader: jspb.BinaryReader): GetServiceInfoResponse;
+}
+
+export namespace GetServiceInfoResponse {
+  export type AsObject = {
+    ipAddr: string,
+  }
+}
+
 export class RemoveServiceArgs extends jspb.Message {
   getServiceId(): string;
   setServiceId(value: string): void;
@@ -411,6 +451,26 @@ export namespace WaitForEndpointAvailabilityArgs {
     retries: number,
     retriesDelayMilliseconds: number,
     bodyText: string,
+  }
+}
+
+export class ExecuteBulkCommandsArgs extends jspb.Message {
+  getSerializedCommands(): string;
+  setSerializedCommands(value: string): void;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): ExecuteBulkCommandsArgs.AsObject;
+  static toObject(includeInstance: boolean, msg: ExecuteBulkCommandsArgs): ExecuteBulkCommandsArgs.AsObject;
+  static extensions: {[key: number]: jspb.ExtensionFieldInfo<jspb.Message>};
+  static extensionsBinary: {[key: number]: jspb.ExtensionFieldBinaryInfo<jspb.Message>};
+  static serializeBinaryToWriter(message: ExecuteBulkCommandsArgs, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): ExecuteBulkCommandsArgs;
+  static deserializeBinaryFromReader(message: ExecuteBulkCommandsArgs, reader: jspb.BinaryReader): ExecuteBulkCommandsArgs;
+}
+
+export namespace ExecuteBulkCommandsArgs {
+  export type AsObject = {
+    serializedCommands: string,
   }
 }
 

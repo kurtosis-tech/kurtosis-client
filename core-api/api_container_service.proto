@@ -28,8 +28,11 @@ service ApiContainerService {
   // Executes the given command inside a running container
   rpc ExecCommand(ExecCommandArgs) returns (ExecCommandResponse) {};
 
-  //Wait for and endpoint in order to know if a service is available
+  // Block until the given HTTP endpoint returns available
   rpc WaitForEndpointAvailability(WaitForEndpointAvailabilityArgs) returns (google.protobuf.Empty) {};
+
+  // Executes multiple commands at once
+  rpc ExecuteBulkCommands(ExecuteBulkCommandsArgs) returns (google.protobuf.Empty) {};
 }
 
 // ==============================================================================================
@@ -203,4 +206,12 @@ message WaitForEndpointAvailabilityArgs {
   uint32 retries_delay_milliseconds = 6;
   //If the endpoint returns this value, the service will be marked as available (e.g. Hello World).
   string body_text = 7;
+}
+
+// ==============================================================================================
+//                                      Execute Bulk Commands
+// ==============================================================================================
+message ExecuteBulkCommandsArgs {
+  // Commands, serialized as JSON
+  string serialized_commands = 1;
 }
