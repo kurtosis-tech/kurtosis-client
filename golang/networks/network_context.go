@@ -177,13 +177,12 @@ func (networkCtx *NetworkContext) GetServiceContext(serviceId services.ServiceID
 	if err != nil {
 		return nil, stacktrace.Propagate(
 			err,
-			"An error occurred when trying to get info from service '%v'",
+			"An error occurred when trying to get info for service '%v'",
 			serviceId)
 	}
 
 	if serviceResponse.GetIpAddr() == "" {
-		return nil, stacktrace.Propagate(
-			err,
+		return nil, stacktrace.NewError(
 			"An error occurred when trying to get the IP address from service '%v'",
 			serviceId)
 	}

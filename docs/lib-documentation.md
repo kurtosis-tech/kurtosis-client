@@ -29,17 +29,6 @@ Starts a new service in the network with the given service ID, inside the partit
 ### addService(ServiceID serviceId, [ContainerConfigFactory\<S\>][containerconfigfactory] configFactory) -\> ([ServiceContext][servicecontext] serviceContext, Map\<String, PortBinding\> hostPortBindings)
 Convenience wrapper around [NetworkContext.addServiceToPartition][networkcontext_addservicetopartition], that adds the service to the default partition. Note that if the network has been repartitioned and the default partition doesn't exist anymore, this method will fail.
 
-### \<S extends [Service][service]\> getService(ServiceID serviceId) -\> S
-Gets the [Service][service] interface representing the service with the given ID.
-
-**Args**
-
-* `serviceId`: The ID of the service in the network to get.
-
-**Returns**
-
-The [Service][service] implementation representing the service.
-
 ### getServiceContext(ServiceID serviceId, [ContainerConfigFactory\<S\>][containerconfigfactory] configFactory)
 Gets relevant information about a service (identified by the given service ID) that is running in the network.
 
@@ -91,14 +80,6 @@ This class is a plain old object defining the state between two partitions (e.g.
 
 **NOTE:** These objects will often have several gRPC-specific fields inside them, but which don't need to be considered; you can construct the object however you normally instantiate objects in your language of choice (e.g. `new` in Java, `PartitionConnectionInfo{....fields...}` in Go, etc.).
 
-### waitForStartup(Duration timeBetweenPolls, int maxNumRetries)
-Blocks until the timeout is reached or the checker's corresponding service becomes available (as determined by the [Service.isAvailable][service_isavailable] method).
-
-**Args**
-
-* `timeBetweenPolls`: The time that the checker should wait before calls to [Service.isAvailable][service_isavailable].
-* `maxNumRetries`: The maximum number of failed calls to [Service.isAvailable][service_isavailable] that the checker will allow before returning an error.
-
 
 
 ContainerConfigFactory\<S extends [Service][service]\>
@@ -138,9 +119,6 @@ Kurtosis uses a Docker volume to keep track of test state, and needs to mount th
 
 ### Set\<String\> usedPorts
 The set of ports that the container will be listening on, in the format `NUM/PROTOCOL` (e.g. `80/tcp`, `9090/udp`, etc.).
-
-### Func([ServiceContext][servicecontext]) -\> S serviceCreatingFunc
-A function that will wrap Kurtosis' internal representation of the running container, the [ServiceContext][servicecontext], with your custom [Service][service] type to make it as simple as possible for your tests to interact with your service.
 
 ### Map\<String, Func(File)\> fileGeneratingFuncs
 Declares the files that will be generated before your service starts and made available on the container's filesystem, as well as the logic for generating their contents. The file keys declared here (which can be any string you like) will be the same keys used to identify the files in the map arg to [ContainerConfigFactory.getRunConfig][containerconfigfactory_getrunconfig].
@@ -261,8 +239,8 @@ _Found a bug? File it on [the repo](https://github.com/kurtosis-tech/kurtosis-cl
 [network]: #network
 
 [networkcontext]: #networkcontext
-[networkcontext_addservice]: #addserviceserviceid-serviceid-containerconfigfactorys-configfactory---s-service-mapstring-portbinding-hostportbindings-availabilitychecker-checker
-[networkcontext_addservicetopartition]: #addservicetopartitionserviceid-serviceid-partitionid-partitionid-containerconfigfactorys-configfactory---s-service-mapstring-portbinding-hostportbindings-availabilitychecker-checker
+[networkcontext_addservice]: #addserviceserviceid-serviceid-containerconfigfactorys-configfactory---s-service-mapstring-portbinding-hostportbindings
+[networkcontext_addservicetopartition]: #addservicetopartitionserviceid-serviceid-partitionid-partitionid-containerconfigfactorys-configfactory---s-service-mapstring-portbinding-hostportbindings
 [networkcontext_repartitionnetwork]: #repartitionnetworkmappartitionid-setserviceid-partitionservices-mappartitionid-mappartitionid-partitionconnectioninfo-partitionconnections-partitionconnectioninfo-defaultconnection
 
 [partitionconnectioninfo]: #partitionconnectioninfo
