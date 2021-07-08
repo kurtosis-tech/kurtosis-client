@@ -1,7 +1,6 @@
 # TBD
 
 ### Features
-* Port over the relevant bits of documentation from `kurtosis-libs`
 * Added new method `GetServiceInfo` in `api_container_service.proto` file
 * Added new method `GetServiceContext` in `NetworkContext` which returns relevant information about the service
 
@@ -15,6 +14,13 @@
 * Removed `GetServiceCreatingFunc` from `ContainerCreationConfig`type
 * Removed `serviceCreatingFunc` field and `GetServiceCreatingFunc` from ContainerCreationConfig type
 * Replaced `Service` interface with `ServiceContext` type in the returned values of `AddService` and `AddServiceToPartition`
+
+# 0.2.3
+### Features
+* Port over the relevant bits of documentation from `kurtosis-libs`
+
+### Fixes
+* Fixed a bug with null-checking the default connection info in the `NetworkContext.repartitionNetwork` call
 
 # 0.2.2
 ### Changes
