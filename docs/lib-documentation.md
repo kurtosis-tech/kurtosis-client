@@ -12,7 +12,7 @@ NetworkContext
 --------------
 This Kurtosis-provided class is the lowest-level representation of a test network, and provides methods for inspecting and manipulating the network. All [Network][network] implementations will encapsulate an instance of this class.
 
-### addServiceToPartition(ServiceID serviceId, PartitionID partitionId, [ContainerConfigFactory\<S\>][containerconfigfactory] configFactory) -\> (S service, Map\<String, PortBinding\> hostPortBindings, [AvailabilityChecker][availabilitychecker] checker)
+### addServiceToPartition(ServiceID serviceId, PartitionID partitionId, [ContainerConfigFactory\<S\>][containerconfigfactory] configFactory) -\> ([ServiceContext][servicecontext] serviceContext, Map\<String, PortBinding\> hostPortBindings)
 Starts a new service in the network with the given service ID, inside the partition with the given ID, using the given config factory.
 
 **Args**
@@ -23,23 +23,23 @@ Starts a new service in the network with the given service ID, inside the partit
 
 **Returns**
 
-* `service`: The [Service][service] implementation representing the new service, as created via the [ContainerCreationConfig.serviceCreatingFunc][containercreationconfig_servicecreatingfunc].
+* `serviceContext`: The [ServiceContext][servicecontext] representation of a service running in a Docker container.
 * `hostPortBindings`: The port spec strings that the service declared (as defined in [ContainerCreationConfig.usedPorts][containercreationconfig_usedports]), mapped to the port on the host machine where the port has been bound to. This allows you to make requests to a service running in Kurtosis by making requests to a port on your local machine. If a port was not bound to a host machine port, it will not be present in the map (and if no ports were bound to host machine ports, the map will be empty).
-* `checker`: A class for checking if the returned service is available yet, as defined by [Service.isAvailable][service_isavailable]. 
 
-### addService(ServiceID serviceId, [ContainerConfigFactory\<S\>][containerconfigfactory] configFactory) -\> (S service, Map\<String, PortBinding\> hostPortBindings, [AvailabilityChecker][availabilitychecker] checker)
+### addService(ServiceID serviceId, [ContainerConfigFactory\<S\>][containerconfigfactory] configFactory) -\> ([ServiceContext][servicecontext] serviceContext, Map\<String, PortBinding\> hostPortBindings)
 Convenience wrapper around [NetworkContext.addServiceToPartition][networkcontext_addservicetopartition], that adds the service to the default partition. Note that if the network has been repartitioned and the default partition doesn't exist anymore, this method will fail.
 
-### \<S extends [Service][service]\> getService(ServiceID serviceId) -\> S
-Gets the [Service][service] interface representing the service with the given ID.
+### getServiceContext(ServiceID serviceId)
+Gets relevant information about a service (identified by the given service ID) that is running in the network.
 
 **Args**
 
-* `serviceId`: The ID of the service in the network to get.
+* `serviceId`: The ID of the service to pull the information from.
 
 **Returns**
 
-The [Service][service] implementation representing the service.
+The [ServiceContext][servicecontext] representation of a service running in a Docker container.
+
 
 ### removeService(ServiceID serviceId, uint64 containerStopTimeoutSeconds)
 Stops the container with the given service ID and removes it from the network.
@@ -78,18 +78,6 @@ PartitionConnectionInfo
 This class is a plain old object defining the state between two partitions (e.g. whether network traffic is blocked or not). It is auto-generated from a gRPC API, so exploring it in code is the best way to view its properties. 
 
 **NOTE:** These objects will often have several gRPC-specific fields inside them, but which don't need to be considered; you can construct the object however you normally instantiate objects in your language of choice (e.g. `new` in Java, `PartitionConnectionInfo{....fields...}` in Go, etc.).
-
-AvailabilityChecker
--------------------
-A class returned by [NetworkContext.addService][networkcontext_addservice] when creating a service, that provides a hook for blocking until the newly-created service is available. This allows for a more-performant workflow of 1) start many services without blocking on their availability and 2) wait for them all to become available.
-
-### waitForStartup(Duration timeBetweenPolls, int maxNumRetries)
-Blocks until the timeout is reached or the checker's corresponding service becomes available (as determined by the [Service.isAvailable][service_isavailable] method).
-
-**Args**
-
-* `timeBetweenPolls`: The time that the checker should wait before calls to [Service.isAvailable][service_isavailable].
-* `maxNumRetries`: The maximum number of failed calls to [Service.isAvailable][service_isavailable] that the checker will allow before returning an error.
 
 
 
@@ -130,9 +118,6 @@ Kurtosis uses a Docker volume to keep track of test state, and needs to mount th
 
 ### Set\<String\> usedPorts
 The set of ports that the container will be listening on, in the format `NUM/PROTOCOL` (e.g. `80/tcp`, `9090/udp`, etc.).
-
-### Func([ServiceContext][servicecontext]) -\> S serviceCreatingFunc
-A function that will wrap Kurtosis' internal representation of the running container, the [ServiceContext][servicecontext], with your custom [Service][service] type to make it as simple as possible for your tests to interact with your service.
 
 ### Map\<String, Func(File)\> fileGeneratingFuncs
 Declares the files that will be generated before your service starts and made available on the container's filesystem, as well as the logic for generating their contents. The file keys declared here (which can be any string you like) will be the same keys used to identify the files in the map arg to [ContainerConfigFactory.getRunConfig][containerconfigfactory_getrunconfig].
@@ -175,16 +160,6 @@ The builder that should be used to create [ContainerRunConfig][containerrunconfi
 
 
 
-Service
--------
-This interface represents a service running in a Docker container inside the test network. Much like the [Network][network] interface is a developer-customizable abstraction layer around Kurtosis' [NetworkContext][networkcontext] representation of the testnet, this interface is a developer-customizable abstraction layer around Kurtosis' [ServiceContext][servicecontext] representation of a service running in a Docker container. For example, an Elasticsearch service running in a container might be represented by an `ElasticsearchService` class that implements this interface with methods like `updateDocument`, `getDocument` and `deleteDocument`.
-
-### isAvailable() -\> bool
-Returns a boolean indicating whether the service is available for use. This method is how an [AvailabilityChecker][availabilitychecker] determines that a service is available.
-
-**Returns**
-
-True if available, false if not.
 
 ServiceContext
 --------------
@@ -246,9 +221,6 @@ _Found a bug? File it on [the repo](https://github.com/kurtosis-tech/kurtosis-cl
 <!-- TODO Make the function definition not include args or return values, so we don't get these huge ugly links that break if we change the function signature -->
 <!-- TODO make the reference names a) be properly-cased (e.g. "Service.isAvailable" rather than "service_isavailable") and b) have an underscore in front of them, so they're easy to find-replace without accidentally over-replacing -->
 
-[availabilitychecker]: #availabilitychecker
-[availabilitychecker_waitforstartup]: #waitforstartupduration-timebetweenpolls-int-maxnumretries
-
 [containerconfigfactory]: #containerconfigfactorys-extends-service
 [containerconfigfactory_getrunconfig]: #getrunconfigstring-containeripaddr-mapstring-string-generatedfilefilepaths---containerrunconfig
 
@@ -256,7 +228,6 @@ _Found a bug? File it on [the repo](https://github.com/kurtosis-tech/kurtosis-cl
 [containercreationconfig_usedports]: #setstring-usedports
 [containercreationconfig_filegeneratingfuncs]: #mapstring-funcfile-filegeneratingfuncs
 [containercreationconfig_filesartifactmountpoints]: #mapstring-string-filesartifactmountpoints
-[containercreationconfig_servicecreatingfunc]: #funcservicecontext---s-servicecreatingfunc
 
 [containercreationconfigbuilder]: #containercreationconfigbuilder
 
@@ -267,14 +238,11 @@ _Found a bug? File it on [the repo](https://github.com/kurtosis-tech/kurtosis-cl
 [network]: #network
 
 [networkcontext]: #networkcontext
-[networkcontext_addservice]: #addserviceserviceid-serviceid-containerconfigfactorys-configfactory---s-service-mapstring-portbinding-hostportbindings-availabilitychecker-checker
-[networkcontext_addservicetopartition]: #addservicetopartitionserviceid-serviceid-partitionid-partitionid-containerconfigfactorys-configfactory---s-service-mapstring-portbinding-hostportbindings-availabilitychecker-checker
+[networkcontext_addservice]: #addserviceserviceid-serviceid-containerconfigfactorys-configfactory---s-service-mapstring-portbinding-hostportbindings
+[networkcontext_addservicetopartition]: #addservicetopartitionserviceid-serviceid-partitionid-partitionid-containerconfigfactorys-configfactory---s-service-mapstring-portbinding-hostportbindings
 [networkcontext_repartitionnetwork]: #repartitionnetworkmappartitionid-setserviceid-partitionservices-mappartitionid-mappartitionid-partitionconnectioninfo-partitionconnections-partitionconnectioninfo-defaultconnection
 
 [partitionconnectioninfo]: #partitionconnectioninfo
-
-[service]: #service
-[service_isavailable]: #isavailable---bool
 
 [servicecontext]: #servicecontext
 

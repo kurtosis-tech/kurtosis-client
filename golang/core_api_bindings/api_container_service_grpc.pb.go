@@ -25,6 +25,8 @@ type ApiContainerServiceClient interface {
 	GenerateFiles(ctx context.Context, in *GenerateFilesArgs, opts ...grpc.CallOption) (*GenerateFilesResponse, error)
 	// Starts a previously-registered service by creating a Docker container for it
 	StartService(ctx context.Context, in *StartServiceArgs, opts ...grpc.CallOption) (*StartServiceResponse, error)
+	//Returns relevant information about the service
+	GetServiceInfo(ctx context.Context, in *GetServiceInfoArgs, opts ...grpc.CallOption) (*GetServiceInfoResponse, error)
 	// Instructs the API container to remove the given service
 	RemoveService(ctx context.Context, in *RemoveServiceArgs, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	// Instructs the API container to repartition the test network
@@ -66,6 +68,15 @@ func (c *apiContainerServiceClient) GenerateFiles(ctx context.Context, in *Gener
 func (c *apiContainerServiceClient) StartService(ctx context.Context, in *StartServiceArgs, opts ...grpc.CallOption) (*StartServiceResponse, error) {
 	out := new(StartServiceResponse)
 	err := c.cc.Invoke(ctx, "/api_container_api.ApiContainerService/StartService", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *apiContainerServiceClient) GetServiceInfo(ctx context.Context, in *GetServiceInfoArgs, opts ...grpc.CallOption) (*GetServiceInfoResponse, error) {
+	out := new(GetServiceInfoResponse)
+	err := c.cc.Invoke(ctx, "/api_container_api.ApiContainerService/GetServiceInfo", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -127,6 +138,8 @@ type ApiContainerServiceServer interface {
 	GenerateFiles(context.Context, *GenerateFilesArgs) (*GenerateFilesResponse, error)
 	// Starts a previously-registered service by creating a Docker container for it
 	StartService(context.Context, *StartServiceArgs) (*StartServiceResponse, error)
+	//Returns relevant information about the service
+	GetServiceInfo(context.Context, *GetServiceInfoArgs) (*GetServiceInfoResponse, error)
 	// Instructs the API container to remove the given service
 	RemoveService(context.Context, *RemoveServiceArgs) (*emptypb.Empty, error)
 	// Instructs the API container to repartition the test network
@@ -152,6 +165,9 @@ func (UnimplementedApiContainerServiceServer) GenerateFiles(context.Context, *Ge
 }
 func (UnimplementedApiContainerServiceServer) StartService(context.Context, *StartServiceArgs) (*StartServiceResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method StartService not implemented")
+}
+func (UnimplementedApiContainerServiceServer) GetServiceInfo(context.Context, *GetServiceInfoArgs) (*GetServiceInfoResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetServiceInfo not implemented")
 }
 func (UnimplementedApiContainerServiceServer) RemoveService(context.Context, *RemoveServiceArgs) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method RemoveService not implemented")
@@ -231,6 +247,24 @@ func _ApiContainerService_StartService_Handler(srv interface{}, ctx context.Cont
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(ApiContainerServiceServer).StartService(ctx, req.(*StartServiceArgs))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ApiContainerService_GetServiceInfo_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetServiceInfoArgs)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ApiContainerServiceServer).GetServiceInfo(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/api_container_api.ApiContainerService/GetServiceInfo",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ApiContainerServiceServer).GetServiceInfo(ctx, req.(*GetServiceInfoArgs))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -343,6 +377,10 @@ var ApiContainerService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "StartService",
 			Handler:    _ApiContainerService_StartService_Handler,
+		},
+		{
+			MethodName: "GetServiceInfo",
+			Handler:    _ApiContainerService_GetServiceInfo_Handler,
 		},
 		{
 			MethodName: "RemoveService",

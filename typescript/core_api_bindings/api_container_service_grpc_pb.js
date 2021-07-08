@@ -27,6 +27,17 @@ function deserialize_api_container_api_ExecCommandResponse(buffer_arg) {
   return api_container_service_pb.ExecCommandResponse.deserializeBinary(new Uint8Array(buffer_arg));
 }
 
+function serialize_api_container_api_ExecuteBulkCommandsArgs(arg) {
+  if (!(arg instanceof api_container_service_pb.ExecuteBulkCommandsArgs)) {
+    throw new Error('Expected argument of type api_container_api.ExecuteBulkCommandsArgs');
+  }
+  return Buffer.from(arg.serializeBinary());
+}
+
+function deserialize_api_container_api_ExecuteBulkCommandsArgs(buffer_arg) {
+  return api_container_service_pb.ExecuteBulkCommandsArgs.deserializeBinary(new Uint8Array(buffer_arg));
+}
+
 function serialize_api_container_api_GenerateFilesArgs(arg) {
   if (!(arg instanceof api_container_service_pb.GenerateFilesArgs)) {
     throw new Error('Expected argument of type api_container_api.GenerateFilesArgs');
@@ -47,6 +58,28 @@ function serialize_api_container_api_GenerateFilesResponse(arg) {
 
 function deserialize_api_container_api_GenerateFilesResponse(buffer_arg) {
   return api_container_service_pb.GenerateFilesResponse.deserializeBinary(new Uint8Array(buffer_arg));
+}
+
+function serialize_api_container_api_GetServiceInfoArgs(arg) {
+  if (!(arg instanceof api_container_service_pb.GetServiceInfoArgs)) {
+    throw new Error('Expected argument of type api_container_api.GetServiceInfoArgs');
+  }
+  return Buffer.from(arg.serializeBinary());
+}
+
+function deserialize_api_container_api_GetServiceInfoArgs(buffer_arg) {
+  return api_container_service_pb.GetServiceInfoArgs.deserializeBinary(new Uint8Array(buffer_arg));
+}
+
+function serialize_api_container_api_GetServiceInfoResponse(arg) {
+  if (!(arg instanceof api_container_service_pb.GetServiceInfoResponse)) {
+    throw new Error('Expected argument of type api_container_api.GetServiceInfoResponse');
+  }
+  return Buffer.from(arg.serializeBinary());
+}
+
+function deserialize_api_container_api_GetServiceInfoResponse(buffer_arg) {
+  return api_container_service_pb.GetServiceInfoResponse.deserializeBinary(new Uint8Array(buffer_arg));
 }
 
 function serialize_api_container_api_RegisterServiceArgs(arg) {
@@ -175,6 +208,18 @@ startService: {
     responseSerialize: serialize_api_container_api_StartServiceResponse,
     responseDeserialize: deserialize_api_container_api_StartServiceResponse,
   },
+  // Returns relevant information about the service
+getServiceInfo: {
+    path: '/api_container_api.ApiContainerService/GetServiceInfo',
+    requestStream: false,
+    responseStream: false,
+    requestType: api_container_service_pb.GetServiceInfoArgs,
+    responseType: api_container_service_pb.GetServiceInfoResponse,
+    requestSerialize: serialize_api_container_api_GetServiceInfoArgs,
+    requestDeserialize: deserialize_api_container_api_GetServiceInfoArgs,
+    responseSerialize: serialize_api_container_api_GetServiceInfoResponse,
+    responseDeserialize: deserialize_api_container_api_GetServiceInfoResponse,
+  },
   // Instructs the API container to remove the given service
 removeService: {
     path: '/api_container_api.ApiContainerService/RemoveService',
@@ -211,7 +256,7 @@ execCommand: {
     responseSerialize: serialize_api_container_api_ExecCommandResponse,
     responseDeserialize: deserialize_api_container_api_ExecCommandResponse,
   },
-  // Wait for and endpoint in order to know if a service is available
+  // Block until the given HTTP endpoint returns available
 waitForEndpointAvailability: {
     path: '/api_container_api.ApiContainerService/WaitForEndpointAvailability',
     requestStream: false,
@@ -220,6 +265,18 @@ waitForEndpointAvailability: {
     responseType: google_protobuf_empty_pb.Empty,
     requestSerialize: serialize_api_container_api_WaitForEndpointAvailabilityArgs,
     requestDeserialize: deserialize_api_container_api_WaitForEndpointAvailabilityArgs,
+    responseSerialize: serialize_google_protobuf_Empty,
+    responseDeserialize: deserialize_google_protobuf_Empty,
+  },
+  // Executes multiple commands at once
+executeBulkCommands: {
+    path: '/api_container_api.ApiContainerService/ExecuteBulkCommands',
+    requestStream: false,
+    responseStream: false,
+    requestType: api_container_service_pb.ExecuteBulkCommandsArgs,
+    responseType: google_protobuf_empty_pb.Empty,
+    requestSerialize: serialize_api_container_api_ExecuteBulkCommandsArgs,
+    requestDeserialize: deserialize_api_container_api_ExecuteBulkCommandsArgs,
     responseSerialize: serialize_google_protobuf_Empty,
     responseDeserialize: deserialize_google_protobuf_Empty,
   },
