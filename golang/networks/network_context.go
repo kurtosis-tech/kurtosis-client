@@ -182,13 +182,13 @@ func (networkCtx *NetworkContext) GetServiceContext(serviceId services.ServiceID
 
 	if serviceResponse.GetIpAddr() == "" {
 		return nil, stacktrace.NewError(
-			"An error occurred when trying to get the IP address from service '%v'",
+			"An error occurred when trying to get the IP address from service '%v' - this should never happen, and is a bug with Kurtosis!",
 			serviceId)
 	}
 
 	if serviceResponse.GetSuiteExecutionVolMntDirpath() == "" {
 		return nil, stacktrace.NewError(
-			"An error occurred when trying to get the suite execution volume directory path from service '%v'",
+			"An error occurred when trying to get the suite execution volume directory path from service '%v' - this should never happen, and is a bug with Kurtosis!",
 			serviceId)
 	}
 
@@ -217,6 +217,8 @@ func (networkCtx *NetworkContext) RemoveService(serviceId services.ServiceID, co
 	if _, err := networkCtx.client.RemoveService(context.Background(), args); err != nil {
 		return stacktrace.Propagate(err, "An error occurred removing service '%v' from the network", serviceId)
 	}
+
+	logrus.Debugf("Successfully removed service ID %v", serviceId)
 
 	return nil
 }
