@@ -168,7 +168,7 @@ func (networkCtx *NetworkContext) AddServiceToPartition(
 }
 
 // Docs available at https://docs.kurtosistech.com/kurtosis-libs/lib-documentation
-func (networkCtx *NetworkContext) GetServiceContext(serviceId services.ServiceID, configFactory services.ContainerConfigFactory) (*services.ServiceContext, error) {
+func (networkCtx *NetworkContext) GetServiceContext(serviceId services.ServiceID) (*services.ServiceContext, error) {
 	getServiceInfoArgs := &core_api_bindings.GetServiceInfoArgs{
 		ServiceId: string(serviceId),
 	}
