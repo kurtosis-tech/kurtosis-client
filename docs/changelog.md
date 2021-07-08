@@ -1,5 +1,7 @@
 # TBD
 
+# 0.3.0
+
 ### Features
 * Added new method `GetServiceInfo` in `api_container_service.proto` file
 * Added new method `GetServiceContext` in `NetworkContext` which returns relevant information about the service
