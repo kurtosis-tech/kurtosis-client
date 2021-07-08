@@ -132,6 +132,8 @@ message GetServiceInfoArgs {
 message GetServiceInfoResponse {
   // The IP address of the service
   string ip_addr = 1;
+  // The full path where the API container should execute the suite execution volume on the service container
+  string suite_execution_vol_mnt_dirpath = 2;
 }
 
 // ==============================================================================================

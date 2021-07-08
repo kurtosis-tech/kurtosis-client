@@ -232,6 +232,9 @@ export class GetServiceInfoResponse extends jspb.Message {
   getIpAddr(): string;
   setIpAddr(value: string): void;
 
+  getSuiteExecutionVolMntDirpath(): string;
+  setSuiteExecutionVolMntDirpath(value: string): void;
+
   serializeBinary(): Uint8Array;
   toObject(includeInstance?: boolean): GetServiceInfoResponse.AsObject;
   static toObject(includeInstance: boolean, msg: GetServiceInfoResponse): GetServiceInfoResponse.AsObject;
@@ -245,6 +248,7 @@ export class GetServiceInfoResponse extends jspb.Message {
 export namespace GetServiceInfoResponse {
   export type AsObject = {
     ipAddr: string,
+    suiteExecutionVolMntDirpath: string,
   }
 }
 

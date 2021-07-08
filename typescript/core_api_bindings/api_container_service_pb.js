@@ -2008,7 +2008,8 @@ proto.api_container_api.GetServiceInfoResponse.prototype.toObject = function(opt
  */
 proto.api_container_api.GetServiceInfoResponse.toObject = function(includeInstance, msg) {
   var f, obj = {
-    ipAddr: jspb.Message.getFieldWithDefault(msg, 1, "")
+    ipAddr: jspb.Message.getFieldWithDefault(msg, 1, ""),
+    suiteExecutionVolMntDirpath: jspb.Message.getFieldWithDefault(msg, 2, "")
   };
 
   if (includeInstance) {
@@ -2049,6 +2050,10 @@ proto.api_container_api.GetServiceInfoResponse.deserializeBinaryFromReader = fun
       var value = /** @type {string} */ (reader.readString());
       msg.setIpAddr(value);
       break;
+    case 2:
+      var value = /** @type {string} */ (reader.readString());
+      msg.setSuiteExecutionVolMntDirpath(value);
+      break;
     default:
       reader.skipField();
       break;
@@ -2085,6 +2090,13 @@ proto.api_container_api.GetServiceInfoResponse.serializeBinaryToWriter = functio
       f
     );
   }
+  f = message.getSuiteExecutionVolMntDirpath();
+  if (f.length > 0) {
+    writer.writeString(
+      2,
+      f
+    );
+  }
 };
 
 
@@ -2103,6 +2115,24 @@ proto.api_container_api.GetServiceInfoResponse.prototype.getIpAddr = function() 
  */
 proto.api_container_api.GetServiceInfoResponse.prototype.setIpAddr = function(value) {
   return jspb.Message.setProto3StringField(this, 1, value);
+};
+
+
+/**
+ * optional string suite_execution_vol_mnt_dirpath = 2;
+ * @return {string}
+ */
+proto.api_container_api.GetServiceInfoResponse.prototype.getSuiteExecutionVolMntDirpath = function() {
+  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 2, ""));
+};
+
+
+/**
+ * @param {string} value
+ * @return {!proto.api_container_api.GetServiceInfoResponse} returns this
+ */
+proto.api_container_api.GetServiceInfoResponse.prototype.setSuiteExecutionVolMntDirpath = function(value) {
+  return jspb.Message.setProto3StringField(this, 2, value);
 };
 
 
