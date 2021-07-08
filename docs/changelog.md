@@ -2,6 +2,7 @@
 ### Features
 * Port over the relevant bits of documentation from `kurtosis-libs`
 * Added the `LoadStaticFiles` endpoint to the API container's API for copying static files to a service's filespace
+* Added a `LoadStaticFiles` command to the bulk command API
 * Added a corresponding `ServiceContext.loadStaticFiles` for calling the API container's `LoadStaticFiles` endpoint
 * `ContainerCreationConfigBuilder` now has a new method, `withStaticFiles`, which defines static files that the service will use
     * This function takes in a set, whose elements should be static file IDs corresponding to the static file IDs defined in your testsuite

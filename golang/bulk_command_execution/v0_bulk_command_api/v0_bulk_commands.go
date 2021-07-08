@@ -39,6 +39,15 @@ func (visitor *cmdArgDeserializingVisitor) VisitGenerateFiles() error {
 	return nil
 }
 
+func (visitor *cmdArgDeserializingVisitor) VisitLoadStaticFiles() error {
+	args := &core_api_bindings.LoadStaticFilesArgs{}
+	if err := json.Unmarshal(visitor.bytesToDeserialize, args); err != nil {
+		return stacktrace.Propagate(err, "An error occurred deserializing the load static files args")
+	}
+	visitor.deserializedCommandArgsPtr = args
+	return nil
+}
+
 func (visitor *cmdArgDeserializingVisitor) VisitStartService() error {
 	args := &core_api_bindings.StartServiceArgs{}
 	if err := json.Unmarshal(visitor.bytesToDeserialize, args); err != nil {
