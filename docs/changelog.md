@@ -1,4 +1,6 @@
 # TBD
+
+# 0.2.3
 ### Features
 * Port over the relevant bits of documentation from `kurtosis-libs`
 * Added the `LoadStaticFiles` endpoint to the API container's API for copying static files to a service's filespace
@@ -10,6 +12,9 @@
 ### Breaking Changes
 * `ContainerConfigFactory.getRunConfig` now takes an extra map argument, `staticFileFilepaths`, whose keys correspond to the static file IDs defined in `ContainerCreationConfigBuilder.withStaticFiles` and whose values are the filepaths _on the service container_ where those static files can be found
     * If your service needs static files, you can use this map to set your container's ENTRYPOINT, CMD, and environment variable parameters appropriately
+
+### Fixes
+* Fixed a bug with null-checking the default connection info in the `NetworkContext.repartitionNetwork` call
 
 # 0.2.2
 ### Changes
