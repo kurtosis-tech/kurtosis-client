@@ -29,13 +29,12 @@ Starts a new service in the network with the given service ID, inside the partit
 ### addService(ServiceID serviceId, [ContainerConfigFactory\<S\>][containerconfigfactory] configFactory) -\> ([ServiceContext][servicecontext] serviceContext, Map\<String, PortBinding\> hostPortBindings)
 Convenience wrapper around [NetworkContext.addServiceToPartition][networkcontext_addservicetopartition], that adds the service to the default partition. Note that if the network has been repartitioned and the default partition doesn't exist anymore, this method will fail.
 
-### getServiceContext(ServiceID serviceId, [ContainerConfigFactory\<S\>][containerconfigfactory] configFactory)
+### getServiceContext(ServiceID serviceId)
 Gets relevant information about a service (identified by the given service ID) that is running in the network.
 
 **Args**
 
 * `serviceId`: The ID of the service to pull the information from.
-* `configFactory`: The factory that produces the configs Kurtosis will use to start the container for the new service.
 
 **Returns**
 
