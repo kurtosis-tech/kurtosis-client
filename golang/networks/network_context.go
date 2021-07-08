@@ -231,7 +231,7 @@ func (networkCtx *NetworkContext) RepartitionNetwork(
 	if partitionServices == nil {
 		return stacktrace.NewError("Partition services map cannot be nil")
 	}
-	if defaultConnection != nil {
+	if defaultConnection == nil {
 		return stacktrace.NewError("Default connection cannot be nil")
 	}
 
