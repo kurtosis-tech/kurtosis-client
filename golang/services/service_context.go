@@ -101,3 +101,27 @@ func (self *ServiceContext) GenerateFiles(filesToGenerateSet map[string]bool) (m
 	}
 	return result, nil
 }
+
+// Docs available at https://docs.kurtosistech.com/kurtosis-libs/lib-documentation
+func (self *ServiceContext) LoadStaticFiles(usedStaticFilesSet map[StaticFileID]bool) (map[StaticFileID]string, error) {
+	serviceId := self.serviceId
+	staticFilesToCopyStringSet := map[string]bool{}
+	for staticFileId := range usedStaticFilesSet {
+		staticFilesToCopyStringSet[string(staticFileId)] = true
+	}
+	loadStaticFilesArgs := &core_api_bindings.LoadStaticFilesArgs{
+		ServiceId:   string(serviceId),
+		StaticFiles: staticFilesToCopyStringSet,
+	}
+	loadStaticFilesResp, err := self.client.LoadStaticFiles(context.Background(), loadStaticFilesArgs)
+	if err != nil {
+		return nil, stacktrace.Propagate(err, "An error occurred loading the requested static files into the namespace of service '%v'", serviceId)
+	}
+	staticFileAbsFilepathsOnService := map[StaticFileID]string{}
+	for staticFileId, filepathRelativeToExVolRoot := range loadStaticFilesResp.CopiedStaticFileRelativeFilepaths {
+		absFilepathOnContainer := path.Join(self.testVolumeMountpointOnServiceContainer, filepathRelativeToExVolRoot)
+		staticFileAbsFilepathsOnService[StaticFileID(staticFileId)] = absFilepathOnContainer
+	}
+	return staticFileAbsFilepathsOnService, nil
+
+}

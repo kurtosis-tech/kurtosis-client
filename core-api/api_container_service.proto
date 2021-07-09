@@ -13,6 +13,9 @@ service ApiContainerService {
   // Generates files inside the test volume on the filesystem for a container
   rpc GenerateFiles(GenerateFilesArgs) returns (GenerateFilesResponse) {};
 
+  // Copies static files that have been registered with the API container into the file namespace of the given service
+  rpc LoadStaticFiles(LoadStaticFilesArgs) returns (LoadStaticFilesResponse) {};
+
   // Starts a previously-registered service by creating a Docker container for it
   rpc StartService(StartServiceArgs) returns (StartServiceResponse) {};
 
@@ -77,6 +80,23 @@ message GenerateFilesResponse {
   // Mapping of meaningful-to-user string ID (as passed in via the request) to the filepath (RELATIVE to the suite
   //  execution volume root!) where the file was generated
   map<string, string> generated_file_relative_filepaths = 1;
+}
+
+// ==============================================================================================
+//                                         Load Static Files
+// ==============================================================================================
+message LoadStaticFilesArgs {
+  // The service ID into whose namespace the static files should be copied
+  string service_id = 1;
+
+  // The "set" of static files, identified by a user-defined ID key, that should be copied into the service's file namespace
+  //  The user-defined ID key should correspond to the keys of the static files declared in the testsuite's getStaticFiles() function
+  map<string, bool> static_files = 2;
+}
+
+message LoadStaticFilesResponse {
+  // A mapping of user_defined_id -> filepath_relative_to_suite_execution_volume_root where the static files have been copied
+  map<string, string> copied_static_file_relative_filepaths = 1;
 }
 
 // ==============================================================================================
