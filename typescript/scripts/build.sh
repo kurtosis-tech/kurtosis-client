@@ -13,5 +13,5 @@ lang_root_dirpath="$(dirname "${script_dirpath}")"
 # # ==================================================================================================
 # #                                             Main Logic
 # # ==================================================================================================
-cd "${lang_root_dirpath}"
-find . -name "*.ts" -exec tsc {} \;
+cd "${lang_root_dirpath}/mainLogic"
+find . -name "*.ts" -exec tsc --out ../build/output.js {} \;
