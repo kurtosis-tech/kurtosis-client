@@ -2,6 +2,10 @@ package services
 
 import "os"
 
+const (
+	defaultTestVolumeMountpoint = "/kurtosis-test-volume"
+)
+
 // The ID of an artifact containing files that should be mounted into a service container
 type FilesArtifactID string
 
@@ -52,14 +56,19 @@ type ContainerCreationConfigBuilder struct {
 	filesArtifactMountpoints map[FilesArtifactID]string
 }
 
-func NewContainerCreationConfigBuilder(image string, testVolumeMountpoint string) *ContainerCreationConfigBuilder {
+func NewContainerCreationConfigBuilder(image string) *ContainerCreationConfigBuilder {
 	return &ContainerCreationConfigBuilder{
 		image:                    image,
-		testVolumeMountpoint:     testVolumeMountpoint,
+		testVolumeMountpoint:     defaultTestVolumeMountpoint,
 		usedPortsSet:             map[string]bool{},
 		fileGeneratingFuncs:      map[string]func(file *os.File) error{},
 		filesArtifactMountpoints: map[FilesArtifactID]string{},
 	}
+}
+
+func (builder *ContainerCreationConfigBuilder) WithTestVolumeMountpoint(testVolumeMountpoint string) *ContainerCreationConfigBuilder {
+	builder.testVolumeMountpoint = testVolumeMountpoint
+	return builder
 }
 
 func (builder *ContainerCreationConfigBuilder) WithUsedPorts(usedPortsSet map[string]bool) *ContainerCreationConfigBuilder {
