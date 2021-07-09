@@ -16,6 +16,9 @@ service ApiContainerService {
   // Starts a previously-registered service by creating a Docker container for it
   rpc StartService(StartServiceArgs) returns (StartServiceResponse) {};
 
+  //Returns relevant information about the service
+  rpc GetServiceInfo(GetServiceInfoArgs) returns (GetServiceInfoResponse) {};
+
   // Instructs the API container to remove the given service
   rpc RemoveService(RemoveServiceArgs) returns (google.protobuf.Empty) {};
 
@@ -116,6 +119,21 @@ message PortBinding {
   string interface_ip = 1;
 
   string interface_port = 2;
+}
+
+// ==============================================================================================
+//                                       Get Service Info
+// ==============================================================================================
+message GetServiceInfoArgs {
+  //The service ID to get the info from
+  string service_id = 1;
+}
+
+message GetServiceInfoResponse {
+  // The IP address of the service
+  string ip_addr = 1;
+  // The full path where the test suite execution volume is mounted on the service
+  string suite_execution_volume_mount_dirpath = 2;
 }
 
 // ==============================================================================================

@@ -12,7 +12,6 @@ import (
 	"github.com/palantir/stacktrace"
 	"github.com/sirupsen/logrus"
 	"os"
-	"sync"
 )
 
 type PartitionID string
@@ -32,13 +31,7 @@ type NetworkContext struct {
 	client core_api_bindings.ApiContainerServiceClient
 
 	filesArtifactUrls map[services.FilesArtifactID]string
-
-	// Mutex protecting access to the services map
-	mutex *sync.Mutex
-
-	services map[services.ServiceID]services.Service
 }
-
 
 /*
 Creates a new NetworkContext object with the given parameters.
@@ -48,51 +41,46 @@ Args:
 	filesArtifactUrls: The mapping of filesArtifactId -> URL for the artifacts that the testsuite will use
 */
 func NewNetworkContext(
-		client core_api_bindings.ApiContainerServiceClient,
-		filesArtifactUrls map[services.FilesArtifactID]string) *NetworkContext {
+	client core_api_bindings.ApiContainerServiceClient,
+	filesArtifactUrls map[services.FilesArtifactID]string) *NetworkContext {
 	return &NetworkContext{
-		mutex: &sync.Mutex{},
-		client: client,
+		client:            client,
 		filesArtifactUrls: filesArtifactUrls,
-		services: map[services.ServiceID]services.Service{},
 	}
 }
 
 // Docs available at https://docs.kurtosistech.com/kurtosis-libs/lib-documentation
 func (networkCtx *NetworkContext) AddService(
-		serviceId services.ServiceID,
-		configFactory services.ContainerConfigFactory) (services.Service, map[string]*core_api_bindings.PortBinding, services.AvailabilityChecker, error) {
-	// Go mutexes aren't re-entrant, so we lock the mutex inside this call
-	service, hostPortBindings, availabilityChecker, err := networkCtx.AddServiceToPartition(
+	serviceId services.ServiceID,
+	configFactory services.ContainerConfigFactory) (*services.ServiceContext, map[string]*core_api_bindings.PortBinding, error) {
+
+	serviceContext, hostPortBindings, err := networkCtx.AddServiceToPartition(
 		serviceId,
 		defaultPartitionId,
 		configFactory)
 	if err != nil {
-		return nil, nil, nil, stacktrace.Propagate(err, "An error occurred adding service '%v' to the network in the default partition", serviceId)
+		return nil, nil, stacktrace.Propagate(err, "An error occurred adding service '%v' to the network in the default partition", serviceId)
 	}
 
-	return service, hostPortBindings, availabilityChecker, nil
+	return serviceContext, hostPortBindings, nil
 }
 
 // Docs available at https://docs.kurtosistech.com/kurtosis-libs/lib-documentation
 func (networkCtx *NetworkContext) AddServiceToPartition(
 		serviceId services.ServiceID,
 		partitionId PartitionID,
-		configFactory services.ContainerConfigFactory) (services.Service, map[string]*core_api_bindings.PortBinding, services.AvailabilityChecker, error) {
-	networkCtx.mutex.Lock()
-	defer networkCtx.mutex.Unlock()
+		configFactory services.ContainerConfigFactory) (*services.ServiceContext, map[string]*core_api_bindings.PortBinding, error) {
 
 	ctx := context.Background()
 
-
 	logrus.Tracef("Registering new service ID with Kurtosis API...")
 	registerServiceArgs := &core_api_bindings.RegisterServiceArgs{
-		ServiceId:       string(serviceId),
-		PartitionId:     string(partitionId),
+		ServiceId:   string(serviceId),
+		PartitionId: string(partitionId),
 	}
 	registerServiceResp, err := networkCtx.client.RegisterService(ctx, registerServiceArgs)
 	if err != nil {
-		return nil, nil, nil, stacktrace.Propagate(
+		return nil, nil, stacktrace.Propagate(
 			err,
 			"An error occurred registering service with ID '%v' with the Kurtosis API",
 			serviceId)
@@ -100,7 +88,7 @@ func (networkCtx *NetworkContext) AddServiceToPartition(
 	serviceIpAddr := registerServiceResp.IpAddr
 	containerCreationConfig, err := configFactory.GetCreationConfig(serviceIpAddr)
 	if err != nil {
-		return nil, nil, nil, stacktrace.Propagate(err, "An error occurred getting the container creation config")
+		return nil, nil, stacktrace.Propagate(err, "An error occurred getting the container creation config")
 	}
 	serviceContext := services.NewServiceContext(
 		networkCtx.client,
@@ -117,23 +105,23 @@ func (networkCtx *NetworkContext) AddServiceToPartition(
 	}
 	generatedFileFilepaths, err := serviceContext.GenerateFiles(filesToGenerate)
 	if err != nil {
-		return nil, nil, nil, stacktrace.Propagate(err, "An error occurred generating the files needed for service startup")
+		return nil, nil, stacktrace.Propagate(err, "An error occurred generating the files needed for service startup")
 	}
 	generatedFileAbsFilepathsOnService := map[string]string{}
 	for fileId, initializingFunc := range containerCreationConfig.GetFileGeneratingFuncs() {
 		filepaths, found := generatedFileFilepaths[fileId]
 		if !found {
-			return nil, nil, nil, stacktrace.Propagate(
+			return nil, nil, stacktrace.Propagate(
 				err,
 				"Needed to initialize file for file ID '%v', but no generated file filepaths were found for that file ID; this is a Kurtosis bug",
 				fileId)
 		}
 		fp, err := os.Create(filepaths.AbsoluteFilepathOnTestsuiteContainer)
 		if err != nil {
-			return nil, nil, nil, stacktrace.Propagate(err, "An error occurred opening file pointer for file '%v'", fileId)
+			return nil, nil, stacktrace.Propagate(err, "An error occurred opening file pointer for file '%v'", fileId)
 		}
 		if err := initializingFunc(fp); err != nil {
-			return nil, nil, nil, stacktrace.Propagate(err, "The function to initialize file with ID '%v' returned an error", fileId)
+			return nil, nil, stacktrace.Propagate(err, "The function to initialize file with ID '%v' returned an error", fileId)
 		}
 		generatedFileAbsFilepathsOnService[fileId] = filepaths.AbsoluteFilepathOnServiceContainer
 	}
@@ -141,7 +129,7 @@ func (networkCtx *NetworkContext) AddServiceToPartition(
 
 	containerRunConfig, err := configFactory.GetRunConfig(serviceIpAddr, generatedFileAbsFilepathsOnService)
 	if err != nil {
-		return nil, nil, nil, stacktrace.Propagate(err, "An error occurred getting the container run config")
+		return nil, nil, stacktrace.Propagate(err, "An error occurred getting the container run config")
 	}
 
 	logrus.Tracef("Creating files artifact URL -> mount dirpaths map...")
@@ -149,7 +137,7 @@ func (networkCtx *NetworkContext) AddServiceToPartition(
 	for filesArtifactId, mountDirpath := range containerCreationConfig.GetFilesArtifactMountpoints() {
 		artifactUrl, found := networkCtx.filesArtifactUrls[filesArtifactId]
 		if !found {
-			return nil, nil, nil, stacktrace.Propagate(
+			return nil, nil, stacktrace.Propagate(
 				err,
 				"Service requested file artifact '%v', but the network" +
 					"context doesn't have a URL for that file artifact; this is a bug with Kurtosis itself",
@@ -172,41 +160,55 @@ func (networkCtx *NetworkContext) AddServiceToPartition(
 	}
 	resp, err := networkCtx.client.StartService(ctx, startServiceArgs)
 	if err != nil {
-		return nil, nil, nil, stacktrace.Propagate(err, "An error occurred starting the service with the Kurtosis API")
+		return nil, nil, stacktrace.Propagate(err, "An error occurred starting the service with the Kurtosis API")
 	}
 	logrus.Tracef("Successfully started service with Kurtosis API")
 
-	logrus.Tracef("Creating service interface...")
-	service := containerCreationConfig.GetServiceCreatingFunc()(serviceContext)
-	logrus.Tracef("Successfully created service interface")
-
-	networkCtx.services[serviceId] = service
-
-	availabilityChecker := services.NewDefaultAvailabilityChecker(serviceId, service)
-
-	return service, resp.UsedPortsHostPortBindings, availabilityChecker, nil
+	return serviceContext, resp.UsedPortsHostPortBindings, nil
 }
 
 // Docs available at https://docs.kurtosistech.com/kurtosis-libs/lib-documentation
-func (networkCtx *NetworkContext) GetService(serviceId services.ServiceID) (services.Service, error) {
-	networkCtx.mutex.Lock()
-	defer networkCtx.mutex.Unlock()
-
-	service, found := networkCtx.services[serviceId]
-	if !found {
-		return nil, stacktrace.NewError("No service info found for ID '%v'", serviceId)
+func (networkCtx *NetworkContext) GetServiceContext(serviceId services.ServiceID) (*services.ServiceContext, error) {
+	getServiceInfoArgs := &core_api_bindings.GetServiceInfoArgs{
+		ServiceId: string(serviceId),
 	}
-	return service, nil
+	serviceResponse, err := networkCtx.client.GetServiceInfo(context.Background(), getServiceInfoArgs)
+	if err != nil {
+		return nil, stacktrace.Propagate(
+			err,
+			"An error occurred when trying to get info for service '%v'",
+			serviceId)
+	}
+
+	if serviceResponse.GetIpAddr() == "" {
+		return nil, stacktrace.NewError(
+			"An error occurred when trying to get the IP address from service '%v' - this should never happen, and is a bug with Kurtosis!",
+			serviceId)
+	}
+
+	if serviceResponse.GetSuiteExecutionVolMntDirpath() == "" {
+		return nil, stacktrace.NewError(
+			"An error occurred when trying to get the suite execution volume directory path from service '%v' - this should never happen, and is a bug with Kurtosis!",
+			serviceId)
+	}
+
+	serviceContext := services.NewServiceContext(
+		networkCtx.client,
+		serviceId,
+		serviceResponse.GetIpAddr(),
+		suiteExVolMountpoint,
+		serviceResponse.GetSuiteExecutionVolMntDirpath(),
+	)
+
+	return serviceContext, nil
 }
 
 // Docs available at https://docs.kurtosistech.com/kurtosis-libs/lib-documentation
 func (networkCtx *NetworkContext) RemoveService(serviceId services.ServiceID, containerStopTimeoutSeconds uint64) error {
-	networkCtx.mutex.Lock()
-	defer networkCtx.mutex.Unlock()
 
 	logrus.Debugf("Removing service '%v'...", serviceId)
 	args := &core_api_bindings.RemoveServiceArgs{
-		ServiceId:                   string(serviceId),
+		ServiceId: string(serviceId),
 		// NOTE: This is kinda weird - when we remove a service we can never get it back so having a container
 		//  stop timeout doesn't make much sense. It will make more sense when we can stop/start containers
 		// Independent of adding/removing them from the network
@@ -215,23 +217,22 @@ func (networkCtx *NetworkContext) RemoveService(serviceId services.ServiceID, co
 	if _, err := networkCtx.client.RemoveService(context.Background(), args); err != nil {
 		return stacktrace.Propagate(err, "An error occurred removing service '%v' from the network", serviceId)
 	}
-	delete(networkCtx.services, serviceId)
+
 	logrus.Debugf("Successfully removed service ID %v", serviceId)
+
 	return nil
 }
 
 // Docs available at https://docs.kurtosistech.com/kurtosis-libs/lib-documentation
 func (networkCtx *NetworkContext) RepartitionNetwork(
-		partitionServices map[PartitionID]map[services.ServiceID]bool,
-		partitionConnections map[PartitionID]map[PartitionID]*core_api_bindings.PartitionConnectionInfo,
-		defaultConnection *core_api_bindings.PartitionConnectionInfo) error {
-	networkCtx.mutex.Lock()
-	defer networkCtx.mutex.Unlock()
+	partitionServices map[PartitionID]map[services.ServiceID]bool,
+	partitionConnections map[PartitionID]map[PartitionID]*core_api_bindings.PartitionConnectionInfo,
+	defaultConnection *core_api_bindings.PartitionConnectionInfo) error {
 
 	if partitionServices == nil {
 		return stacktrace.NewError("Partition services map cannot be nil")
 	}
-	if defaultConnection != nil {
+	if defaultConnection == nil {
 		return stacktrace.NewError("Default connection cannot be nil")
 	}
 
@@ -281,16 +282,17 @@ func (networkCtx *NetworkContext) RepartitionNetwork(
 // Docs available at https://docs.kurtosistech.com/kurtosis-libs/lib-documentation
 func (networkCtx *NetworkContext) WaitForEndpointAvailability(serviceId services.ServiceID, port uint32, path string, initialDelaySeconds uint32, retries uint32, retriesDelayMilliseconds uint32, bodyText string) error {
 	availabilityArgs := &core_api_bindings.WaitForEndpointAvailabilityArgs{
-		ServiceId: string(serviceId),
-		Port: port,
-		Path: path,
-		InitialDelaySeconds: initialDelaySeconds,
-		Retries: retries,
+		ServiceId:                string(serviceId),
+		Port:                     port,
+		Path:                     path,
+		InitialDelaySeconds:      initialDelaySeconds,
+		Retries:                  retries,
 		RetriesDelayMilliseconds: retriesDelayMilliseconds,
-		BodyText: bodyText,
+		BodyText:                 bodyText,
 	}
 	if _, err := networkCtx.client.WaitForEndpointAvailability(context.Background(), availabilityArgs); err != nil {
-		return stacktrace.NewError(
+		return stacktrace.Propagate(
+			err,
 			"Service '%v' did not become available despite polling %v times with %v between polls",
 			serviceId,
 			retries,
@@ -302,9 +304,6 @@ func (networkCtx *NetworkContext) WaitForEndpointAvailability(serviceId services
 
 // Docs available at https://docs.kurtosistech.com/kurtosis-libs/lib-documentation
 func (networkCtx *NetworkContext) ExecuteBulkCommands(bulkCommandsJson string) error {
-	// TODO kill this mutex for networkcontext - it doesn't make sense
-	networkCtx.mutex.Lock()
-	defer networkCtx.mutex.Unlock()
 
 	args := &core_api_bindings.ExecuteBulkCommandsArgs{
 		SerializedCommands: bulkCommandsJson,
