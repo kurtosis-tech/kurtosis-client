@@ -203,6 +203,18 @@ Generates files inside the suite execution volume, which is mounted on both the 
 
 A map of the file IDs (corresponding to the set passed in as input) mapped to a [GeneratedFileFilepaths][generatedfilefilepaths] object containing the filepaths on a) the testsuite container and b) the service container where the generated file was created.
 
+### loadStaticFiles(Set\<String\> usedStaticFiles) -\> Map\<String, String\>
+Loads static files that have been registered with the Kurtosis API into the filespace of the service, so that the service can use it. You'd use this function if, e.g., you had a test database file that you wanted to mount on your service.
+
+**Args**
+
+* `usedStaticFiles`: A set of IDs corresponding to the static files that should be loaded, where the IDs have been registered with the Kurtosis API in advance via the testsuite.
+
+**Returns**
+
+A map of the static file IDs (corresponding to the set passed in as input) mapped to the filepath _inside the service container_ where the static file is now available.
+
+
 GeneratedFileFilepaths
 ----------------------
 Simple structure containing the filepaths to a generated file on either a) the testsuite container or b) on the service container for whom the file was generated. These filepaths are different because the path where the suite execution volume is mounted on the testsuite container can be different from the path where the volume is mounted on the service container.

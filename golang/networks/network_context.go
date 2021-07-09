@@ -17,13 +17,9 @@ import (
 type PartitionID string
 
 const (
-	// This will alwyas resolve to the default partition ID (regardless of whether such a partition exists in the network,
+	// This will always resolve to the default partition ID (regardless of whether such a partition exists in the network,
 	//  or it was repartitioned away)
 	defaultPartitionId PartitionID = ""
-
-	// This value - where the suite execution volume will be mounted on the testsuite container - is
-	//  hardcoded inside Kurtosis Core
-	suiteExVolMountpoint = "/suite-execution"
 )
 
 // Docs available at https://docs.kurtosistech.com/kurtosis-libs/lib-documentation
@@ -31,21 +27,22 @@ type NetworkContext struct {
 	client core_api_bindings.ApiContainerServiceClient
 
 	filesArtifactUrls map[services.FilesArtifactID]string
+
+	// The location on the filesystem where this code is running where the suite execution volume is mounted
+	suiteExVolMountpoint string
 }
 
 /*
 Creates a new NetworkContext object with the given parameters.
-
-Args:
-	client: The Kurtosis API client that the NetworkContext will use for modifying the state of the testnet
-	filesArtifactUrls: The mapping of filesArtifactId -> URL for the artifacts that the testsuite will use
 */
 func NewNetworkContext(
-	client core_api_bindings.ApiContainerServiceClient,
-	filesArtifactUrls map[services.FilesArtifactID]string) *NetworkContext {
+		client core_api_bindings.ApiContainerServiceClient,
+		filesArtifactUrls map[services.FilesArtifactID]string,
+		suiteExVolMountpoint string) *NetworkContext {
 	return &NetworkContext{
 		client:            client,
 		filesArtifactUrls: filesArtifactUrls,
+		suiteExVolMountpoint: suiteExVolMountpoint,
 	}
 }
 
@@ -94,9 +91,17 @@ func (networkCtx *NetworkContext) AddServiceToPartition(
 		networkCtx.client,
 		serviceId,
 		serviceIpAddr,
-		suiteExVolMountpoint,
+		networkCtx.suiteExVolMountpoint,
 		containerCreationConfig.GetTestVolumeMountpoint())
 	logrus.Tracef("New service successfully registered with Kurtosis API")
+
+	logrus.Trace("Loading static files into new service namespace...")
+	usedStaticFiles := containerCreationConfig.GetUsedStaticFiles()
+	staticFileAbsFilepathsOnService, err := serviceContext.LoadStaticFiles(usedStaticFiles)
+	if err != nil {
+		return nil, nil, stacktrace.Propagate(err, "An error occurred loading the following static files to service '%v': %+v", serviceId, usedStaticFiles)
+	}
+	logrus.Trace("Successfully loaded static files")
 
 	logrus.Trace("Initializing generated files...")
 	filesToGenerate := map[string]bool{}
@@ -127,7 +132,7 @@ func (networkCtx *NetworkContext) AddServiceToPartition(
 	}
 	logrus.Trace("Successfully initialized generated files in suite execution volume")
 
-	containerRunConfig, err := configFactory.GetRunConfig(serviceIpAddr, generatedFileAbsFilepathsOnService)
+	containerRunConfig, err := configFactory.GetRunConfig(serviceIpAddr, generatedFileAbsFilepathsOnService, staticFileAbsFilepathsOnService)
 	if err != nil {
 		return nil, nil, stacktrace.Propagate(err, "An error occurred getting the container run config")
 	}
@@ -179,16 +184,16 @@ func (networkCtx *NetworkContext) GetServiceContext(serviceId services.ServiceID
 			"An error occurred when trying to get info for service '%v'",
 			serviceId)
 	}
-
 	if serviceResponse.GetIpAddr() == "" {
 		return nil, stacktrace.NewError(
-			"An error occurred when trying to get the IP address from service '%v' - this should never happen, and is a bug with Kurtosis!",
+			"Kurtosis API reported an empty IP address for service '%v' - this should never happen, and is a bug with Kurtosis!",
 			serviceId)
 	}
 
-	if serviceResponse.GetSuiteExecutionVolMntDirpath() == "" {
+	suiteExVolMountpoint := serviceResponse.GetSuiteExecutionVolumeMountDirpath()
+	if suiteExVolMountpoint == "" {
 		return nil, stacktrace.NewError(
-			"An error occurred when trying to get the suite execution volume directory path from service '%v' - this should never happen, and is a bug with Kurtosis!",
+			"Kurtosis API reported an empty suite execution volume directory path for service '%v' - this should never happen, and is a bug with Kurtosis!",
 			serviceId)
 	}
 
@@ -197,7 +202,7 @@ func (networkCtx *NetworkContext) GetServiceContext(serviceId services.ServiceID
 		serviceId,
 		serviceResponse.GetIpAddr(),
 		suiteExVolMountpoint,
-		serviceResponse.GetSuiteExecutionVolMntDirpath(),
+		suiteExVolMountpoint,
 	)
 
 	return serviceContext, nil
@@ -293,10 +298,13 @@ func (networkCtx *NetworkContext) WaitForEndpointAvailability(serviceId services
 	if _, err := networkCtx.client.WaitForEndpointAvailability(context.Background(), availabilityArgs); err != nil {
 		return stacktrace.Propagate(
 			err,
-			"Service '%v' did not become available despite polling %v times with %v between polls",
+			"Endpoint '%v' on port '%v' for service '%v' did not become available despite polling %v times with %v between polls",
+			path,
+			port,
 			serviceId,
 			retries,
-			retriesDelayMilliseconds)
+			retriesDelayMilliseconds,
+		)
 	}
 
 	return nil

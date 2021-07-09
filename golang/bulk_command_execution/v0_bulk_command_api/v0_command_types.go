@@ -8,6 +8,7 @@ import "github.com/palantir/stacktrace"
 type V0CommandTypeVisitor interface {
 	VisitRegisterService() error
 	VisitGenerateFiles() error
+	VisitLoadStaticFiles() error
 	VisitStartService() error
 	VisitRemoveService() error
 	VisitRepartition() error
@@ -21,6 +22,7 @@ const (
 	// vvvvvvvvvvvvvvvvvvvv Update the visitor whenever you add an enum value!!! vvvvvvvvvvvvvvvvvvvvvvvvvvv
 	RegisterServiceCommandType V0CommandType = "REGISTER_SERVICE"
 	GenerateFilesCommandType				 = "GENERATE_FILES"
+	LoadStaticFilesCommandType				 = "LOAD_STATIC_FILES"
 	StartServiceCommandType                  = "START_SERVICE"
 	RemoveServiceCommandType                 = "REMOVE_SERVICE"
 	RepartitionCommandType					 = "REPARTITION"
@@ -36,6 +38,8 @@ func (commandType V0CommandType) AcceptVisitor(visitor V0CommandTypeVisitor) err
 		err = visitor.VisitRegisterService()
 	case GenerateFilesCommandType:
 		err = visitor.VisitGenerateFiles()
+	case LoadStaticFilesCommandType:
+		err = visitor.VisitLoadStaticFiles()
 	case StartServiceCommandType:
 		err = visitor.VisitStartService()
 	case RemoveServiceCommandType:
