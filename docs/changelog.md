@@ -1,4 +1,6 @@
 # TBD
+
+# 0.4.0
 ### Features
 * Added the `LoadStaticFiles` endpoint to the API container's API for copying static files to a service's filespace
 * Added a `LoadStaticFiles` command to the bulk command API
