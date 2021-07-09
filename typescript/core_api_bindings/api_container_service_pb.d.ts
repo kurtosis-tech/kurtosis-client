@@ -250,6 +250,50 @@ export namespace PortBinding {
   }
 }
 
+export class GetServiceInfoArgs extends jspb.Message {
+  getServiceId(): string;
+  setServiceId(value: string): void;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): GetServiceInfoArgs.AsObject;
+  static toObject(includeInstance: boolean, msg: GetServiceInfoArgs): GetServiceInfoArgs.AsObject;
+  static extensions: {[key: number]: jspb.ExtensionFieldInfo<jspb.Message>};
+  static extensionsBinary: {[key: number]: jspb.ExtensionFieldBinaryInfo<jspb.Message>};
+  static serializeBinaryToWriter(message: GetServiceInfoArgs, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): GetServiceInfoArgs;
+  static deserializeBinaryFromReader(message: GetServiceInfoArgs, reader: jspb.BinaryReader): GetServiceInfoArgs;
+}
+
+export namespace GetServiceInfoArgs {
+  export type AsObject = {
+    serviceId: string,
+  }
+}
+
+export class GetServiceInfoResponse extends jspb.Message {
+  getIpAddr(): string;
+  setIpAddr(value: string): void;
+
+  getSuiteExecutionVolumeMountDirpath(): string;
+  setSuiteExecutionVolumeMountDirpath(value: string): void;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): GetServiceInfoResponse.AsObject;
+  static toObject(includeInstance: boolean, msg: GetServiceInfoResponse): GetServiceInfoResponse.AsObject;
+  static extensions: {[key: number]: jspb.ExtensionFieldInfo<jspb.Message>};
+  static extensionsBinary: {[key: number]: jspb.ExtensionFieldBinaryInfo<jspb.Message>};
+  static serializeBinaryToWriter(message: GetServiceInfoResponse, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): GetServiceInfoResponse;
+  static deserializeBinaryFromReader(message: GetServiceInfoResponse, reader: jspb.BinaryReader): GetServiceInfoResponse;
+}
+
+export namespace GetServiceInfoResponse {
+  export type AsObject = {
+    ipAddr: string,
+    suiteExecutionVolumeMountDirpath: string,
+  }
+}
+
 export class RemoveServiceArgs extends jspb.Message {
   getServiceId(): string;
   setServiceId(value: string): void;

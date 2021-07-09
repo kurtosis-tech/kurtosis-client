@@ -60,6 +60,28 @@ function deserialize_api_container_api_GenerateFilesResponse(buffer_arg) {
   return api_container_service_pb.GenerateFilesResponse.deserializeBinary(new Uint8Array(buffer_arg));
 }
 
+function serialize_api_container_api_GetServiceInfoArgs(arg) {
+  if (!(arg instanceof api_container_service_pb.GetServiceInfoArgs)) {
+    throw new Error('Expected argument of type api_container_api.GetServiceInfoArgs');
+  }
+  return Buffer.from(arg.serializeBinary());
+}
+
+function deserialize_api_container_api_GetServiceInfoArgs(buffer_arg) {
+  return api_container_service_pb.GetServiceInfoArgs.deserializeBinary(new Uint8Array(buffer_arg));
+}
+
+function serialize_api_container_api_GetServiceInfoResponse(arg) {
+  if (!(arg instanceof api_container_service_pb.GetServiceInfoResponse)) {
+    throw new Error('Expected argument of type api_container_api.GetServiceInfoResponse');
+  }
+  return Buffer.from(arg.serializeBinary());
+}
+
+function deserialize_api_container_api_GetServiceInfoResponse(buffer_arg) {
+  return api_container_service_pb.GetServiceInfoResponse.deserializeBinary(new Uint8Array(buffer_arg));
+}
+
 function serialize_api_container_api_LoadStaticFilesArgs(arg) {
   if (!(arg instanceof api_container_service_pb.LoadStaticFilesArgs)) {
     throw new Error('Expected argument of type api_container_api.LoadStaticFilesArgs');
@@ -219,6 +241,18 @@ startService: {
     requestDeserialize: deserialize_api_container_api_StartServiceArgs,
     responseSerialize: serialize_api_container_api_StartServiceResponse,
     responseDeserialize: deserialize_api_container_api_StartServiceResponse,
+  },
+  // Returns relevant information about the service
+getServiceInfo: {
+    path: '/api_container_api.ApiContainerService/GetServiceInfo',
+    requestStream: false,
+    responseStream: false,
+    requestType: api_container_service_pb.GetServiceInfoArgs,
+    responseType: api_container_service_pb.GetServiceInfoResponse,
+    requestSerialize: serialize_api_container_api_GetServiceInfoArgs,
+    requestDeserialize: deserialize_api_container_api_GetServiceInfoArgs,
+    responseSerialize: serialize_api_container_api_GetServiceInfoResponse,
+    responseDeserialize: deserialize_api_container_api_GetServiceInfoResponse,
   },
   // Instructs the API container to remove the given service
 removeService: {

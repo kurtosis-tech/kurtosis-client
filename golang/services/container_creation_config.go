@@ -14,7 +14,6 @@ type ContainerCreationConfig struct {
 	image                        string
 	testVolumeMountpoint         string
 	usedPortsSet                 map[string]bool
-	serviceCreatingFunc          func(*ServiceContext) Service
 	fileGeneratingFuncs          map[string]func(*os.File) error
 	usedStaticFilesSet		     map[StaticFileID]bool
 	filesArtifactMountpoints     map[FilesArtifactID]string
@@ -30,10 +29,6 @@ func (config *ContainerCreationConfig) GetTestVolumeMountpoint() string {
 
 func (config *ContainerCreationConfig) GetUsedPortsSet() map[string]bool {
 	return config.usedPortsSet
-}
-
-func (config *ContainerCreationConfig) GetServiceCreatingFunc() func(ctx *ServiceContext) Service {
-	return config.serviceCreatingFunc
 }
 
 func (config *ContainerCreationConfig) GetFileGeneratingFuncs() map[string]func(*os.File) error {
@@ -58,18 +53,16 @@ type ContainerCreationConfigBuilder struct {
 	image                    string
 	testVolumeMountpoint     string
 	usedPortsSet             map[string]bool
-	serviceCreatingFunc      func(*ServiceContext) Service
 	usedStaticFilesSet       map[StaticFileID]bool
 	fileGeneratingFuncs      map[string]func(*os.File) error
 	filesArtifactMountpoints map[FilesArtifactID]string
 }
 
-func NewContainerCreationConfigBuilder(image string, testVolumeMountpoint string, serviceCreatingFunc func(ctx *ServiceContext) Service) *ContainerCreationConfigBuilder {
+func NewContainerCreationConfigBuilder(image string, testVolumeMountpoint string) *ContainerCreationConfigBuilder {
 	return &ContainerCreationConfigBuilder{
 		image:                    image,
 		testVolumeMountpoint:     testVolumeMountpoint,
 		usedPortsSet:             map[string]bool{},
-		serviceCreatingFunc:      serviceCreatingFunc,
 		fileGeneratingFuncs:      map[string]func(file *os.File) error{},
 		filesArtifactMountpoints: map[FilesArtifactID]string{},
 	}
@@ -101,7 +94,6 @@ func (builder *ContainerCreationConfigBuilder) Build() *ContainerCreationConfig 
 		image:                        builder.image,
 		testVolumeMountpoint:         builder.testVolumeMountpoint,
 		usedPortsSet:                 builder.usedPortsSet,
-		serviceCreatingFunc:          builder.serviceCreatingFunc,
 		fileGeneratingFuncs:          builder.fileGeneratingFuncs,
 		usedStaticFilesSet:           builder.usedStaticFilesSet,
 		filesArtifactMountpoints:     builder.filesArtifactMountpoints,
