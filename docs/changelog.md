@@ -1,4 +1,6 @@
-# TBD
+#TBD
+### Changes
+* Added build.sh script inside of typescript/ that takes in .ts files and outputs a single .js file
 
 # 0.4.0
 ### Features
