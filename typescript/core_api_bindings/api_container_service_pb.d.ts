@@ -116,6 +116,48 @@ export namespace GenerateFilesResponse {
   }
 }
 
+export class LoadStaticFilesArgs extends jspb.Message {
+  getServiceId(): string;
+  setServiceId(value: string): void;
+
+  getStaticFilesMap(): jspb.Map<string, boolean>;
+  clearStaticFilesMap(): void;
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): LoadStaticFilesArgs.AsObject;
+  static toObject(includeInstance: boolean, msg: LoadStaticFilesArgs): LoadStaticFilesArgs.AsObject;
+  static extensions: {[key: number]: jspb.ExtensionFieldInfo<jspb.Message>};
+  static extensionsBinary: {[key: number]: jspb.ExtensionFieldBinaryInfo<jspb.Message>};
+  static serializeBinaryToWriter(message: LoadStaticFilesArgs, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): LoadStaticFilesArgs;
+  static deserializeBinaryFromReader(message: LoadStaticFilesArgs, reader: jspb.BinaryReader): LoadStaticFilesArgs;
+}
+
+export namespace LoadStaticFilesArgs {
+  export type AsObject = {
+    serviceId: string,
+    staticFilesMap: Array<[string, boolean]>,
+  }
+}
+
+export class LoadStaticFilesResponse extends jspb.Message {
+  getCopiedStaticFileRelativeFilepathsMap(): jspb.Map<string, string>;
+  clearCopiedStaticFileRelativeFilepathsMap(): void;
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): LoadStaticFilesResponse.AsObject;
+  static toObject(includeInstance: boolean, msg: LoadStaticFilesResponse): LoadStaticFilesResponse.AsObject;
+  static extensions: {[key: number]: jspb.ExtensionFieldInfo<jspb.Message>};
+  static extensionsBinary: {[key: number]: jspb.ExtensionFieldBinaryInfo<jspb.Message>};
+  static serializeBinaryToWriter(message: LoadStaticFilesResponse, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): LoadStaticFilesResponse;
+  static deserializeBinaryFromReader(message: LoadStaticFilesResponse, reader: jspb.BinaryReader): LoadStaticFilesResponse;
+}
+
+export namespace LoadStaticFilesResponse {
+  export type AsObject = {
+    copiedStaticFileRelativeFilepathsMap: Array<[string, string]>,
+  }
+}
+
 export class StartServiceArgs extends jspb.Message {
   getServiceId(): string;
   setServiceId(value: string): void;
@@ -232,8 +274,8 @@ export class GetServiceInfoResponse extends jspb.Message {
   getIpAddr(): string;
   setIpAddr(value: string): void;
 
-  getSuiteExecutionVolMntDirpath(): string;
-  setSuiteExecutionVolMntDirpath(value: string): void;
+  getSuiteExecutionVolumeMountDirpath(): string;
+  setSuiteExecutionVolumeMountDirpath(value: string): void;
 
   serializeBinary(): Uint8Array;
   toObject(includeInstance?: boolean): GetServiceInfoResponse.AsObject;
@@ -248,7 +290,7 @@ export class GetServiceInfoResponse extends jspb.Message {
 export namespace GetServiceInfoResponse {
   export type AsObject = {
     ipAddr: string,
-    suiteExecutionVolMntDirpath: string,
+    suiteExecutionVolumeMountDirpath: string,
   }
 }
 

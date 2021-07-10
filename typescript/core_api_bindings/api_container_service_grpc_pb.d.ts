@@ -10,6 +10,7 @@ import * as grpc from "grpc";
 interface IApiContainerServiceService extends grpc.ServiceDefinition<grpc.UntypedServiceImplementation> {
   registerService: grpc.MethodDefinition<api_container_service_pb.RegisterServiceArgs, api_container_service_pb.RegisterServiceResponse>;
   generateFiles: grpc.MethodDefinition<api_container_service_pb.GenerateFilesArgs, api_container_service_pb.GenerateFilesResponse>;
+  loadStaticFiles: grpc.MethodDefinition<api_container_service_pb.LoadStaticFilesArgs, api_container_service_pb.LoadStaticFilesResponse>;
   startService: grpc.MethodDefinition<api_container_service_pb.StartServiceArgs, api_container_service_pb.StartServiceResponse>;
   getServiceInfo: grpc.MethodDefinition<api_container_service_pb.GetServiceInfoArgs, api_container_service_pb.GetServiceInfoResponse>;
   removeService: grpc.MethodDefinition<api_container_service_pb.RemoveServiceArgs, google_protobuf_empty_pb.Empty>;
@@ -24,6 +25,7 @@ export const ApiContainerServiceService: IApiContainerServiceService;
 export interface IApiContainerServiceServer extends grpc.UntypedServiceImplementation {
   registerService: grpc.handleUnaryCall<api_container_service_pb.RegisterServiceArgs, api_container_service_pb.RegisterServiceResponse>;
   generateFiles: grpc.handleUnaryCall<api_container_service_pb.GenerateFilesArgs, api_container_service_pb.GenerateFilesResponse>;
+  loadStaticFiles: grpc.handleUnaryCall<api_container_service_pb.LoadStaticFilesArgs, api_container_service_pb.LoadStaticFilesResponse>;
   startService: grpc.handleUnaryCall<api_container_service_pb.StartServiceArgs, api_container_service_pb.StartServiceResponse>;
   getServiceInfo: grpc.handleUnaryCall<api_container_service_pb.GetServiceInfoArgs, api_container_service_pb.GetServiceInfoResponse>;
   removeService: grpc.handleUnaryCall<api_container_service_pb.RemoveServiceArgs, google_protobuf_empty_pb.Empty>;
@@ -41,6 +43,9 @@ export class ApiContainerServiceClient extends grpc.Client {
   generateFiles(argument: api_container_service_pb.GenerateFilesArgs, callback: grpc.requestCallback<api_container_service_pb.GenerateFilesResponse>): grpc.ClientUnaryCall;
   generateFiles(argument: api_container_service_pb.GenerateFilesArgs, metadataOrOptions: grpc.Metadata | grpc.CallOptions | null, callback: grpc.requestCallback<api_container_service_pb.GenerateFilesResponse>): grpc.ClientUnaryCall;
   generateFiles(argument: api_container_service_pb.GenerateFilesArgs, metadata: grpc.Metadata | null, options: grpc.CallOptions | null, callback: grpc.requestCallback<api_container_service_pb.GenerateFilesResponse>): grpc.ClientUnaryCall;
+  loadStaticFiles(argument: api_container_service_pb.LoadStaticFilesArgs, callback: grpc.requestCallback<api_container_service_pb.LoadStaticFilesResponse>): grpc.ClientUnaryCall;
+  loadStaticFiles(argument: api_container_service_pb.LoadStaticFilesArgs, metadataOrOptions: grpc.Metadata | grpc.CallOptions | null, callback: grpc.requestCallback<api_container_service_pb.LoadStaticFilesResponse>): grpc.ClientUnaryCall;
+  loadStaticFiles(argument: api_container_service_pb.LoadStaticFilesArgs, metadata: grpc.Metadata | null, options: grpc.CallOptions | null, callback: grpc.requestCallback<api_container_service_pb.LoadStaticFilesResponse>): grpc.ClientUnaryCall;
   startService(argument: api_container_service_pb.StartServiceArgs, callback: grpc.requestCallback<api_container_service_pb.StartServiceResponse>): grpc.ClientUnaryCall;
   startService(argument: api_container_service_pb.StartServiceArgs, metadataOrOptions: grpc.Metadata | grpc.CallOptions | null, callback: grpc.requestCallback<api_container_service_pb.StartServiceResponse>): grpc.ClientUnaryCall;
   startService(argument: api_container_service_pb.StartServiceArgs, metadata: grpc.Metadata | null, options: grpc.CallOptions | null, callback: grpc.requestCallback<api_container_service_pb.StartServiceResponse>): grpc.ClientUnaryCall;

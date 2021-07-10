@@ -82,6 +82,28 @@ function deserialize_api_container_api_GetServiceInfoResponse(buffer_arg) {
   return api_container_service_pb.GetServiceInfoResponse.deserializeBinary(new Uint8Array(buffer_arg));
 }
 
+function serialize_api_container_api_LoadStaticFilesArgs(arg) {
+  if (!(arg instanceof api_container_service_pb.LoadStaticFilesArgs)) {
+    throw new Error('Expected argument of type api_container_api.LoadStaticFilesArgs');
+  }
+  return Buffer.from(arg.serializeBinary());
+}
+
+function deserialize_api_container_api_LoadStaticFilesArgs(buffer_arg) {
+  return api_container_service_pb.LoadStaticFilesArgs.deserializeBinary(new Uint8Array(buffer_arg));
+}
+
+function serialize_api_container_api_LoadStaticFilesResponse(arg) {
+  if (!(arg instanceof api_container_service_pb.LoadStaticFilesResponse)) {
+    throw new Error('Expected argument of type api_container_api.LoadStaticFilesResponse');
+  }
+  return Buffer.from(arg.serializeBinary());
+}
+
+function deserialize_api_container_api_LoadStaticFilesResponse(buffer_arg) {
+  return api_container_service_pb.LoadStaticFilesResponse.deserializeBinary(new Uint8Array(buffer_arg));
+}
+
 function serialize_api_container_api_RegisterServiceArgs(arg) {
   if (!(arg instanceof api_container_service_pb.RegisterServiceArgs)) {
     throw new Error('Expected argument of type api_container_api.RegisterServiceArgs');
@@ -195,6 +217,18 @@ generateFiles: {
     requestDeserialize: deserialize_api_container_api_GenerateFilesArgs,
     responseSerialize: serialize_api_container_api_GenerateFilesResponse,
     responseDeserialize: deserialize_api_container_api_GenerateFilesResponse,
+  },
+  // Copies static files that have been registered with the API container into the file namespace of the given service
+loadStaticFiles: {
+    path: '/api_container_api.ApiContainerService/LoadStaticFiles',
+    requestStream: false,
+    responseStream: false,
+    requestType: api_container_service_pb.LoadStaticFilesArgs,
+    responseType: api_container_service_pb.LoadStaticFilesResponse,
+    requestSerialize: serialize_api_container_api_LoadStaticFilesArgs,
+    requestDeserialize: deserialize_api_container_api_LoadStaticFilesArgs,
+    responseSerialize: serialize_api_container_api_LoadStaticFilesResponse,
+    responseDeserialize: deserialize_api_container_api_LoadStaticFilesResponse,
   },
   // Starts a previously-registered service by creating a Docker container for it
 startService: {
