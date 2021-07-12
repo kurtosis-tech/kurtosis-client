@@ -36,12 +36,12 @@ type NetworkContext struct {
 Creates a new NetworkContext object with the given parameters.
 */
 func NewNetworkContext(
-		client core_api_bindings.ApiContainerServiceClient,
-		filesArtifactUrls map[services.FilesArtifactID]string,
-		suiteExVolMountpoint string) *NetworkContext {
+	client core_api_bindings.ApiContainerServiceClient,
+	filesArtifactUrls map[services.FilesArtifactID]string,
+	suiteExVolMountpoint string) *NetworkContext {
 	return &NetworkContext{
-		client:            client,
-		filesArtifactUrls: filesArtifactUrls,
+		client:               client,
+		filesArtifactUrls:    filesArtifactUrls,
 		suiteExVolMountpoint: suiteExVolMountpoint,
 	}
 }
@@ -49,12 +49,16 @@ func NewNetworkContext(
 // Docs available at https://docs.kurtosistech.com/kurtosis-libs/lib-documentation
 func (networkCtx *NetworkContext) AddService(
 	serviceId services.ServiceID,
-	configFactory services.ContainerConfigFactory) (*services.ServiceContext, map[string]*core_api_bindings.PortBinding, error) {
+	containerCreationConfig *services.ContainerCreationConfig,
+	generateRunConfigFunc func(ipAddr string, generatedFileFilepaths map[string]string, staticFileFilepaths map[services.StaticFileID]string) (*services.ContainerRunConfig, error),
+) (*services.ServiceContext, map[string]*core_api_bindings.PortBinding, error) {
 
 	serviceContext, hostPortBindings, err := networkCtx.AddServiceToPartition(
 		serviceId,
 		defaultPartitionId,
-		configFactory)
+		containerCreationConfig,
+		generateRunConfigFunc,
+		)
 	if err != nil {
 		return nil, nil, stacktrace.Propagate(err, "An error occurred adding service '%v' to the network in the default partition", serviceId)
 	}
@@ -64,9 +68,11 @@ func (networkCtx *NetworkContext) AddService(
 
 // Docs available at https://docs.kurtosistech.com/kurtosis-libs/lib-documentation
 func (networkCtx *NetworkContext) AddServiceToPartition(
-		serviceId services.ServiceID,
-		partitionId PartitionID,
-		configFactory services.ContainerConfigFactory) (*services.ServiceContext, map[string]*core_api_bindings.PortBinding, error) {
+	serviceId services.ServiceID,
+	partitionId PartitionID,
+	containerCreationConfig *services.ContainerCreationConfig,
+	generateRunConfigFunc func(ipAddr string, generatedFileFilepaths map[string]string, staticFileFilepaths map[services.StaticFileID]string) (*services.ContainerRunConfig, error),
+) (*services.ServiceContext, map[string]*core_api_bindings.PortBinding, error) {
 
 	ctx := context.Background()
 
@@ -83,7 +89,7 @@ func (networkCtx *NetworkContext) AddServiceToPartition(
 			serviceId)
 	}
 	serviceIpAddr := registerServiceResp.IpAddr
-	containerCreationConfig, err := configFactory.GetCreationConfig(serviceIpAddr)
+
 	if err != nil {
 		return nil, nil, stacktrace.Propagate(err, "An error occurred getting the container creation config")
 	}
@@ -132,7 +138,7 @@ func (networkCtx *NetworkContext) AddServiceToPartition(
 	}
 	logrus.Trace("Successfully initialized generated files in suite execution volume")
 
-	containerRunConfig, err := configFactory.GetRunConfig(serviceIpAddr, generatedFileAbsFilepathsOnService, staticFileAbsFilepathsOnService)
+	containerRunConfig, err := generateRunConfigFunc(serviceIpAddr, generatedFileAbsFilepathsOnService, staticFileAbsFilepathsOnService)
 	if err != nil {
 		return nil, nil, stacktrace.Propagate(err, "An error occurred getting the container run config")
 	}
@@ -144,7 +150,7 @@ func (networkCtx *NetworkContext) AddServiceToPartition(
 		if !found {
 			return nil, nil, stacktrace.Propagate(
 				err,
-				"Service requested file artifact '%v', but the network" +
+				"Service requested file artifact '%v', but the network"+
 					"context doesn't have a URL for that file artifact; this is a bug with Kurtosis itself",
 				filesArtifactId)
 		}

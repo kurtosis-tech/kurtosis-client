@@ -11,12 +11,12 @@ type FilesArtifactID string
 // TODO defensive copy when we're giving back complex objects?????
 // Docs available at https://docs.kurtosistech.com/kurtosis-libs/lib-documentation
 type ContainerCreationConfig struct {
-	image                        string
-	testVolumeMountpoint         string
-	usedPortsSet                 map[string]bool
-	fileGeneratingFuncs          map[string]func(*os.File) error
-	usedStaticFilesSet		     map[StaticFileID]bool
-	filesArtifactMountpoints     map[FilesArtifactID]string
+	image                    string
+	testVolumeMountpoint     string
+	usedPortsSet             map[string]bool
+	fileGeneratingFuncs      map[string]func(*os.File) error
+	usedStaticFilesSet       map[StaticFileID]bool
+	filesArtifactMountpoints map[FilesArtifactID]string
 }
 
 func (config *ContainerCreationConfig) GetImage() string {
@@ -42,7 +42,6 @@ func (config *ContainerCreationConfig) GetFilesArtifactMountpoints() map[FilesAr
 func (config *ContainerCreationConfig) GetUsedStaticFiles() map[StaticFileID]bool {
 	return config.usedStaticFilesSet
 }
-
 
 // ====================================================================================================
 //                                        Builder
@@ -88,16 +87,13 @@ func (builder *ContainerCreationConfigBuilder) WithFilesArtifacts(filesArtifactM
 	return builder
 }
 
-
 func (builder *ContainerCreationConfigBuilder) Build() *ContainerCreationConfig {
 	return &ContainerCreationConfig{
-		image:                        builder.image,
-		testVolumeMountpoint:         builder.testVolumeMountpoint,
-		usedPortsSet:                 builder.usedPortsSet,
-		fileGeneratingFuncs:          builder.fileGeneratingFuncs,
-		usedStaticFilesSet:           builder.usedStaticFilesSet,
-		filesArtifactMountpoints:     builder.filesArtifactMountpoints,
+		image:                    builder.image,
+		testVolumeMountpoint:     builder.testVolumeMountpoint,
+		usedPortsSet:             builder.usedPortsSet,
+		fileGeneratingFuncs:      builder.fileGeneratingFuncs,
+		usedStaticFilesSet:       builder.usedStaticFilesSet,
+		filesArtifactMountpoints: builder.filesArtifactMountpoints,
 	}
 }
-
-
