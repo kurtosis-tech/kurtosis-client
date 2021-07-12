@@ -1,6 +1,7 @@
 #TBD
 ### Changes
 * Added build.sh script inside of typescript/ that takes in .ts files and outputs a single .js file
+* Updated the `release.sh` script to use the changelog script
 
 # 0.4.0
 ### Features
