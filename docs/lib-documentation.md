@@ -114,7 +114,7 @@ Object containing information Kurtosis needs to create the container. This confi
 The name of the container image that Kurtosis should use when creating the service's container (e.g. `my-repo/my-image:some-tag-name`).
 
 ### String testVolumeMountpoint
-Kurtosis uses a Docker volume to keep track of test state, and needs to mount this volume on every container. Kurtosis can't know what filesystem the service image uses or what paths are safe to mount on though, so this property tells Kurtosis where that volume should be mounted. This should be set to a filepath that doesn't already exist where Kurtosis can safely mount the Kurtosis volume.
+Kurtosis uses a Docker volume to keep track of test state, and needs to mount this volume on every container. Kurtosis by default tries to mount this at a location that probably won't be used, but it can't know for certain what paths won't conflict so this property can be used to tell Kurtosis a filepath that doesn't yet exist and is safe for mounting.
 
 ### Set\<String\> usedPorts
 The set of ports that the container will be listening on, in the format `NUM/PROTOCOL` (e.g. `80/tcp`, `9090/udp`, etc.).
