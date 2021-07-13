@@ -1,4 +1,4 @@
-#TBD
+# TBD
 ### Features
 * Test volume mountpoints are now optional (with a sensible default) when creating `ContainerCreationConfig`s
 
@@ -8,6 +8,10 @@
 
 ### Fixes
 * Fix broken links to `kurtosis-libs` inside the docs
+
+### Breaking Changes
+* The `ContainerCreationConfigBuilder` constructor no longer takes in a test volume mountpoint
+* Added a `ContainerCreationConfigBuilder.WithTestVolumeMountpoint` for specifying the test volume mountpoint, which should be used instead if the default test volume mountpoint of `/kurtosis-test-volume` isn't acceptable
 
 # 0.4.0
 ### Features
