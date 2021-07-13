@@ -1,4 +1,6 @@
 # TBD
+
+# 0.5.0
 ### Features
 * Test volume mountpoints are now optional (with a sensible default) when creating `ContainerCreationConfig`s
 
