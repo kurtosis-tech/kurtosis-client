@@ -224,8 +224,8 @@ _Found a bug? File it on [the repo](https://github.com/kurtosis-tech/kurtosis-cl
 
 [networkcontext]: #networkcontext
 
-[networkcontext_addservice]: #addserviceserviceid-serviceid-containerCreationConfig-containerCreationConfig-generateRunConfigFunc---s-service-mapstring-portbinding-hostportbindings
-[networkcontext_addservicetopartition]: #addservicetopartitionserviceid-serviceid-partitionid-partitionid-containerCreationConfig-containerCreationConfig-generateRunConfigFunc---s-service-mapstring-portbinding-hostportbindings
+[networkcontext_addservice]: #addserviceserviceid-serviceid-containercreationconfig-containercreationconfig-funcstring-ipaddr-mapstring-string-generatedfilefilepaths-mapstaticfileid-string-staticfilefilepaths---containerrunconfig-error-generaterunconfigfunc----servicecontext-servicecontext-mapstring-portbinding-hostportbindings
+[networkcontext_addservicetopartition]: #addservicetopartitionserviceid-serviceid-partitionid-partitionid-containercreationconfig-containercreationconfig-funcstring-ipaddr-mapstring-string-generatedfilefilepaths-mapstaticfileid-string-staticfilefilepaths---containerrunconfig-error-generaterunconfigfunc---servicecontext-servicecontext-mapstring-portbinding-hostportbindings
 [networkcontext_repartitionnetwork]: #repartitionnetworkmappartitionid-setserviceid-partitionservices-mappartitionid-mappartitionid-partitionconnectioninfo-partitionconnections-partitionconnectioninfo-defaultconnection
 
 [partitionconnectioninfo]: #partitionconnectioninfo
