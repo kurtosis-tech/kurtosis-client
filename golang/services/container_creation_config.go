@@ -2,6 +2,10 @@ package services
 
 import "os"
 
+const (
+	defaultTestVolumeMountpoint = "/kurtosis-test-volume"
+)
+
 // The ID of an artifact containing files that should be mounted into a service container
 type FilesArtifactID string
 
@@ -14,8 +18,8 @@ type ContainerCreationConfig struct {
 	image                        string
 	testVolumeMountpoint         string
 	usedPortsSet                 map[string]bool
-	serviceCreatingFunc          func(*ServiceContext) Service
 	fileGeneratingFuncs          map[string]func(*os.File) error
+	usedStaticFilesSet		     map[StaticFileID]bool
 	filesArtifactMountpoints     map[FilesArtifactID]string
 }
 
@@ -31,16 +35,16 @@ func (config *ContainerCreationConfig) GetUsedPortsSet() map[string]bool {
 	return config.usedPortsSet
 }
 
-func (config *ContainerCreationConfig) GetServiceCreatingFunc() func(ctx *ServiceContext) Service {
-	return config.serviceCreatingFunc
-}
-
 func (config *ContainerCreationConfig) GetFileGeneratingFuncs() map[string]func(*os.File) error {
 	return config.fileGeneratingFuncs
 }
 
 func (config *ContainerCreationConfig) GetFilesArtifactMountpoints() map[FilesArtifactID]string {
 	return config.filesArtifactMountpoints
+}
+
+func (config *ContainerCreationConfig) GetUsedStaticFiles() map[StaticFileID]bool {
+	return config.usedStaticFilesSet
 }
 
 
@@ -53,20 +57,24 @@ type ContainerCreationConfigBuilder struct {
 	image                    string
 	testVolumeMountpoint     string
 	usedPortsSet             map[string]bool
-	serviceCreatingFunc      func(*ServiceContext) Service
+	usedStaticFilesSet       map[StaticFileID]bool
 	fileGeneratingFuncs      map[string]func(*os.File) error
 	filesArtifactMountpoints map[FilesArtifactID]string
 }
 
-func NewContainerCreationConfigBuilder(image string, testVolumeMountpoint string, serviceCreatingFunc func(ctx *ServiceContext) Service) *ContainerCreationConfigBuilder {
+func NewContainerCreationConfigBuilder(image string) *ContainerCreationConfigBuilder {
 	return &ContainerCreationConfigBuilder{
 		image:                    image,
-		testVolumeMountpoint:     testVolumeMountpoint,
+		testVolumeMountpoint:     defaultTestVolumeMountpoint,
 		usedPortsSet:             map[string]bool{},
-		serviceCreatingFunc:      serviceCreatingFunc,
 		fileGeneratingFuncs:      map[string]func(file *os.File) error{},
 		filesArtifactMountpoints: map[FilesArtifactID]string{},
 	}
+}
+
+func (builder *ContainerCreationConfigBuilder) WithTestVolumeMountpoint(testVolumeMountpoint string) *ContainerCreationConfigBuilder {
+	builder.testVolumeMountpoint = testVolumeMountpoint
+	return builder
 }
 
 func (builder *ContainerCreationConfigBuilder) WithUsedPorts(usedPortsSet map[string]bool) *ContainerCreationConfigBuilder {
@@ -76,6 +84,11 @@ func (builder *ContainerCreationConfigBuilder) WithUsedPorts(usedPortsSet map[st
 
 func (builder *ContainerCreationConfigBuilder) WithGeneratedFiles(fileGeneratingFuncs map[string]func(*os.File) error) *ContainerCreationConfigBuilder {
 	builder.fileGeneratingFuncs = fileGeneratingFuncs
+	return builder
+}
+
+func (builder *ContainerCreationConfigBuilder) WithStaticFiles(usedStaticFilesSet map[StaticFileID]bool) *ContainerCreationConfigBuilder {
+	builder.usedStaticFilesSet = usedStaticFilesSet
 	return builder
 }
 
@@ -90,8 +103,8 @@ func (builder *ContainerCreationConfigBuilder) Build() *ContainerCreationConfig 
 		image:                        builder.image,
 		testVolumeMountpoint:         builder.testVolumeMountpoint,
 		usedPortsSet:                 builder.usedPortsSet,
-		serviceCreatingFunc:          builder.serviceCreatingFunc,
 		fileGeneratingFuncs:          builder.fileGeneratingFuncs,
+		usedStaticFilesSet:           builder.usedStaticFilesSet,
 		filesArtifactMountpoints:     builder.filesArtifactMountpoints,
 	}
 }

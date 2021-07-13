@@ -13,8 +13,14 @@ service ApiContainerService {
   // Generates files inside the test volume on the filesystem for a container
   rpc GenerateFiles(GenerateFilesArgs) returns (GenerateFilesResponse) {};
 
+  // Copies static files that have been registered with the API container into the file namespace of the given service
+  rpc LoadStaticFiles(LoadStaticFilesArgs) returns (LoadStaticFilesResponse) {};
+
   // Starts a previously-registered service by creating a Docker container for it
   rpc StartService(StartServiceArgs) returns (StartServiceResponse) {};
+
+  //Returns relevant information about the service
+  rpc GetServiceInfo(GetServiceInfoArgs) returns (GetServiceInfoResponse) {};
 
   // Instructs the API container to remove the given service
   rpc RemoveService(RemoveServiceArgs) returns (google.protobuf.Empty) {};
@@ -25,8 +31,11 @@ service ApiContainerService {
   // Executes the given command inside a running container
   rpc ExecCommand(ExecCommandArgs) returns (ExecCommandResponse) {};
 
-  //Wait for and endpoint in order to know if a service is available
+  // Block until the given HTTP endpoint returns available
   rpc WaitForEndpointAvailability(WaitForEndpointAvailabilityArgs) returns (google.protobuf.Empty) {};
+
+  // Executes multiple commands at once
+  rpc ExecuteBulkCommands(ExecuteBulkCommandsArgs) returns (google.protobuf.Empty) {};
 }
 
 // ==============================================================================================
@@ -74,6 +83,23 @@ message GenerateFilesResponse {
 }
 
 // ==============================================================================================
+//                                         Load Static Files
+// ==============================================================================================
+message LoadStaticFilesArgs {
+  // The service ID into whose namespace the static files should be copied
+  string service_id = 1;
+
+  // The "set" of static files, identified by a user-defined ID key, that should be copied into the service's file namespace
+  //  The user-defined ID key should correspond to the keys of the static files declared in the testsuite's getStaticFiles() function
+  map<string, bool> static_files = 2;
+}
+
+message LoadStaticFilesResponse {
+  // A mapping of user_defined_id -> filepath_relative_to_suite_execution_volume_root where the static files have been copied
+  map<string, string> copied_static_file_relative_filepaths = 1;
+}
+
+// ==============================================================================================
 //                                        Start Service
 // ==============================================================================================
 message StartServiceArgs {
@@ -113,6 +139,21 @@ message PortBinding {
   string interface_ip = 1;
 
   string interface_port = 2;
+}
+
+// ==============================================================================================
+//                                       Get Service Info
+// ==============================================================================================
+message GetServiceInfoArgs {
+  //The service ID to get the info from
+  string service_id = 1;
+}
+
+message GetServiceInfoResponse {
+  // The IP address of the service
+  string ip_addr = 1;
+  // The full path where the test suite execution volume is mounted on the service
+  string suite_execution_volume_mount_dirpath = 2;
 }
 
 // ==============================================================================================
@@ -187,4 +228,12 @@ message WaitForEndpointAvailabilityArgs {
   uint32 retries_delay_milliseconds = 6;
   //If the endpoint returns this value, the service will be marked as available (e.g. Hello World).
   string body_text = 7;
+}
+
+// ==============================================================================================
+//                                      Execute Bulk Commands
+// ==============================================================================================
+message ExecuteBulkCommandsArgs {
+  // Commands, serialized as JSON
+  string serialized_commands = 1;
 }
