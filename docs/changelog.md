@@ -1,4 +1,6 @@
-#TBD
+# TBD
+
+# 0.5.0
 ### Features
 * Test volume mountpoints are now optional (with a sensible default) when creating `ContainerCreationConfig`s
 
@@ -6,10 +8,15 @@
 * Added build.sh script inside of typescript/ that takes in .ts files and outputs a single .js file
 * Updated the `release.sh` script to use the changelog script
 
+### Fixes
+* Fix broken links to `kurtosis-libs` inside the docs
+
 ### Breaking Changes
-* Replaced the argument `ContainerConfigFactory` in `AddService`and `AddServiceToPartition`with two arguments `ContainerCreationConfig`and an anonymous function which should returns `ContainerRunConfig`type; 
+* The `ContainerCreationConfigBuilder` constructor no longer takes in a test volume mountpoint
+* Added a `ContainerCreationConfigBuilder.WithTestVolumeMountpoint` for specifying the test volume mountpoint, which should be used instead if the default test volume mountpoint of `/kurtosis-test-volume` isn't acceptable
+* Replaced the argument `ContainerConfigFactory` in `AddService`and `AddServiceToPartition`with two arguments `ContainerCreationConfig`and an anonymous function which should returns `ContainerRunConfig`type;
   users should use `ContainerCreationConfig` struct, and the function that was defined in `GetRunCongig` in the `ContainerConfigFactory` implementations as the new arguments
-* Removed `ContainerConfigFactory` interface  
+* Removed `ContainerConfigFactory` interface
 
 # 0.4.0
 ### Features
