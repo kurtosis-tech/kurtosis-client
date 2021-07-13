@@ -6,6 +6,9 @@
 * Added build.sh script inside of typescript/ that takes in .ts files and outputs a single .js file
 * Updated the `release.sh` script to use the changelog script
 
+### Fixes
+* Fix broken links to `kurtosis-libs` inside the docs
+
 # 0.4.0
 ### Features
 * Added the `LoadStaticFiles` endpoint to the API container's API for copying static files to a service's filespace

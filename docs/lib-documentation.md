@@ -1,6 +1,6 @@
 Kurtosis Client Documentation
 =============================
-This documentation describes how to interact with the Kurtosis API from within a testnet. It includes information about starting service, stopping services, repartitioning the network, etc. These objects are heavily used inside the [Kurtosis testing framework](./kurtosis-libs/lib-documentation). Note that any comments specific to a language implementation will be found in the code comments.
+This documentation describes how to interact with the Kurtosis API from within a testnet. It includes information about starting service, stopping services, repartitioning the network, etc. These objects are heavily used inside the [Kurtosis testing framework](../kurtosis-libs/lib-documentation). Note that any comments specific to a language implementation will be found in the code comments.
 
 _Found a bug? File it on [the repo](https://github.com/kurtosis-tech/kurtosis-client/issues)!_
 
@@ -260,14 +260,14 @@ _Found a bug? File it on [the repo](https://github.com/kurtosis-tech/kurtosis-cl
 
 [generatedfilefilepaths]: #generatedfilefilepaths
 
-[test]: ./kurtosis-libs/lib-documentation#testn-extends-network
-[test_configure]: ./kurtosis-libs/lib-documentation#configuretestconfigurationbuilder-builder
-[test_setup]: ./kurtosis-libs/lib-documentation#setupnetworkcontext-networkcontext---n
-[test_run]: ./kurtosis-libs/lib-documentation#runn-network
-[test_gettestconfiguration]: ./kurtosis-libs/lib-documentation#gettestconfiguration---testconfiguration
+[test]: ../kurtosis-libs/lib-documentation#testn-extends-network
+[test_configure]: ../kurtosis-libs/lib-documentation#configuretestconfigurationbuilder-builder
+[test_setup]: ../kurtosis-libs/lib-documentation#setupnetworkcontext-networkcontext---n
+[test_run]: ../kurtosis-libs/lib-documentation#runn-network
+[test_gettestconfiguration]: ../kurtosis-libs/lib-documentation#gettestconfiguration---testconfiguration
 
-[testconfiguration]: ./kurtosis-libs/lib-documentation#testconfiguration
+[testconfiguration]: ../kurtosis-libs/lib-documentation#testconfiguration
 
-[testconfigurationbuilder]: ./kurtosis-libs/lib-documentation#testconfigurationbuilder
+[testconfigurationbuilder]: ../kurtosis-libs/lib-documentation#testconfigurationbuilder
 
-[testsuite]: ./kurtosis-libs/lib-documentation#testsuite
+[testsuite]: ../kurtosis-libs/lib-documentation#testsuite
