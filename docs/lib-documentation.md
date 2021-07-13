@@ -1,6 +1,6 @@
 Kurtosis Client Documentation
 =============================
-This documentation describes how to interact with the Kurtosis API from within a testnet. It includes information about starting service, stopping services, repartitioning the network, etc. These objects are heavily used inside the [Kurtosis testing framework](./kurtosis-libs/lib-documentation). Note that any comments specific to a language implementation will be found in the code comments.
+This documentation describes how to interact with the Kurtosis API from within a testnet. It includes information about starting service, stopping services, repartitioning the network, etc. These objects are heavily used inside the [Kurtosis testing framework](../kurtosis-libs/lib-documentation). Note that any comments specific to a language implementation will be found in the code comments.
 
 _Found a bug? File it on [the repo](https://github.com/kurtosis-tech/kurtosis-client/issues)!_
 
@@ -114,7 +114,7 @@ Object containing information Kurtosis needs to create the container. This confi
 The name of the container image that Kurtosis should use when creating the service's container (e.g. `my-repo/my-image:some-tag-name`).
 
 ### String testVolumeMountpoint
-Kurtosis uses a Docker volume to keep track of test state, and needs to mount this volume on every container. Kurtosis can't know what filesystem the service image uses or what paths are safe to mount on though, so this property tells Kurtosis where that volume should be mounted. This should be set to a filepath that doesn't already exist where Kurtosis can safely mount the Kurtosis volume.
+Kurtosis uses a Docker volume to keep track of test state, and needs to mount this volume on every container. Kurtosis by default tries to mount this at a location that probably won't be used, but it can't know for certain what paths won't conflict so this property can be used to tell Kurtosis a filepath that doesn't yet exist and is safe for mounting.
 
 ### Set\<String\> usedPorts
 The set of ports that the container will be listening on, in the format `NUM/PROTOCOL` (e.g. `80/tcp`, `9090/udp`, etc.).
@@ -260,14 +260,14 @@ _Found a bug? File it on [the repo](https://github.com/kurtosis-tech/kurtosis-cl
 
 [generatedfilefilepaths]: #generatedfilefilepaths
 
-[test]: ./kurtosis-libs/lib-documentation#testn-extends-network
-[test_configure]: ./kurtosis-libs/lib-documentation#configuretestconfigurationbuilder-builder
-[test_setup]: ./kurtosis-libs/lib-documentation#setupnetworkcontext-networkcontext---n
-[test_run]: ./kurtosis-libs/lib-documentation#runn-network
-[test_gettestconfiguration]: ./kurtosis-libs/lib-documentation#gettestconfiguration---testconfiguration
+[test]: ../kurtosis-libs/lib-documentation#testn-extends-network
+[test_configure]: ../kurtosis-libs/lib-documentation#configuretestconfigurationbuilder-builder
+[test_setup]: ../kurtosis-libs/lib-documentation#setupnetworkcontext-networkcontext---n
+[test_run]: ../kurtosis-libs/lib-documentation#runn-network
+[test_gettestconfiguration]: ../kurtosis-libs/lib-documentation#gettestconfiguration---testconfiguration
 
-[testconfiguration]: ./kurtosis-libs/lib-documentation#testconfiguration
+[testconfiguration]: ../kurtosis-libs/lib-documentation#testconfiguration
 
-[testconfigurationbuilder]: ./kurtosis-libs/lib-documentation#testconfigurationbuilder
+[testconfigurationbuilder]: ../kurtosis-libs/lib-documentation#testconfigurationbuilder
 
-[testsuite]: ./kurtosis-libs/lib-documentation#testsuite
+[testsuite]: ../kurtosis-libs/lib-documentation#testsuite

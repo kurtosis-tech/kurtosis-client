@@ -1,5 +1,20 @@
 # TBD
 
+# 0.5.0
+### Features
+* Test volume mountpoints are now optional (with a sensible default) when creating `ContainerCreationConfig`s
+
+### Changes
+* Added build.sh script inside of typescript/ that takes in .ts files and outputs a single .js file
+* Updated the `release.sh` script to use the changelog script
+
+### Fixes
+* Fix broken links to `kurtosis-libs` inside the docs
+
+### Breaking Changes
+* The `ContainerCreationConfigBuilder` constructor no longer takes in a test volume mountpoint
+* Added a `ContainerCreationConfigBuilder.WithTestVolumeMountpoint` for specifying the test volume mountpoint, which should be used instead if the default test volume mountpoint of `/kurtosis-test-volume` isn't acceptable
+
 # 0.4.0
 ### Features
 * Added the `LoadStaticFiles` endpoint to the API container's API for copying static files to a service's filespace
