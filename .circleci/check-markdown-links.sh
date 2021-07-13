@@ -10,11 +10,11 @@ cat << EOF > "${config_filepath}"
 {
     "replacementPatterns": [
         {
-            "pattern": "^./kurtosis-core",
+            "pattern": "^../kurtosis-core",
             "replacement": "https://docs.kurtosistech.com/kurtosis-core"
         },
         {
-            "pattern": "^./kurtosis-libs",
+            "pattern": "^../kurtosis-libs",
             "replacement": "https://docs.kurtosistech.com/kurtosis-libs"
         }
     ]
