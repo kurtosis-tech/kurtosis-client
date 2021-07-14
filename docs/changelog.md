@@ -1,5 +1,12 @@
 # TBD
 
+# 0.6.0
+
+### Breaking Changes
+* Replaced the argument `ContainerConfigFactory` in `AddService`and `AddServiceToPartition`with two arguments `ContainerCreationConfig`and an anonymous function which should returns `ContainerRunConfig`type
+  * Users should use the `ContainerCreationConfig` struct, and the function that was defined in `GetRunConfig` in the `ContainerConfigFactory` implementations as the new arguments
+* Removed `ContainerConfigFactory` interface; users should instead feed the `ContainerCreationConfig` and `ContainerRunConfig` values directly to `NetworkContext.AddService` or `NetworkContext.AddServiceToPartition`
+
 # 0.5.0
 ### Features
 * Test volume mountpoints are now optional (with a sensible default) when creating `ContainerCreationConfig`s
@@ -14,6 +21,9 @@
 ### Breaking Changes
 * The `ContainerCreationConfigBuilder` constructor no longer takes in a test volume mountpoint
 * Added a `ContainerCreationConfigBuilder.WithTestVolumeMountpoint` for specifying the test volume mountpoint, which should be used instead if the default test volume mountpoint of `/kurtosis-test-volume` isn't acceptable
+* Replaced the argument `ContainerConfigFactory` in `AddService`and `AddServiceToPartition`with two arguments `ContainerCreationConfig`and an anonymous function which should returns `ContainerRunConfig`type;
+  users should use `ContainerCreationConfig` struct, and the function that was defined in `GetRunCongig` in the `ContainerConfigFactory` implementations as the new arguments
+* Removed `ContainerConfigFactory` interface
 
 # 0.4.0
 ### Features
