@@ -1,66 +1,54 @@
-/*package services*/
+/*package services*/ //TODO Get rid of this, not needed in typescript
 
-//TODO TODO TODO - fix imports
-
-/*import (
-	"context"
-	"github.com/palantir/stacktrace" //
-	"path"
-)*/
-
-import * as core_api_bindings from '../core_api_bindings'; //TODO - package.json?
-//import stacktrace = require('github.com/palantir/stacktrace');
+//import (
+	//"context" //TODO Don't need context for typescript, golang specific
+import * as core_api_bindings_js_grpc from '../../core_api_bindings/api_container_service_grpc_pb.js';
+import core_api_bindings_js from '../../core_api_bindings/api_container_service_pb.js'; //TODO - extra line, I might be able to reduce this with line above
+//	"github.com/palantir/stacktrace" //import stacktrace = require('github.com/palantir/stacktrace'); // TODO - Don't need stackTrace for golang
+	var path = require("path"); //"path" - TODO importing from node.js potentially
+//)
 
 // Docs available at https://docs.kurtosistech.com/kurtosis-libs/lib-documentation
-interface GeneratedFileFilepaths {
+interface GeneratedFileFilepaths { //TODO Chose to use interface to represent struct, will need to test to see if this hypothesis works
 	AbsoluteFilepathOnTestsuiteContainer: string;
 	AbsoluteFilepathOnServiceContainer:   string;
 }
 
-// // Docs available at https://docs.kurtosistech.com/kurtosis-libs/lib-documentation
-// interface ServiceContext {
-// 	//client:                                   core_api_bindings.ApiContainerServiceClient;
-// 	serviceId:                                ServiceID;
-// 	ipAddress:                               string;
-// 	testVolumeMountpointOnTestsuiteContainer: string;
-// 	testVolumeMountpointOnServiceContainer:   string;
-// }
+// Docs available at https://docs.kurtosistech.com/kurtosis-libs/lib-documentation
+interface ServiceContext {
+	client:                                   core_api_bindings_js_grpc.ApiContainerServiceClient;
+	serviceId:                                ServiceID;
+	ipAddress:                                string;
+	testVolumeMountpointOnTestsuiteContainer: string;
+	testVolumeMountpointOnServiceContainer:   string;
+}
 
-// function NewServiceContext (
-// 		//client core_api_bindings.ApiContainerServiceClient,
-// 		serviceId: ServiceID,
-// 		ipAddress: string,
-// 		testVolumeMountpointOnTestsuiteContainer: string,
-// 		testVolumeMountpointOnServiceContainer: string) {
-	
-//     let NewServiceContext = {
-//         //client:                                   client,
-//         serviceId:                                serviceId,
-//         ipAddress:                                ipAddress,
-//         testVolumeMountpointOnTestsuiteContainer: testVolumeMountpointOnTestsuiteContainer,
-//         testVolumeMountpointOnServiceContainer: testVolumeMountpointOnServiceContainer,
-//     }
-//     return NewServiceContext;
+function NewServiceContext (
+		client: core_api_bindings_js_grpc.ApiContainerServiceClient,
+		serviceId: ServiceID,
+		ipAddress: string,
+		testVolumeMountpointOnTestsuiteContainer: string,
+		testVolumeMountpointOnServiceContainer: string) { //TODO - Return type for function, typescript doesn't need
+	let NewServiceContext = {
+        client:                                   client,
+        serviceId:                                serviceId,
+        ipAddress:                                ipAddress,
+        testVolumeMountpointOnTestsuiteContainer: testVolumeMountpointOnTestsuiteContainer,
+        testVolumeMountpointOnServiceContainer: testVolumeMountpointOnServiceContainer,
+    }
+    return NewServiceContext; //TODO return pointer in golang, but typescript's reference variables implciltly point into the heap
+}
 
-//     // return ServiceContext{
-// 	// 	client:                                   client,
-// 	// 	serviceId:                                serviceId,
-// 	// 	ipAddress:                                ipAddress,
-// 	// 	testVolumeMountpointOnTestsuiteContainer: testVolumeMountpointOnTestsuiteContainer,
-// 	// 	testVolumeMountpointOnServiceContainer: testVolumeMountpointOnServiceContainer,
-// 	// }
-// }
-
-class ServiceContext {
+class ServiceContext { //TODO Should only be adding methods into a class, you can't link to a struct in typescript like in golang
     
-    client: core_api_bindings.ApiContainerServiceClient;
+    client: core_api_bindings_js_grpc.ApiContainerServiceClient;
     serviceId: ServiceID;
 	ipAddress: string;
 	testVolumeMountpointOnTestsuiteContainer: string;
 	testVolumeMountpointOnServiceContainer: string;
 
     constructor(
-        client: core_api_bindings.ApiContainerServiceClient,
+        client: core_api_bindings_js_grpc.ApiContainerServiceClient,
 		serviceId: ServiceID,
 		ipAddress: string,
 		testVolumeMountpointOnTestsuiteContainer: string,
@@ -70,7 +58,7 @@ class ServiceContext {
             this.ipAddress = ipAddress;
             this.testVolumeMountpointOnTestsuiteContainer = testVolumeMountpointOnTestsuiteContainer;
             this.testVolumeMountpointOnServiceContainer = testVolumeMountpointOnServiceContainer;
-        }
+    }
 
     // Docs available at https://docs.kurtosistech.com/kurtosis-libs/lib-documentation
     public GetServiceID() {
@@ -85,122 +73,85 @@ class ServiceContext {
     // Docs available at https://docs.kurtosistech.com/kurtosis-libs/lib-documentation
     public ExecCommand(command: string[]) {
         let serviceId = this.serviceId;
-        // let args = core_api_bindings.ExecCommandArgs{ //TODO -> pointer - &core_
-        //     ServiceId: String(serviceId),
-        //     CommandArgs: command,
-        // }
-        let resp, err = this.client.ExecCommand(context.Background(), args) //context.Background() = WeakMap
+        let args = new core_api_bindings_js.ExecCommandArgs();
+        args.setServiceId(serviceId);
+        args.setCommandArgsList(command);
+
+        let resp, err = this.client.execCommand(args); //TODO - no context needed in typescript, so what should I do here?
         if (err != null) {
-            return 0, null, stacktrace.Propagate(
+            return [0, null, console.error(
                 err,
-                "An error occurred executing command '%v' on service '%v'",
-                command,
-                serviceId);
+			    "An error occurred executing command '%v' on service '%v'",
+			    command,
+			    serviceId
+            )]; //TODO cannot return multipe values in typescript function, need to wrap in array or object
         }
-        return resp.ExitCode, resp.LogOutput, null; //TODO -> pointer - &resp.LogOutput
+        return resp.ExitCode, resp.LogOutput, null;
     }
 
     // Docs available at https://docs.kurtosistech.com/kurtosis-libs/lib-documentation
     public GenerateFiles(filesToGenerateSet: Map<string, boolean>) {
         let serviceId = this.serviceId;
-        let fileGenerationOpts = new Map(); //TODO - map type?
+        let fileGenerationOpts = new Map(); //Key: string & Value: core_api_bindings.FileGenerationOptions{} - type not needed in typescript
         for (let fileId in filesToGenerateSet) {
-            //fileGenerationOpts[fileId] = &core_api_bindings.FileGenerationOptions{
-            //     FileTypeToGenerate: core_api_bindings.FileGenerationOptions_FILE,
-            // }
+            fileGenerationOpts[fileId] = new core_api_bindings_js.FileGenerationOptions();
+            fileGenerationOpts[fileId].setFileTypeToGenerate(core_api_bindings_js.FileGenerationOptions.FileTypeToGenerate); //TODO - Check this
         }
-        // let args = &core_api_bindings.GenerateFilesArgs{
-        //     ServiceId:       String(serviceId),
-        //     FilesToGenerate: fileGenerationOpts
-        // }
-        // let resp, err = self.client.GenerateFiles(context.Background(), args) //context.Background() = WeakMap
-        // if err != nil {
-        //     return nil, stacktrace.Propagate(err, "An error occurred generating files using args: %+v", args)
-        // }
+
+        let args = new core_api_bindings_js.GenerateFilesArgs();
+        args.setServiceId(String(serviceId));
+        args.getFilesToGenerateMap(fileGenerationOpts); //TODO - No option to set FilesToGenerateMap (should this be the case)??
+
+        let resp, err = this.client.generateFiles(args) //TODO TODO - don't need context, what to do?
+        if (err != null){
+            return [null, console.error(err, "An error occurred generating files using args: %+v", args)];
+        }
         let generatedFileRelativeFilepaths = resp.GeneratedFileRelativeFilepaths
 
-        let result = new Map(); // TODO - may type?
+        let result = new Map(); // TODO Key:string & Value:GeneratedFileFilepaths{} - type not needed in typescript
         for (let fileId in filesToGenerateSet) {
             let relativeFilepath, found = generatedFileRelativeFilepaths[fileId]
-            // if (!found) {
-            //     return null, stacktrace.NewError(
-            //         "No filepath (relative to test volume root) was returned for file '%v', even though we requested it; this is a Kurtosis bug",
-            //         fileId)
-            // }
+            if (!found) {
+                return [null, console.error(
+                    "No filepath (relative to test volume root) was returned for file '%v', even though we requested it; this is a Kurtosis bug",
+                    fileId)]
+            }
+            // let absFilepathOnTestsuite = new URL(this.testVolumeMountpointOnTestsuiteContainer, relativeFilepath); //TODO need to confirm this VS path
+            // let absFilepathOnService = new URL(this.testVolumeMountpointOnServiceContainer, relativeFilepath);
             let absFilepathOnTestsuite = path.Join(this.testVolumeMountpointOnTestsuiteContainer, relativeFilepath)
             let absFilepathOnService = path.Join(this.testVolumeMountpointOnServiceContainer, relativeFilepath)
-            // result[fileId] = &GeneratedFileFilepaths{
-            //     AbsoluteFilepathOnTestsuiteContainer: absFilepathOnTestsuite,
-            //     AbsoluteFilepathOnServiceContainer:   absFilepathOnService,
+            // result[fileId] = GeneratedFileFilepaths{ //TODO - need to use interface defined above to pass it into result
+            //     {AbsoluteFilepathOnTestsuiteContainer: absFilepathOnTestsuite}
+            //     {AbsoluteFilepathOnServiceContainer:   absFilepathOnService}
             // }
         }
-        return result, null;
+        return [result, null]; //TODO - Design decision, returning multiple values as an array
     }
 
 
 }
 
-// // Docs available at https://docs.kurtosistech.com/kurtosis-libs/lib-documentation
-// func (self *ServiceContext) GetServiceID() ServiceID {
-// 	return self.serviceId
-// }
 
 // // Docs available at https://docs.kurtosistech.com/kurtosis-libs/lib-documentation
-// func (self *ServiceContext) GetIPAddress() string {
-// 	return self.ipAddress
-// }
-
-// // Docs available at https://docs.kurtosistech.com/kurtosis-libs/lib-documentation
-// func (self *ServiceContext) ExecCommand(command []string) (int32, *[]byte, error) {
+// func (self *ServiceContext) LoadStaticFiles(usedStaticFilesSet map[StaticFileID]bool) (map[StaticFileID]string, error) {
 // 	serviceId := self.serviceId
-// 	args := &core_api_bindings.ExecCommandArgs{
-// 		ServiceId: string(serviceId),
-// 		CommandArgs: command,
+// 	staticFilesToCopyStringSet := map[string]bool{}
+// 	for staticFileId := range usedStaticFilesSet {
+// 		staticFilesToCopyStringSet[string(staticFileId)] = true
 // 	}
-// 	resp, err := self.client.ExecCommand(context.Background(), args)
+// 	loadStaticFilesArgs := &core_api_bindings.LoadStaticFilesArgs{
+// 		ServiceId:   string(serviceId),
+// 		StaticFiles: staticFilesToCopyStringSet,
+// 	}
+// 	loadStaticFilesResp, err := self.client.LoadStaticFiles(context.Background(), loadStaticFilesArgs)
 // 	if err != nil {
-// 		return 0, nil, stacktrace.Propagate(
-// 			err,
-// 			"An error occurred executing command '%v' on service '%v'",
-// 			command,
-// 			serviceId)
+// 		return nil, stacktrace.Propagate(err, "An error occurred loading the requested static files into the namespace of service '%v'", serviceId)
 // 	}
-// 	return resp.ExitCode, &resp.LogOutput, nil
-// }
+// 	staticFileAbsFilepathsOnService := map[StaticFileID]string{}
+// 	for staticFileId, filepathRelativeToExVolRoot := range loadStaticFilesResp.CopiedStaticFileRelativeFilepaths {
+// 		absFilepathOnContainer := path.Join(self.testVolumeMountpointOnServiceContainer, filepathRelativeToExVolRoot)
+// 		staticFileAbsFilepathsOnService[StaticFileID(staticFileId)] = absFilepathOnContainer
+// 	}
+// 	return staticFileAbsFilepathsOnService, nil
 
-// // Docs available at https://docs.kurtosistech.com/kurtosis-libs/lib-documentation
-// func (self *ServiceContext) GenerateFiles(filesToGenerateSet map[string]bool) (map[string]*GeneratedFileFilepaths, error) {
-// 	serviceId := self.serviceId
-// 	fileGenerationOpts := map[string]*core_api_bindings.FileGenerationOptions{}
-// 	for fileId := range filesToGenerateSet {
-// 		fileGenerationOpts[fileId] = &core_api_bindings.FileGenerationOptions{
-// 			FileTypeToGenerate: core_api_bindings.FileGenerationOptions_FILE,
-// 		}
-// 	}
-// 	args := &core_api_bindings.GenerateFilesArgs{
-// 		ServiceId:       string(serviceId),
-// 		FilesToGenerate: fileGenerationOpts,
-// 	}
-// 	resp, err := self.client.GenerateFiles(context.Background(), args)
-// 	if err != nil {
-// 		return nil, stacktrace.Propagate(err, "An error occurred generating files using args: %+v", args)
-// 	}
-// 	generatedFileRelativeFilepaths := resp.GeneratedFileRelativeFilepaths
-
-// 	result := map[string]*GeneratedFileFilepaths{}
-// 	for fileId := range filesToGenerateSet {
-// 		relativeFilepath, found := generatedFileRelativeFilepaths[fileId]
-// 		if !found {
-// 			return nil, stacktrace.NewError(
-// 				"No filepath (relative to test volume root) was returned for file '%v', even though we requested it; this is a Kurtosis bug",
-// 				fileId)
-// 		}
-// 		absFilepathOnTestsuite := path.Join(self.testVolumeMountpointOnTestsuiteContainer, relativeFilepath)
-// 		absFilepathOnService := path.Join(self.testVolumeMountpointOnServiceContainer, relativeFilepath)
-// 		result[fileId] = &GeneratedFileFilepaths{
-// 			AbsoluteFilepathOnTestsuiteContainer: absFilepathOnTestsuite,
-// 			AbsoluteFilepathOnServiceContainer:   absFilepathOnService,
-// 		}
-// 	}
-// 	return result, nil
 // }

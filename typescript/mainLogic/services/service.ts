@@ -10,8 +10,8 @@ The identifier used for services with the network.
 */
 type ServiceID = string;
 
-// Docs available at https://docs.kurtosistech.com/kurtosis-libs/lib-documentation
-interface Service {
-	// Docs available at https://docs.kurtosistech.com/kurtosis-libs/lib-documentation
-	IsAvailable: () => boolean;
-}
+// // Docs available at https://docs.kurtosistech.com/kurtosis-libs/lib-documentation
+// interface Service {
+// 	// Docs available at https://docs.kurtosistech.com/kurtosis-libs/lib-documentation
+// 	IsAvailable: () => boolean;
+// }
