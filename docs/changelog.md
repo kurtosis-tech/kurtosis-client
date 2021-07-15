@@ -1,4 +1,7 @@
 # TBD
+### Features
+* Added a `LoadModule` endpoint to the API container
+* Added a `NetworkContext.loadLambda` method that returns a `LambdaModuleContext` with a single method, `execute`, for using Kurtosis Lambda module functions
 
 # 0.5.0
 ### Features

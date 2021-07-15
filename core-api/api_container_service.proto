@@ -7,6 +7,12 @@ option go_package = "github.com/kurtosis-tech/kurtosis-client/golang/core_api_bi
 import "google/protobuf/empty.proto";
 
 service ApiContainerService {
+  // Starts a module container into the network
+  rpc LoadModule(LoadModuleArgs) returns (LoadModuleResponse) {};
+
+  // Executes a Kurtosis Lambda module function on behalf of the user 
+  rpc ExecuteLambda(ExecuteLambdaArgs) returns (ExecuteLambdaResponse) {};
+
   // Registers a service with the API container but doesn't start the container for it
   rpc RegisterService(RegisterServiceArgs) returns (RegisterServiceResponse) {};
 
@@ -37,6 +43,48 @@ service ApiContainerService {
   // Executes multiple commands at once
   rpc ExecuteBulkCommands(ExecuteBulkCommandsArgs) returns (google.protobuf.Empty) {};
 }
+
+
+// ==============================================================================================
+//                                     Load Module
+// ==============================================================================================
+message LoadModuleArgs {
+  enum ModuleType {
+    LAMBDA = 0; // Module that has a single function
+    // TODO add arbitrary-API modules
+  }
+
+  ModuleType module_type = 1;
+
+  string container_image = 2;
+
+  // The serialized-to-JSON params object that will be used to start the module
+  string params_json = 3;
+}
+
+message LoadModuleResponse {
+  string module_id = 1;
+
+  string ip_addr = 2;
+}
+
+
+
+// ==============================================================================================
+//                                     Execute Lambda
+// ==============================================================================================
+message ExecuteLambdaArgs {
+  string module_id = 1;
+
+  // JSON-serialized args to the Lambda's execute function
+  string params_json = 2;
+}
+
+message ExecuteLambdaResponse {
+  // JSON-serialized response from the Lambda's execute function
+  string response_json = 1;
+}
+
 
 // ==============================================================================================
 //                                     Register Service
