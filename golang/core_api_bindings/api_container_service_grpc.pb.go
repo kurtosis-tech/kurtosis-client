@@ -19,6 +19,10 @@ const _ = grpc.SupportPackageIsVersion7
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type ApiContainerServiceClient interface {
+	// Starts a module container into the network
+	LoadModule(ctx context.Context, in *LoadModuleArgs, opts ...grpc.CallOption) (*LoadModuleResponse, error)
+	// Executes a Kurtosis Lambda module function on behalf of the user
+	ExecuteLambda(ctx context.Context, in *ExecuteLambdaArgs, opts ...grpc.CallOption) (*ExecuteLambdaResponse, error)
 	// Registers a service with the API container but doesn't start the container for it
 	RegisterService(ctx context.Context, in *RegisterServiceArgs, opts ...grpc.CallOption) (*RegisterServiceResponse, error)
 	// Generates files inside the test volume on the filesystem for a container
@@ -47,6 +51,24 @@ type apiContainerServiceClient struct {
 
 func NewApiContainerServiceClient(cc grpc.ClientConnInterface) ApiContainerServiceClient {
 	return &apiContainerServiceClient{cc}
+}
+
+func (c *apiContainerServiceClient) LoadModule(ctx context.Context, in *LoadModuleArgs, opts ...grpc.CallOption) (*LoadModuleResponse, error) {
+	out := new(LoadModuleResponse)
+	err := c.cc.Invoke(ctx, "/api_container_api.ApiContainerService/LoadModule", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *apiContainerServiceClient) ExecuteLambda(ctx context.Context, in *ExecuteLambdaArgs, opts ...grpc.CallOption) (*ExecuteLambdaResponse, error) {
+	out := new(ExecuteLambdaResponse)
+	err := c.cc.Invoke(ctx, "/api_container_api.ApiContainerService/ExecuteLambda", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
 }
 
 func (c *apiContainerServiceClient) RegisterService(ctx context.Context, in *RegisterServiceArgs, opts ...grpc.CallOption) (*RegisterServiceResponse, error) {
@@ -143,6 +165,10 @@ func (c *apiContainerServiceClient) ExecuteBulkCommands(ctx context.Context, in 
 // All implementations must embed UnimplementedApiContainerServiceServer
 // for forward compatibility
 type ApiContainerServiceServer interface {
+	// Starts a module container into the network
+	LoadModule(context.Context, *LoadModuleArgs) (*LoadModuleResponse, error)
+	// Executes a Kurtosis Lambda module function on behalf of the user
+	ExecuteLambda(context.Context, *ExecuteLambdaArgs) (*ExecuteLambdaResponse, error)
 	// Registers a service with the API container but doesn't start the container for it
 	RegisterService(context.Context, *RegisterServiceArgs) (*RegisterServiceResponse, error)
 	// Generates files inside the test volume on the filesystem for a container
@@ -170,6 +196,12 @@ type ApiContainerServiceServer interface {
 type UnimplementedApiContainerServiceServer struct {
 }
 
+func (UnimplementedApiContainerServiceServer) LoadModule(context.Context, *LoadModuleArgs) (*LoadModuleResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method LoadModule not implemented")
+}
+func (UnimplementedApiContainerServiceServer) ExecuteLambda(context.Context, *ExecuteLambdaArgs) (*ExecuteLambdaResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ExecuteLambda not implemented")
+}
 func (UnimplementedApiContainerServiceServer) RegisterService(context.Context, *RegisterServiceArgs) (*RegisterServiceResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method RegisterService not implemented")
 }
@@ -211,6 +243,42 @@ type UnsafeApiContainerServiceServer interface {
 
 func RegisterApiContainerServiceServer(s grpc.ServiceRegistrar, srv ApiContainerServiceServer) {
 	s.RegisterService(&ApiContainerService_ServiceDesc, srv)
+}
+
+func _ApiContainerService_LoadModule_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(LoadModuleArgs)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ApiContainerServiceServer).LoadModule(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/api_container_api.ApiContainerService/LoadModule",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ApiContainerServiceServer).LoadModule(ctx, req.(*LoadModuleArgs))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ApiContainerService_ExecuteLambda_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ExecuteLambdaArgs)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ApiContainerServiceServer).ExecuteLambda(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/api_container_api.ApiContainerService/ExecuteLambda",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ApiContainerServiceServer).ExecuteLambda(ctx, req.(*ExecuteLambdaArgs))
+	}
+	return interceptor(ctx, in, info, handler)
 }
 
 func _ApiContainerService_RegisterService_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
@@ -400,6 +468,14 @@ var ApiContainerService_ServiceDesc = grpc.ServiceDesc{
 	ServiceName: "api_container_api.ApiContainerService",
 	HandlerType: (*ApiContainerServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "LoadModule",
+			Handler:    _ApiContainerService_LoadModule_Handler,
+		},
+		{
+			MethodName: "ExecuteLambda",
+			Handler:    _ApiContainerService_ExecuteLambda_Handler,
+		},
 		{
 			MethodName: "RegisterService",
 			Handler:    _ApiContainerService_RegisterService_Handler,

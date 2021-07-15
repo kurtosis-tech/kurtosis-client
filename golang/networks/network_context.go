@@ -8,6 +8,7 @@ package networks
 import (
 	"context"
 	"github.com/kurtosis-tech/kurtosis-client/golang/core_api_bindings"
+	"github.com/kurtosis-tech/kurtosis-client/golang/modules"
 	"github.com/kurtosis-tech/kurtosis-client/golang/services"
 	"github.com/palantir/stacktrace"
 	"github.com/sirupsen/logrus"
@@ -44,6 +45,25 @@ func NewNetworkContext(
 		filesArtifactUrls:    filesArtifactUrls,
 		suiteExVolMountpoint: suiteExVolMountpoint,
 	}
+}
+
+// Docs available at https://docs.kurtosistech.com/kurtosis-libs/lib-documentation
+func (networkCtx *NetworkContext) LoadLambda(
+		moduleId modules.ModuleID,
+		moduleImage string,
+		paramsJsonStr string) (*modules.LambdaModuleContext, error) {
+	args := &core_api_bindings.LoadModuleArgs{
+		ModuleType:     core_api_bindings.LoadModuleArgs_LAMBDA,
+		ContainerImage: moduleImage,
+		ParamsJson:     paramsJsonStr,
+	}
+	// Calling Lambda modules are proxied by the API container, so actually no need to use the response here
+	_, err := networkCtx.client.LoadModule(context.Background(), args)
+	if err != nil {
+		return nil, stacktrace.Propagate(err, "An error occurred loading new module '%v' with image '%v' and params JSON '%v'", moduleId, moduleImage, paramsJsonStr)
+	}
+	moduleCtx := modules.NewLambdaModuleContext(networkCtx.client, moduleId)
+	return moduleCtx, nil
 }
 
 // Docs available at https://docs.kurtosistech.com/kurtosis-libs/lib-documentation

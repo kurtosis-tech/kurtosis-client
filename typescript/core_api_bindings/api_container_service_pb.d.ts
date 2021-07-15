@@ -4,6 +4,108 @@
 import * as jspb from "google-protobuf";
 import * as google_protobuf_empty_pb from "google-protobuf/google/protobuf/empty_pb";
 
+export class LoadModuleArgs extends jspb.Message {
+  getModuleType(): LoadModuleArgs.ModuleTypeMap[keyof LoadModuleArgs.ModuleTypeMap];
+  setModuleType(value: LoadModuleArgs.ModuleTypeMap[keyof LoadModuleArgs.ModuleTypeMap]): void;
+
+  getContainerImage(): string;
+  setContainerImage(value: string): void;
+
+  getParamsJson(): string;
+  setParamsJson(value: string): void;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): LoadModuleArgs.AsObject;
+  static toObject(includeInstance: boolean, msg: LoadModuleArgs): LoadModuleArgs.AsObject;
+  static extensions: {[key: number]: jspb.ExtensionFieldInfo<jspb.Message>};
+  static extensionsBinary: {[key: number]: jspb.ExtensionFieldBinaryInfo<jspb.Message>};
+  static serializeBinaryToWriter(message: LoadModuleArgs, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): LoadModuleArgs;
+  static deserializeBinaryFromReader(message: LoadModuleArgs, reader: jspb.BinaryReader): LoadModuleArgs;
+}
+
+export namespace LoadModuleArgs {
+  export type AsObject = {
+    moduleType: LoadModuleArgs.ModuleTypeMap[keyof LoadModuleArgs.ModuleTypeMap],
+    containerImage: string,
+    paramsJson: string,
+  }
+
+  export interface ModuleTypeMap {
+    LAMBDA: 0;
+  }
+
+  export const ModuleType: ModuleTypeMap;
+}
+
+export class LoadModuleResponse extends jspb.Message {
+  getModuleId(): string;
+  setModuleId(value: string): void;
+
+  getIpAddr(): string;
+  setIpAddr(value: string): void;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): LoadModuleResponse.AsObject;
+  static toObject(includeInstance: boolean, msg: LoadModuleResponse): LoadModuleResponse.AsObject;
+  static extensions: {[key: number]: jspb.ExtensionFieldInfo<jspb.Message>};
+  static extensionsBinary: {[key: number]: jspb.ExtensionFieldBinaryInfo<jspb.Message>};
+  static serializeBinaryToWriter(message: LoadModuleResponse, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): LoadModuleResponse;
+  static deserializeBinaryFromReader(message: LoadModuleResponse, reader: jspb.BinaryReader): LoadModuleResponse;
+}
+
+export namespace LoadModuleResponse {
+  export type AsObject = {
+    moduleId: string,
+    ipAddr: string,
+  }
+}
+
+export class ExecuteLambdaArgs extends jspb.Message {
+  getModuleId(): string;
+  setModuleId(value: string): void;
+
+  getParamsJson(): string;
+  setParamsJson(value: string): void;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): ExecuteLambdaArgs.AsObject;
+  static toObject(includeInstance: boolean, msg: ExecuteLambdaArgs): ExecuteLambdaArgs.AsObject;
+  static extensions: {[key: number]: jspb.ExtensionFieldInfo<jspb.Message>};
+  static extensionsBinary: {[key: number]: jspb.ExtensionFieldBinaryInfo<jspb.Message>};
+  static serializeBinaryToWriter(message: ExecuteLambdaArgs, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): ExecuteLambdaArgs;
+  static deserializeBinaryFromReader(message: ExecuteLambdaArgs, reader: jspb.BinaryReader): ExecuteLambdaArgs;
+}
+
+export namespace ExecuteLambdaArgs {
+  export type AsObject = {
+    moduleId: string,
+    paramsJson: string,
+  }
+}
+
+export class ExecuteLambdaResponse extends jspb.Message {
+  getResponseJson(): string;
+  setResponseJson(value: string): void;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): ExecuteLambdaResponse.AsObject;
+  static toObject(includeInstance: boolean, msg: ExecuteLambdaResponse): ExecuteLambdaResponse.AsObject;
+  static extensions: {[key: number]: jspb.ExtensionFieldInfo<jspb.Message>};
+  static extensionsBinary: {[key: number]: jspb.ExtensionFieldBinaryInfo<jspb.Message>};
+  static serializeBinaryToWriter(message: ExecuteLambdaResponse, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): ExecuteLambdaResponse;
+  static deserializeBinaryFromReader(message: ExecuteLambdaResponse, reader: jspb.BinaryReader): ExecuteLambdaResponse;
+}
+
+export namespace ExecuteLambdaResponse {
+  export type AsObject = {
+    responseJson: string,
+  }
+}
+
 export class RegisterServiceArgs extends jspb.Message {
   getServiceId(): string;
   setServiceId(value: string): void;
