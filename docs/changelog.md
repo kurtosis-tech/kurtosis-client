@@ -1,4 +1,6 @@
 # TBD
+
+# 0.6.2
 ### Changes
 * Make the user specify module ID, rather than autogenerating one
 
