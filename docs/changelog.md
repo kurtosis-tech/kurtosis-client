@@ -1,5 +1,13 @@
 # TBD
 
+# 0.6.2
+### Changes
+* Make the user specify module ID, rather than autogenerating one
+
+### Features
+* Added a `LoadModule` endpoint to the API container
+* Added a `NetworkContext.loadLambda` method that returns a `LambdaModuleContext` with a single method, `execute`, for using Kurtosis Lambda module functions
+
 # 0.6.1
 ### Fixes
 * Fixed an error in this document
