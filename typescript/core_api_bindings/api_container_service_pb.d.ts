@@ -5,11 +5,14 @@ import * as jspb from "google-protobuf";
 import * as google_protobuf_empty_pb from "google-protobuf/google/protobuf/empty_pb";
 
 export class LoadModuleArgs extends jspb.Message {
-  getModuleType(): LoadModuleArgs.ModuleTypeMap[keyof LoadModuleArgs.ModuleTypeMap];
-  setModuleType(value: LoadModuleArgs.ModuleTypeMap[keyof LoadModuleArgs.ModuleTypeMap]): void;
+  getModuleId(): string;
+  setModuleId(value: string): void;
 
   getContainerImage(): string;
   setContainerImage(value: string): void;
+
+  getModuleType(): LoadModuleArgs.ModuleTypeMap[keyof LoadModuleArgs.ModuleTypeMap];
+  setModuleType(value: LoadModuleArgs.ModuleTypeMap[keyof LoadModuleArgs.ModuleTypeMap]): void;
 
   getParamsJson(): string;
   setParamsJson(value: string): void;
@@ -26,8 +29,9 @@ export class LoadModuleArgs extends jspb.Message {
 
 export namespace LoadModuleArgs {
   export type AsObject = {
-    moduleType: LoadModuleArgs.ModuleTypeMap[keyof LoadModuleArgs.ModuleTypeMap],
+    moduleId: string,
     containerImage: string,
+    moduleType: LoadModuleArgs.ModuleTypeMap[keyof LoadModuleArgs.ModuleTypeMap],
     paramsJson: string,
   }
 
@@ -39,9 +43,6 @@ export namespace LoadModuleArgs {
 }
 
 export class LoadModuleResponse extends jspb.Message {
-  getModuleId(): string;
-  setModuleId(value: string): void;
-
   getIpAddr(): string;
   setIpAddr(value: string): void;
 
@@ -57,7 +58,6 @@ export class LoadModuleResponse extends jspb.Message {
 
 export namespace LoadModuleResponse {
   export type AsObject = {
-    moduleId: string,
     ipAddr: string,
   }
 }

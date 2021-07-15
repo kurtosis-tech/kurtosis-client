@@ -53,11 +53,12 @@ func (networkCtx *NetworkContext) LoadLambda(
 		moduleImage string,
 		paramsJsonStr string) (*modules.LambdaModuleContext, error) {
 	args := &core_api_bindings.LoadModuleArgs{
-		ModuleType:     core_api_bindings.LoadModuleArgs_LAMBDA,
+		ModuleId:       string(moduleId),
 		ContainerImage: moduleImage,
+		ModuleType:     core_api_bindings.LoadModuleArgs_LAMBDA,
 		ParamsJson:     paramsJsonStr,
 	}
-	// Calling Lambda modules are proxied by the API container, so actually no need to use the response here
+	// We proxy calls to Lambda modules via the API container, so actually no need to use the response here
 	_, err := networkCtx.client.LoadModule(context.Background(), args)
 	if err != nil {
 		return nil, stacktrace.Propagate(err, "An error occurred loading new module '%v' with image '%v' and params JSON '%v'", moduleId, moduleImage, paramsJsonStr)
