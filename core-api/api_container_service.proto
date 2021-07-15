@@ -54,17 +54,17 @@ message LoadModuleArgs {
     // TODO add arbitrary-API modules
   }
 
-  ModuleType module_type = 1;
+  string module_id = 1;
 
   string container_image = 2;
 
+  ModuleType module_type = 3;
+
   // The serialized-to-JSON params object that will be used to start the module
-  string params_json = 3;
+  string params_json = 4;
 }
 
 message LoadModuleResponse {
-  string module_id = 1;
-
   string ip_addr = 2;
 }
 

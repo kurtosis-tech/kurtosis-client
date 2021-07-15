@@ -601,9 +601,10 @@ proto.api_container_api.LoadModuleArgs.prototype.toObject = function(opt_include
  */
 proto.api_container_api.LoadModuleArgs.toObject = function(includeInstance, msg) {
   var f, obj = {
-    moduleType: jspb.Message.getFieldWithDefault(msg, 1, 0),
+    moduleId: jspb.Message.getFieldWithDefault(msg, 1, ""),
     containerImage: jspb.Message.getFieldWithDefault(msg, 2, ""),
-    paramsJson: jspb.Message.getFieldWithDefault(msg, 3, "")
+    moduleType: jspb.Message.getFieldWithDefault(msg, 3, 0),
+    paramsJson: jspb.Message.getFieldWithDefault(msg, 4, "")
   };
 
   if (includeInstance) {
@@ -641,14 +642,18 @@ proto.api_container_api.LoadModuleArgs.deserializeBinaryFromReader = function(ms
     var field = reader.getFieldNumber();
     switch (field) {
     case 1:
-      var value = /** @type {!proto.api_container_api.LoadModuleArgs.ModuleType} */ (reader.readEnum());
-      msg.setModuleType(value);
+      var value = /** @type {string} */ (reader.readString());
+      msg.setModuleId(value);
       break;
     case 2:
       var value = /** @type {string} */ (reader.readString());
       msg.setContainerImage(value);
       break;
     case 3:
+      var value = /** @type {!proto.api_container_api.LoadModuleArgs.ModuleType} */ (reader.readEnum());
+      msg.setModuleType(value);
+      break;
+    case 4:
       var value = /** @type {string} */ (reader.readString());
       msg.setParamsJson(value);
       break;
@@ -681,9 +686,9 @@ proto.api_container_api.LoadModuleArgs.prototype.serializeBinary = function() {
  */
 proto.api_container_api.LoadModuleArgs.serializeBinaryToWriter = function(message, writer) {
   var f = undefined;
-  f = message.getModuleType();
-  if (f !== 0.0) {
-    writer.writeEnum(
+  f = message.getModuleId();
+  if (f.length > 0) {
+    writer.writeString(
       1,
       f
     );
@@ -695,10 +700,17 @@ proto.api_container_api.LoadModuleArgs.serializeBinaryToWriter = function(messag
       f
     );
   }
+  f = message.getModuleType();
+  if (f !== 0.0) {
+    writer.writeEnum(
+      3,
+      f
+    );
+  }
   f = message.getParamsJson();
   if (f.length > 0) {
     writer.writeString(
-      3,
+      4,
       f
     );
   }
@@ -713,20 +725,20 @@ proto.api_container_api.LoadModuleArgs.ModuleType = {
 };
 
 /**
- * optional ModuleType module_type = 1;
- * @return {!proto.api_container_api.LoadModuleArgs.ModuleType}
+ * optional string module_id = 1;
+ * @return {string}
  */
-proto.api_container_api.LoadModuleArgs.prototype.getModuleType = function() {
-  return /** @type {!proto.api_container_api.LoadModuleArgs.ModuleType} */ (jspb.Message.getFieldWithDefault(this, 1, 0));
+proto.api_container_api.LoadModuleArgs.prototype.getModuleId = function() {
+  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 1, ""));
 };
 
 
 /**
- * @param {!proto.api_container_api.LoadModuleArgs.ModuleType} value
+ * @param {string} value
  * @return {!proto.api_container_api.LoadModuleArgs} returns this
  */
-proto.api_container_api.LoadModuleArgs.prototype.setModuleType = function(value) {
-  return jspb.Message.setProto3EnumField(this, 1, value);
+proto.api_container_api.LoadModuleArgs.prototype.setModuleId = function(value) {
+  return jspb.Message.setProto3StringField(this, 1, value);
 };
 
 
@@ -749,11 +761,29 @@ proto.api_container_api.LoadModuleArgs.prototype.setContainerImage = function(va
 
 
 /**
- * optional string params_json = 3;
+ * optional ModuleType module_type = 3;
+ * @return {!proto.api_container_api.LoadModuleArgs.ModuleType}
+ */
+proto.api_container_api.LoadModuleArgs.prototype.getModuleType = function() {
+  return /** @type {!proto.api_container_api.LoadModuleArgs.ModuleType} */ (jspb.Message.getFieldWithDefault(this, 3, 0));
+};
+
+
+/**
+ * @param {!proto.api_container_api.LoadModuleArgs.ModuleType} value
+ * @return {!proto.api_container_api.LoadModuleArgs} returns this
+ */
+proto.api_container_api.LoadModuleArgs.prototype.setModuleType = function(value) {
+  return jspb.Message.setProto3EnumField(this, 3, value);
+};
+
+
+/**
+ * optional string params_json = 4;
  * @return {string}
  */
 proto.api_container_api.LoadModuleArgs.prototype.getParamsJson = function() {
-  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 3, ""));
+  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 4, ""));
 };
 
 
@@ -762,7 +792,7 @@ proto.api_container_api.LoadModuleArgs.prototype.getParamsJson = function() {
  * @return {!proto.api_container_api.LoadModuleArgs} returns this
  */
 proto.api_container_api.LoadModuleArgs.prototype.setParamsJson = function(value) {
-  return jspb.Message.setProto3StringField(this, 3, value);
+  return jspb.Message.setProto3StringField(this, 4, value);
 };
 
 
@@ -798,7 +828,6 @@ proto.api_container_api.LoadModuleResponse.prototype.toObject = function(opt_inc
  */
 proto.api_container_api.LoadModuleResponse.toObject = function(includeInstance, msg) {
   var f, obj = {
-    moduleId: jspb.Message.getFieldWithDefault(msg, 1, ""),
     ipAddr: jspb.Message.getFieldWithDefault(msg, 2, "")
   };
 
@@ -836,10 +865,6 @@ proto.api_container_api.LoadModuleResponse.deserializeBinaryFromReader = functio
     }
     var field = reader.getFieldNumber();
     switch (field) {
-    case 1:
-      var value = /** @type {string} */ (reader.readString());
-      msg.setModuleId(value);
-      break;
     case 2:
       var value = /** @type {string} */ (reader.readString());
       msg.setIpAddr(value);
@@ -873,13 +898,6 @@ proto.api_container_api.LoadModuleResponse.prototype.serializeBinary = function(
  */
 proto.api_container_api.LoadModuleResponse.serializeBinaryToWriter = function(message, writer) {
   var f = undefined;
-  f = message.getModuleId();
-  if (f.length > 0) {
-    writer.writeString(
-      1,
-      f
-    );
-  }
   f = message.getIpAddr();
   if (f.length > 0) {
     writer.writeString(
@@ -887,24 +905,6 @@ proto.api_container_api.LoadModuleResponse.serializeBinaryToWriter = function(me
       f
     );
   }
-};
-
-
-/**
- * optional string module_id = 1;
- * @return {string}
- */
-proto.api_container_api.LoadModuleResponse.prototype.getModuleId = function() {
-  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 1, ""));
-};
-
-
-/**
- * @param {string} value
- * @return {!proto.api_container_api.LoadModuleResponse} returns this
- */
-proto.api_container_api.LoadModuleResponse.prototype.setModuleId = function(value) {
-  return jspb.Message.setProto3StringField(this, 1, value);
 };
 
 
