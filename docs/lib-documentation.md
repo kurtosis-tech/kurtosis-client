@@ -9,16 +9,16 @@ LambdaModuleContext
 <!-- TODO need to add docs for what Kurtosis modules are -->
 This Kurtosis-provided class is the lowest-level representation of a Lambda Kurtosis module - a Kurtosis module that has exactly one function.
 
-### execute(String argsJson) -\> String
+### execute(String argsJson) -\> String responseJson
 Executes the function packaged inside the Kurtosis Lambda module with the given JSON-serialized args.
 
 **Args**
 
-An arbitrary JSON-serialized object containing args to the Lambda function. Consult the documentation for the module you're using to determine what this should contain.
+* `argsJson`: An arbitrary JSON-serialized object containing args to the Lambda function. Consult the documentation for the module you're using to determine what this should contain.
 
 **Returns**
 
-An arbitrary JSON-serialized object containing the results of executing the Lambda function. Consult the documentation for the module you're using to determine what this will contain.
+* `responseJson`: An arbitrary JSON-serialized object containing the results of executing the Lambda function. Consult the documentation for the module you're using to determine what this will contain.
 
 Network
 -------
@@ -29,7 +29,7 @@ NetworkContext
 This Kurtosis-provided class is the lowest-level representation of a test network, and provides methods for inspecting and manipulating the network. All [Network][network] implementations will encapsulate an instance of this class.
 
 
-### loadLambda(String moduleId, String moduleImage, String paramsJson) -\> [LambdaModuleContext][lambdamodulecontext] 
+### loadLambda(String moduleId, String moduleImage, String paramsJson) -\> [LambdaModuleContext][lambdamodulecontext] lambdaModuleContext
 Starts a new Kurtosis Lambda module inside the test network, which makes its function available for use.
 
 **Args**
@@ -39,7 +39,8 @@ Starts a new Kurtosis Lambda module inside the test network, which makes its fun
 * `paramsJson`: JSON-serialized parameters that will be passed to the module as it starts, to control overall module behaviour.
 
 **Returns**
-The [LambdaModuleContext][lambdamodulecontext] representation of the running module, which allows execution of the Lambda function.
+
+* `lambdaModuleContext`: The [LambdaModuleContext][lambdamodulecontext] representation of the running module, which allows execution of the Lambda function.
 
 
 ### addServiceToPartition(ServiceID serviceId, PartitionID partitionId, [ContainerConfigFactory\<S\>][containerconfigfactory] configFactory) -\> ([ServiceContext][servicecontext] serviceContext, Map\<String, PortBinding\> hostPortBindings)
