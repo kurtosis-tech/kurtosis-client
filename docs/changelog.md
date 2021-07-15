@@ -3,6 +3,16 @@
 * Added a `LoadModule` endpoint to the API container
 * Added a `NetworkContext.loadLambda` method that returns a `LambdaModuleContext` with a single method, `execute`, for using Kurtosis Lambda module functions
 
+# 0.6.1
+### Fixes
+* Fixed an error in this document
+
+# 0.6.0
+### Breaking Changes
+* Replaced the argument `ContainerConfigFactory` in `AddService`and `AddServiceToPartition`with two arguments `ContainerCreationConfig`and an anonymous function which should returns `ContainerRunConfig`type
+  * Users should use the `ContainerCreationConfig` struct, and the function that was defined in `GetRunConfig` in the `ContainerConfigFactory` implementations as the new arguments
+* Removed `ContainerConfigFactory` interface; users should instead feed the `ContainerCreationConfig` and `ContainerRunConfig` values directly to `NetworkContext.AddService` or `NetworkContext.AddServiceToPartition`
+
 # 0.5.0
 ### Features
 * Test volume mountpoints are now optional (with a sensible default) when creating `ContainerCreationConfig`s

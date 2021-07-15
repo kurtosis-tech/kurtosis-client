@@ -28,7 +28,6 @@ NetworkContext
 --------------
 This Kurtosis-provided class is the lowest-level representation of a test network, and provides methods for inspecting and manipulating the network. All [Network][network] implementations will encapsulate an instance of this class.
 
-
 ### loadLambda(String moduleId, String moduleImage, String paramsJson) -\> [LambdaModuleContext][lambdamodulecontext] lambdaModuleContext
 Starts a new Kurtosis Lambda module inside the test network, which makes its function available for use.
 
@@ -43,21 +42,22 @@ Starts a new Kurtosis Lambda module inside the test network, which makes its fun
 * `lambdaModuleContext`: The [LambdaModuleContext][lambdamodulecontext] representation of the running module, which allows execution of the Lambda function.
 
 
-### addServiceToPartition(ServiceID serviceId, PartitionID partitionId, [ContainerConfigFactory\<S\>][containerconfigfactory] configFactory) -\> ([ServiceContext][servicecontext] serviceContext, Map\<String, PortBinding\> hostPortBindings)
+### addServiceToPartition(ServiceID serviceId, PartitionID partitionId, [ContainerCreationConfig][containercreationconfig] containerCreationConfig, Func(String ipAddr, Map\<String, String\> generatedFileFilepaths, Map\<String, String\> staticFileFilepaths) -\> [ContainerRunConfig][containerrunconfig] generateRunConfigFunc) -\> ([ServiceContext][servicecontext] serviceContext, Map\<String, PortBinding\> hostPortBindings)
 Starts a new service in the network with the given service ID, inside the partition with the given ID, using the given config factory.
 
 **Args**
 
 * `serviceId`: The ID that the new service should have.
 * `partitionId`: The ID of the partition that the new service should be started in. This can be left blank to start the service in the default partition if it exists (i.e. if the network hasn't been repartitioned and the default partition removed).
-* `configFactory`: The factory that produces the configs Kurtosis will use to start the container for the new service.
+* `containerCreationConfig`: The definition of the necessary values that Kurtosis will use to start the container for the new service.
+* `generateRunConfigFunc`: An anonymous function, used to produce the [ContainerRunConfig][containerrunconfig] for starting the service, which receives three dynamic values as arguments: the IP address of the service being started, the filepaths of the generated files specified in the [ContainerCreationConfig][containercreationconfig], and the filepaths of the static files specifid in [ContainerCreationConfig][containercreationconfig].
 
 **Returns**
 
 * `serviceContext`: The [ServiceContext][servicecontext] representation of a service running in a Docker container.
 * `hostPortBindings`: The port spec strings that the service declared (as defined in [ContainerCreationConfig.usedPorts][containercreationconfig_usedports]), mapped to the port on the host machine where the port has been bound to. This allows you to make requests to a service running in Kurtosis by making requests to a port on your local machine. If a port was not bound to a host machine port, it will not be present in the map (and if no ports were bound to host machine ports, the map will be empty).
 
-### addService(ServiceID serviceId, [ContainerConfigFactory\<S\>][containerconfigfactory] configFactory) -\> ([ServiceContext][servicecontext] serviceContext, Map\<String, PortBinding\> hostPortBindings)
+### addService(ServiceID serviceId, [ContainerCreationConfig][containercreationconfig] containerCreationConfig, Func(String ipAddr, Map\<String, String\> generatedFileFilepaths, Map\<String, String\> staticFileFilepaths) -\> [ContainerRunConfig][containerrunconfig] generateRunConfigFunc ) -\> ([ServiceContext][servicecontext] serviceContext, Map\<String, PortBinding\> hostPortBindings)
 Convenience wrapper around [NetworkContext.addServiceToPartition][networkcontext_addservicetopartition], that adds the service to the default partition. Note that if the network has been repartitioned and the default partition doesn't exist anymore, this method will fail.
 
 ### getServiceContext(ServiceID serviceId) -\> [ServiceContext][servicecontext]
@@ -112,31 +112,6 @@ This class is a plain old object defining the state between two partitions (e.g.
 
 
 
-ContainerConfigFactory\<S extends [Service][service]\>
------------------------------------------------------
-Factory interface that creates [ContainerCreationConfig][containercreationconfig] and [ContainerRunConfig][containerrunconfig] instances, which instruct Kurtosis how to instantiate a container.
-
-### getCreationConfig(String containerIpAddr) -\> [ContainerCreationConfig][containercreationconfig]
-Returns a [ContainerCreationConfig][containercreationconfig] object for instructing Kurtosis how to create the container. You should use the [ContainerCreationConfigBuilder][containercreationconfigbuilder] object to create the result.
-
-**Args**
-* `containerIpAddr`: The IP address that the container-to-be will have.
-
-**Returns**
-The config detailing how the container will be created, constructed using a [ContainerCreationConfigBuilder][containercreationconfigbuilder].
-
-### getRunConfig(String containerIpAddr, Map\<String, String\> generatedFileFilepaths) -\> [ContainerRunConfig][containerrunconfig]
-Returns a [ContainerRunConfig][containerrunconfig] object for instructing Kurtosis how to run the container. You should use the [ContainerRunConfigBuilder][containerrunconfigbuilder] object to create the result.
-
-**Args**
-* `containerIpAddr`: The IP address that the container to run has been allocated.
-* `generatedFileFilepaths`: A mapping of file ID (as declared in [ContainerCreationConfig.fileGeneratingFuncs][containercreationconfig_filegeneratingfuncs] to the filepath on the service container where the generated file lives.
-
-**Returns**
-The config detailing how the container will be run, constructed using a [ContainerRunConfigBuilder][containerrunconfigbuilder].
-
-
-
 ContainerCreationConfig
 -----------------------
 Object containing information Kurtosis needs to create the container. This config should be created using [ContainerCreationConfigBuilder][containercreationconfigbuilder] instances.
@@ -151,7 +126,7 @@ Kurtosis uses a Docker volume to keep track of test state, and needs to mount th
 The set of ports that the container will be listening on, in the format `NUM/PROTOCOL` (e.g. `80/tcp`, `9090/udp`, etc.).
 
 ### Map\<String, Func(File)\> fileGeneratingFuncs
-Declares the files that will be generated before your service starts and made available on the container's filesystem, as well as the logic for generating their contents. The file keys declared here (which can be any string you like) will be the same keys used to identify the files in the map arg to [ContainerConfigFactory.getRunConfig][containerconfigfactory_getrunconfig].
+Declares the files that will be generated before your service starts and made available on the container's filesystem, as well as the logic for generating their contents. The file keys declared here (which can be any string you like) will be the same keys used to identify the files in the map arg to [NetworkContext.addServiceToPartition][networkcontext_addservicetopartition].
 
 E.g. if your service needs a config file and a log file, you might return a map with keys `config` and `log` corresponding to logic for generating the config and log files respectively.
 
@@ -264,9 +239,6 @@ _Found a bug? File it on [the repo](https://github.com/kurtosis-tech/kurtosis-cl
 <!-- TODO Make the function definition not include args or return values, so we don't get these huge ugly links that break if we change the function signature -->
 <!-- TODO make the reference names a) be properly-cased (e.g. "Service.isAvailable" rather than "service_isavailable") and b) have an underscore in front of them, so they're easy to find-replace without accidentally over-replacing -->
 
-[containerconfigfactory]: #containerconfigfactorys-extends-service
-[containerconfigfactory_getrunconfig]: #getrunconfigstring-containeripaddr-mapstring-string-generatedfilefilepaths---containerrunconfig
-
 [containercreationconfig]: #containercreationconfig
 [containercreationconfig_usedports]: #setstring-usedports
 [containercreationconfig_filegeneratingfuncs]: #mapstring-funcfile-filegeneratingfuncs
@@ -285,8 +257,9 @@ _Found a bug? File it on [the repo](https://github.com/kurtosis-tech/kurtosis-cl
 [network]: #network
 
 [networkcontext]: #networkcontext
-[networkcontext_addservice]: #addserviceserviceid-serviceid-containerconfigfactorys-configfactory---s-service-mapstring-portbinding-hostportbindings
-[networkcontext_addservicetopartition]: #addservicetopartitionserviceid-serviceid-partitionid-partitionid-containerconfigfactorys-configfactory---s-service-mapstring-portbinding-hostportbindings
+
+[networkcontext_addservice]: #addserviceserviceid-serviceid-containercreationconfig-containercreationconfig-funcstring-ipaddr-mapstring-string-generatedfilefilepaths-mapstaticfileid-string-staticfilefilepaths---containerrunconfig-error-generaterunconfigfunc----servicecontext-servicecontext-mapstring-portbinding-hostportbindings
+[networkcontext_addservicetopartition]: #addservicetopartitionserviceid-serviceid-partitionid-partitionid-containercreationconfig-containercreationconfig-funcstring-ipaddr-mapstring-string-generatedfilefilepaths-mapstring-string-staticfilefilepaths---containerrunconfig-generaterunconfigfunc---servicecontext-servicecontext-mapstring-portbinding-hostportbindings
 [networkcontext_repartitionnetwork]: #repartitionnetworkmappartitionid-setserviceid-partitionservices-mappartitionid-mappartitionid-partitionconnectioninfo-partitionconnections-partitionconnectioninfo-defaultconnection
 
 [partitionconnectioninfo]: #partitionconnectioninfo
