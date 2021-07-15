@@ -1,6 +1,6 @@
 # TBD
 ### Fixes
-* An error in this document
+* Fixed an error in this document
 
 # 0.6.0
 ### Breaking Changes
