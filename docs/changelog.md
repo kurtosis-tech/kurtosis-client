@@ -1,4 +1,6 @@
 # TBD
+
+# 0.6.1
 ### Fixes
 * Fixed an error in this document
 
