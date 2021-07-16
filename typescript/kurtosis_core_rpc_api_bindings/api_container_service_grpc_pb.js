@@ -104,26 +104,15 @@ function deserialize_api_container_api_GetServiceInfoResponse(buffer_arg) {
   return api_container_service_pb.GetServiceInfoResponse.deserializeBinary(new Uint8Array(buffer_arg));
 }
 
-function serialize_api_container_api_LoadModuleArgs(arg) {
-  if (!(arg instanceof api_container_service_pb.LoadModuleArgs)) {
-    throw new Error('Expected argument of type api_container_api.LoadModuleArgs');
+function serialize_api_container_api_LoadLambdaArgs(arg) {
+  if (!(arg instanceof api_container_service_pb.LoadLambdaArgs)) {
+    throw new Error('Expected argument of type api_container_api.LoadLambdaArgs');
   }
   return Buffer.from(arg.serializeBinary());
 }
 
-function deserialize_api_container_api_LoadModuleArgs(buffer_arg) {
-  return api_container_service_pb.LoadModuleArgs.deserializeBinary(new Uint8Array(buffer_arg));
-}
-
-function serialize_api_container_api_LoadModuleResponse(arg) {
-  if (!(arg instanceof api_container_service_pb.LoadModuleResponse)) {
-    throw new Error('Expected argument of type api_container_api.LoadModuleResponse');
-  }
-  return Buffer.from(arg.serializeBinary());
-}
-
-function deserialize_api_container_api_LoadModuleResponse(buffer_arg) {
-  return api_container_service_pb.LoadModuleResponse.deserializeBinary(new Uint8Array(buffer_arg));
+function deserialize_api_container_api_LoadLambdaArgs(buffer_arg) {
+  return api_container_service_pb.LoadLambdaArgs.deserializeBinary(new Uint8Array(buffer_arg));
 }
 
 function serialize_api_container_api_LoadStaticFilesArgs(arg) {
@@ -238,19 +227,19 @@ function deserialize_google_protobuf_Empty(buffer_arg) {
 
 
 var ApiContainerServiceService = exports.ApiContainerServiceService = {
-  // Starts a module container into the network
-loadModule: {
-    path: '/api_container_api.ApiContainerService/LoadModule',
+  // Starts a lambda container into the network
+loadLambda: {
+    path: '/api_container_api.ApiContainerService/LoadLambda',
     requestStream: false,
     responseStream: false,
-    requestType: api_container_service_pb.LoadModuleArgs,
-    responseType: api_container_service_pb.LoadModuleResponse,
-    requestSerialize: serialize_api_container_api_LoadModuleArgs,
-    requestDeserialize: deserialize_api_container_api_LoadModuleArgs,
-    responseSerialize: serialize_api_container_api_LoadModuleResponse,
-    responseDeserialize: deserialize_api_container_api_LoadModuleResponse,
+    requestType: api_container_service_pb.LoadLambdaArgs,
+    responseType: google_protobuf_empty_pb.Empty,
+    requestSerialize: serialize_api_container_api_LoadLambdaArgs,
+    requestDeserialize: deserialize_api_container_api_LoadLambdaArgs,
+    responseSerialize: serialize_google_protobuf_Empty,
+    responseDeserialize: deserialize_google_protobuf_Empty,
   },
-  // Executes a Kurtosis Lambda module function on behalf of the user 
+  // Executes a Kurtosis Lambda function on behalf of the user 
 executeLambda: {
     path: '/api_container_api.ApiContainerService/ExecuteLambda',
     requestStream: false,

@@ -1,5 +1,18 @@
 # TBD
 
+# 0.8.0
+### Fixes
+* Fixed Protobuf binding generation, that got broken in 0.7.0
+
+### Changes
+* Renamed all the references to "modules" -> "lambdas" to more specifically match the purpose
+
+### Breaking Changes
+* Renamed the `ModuleID` type to `LambdaID`, to more closely match its purpose
+* Renamed `LambdaModuleContext` -> `LambdaContext`
+* Renamed `LoadModule` -> `LoadLambda`
+* Renamed `LoadModuleArgs` -> `LoadLambdaArgs`
+
 # 0.7.0
 ### Changes
 * Added an explicit `kurtosis_` in the API binding packages, to clarify that they're Kurtosis specific (per feedback from a user research session)

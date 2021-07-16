@@ -6,27 +6,27 @@ import (
 	"github.com/palantir/stacktrace"
 )
 
-type ModuleID string
+type LambdaID string
 
 // Docs available at https://docs.kurtosistech.com/kurtosis-libs/lib-documentation
-type LambdaModuleContext struct {
+type LambdaContext struct {
 	client   kurtosis_core_rpc_api_bindings.ApiContainerServiceClient
-	moduleId ModuleID
+	lambdaId LambdaID
 }
 
-func NewLambdaModuleContext(client kurtosis_core_rpc_api_bindings.ApiContainerServiceClient, moduleId ModuleID) *LambdaModuleContext {
-	return &LambdaModuleContext{client: client, moduleId: moduleId}
+func NewLambdaContext(client kurtosis_core_rpc_api_bindings.ApiContainerServiceClient, lambdaId LambdaID) *LambdaContext {
+	return &LambdaContext{client: client, lambdaId: lambdaId}
 }
 
 // Docs available at https://docs.kurtosistech.com/kurtosis-libs/lib-documentation
-func (moduleCtx *LambdaModuleContext) Execute(argsJsonStr string) (responseJsonStr string, resultErr error) {
+func (moduleCtx *LambdaContext) Execute(argsJsonStr string) (responseJsonStr string, resultErr error) {
 	args := &kurtosis_core_rpc_api_bindings.ExecuteLambdaArgs{
-		ModuleId:   string(moduleCtx.moduleId),
+		LambdaId:   string(moduleCtx.lambdaId),
 		ParamsJson: argsJsonStr,
 	}
 	resp, err := moduleCtx.client.ExecuteLambda(context.Background(), args)
 	if err != nil {
-		return "", stacktrace.Propagate(err, "An error occurred executing Lambda module '%v'", moduleCtx.moduleId)
+		return "", stacktrace.Propagate(err, "An error occurred executing Lambda '%v'", moduleCtx.lambdaId)
 	}
 	return resp.ResponseJson, nil
 }
