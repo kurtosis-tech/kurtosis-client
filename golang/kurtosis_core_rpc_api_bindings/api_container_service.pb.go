@@ -4,7 +4,7 @@
 // 	protoc        v3.17.3
 // source: api_container_service.proto
 
-package core_api_bindings
+package kurtosis_core_rpc_api_bindings
 
 import (
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"

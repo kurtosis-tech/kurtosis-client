@@ -7,9 +7,9 @@ package networks
 
 import (
 	"context"
-	"github.com/kurtosis-tech/kurtosis-client/golang/core_api_bindings"
-	"github.com/kurtosis-tech/kurtosis-client/golang/modules"
-	"github.com/kurtosis-tech/kurtosis-client/golang/services"
+	"github.com/kurtosis-tech/kurtosis-client/golang/kurtosis_core_rpc_api_bindings"
+	modules2 "github.com/kurtosis-tech/kurtosis-client/golang/lib/modules"
+	services2 "github.com/kurtosis-tech/kurtosis-client/golang/lib/services"
 	"github.com/palantir/stacktrace"
 	"github.com/sirupsen/logrus"
 	"os"
@@ -25,9 +25,9 @@ const (
 
 // Docs available at https://docs.kurtosistech.com/kurtosis-libs/lib-documentation
 type NetworkContext struct {
-	client core_api_bindings.ApiContainerServiceClient
+	client kurtosis_core_rpc_api_bindings.ApiContainerServiceClient
 
-	filesArtifactUrls map[services.FilesArtifactID]string
+	filesArtifactUrls map[services2.FilesArtifactID]string
 
 	// The location on the filesystem where this code is running where the suite execution volume is mounted
 	suiteExVolMountpoint string
@@ -37,8 +37,8 @@ type NetworkContext struct {
 Creates a new NetworkContext object with the given parameters.
 */
 func NewNetworkContext(
-	client core_api_bindings.ApiContainerServiceClient,
-	filesArtifactUrls map[services.FilesArtifactID]string,
+	client kurtosis_core_rpc_api_bindings.ApiContainerServiceClient,
+	filesArtifactUrls map[services2.FilesArtifactID]string,
 	suiteExVolMountpoint string) *NetworkContext {
 	return &NetworkContext{
 		client:               client,
@@ -49,13 +49,13 @@ func NewNetworkContext(
 
 // Docs available at https://docs.kurtosistech.com/kurtosis-libs/lib-documentation
 func (networkCtx *NetworkContext) LoadLambda(
-		moduleId modules.ModuleID,
+		moduleId modules2.ModuleID,
 		moduleImage string,
-		paramsJsonStr string) (*modules.LambdaModuleContext, error) {
-	args := &core_api_bindings.LoadModuleArgs{
+		paramsJsonStr string) (*modules2.LambdaModuleContext, error) {
+	args := &kurtosis_core_rpc_api_bindings.LoadModuleArgs{
 		ModuleId:       string(moduleId),
 		ContainerImage: moduleImage,
-		ModuleType:     core_api_bindings.LoadModuleArgs_LAMBDA,
+		ModuleType:     kurtosis_core_rpc_api_bindings.LoadModuleArgs_LAMBDA,
 		ParamsJson:     paramsJsonStr,
 	}
 	// We proxy calls to Lambda modules via the API container, so actually no need to use the response here
@@ -63,16 +63,16 @@ func (networkCtx *NetworkContext) LoadLambda(
 	if err != nil {
 		return nil, stacktrace.Propagate(err, "An error occurred loading new module '%v' with image '%v' and params JSON '%v'", moduleId, moduleImage, paramsJsonStr)
 	}
-	moduleCtx := modules.NewLambdaModuleContext(networkCtx.client, moduleId)
+	moduleCtx := modules2.NewLambdaModuleContext(networkCtx.client, moduleId)
 	return moduleCtx, nil
 }
 
 // Docs available at https://docs.kurtosistech.com/kurtosis-libs/lib-documentation
 func (networkCtx *NetworkContext) AddService(
-	serviceId services.ServiceID,
-	containerCreationConfig *services.ContainerCreationConfig,
-	generateRunConfigFunc func(ipAddr string, generatedFileFilepaths map[string]string, staticFileFilepaths map[services.StaticFileID]string) (*services.ContainerRunConfig, error),
-) (*services.ServiceContext, map[string]*core_api_bindings.PortBinding, error) {
+	serviceId services2.ServiceID,
+	containerCreationConfig *services2.ContainerCreationConfig,
+	generateRunConfigFunc func(ipAddr string, generatedFileFilepaths map[string]string, staticFileFilepaths map[services2.StaticFileID]string) (*services2.ContainerRunConfig, error),
+) (*services2.ServiceContext, map[string]*kurtosis_core_rpc_api_bindings.PortBinding, error) {
 
 	serviceContext, hostPortBindings, err := networkCtx.AddServiceToPartition(
 		serviceId,
@@ -89,16 +89,16 @@ func (networkCtx *NetworkContext) AddService(
 
 // Docs available at https://docs.kurtosistech.com/kurtosis-libs/lib-documentation
 func (networkCtx *NetworkContext) AddServiceToPartition(
-	serviceId services.ServiceID,
+	serviceId services2.ServiceID,
 	partitionId PartitionID,
-	containerCreationConfig *services.ContainerCreationConfig,
-	generateRunConfigFunc func(ipAddr string, generatedFileFilepaths map[string]string, staticFileFilepaths map[services.StaticFileID]string) (*services.ContainerRunConfig, error),
-) (*services.ServiceContext, map[string]*core_api_bindings.PortBinding, error) {
+	containerCreationConfig *services2.ContainerCreationConfig,
+	generateRunConfigFunc func(ipAddr string, generatedFileFilepaths map[string]string, staticFileFilepaths map[services2.StaticFileID]string) (*services2.ContainerRunConfig, error),
+) (*services2.ServiceContext, map[string]*kurtosis_core_rpc_api_bindings.PortBinding, error) {
 
 	ctx := context.Background()
 
 	logrus.Tracef("Registering new service ID with Kurtosis API...")
-	registerServiceArgs := &core_api_bindings.RegisterServiceArgs{
+	registerServiceArgs := &kurtosis_core_rpc_api_bindings.RegisterServiceArgs{
 		ServiceId:   string(serviceId),
 		PartitionId: string(partitionId),
 	}
@@ -114,7 +114,7 @@ func (networkCtx *NetworkContext) AddServiceToPartition(
 	if err != nil {
 		return nil, nil, stacktrace.Propagate(err, "An error occurred getting the container creation config")
 	}
-	serviceContext := services.NewServiceContext(
+	serviceContext := services2.NewServiceContext(
 		networkCtx.client,
 		serviceId,
 		serviceIpAddr,
@@ -180,7 +180,7 @@ func (networkCtx *NetworkContext) AddServiceToPartition(
 	logrus.Tracef("Successfully created files artifact URL -> mount dirpaths map")
 
 	logrus.Tracef("Starting new service with Kurtosis API...")
-	startServiceArgs := &core_api_bindings.StartServiceArgs{
+	startServiceArgs := &kurtosis_core_rpc_api_bindings.StartServiceArgs{
 		ServiceId:                   string(serviceId),
 		DockerImage:                 containerCreationConfig.GetImage(),
 		UsedPorts:                   containerCreationConfig.GetUsedPortsSet(),
@@ -200,8 +200,8 @@ func (networkCtx *NetworkContext) AddServiceToPartition(
 }
 
 // Docs available at https://docs.kurtosistech.com/kurtosis-libs/lib-documentation
-func (networkCtx *NetworkContext) GetServiceContext(serviceId services.ServiceID) (*services.ServiceContext, error) {
-	getServiceInfoArgs := &core_api_bindings.GetServiceInfoArgs{
+func (networkCtx *NetworkContext) GetServiceContext(serviceId services2.ServiceID) (*services2.ServiceContext, error) {
+	getServiceInfoArgs := &kurtosis_core_rpc_api_bindings.GetServiceInfoArgs{
 		ServiceId: string(serviceId),
 	}
 	serviceResponse, err := networkCtx.client.GetServiceInfo(context.Background(), getServiceInfoArgs)
@@ -224,7 +224,7 @@ func (networkCtx *NetworkContext) GetServiceContext(serviceId services.ServiceID
 			serviceId)
 	}
 
-	serviceContext := services.NewServiceContext(
+	serviceContext := services2.NewServiceContext(
 		networkCtx.client,
 		serviceId,
 		serviceResponse.GetIpAddr(),
@@ -236,10 +236,10 @@ func (networkCtx *NetworkContext) GetServiceContext(serviceId services.ServiceID
 }
 
 // Docs available at https://docs.kurtosistech.com/kurtosis-libs/lib-documentation
-func (networkCtx *NetworkContext) RemoveService(serviceId services.ServiceID, containerStopTimeoutSeconds uint64) error {
+func (networkCtx *NetworkContext) RemoveService(serviceId services2.ServiceID, containerStopTimeoutSeconds uint64) error {
 
 	logrus.Debugf("Removing service '%v'...", serviceId)
-	args := &core_api_bindings.RemoveServiceArgs{
+	args := &kurtosis_core_rpc_api_bindings.RemoveServiceArgs{
 		ServiceId: string(serviceId),
 		// NOTE: This is kinda weird - when we remove a service we can never get it back so having a container
 		//  stop timeout doesn't make much sense. It will make more sense when we can stop/start containers
@@ -257,9 +257,9 @@ func (networkCtx *NetworkContext) RemoveService(serviceId services.ServiceID, co
 
 // Docs available at https://docs.kurtosistech.com/kurtosis-libs/lib-documentation
 func (networkCtx *NetworkContext) RepartitionNetwork(
-	partitionServices map[PartitionID]map[services.ServiceID]bool,
-	partitionConnections map[PartitionID]map[PartitionID]*core_api_bindings.PartitionConnectionInfo,
-	defaultConnection *core_api_bindings.PartitionConnectionInfo) error {
+	partitionServices map[PartitionID]map[services2.ServiceID]bool,
+	partitionConnections map[PartitionID]map[PartitionID]*kurtosis_core_rpc_api_bindings.PartitionConnectionInfo,
+	defaultConnection *kurtosis_core_rpc_api_bindings.PartitionConnectionInfo) error {
 
 	if partitionServices == nil {
 		return stacktrace.NewError("Partition services map cannot be nil")
@@ -270,10 +270,10 @@ func (networkCtx *NetworkContext) RepartitionNetwork(
 
 	// Cover for lazy/confused users
 	if partitionConnections == nil {
-		partitionConnections = map[PartitionID]map[PartitionID]*core_api_bindings.PartitionConnectionInfo{}
+		partitionConnections = map[PartitionID]map[PartitionID]*kurtosis_core_rpc_api_bindings.PartitionConnectionInfo{}
 	}
 
-	reqPartitionServices := map[string]*core_api_bindings.PartitionServices{}
+	reqPartitionServices := map[string]*kurtosis_core_rpc_api_bindings.PartitionServices{}
 	for partitionId, serviceIdSet := range partitionServices {
 		serviceIdStrPseudoSet := map[string]bool{}
 		for serviceId := range serviceIdSet {
@@ -281,26 +281,26 @@ func (networkCtx *NetworkContext) RepartitionNetwork(
 			serviceIdStrPseudoSet[serviceIdStr] = true
 		}
 		partitionIdStr := string(partitionId)
-		reqPartitionServices[partitionIdStr] = &core_api_bindings.PartitionServices{
+		reqPartitionServices[partitionIdStr] = &kurtosis_core_rpc_api_bindings.PartitionServices{
 			ServiceIdSet: serviceIdStrPseudoSet,
 		}
 	}
 
-	reqPartitionConns := map[string]*core_api_bindings.PartitionConnections{}
+	reqPartitionConns := map[string]*kurtosis_core_rpc_api_bindings.PartitionConnections{}
 	for partitionAId, partitionAConnsMap := range partitionConnections {
-		partitionAConnsStrMap := map[string]*core_api_bindings.PartitionConnectionInfo{}
+		partitionAConnsStrMap := map[string]*kurtosis_core_rpc_api_bindings.PartitionConnectionInfo{}
 		for partitionBId, connInfo := range partitionAConnsMap {
 			partitionBIdStr := string(partitionBId)
 			partitionAConnsStrMap[partitionBIdStr] = connInfo
 		}
-		partitionAConns := &core_api_bindings.PartitionConnections{
+		partitionAConns := &kurtosis_core_rpc_api_bindings.PartitionConnections{
 			ConnectionInfo: partitionAConnsStrMap,
 		}
 		partitionAIdStr := string(partitionAId)
 		reqPartitionConns[partitionAIdStr] = partitionAConns
 	}
 
-	repartitionArgs := &core_api_bindings.RepartitionArgs{
+	repartitionArgs := &kurtosis_core_rpc_api_bindings.RepartitionArgs{
 		PartitionServices:    reqPartitionServices,
 		PartitionConnections: reqPartitionConns,
 		DefaultConnection:    defaultConnection,
@@ -312,8 +312,8 @@ func (networkCtx *NetworkContext) RepartitionNetwork(
 }
 
 // Docs available at https://docs.kurtosistech.com/kurtosis-libs/lib-documentation
-func (networkCtx *NetworkContext) WaitForEndpointAvailability(serviceId services.ServiceID, port uint32, path string, initialDelaySeconds uint32, retries uint32, retriesDelayMilliseconds uint32, bodyText string) error {
-	availabilityArgs := &core_api_bindings.WaitForEndpointAvailabilityArgs{
+func (networkCtx *NetworkContext) WaitForEndpointAvailability(serviceId services2.ServiceID, port uint32, path string, initialDelaySeconds uint32, retries uint32, retriesDelayMilliseconds uint32, bodyText string) error {
+	availabilityArgs := &kurtosis_core_rpc_api_bindings.WaitForEndpointAvailabilityArgs{
 		ServiceId:                string(serviceId),
 		Port:                     port,
 		Path:                     path,
@@ -340,7 +340,7 @@ func (networkCtx *NetworkContext) WaitForEndpointAvailability(serviceId services
 // Docs available at https://docs.kurtosistech.com/kurtosis-libs/lib-documentation
 func (networkCtx *NetworkContext) ExecuteBulkCommands(bulkCommandsJson string) error {
 
-	args := &core_api_bindings.ExecuteBulkCommandsArgs{
+	args := &kurtosis_core_rpc_api_bindings.ExecuteBulkCommandsArgs{
 		SerializedCommands: bulkCommandsJson,
 	}
 	if _, err := networkCtx.client.ExecuteBulkCommands(context.Background(), args); err != nil {

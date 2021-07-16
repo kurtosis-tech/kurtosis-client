@@ -20,15 +20,15 @@ type V0CommandTypeVisitor interface {
 type V0CommandType string
 const (
 	// vvvvvvvvvvvvvvvvvvvv Update the visitor whenever you add an enum value!!! vvvvvvvvvvvvvvvvvvvvvvvvvvv
-	RegisterServiceCommandType V0CommandType = "REGISTER_SERVICE"
-	GenerateFilesCommandType				 = "GENERATE_FILES"
-	LoadStaticFilesCommandType				 = "LOAD_STATIC_FILES"
-	StartServiceCommandType                  = "START_SERVICE"
-	RemoveServiceCommandType                 = "REMOVE_SERVICE"
-	RepartitionCommandType					 = "REPARTITION"
-	ExecCommandCommandType					 = "EXEC_COMMAND"
-	WaitForEndpointAvailabilityCommandType   = "WAIT_FOR_ENDPOINT_AVAILABILITY"
-	ExecuteBulkCommandsCommandType			 = "EXECUTE_BULK_COMMANDS"
+	RegisterServiceCommandType             V0CommandType = "REGISTER_SERVICE"
+	GenerateFilesCommandType                             = "GENERATE_FILES"
+	LoadStaticFilesCommandType                           = "LOAD_STATIC_FILES"
+	StartServiceCommandType                              = "START_SERVICE"
+	RemoveServiceCommandType                             = "REMOVE_SERVICE"
+	RepartitionCommandType                               = "REPARTITION"
+	ExecCommandCommandType                               = "EXEC_COMMAND"
+	WaitForEndpointAvailabilityCommandType               = "WAIT_FOR_ENDPOINT_AVAILABILITY"
+	ExecuteBulkCommandsCommandType                       = "EXECUTE_BULK_COMMANDS"
 	// ^^^^^^^^^^^^^^^^^^^^ Update the visitor whenever you add an enum value!!! ^^^^^^^^^^^^^^^^^^^^^^^^^^^
 )
 func (commandType V0CommandType) AcceptVisitor(visitor V0CommandTypeVisitor) error {
