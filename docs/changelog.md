@@ -1,4 +1,15 @@
 # TBD
+### Changes
+* Added an explicit `kurtosis_` in the API binding packages, to clarify that they're Kurtosis specific (per feedback from a user research session)
+* Moved the `services`, `networks`, `bulk_command_execution`, and `modules` packages inside a `lib` directory
+
+### Breaking Changes
+* Renamed the `core_api_bindings` package -> `kurtosis_core_rpc_api_bindings`
+    * Users will need to update their import statements to reflect the new name
+* Renamed the `core_api_consts` package -> `kurtosis_core_rpc_api_consts`
+    * Users will need to update their import statements to reflect the new name
+* Moved the `services`, `networks`, `bulk_command_execution`, and `modules` packages inside a `lib` directory
+    * Users will need to update their import statements to reflect the new name
 
 # 0.6.2
 ### Changes
