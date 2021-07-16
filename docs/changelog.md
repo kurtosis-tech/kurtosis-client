@@ -1,4 +1,6 @@
 # TBD
+### Fixes
+* Fixed Protobuf binding generation, that got broken in 0.7.0
 
 # 0.7.0
 ### Changes
