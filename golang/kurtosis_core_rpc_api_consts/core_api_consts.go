@@ -1,4 +1,4 @@
-package core_api_consts
+package kurtosis_core_rpc_api_consts
 
 const (
 	// Protocol that the API container listens on

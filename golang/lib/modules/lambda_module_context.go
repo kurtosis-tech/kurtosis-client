@@ -2,7 +2,7 @@ package modules
 
 import (
 	"context"
-	"github.com/kurtosis-tech/kurtosis-client/golang/core_api_bindings"
+	"github.com/kurtosis-tech/kurtosis-client/golang/kurtosis_core_rpc_api_bindings"
 	"github.com/palantir/stacktrace"
 )
 
@@ -10,17 +10,17 @@ type ModuleID string
 
 // Docs available at https://docs.kurtosistech.com/kurtosis-libs/lib-documentation
 type LambdaModuleContext struct {
-	client core_api_bindings.ApiContainerServiceClient
+	client   kurtosis_core_rpc_api_bindings.ApiContainerServiceClient
 	moduleId ModuleID
 }
 
-func NewLambdaModuleContext(client core_api_bindings.ApiContainerServiceClient, moduleId ModuleID) *LambdaModuleContext {
+func NewLambdaModuleContext(client kurtosis_core_rpc_api_bindings.ApiContainerServiceClient, moduleId ModuleID) *LambdaModuleContext {
 	return &LambdaModuleContext{client: client, moduleId: moduleId}
 }
 
 // Docs available at https://docs.kurtosistech.com/kurtosis-libs/lib-documentation
 func (moduleCtx *LambdaModuleContext) Execute(argsJsonStr string) (responseJsonStr string, resultErr error) {
-	args := &core_api_bindings.ExecuteLambdaArgs{
+	args := &kurtosis_core_rpc_api_bindings.ExecuteLambdaArgs{
 		ModuleId:   string(moduleCtx.moduleId),
 		ParamsJson: argsJsonStr,
 	}
