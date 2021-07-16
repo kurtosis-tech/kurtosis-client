@@ -4,6 +4,7 @@
 	//"context" //TODO Don't need context for typescript, golang specific
 import * as core_api_bindings_js_grpc from '../../core_api_bindings/api_container_service_grpc_pb.js'; //TODO - camelCase VS snake_case ; do I need asterisk?
 import * as core_api_bindings_js from '../../core_api_bindings/api_container_service_pb.js'; //TODO - extra line, I might be able to reduce this with line above ; * = importing everything ? Can I use this to get rid of this line
+//import {ServiceID} from 'service'; //TODO - not working at the moment, but TS cannont find ServiceID so need to fix (need to export in service.ts!); (more import lines than golang)
 var path = require("path"); //"path" - TODO importing from node.js potentially
 //)
 
@@ -16,7 +17,7 @@ class GeneratedFileFilepaths { //TODO (comment) - try interface if class doesn't
 // Docs available at https://docs.kurtosistech.com/kurtosis-libs/lib-documentation
 interface ServiceContext { //TODO lowerCamelCase ; maybe a class (I might not need this, since I already have a class)
 	client:                                   core_api_bindings_js_grpc.ApiContainerServiceClient;
-	serviceId:                                ServiceID;
+	serviceId:                                ServiceID; //TODO - might need to import, but we'll see
 	ipAddress:                                string;
 	testVolumeMountpointOnTestsuiteContainer: string;
 	testVolumeMountpointOnServiceContainer:   string;
@@ -70,7 +71,7 @@ class ServiceContext { //TODO Should only be adding methods into a class, you ca
     }
 
     // Docs available at https://docs.kurtosistech.com/kurtosis-libs/lib-documentation
-    public execCommand(command: string[]): [number, []string, Error] { //TODO - [int32, pointer to []byte (comment), error ]
+    public execCommand(command: string[]): [number, [], Error] { //TODO - [int32, pointer to []byte (comment), error ] ; is is not []`type` like []string
         let serviceId = this.serviceId;
         let args = new core_api_bindings_js.ExecCommandArgs(); //TODO - try to find a constructor for this ; (comment) this was also a pointer before
         args.setServiceId(serviceId); //TODO - get rid of setters if possible
@@ -100,7 +101,7 @@ class ServiceContext { //TODO Should only be adding methods into a class, you ca
         //}
         let resp, err = this.client.generateFiles(args); //TODO TODO - don't need context, what to do?
         if (err != null){
-            return [null, console.error(err, "An error occurred generating files using args: %+v", args)]; //TODO - can't use console.error
+            return [null, new Error("An error occurred generating files using args: %+v")]; //TODO - can't use console.error ; no %+v maybe
         }
         let generatedFileRelativeFilepaths = resp.GeneratedFileRelativeFilepaths
 
@@ -126,7 +127,7 @@ class ServiceContext { //TODO Should only be adding methods into a class, you ca
     }
 
     // Docs available at https://docs.kurtosistech.com/kurtosis-libs/lib-documentation
-    public loadStaticFiles(usedStaticFilesSet): [Map<string, bool>, Error] { //TODO - string VS StaticFileID ; do I still need a map
+    public loadStaticFiles(usedStaticFilesSet): [Map<string, boolean>, Error] { //TODO - string VS StaticFileID ; do I still need a map
         let serviceId = this.serviceId;
         let staticFilesToCopyStringSet = new Map(); //TODO (comment because no Map Type) = map[string]bool{}
         for (let staticFileId in usedStaticFilesSet) {
