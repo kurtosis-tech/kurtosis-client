@@ -49,21 +49,20 @@ func NewNetworkContext(
 
 // Docs available at https://docs.kurtosistech.com/kurtosis-libs/lib-documentation
 func (networkCtx *NetworkContext) LoadLambda(
-		moduleId modules.ModuleID,
-		moduleImage string,
-		paramsJsonStr string) (*modules.LambdaModuleContext, error) {
-	args := &kurtosis_core_rpc_api_bindings.LoadModuleArgs{
-		ModuleId:       string(moduleId),
-		ContainerImage: moduleImage,
-		ModuleType:     kurtosis_core_rpc_api_bindings.LoadModuleArgs_LAMBDA,
+		lambdaId modules.LambdaID,
+		image string,
+		paramsJsonStr string) (*modules.LambdaContext, error) {
+	args := &kurtosis_core_rpc_api_bindings.LoadLambdaArgs{
+		LambdaId:       string(lambdaId),
+		ContainerImage: image,
 		ParamsJson:     paramsJsonStr,
 	}
 	// We proxy calls to Lambda modules via the API container, so actually no need to use the response here
-	_, err := networkCtx.client.LoadModule(context.Background(), args)
+	_, err := networkCtx.client.LoadLambda(context.Background(), args)
 	if err != nil {
-		return nil, stacktrace.Propagate(err, "An error occurred loading new module '%v' with image '%v' and params JSON '%v'", moduleId, moduleImage, paramsJsonStr)
+		return nil, stacktrace.Propagate(err, "An error occurred loading new module '%v' with image '%v' and params JSON '%v'", lambdaId, image, paramsJsonStr)
 	}
-	moduleCtx := modules.NewLambdaModuleContext(networkCtx.client, moduleId)
+	moduleCtx := modules.NewLambdaContext(networkCtx.client, lambdaId)
 	return moduleCtx, nil
 }
 
