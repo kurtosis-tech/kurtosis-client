@@ -1,6 +1,6 @@
 /*package services*/ //TODO Get rid of this, not needed in typescript
 
-//import (
+//import ( //TODO TODO TODO!!!!!! - Make sure to adjust variable name to lowerCamelCase (except classes, enums, enum members)
 	//"context" //TODO Don't need context for typescript, golang specific
 import * as core_api_bindings_js_grpc from '../../core_api_bindings/api_container_service_grpc_pb.js';
 import core_api_bindings_js from '../../core_api_bindings/api_container_service_pb.js'; //TODO - extra line, I might be able to reduce this with line above
@@ -9,13 +9,13 @@ import core_api_bindings_js from '../../core_api_bindings/api_container_service_
 //)
 
 // Docs available at https://docs.kurtosistech.com/kurtosis-libs/lib-documentation
-interface GeneratedFileFilepaths { //TODO Chose to use interface to represent struct, will need to test to see if this hypothesis works
-	AbsoluteFilepathOnTestsuiteContainer: string;
-	AbsoluteFilepathOnServiceContainer:   string;
+interface GeneratedFileFilepaths { //TODO Chose to use interface to represent struct, will need to test to see if this hypothesis works (might be a class)
+	absoluteFilepathOnTestsuiteContainer: string;
+	absoluteFilepathOnServiceContainer:   string;
 }
 
 // Docs available at https://docs.kurtosistech.com/kurtosis-libs/lib-documentation
-interface ServiceContext {
+interface ServiceContext { //TODO lowerCamelCase ; maybe a class
 	client:                                   core_api_bindings_js_grpc.ApiContainerServiceClient;
 	serviceId:                                ServiceID;
 	ipAddress:                                string;
@@ -23,7 +23,7 @@ interface ServiceContext {
 	testVolumeMountpointOnServiceContainer:   string;
 }
 
-function NewServiceContext (
+function NewServiceContext ( //TODO lowerCamelCase
 		client: core_api_bindings_js_grpc.ApiContainerServiceClient,
 		serviceId: ServiceID,
 		ipAddress: string,
@@ -61,7 +61,7 @@ class ServiceContext { //TODO Should only be adding methods into a class, you ca
     }
 
     // Docs available at https://docs.kurtosistech.com/kurtosis-libs/lib-documentation
-    public GetServiceID() {
+    public GetServiceID() { 
         return this.serviceId;
     }
 
@@ -128,30 +128,27 @@ class ServiceContext { //TODO Should only be adding methods into a class, you ca
         return [result, null]; //TODO - Design decision, returning multiple values as an array
     }
 
+    // Docs available at https://docs.kurtosistech.com/kurtosis-libs/lib-documentation
+    public LoadStaticFiles(usedStaticFilesSet) { //TODO - removed the function return type - typescript doesn't need it
+        let serviceId = this.serviceId
+        let staticFilesToCopyStringSet = new Map() //TODO - no Map type
+        for (let staticFileId in usedStaticFilesSet) {
+            staticFilesToCopyStringSet[String(staticFileId)] = true
+        }
+    	let loadStaticFilesArgs = core_api_bindings_js.LoadStaticFilesArgs{ //TODO - was a pointer, but don't need this in typescript
+    		ServiceId:   string(serviceId),
+    		StaticFiles: staticFilesToCopyStringSet,
+    	}
+    // 	loadStaticFilesResp, err := self.client.LoadStaticFiles(context.Background(), loadStaticFilesArgs)
+    // 	if err != nil {
+    // 		return nil, stacktrace.Propagate(err, "An error occurred loading the requested static files into the namespace of service '%v'", serviceId)
+    // 	}
+    // 	staticFileAbsFilepathsOnService := map[StaticFileID]string{}
+    // 	for staticFileId, filepathRelativeToExVolRoot := range loadStaticFilesResp.CopiedStaticFileRelativeFilepaths {
+    // 		absFilepathOnContainer := path.Join(self.testVolumeMountpointOnServiceContainer, filepathRelativeToExVolRoot)
+    // 		staticFileAbsFilepathsOnService[StaticFileID(staticFileId)] = absFilepathOnContainer
+    // 	}
+    // 	return staticFileAbsFilepathsOnService, nil
 
+    }
 }
-
-
-// // Docs available at https://docs.kurtosistech.com/kurtosis-libs/lib-documentation
-// func (self *ServiceContext) LoadStaticFiles(usedStaticFilesSet map[StaticFileID]bool) (map[StaticFileID]string, error) {
-// 	serviceId := self.serviceId
-// 	staticFilesToCopyStringSet := map[string]bool{}
-// 	for staticFileId := range usedStaticFilesSet {
-// 		staticFilesToCopyStringSet[string(staticFileId)] = true
-// 	}
-// 	loadStaticFilesArgs := &core_api_bindings.LoadStaticFilesArgs{
-// 		ServiceId:   string(serviceId),
-// 		StaticFiles: staticFilesToCopyStringSet,
-// 	}
-// 	loadStaticFilesResp, err := self.client.LoadStaticFiles(context.Background(), loadStaticFilesArgs)
-// 	if err != nil {
-// 		return nil, stacktrace.Propagate(err, "An error occurred loading the requested static files into the namespace of service '%v'", serviceId)
-// 	}
-// 	staticFileAbsFilepathsOnService := map[StaticFileID]string{}
-// 	for staticFileId, filepathRelativeToExVolRoot := range loadStaticFilesResp.CopiedStaticFileRelativeFilepaths {
-// 		absFilepathOnContainer := path.Join(self.testVolumeMountpointOnServiceContainer, filepathRelativeToExVolRoot)
-// 		staticFileAbsFilepathsOnService[StaticFileID(staticFileId)] = absFilepathOnContainer
-// 	}
-// 	return staticFileAbsFilepathsOnService, nil
-
-// }
