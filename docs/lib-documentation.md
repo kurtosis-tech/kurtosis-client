@@ -4,8 +4,8 @@ This documentation describes how to interact with the Kurtosis API from within a
 
 _Found a bug? File it on [the repo](https://github.com/kurtosis-tech/kurtosis-client/issues)!_
 
-LambdaModuleContext
--------------------
+LambdaContext
+-------------
 <!-- TODO need to add docs for what Kurtosis modules are -->
 This Kurtosis-provided class is the lowest-level representation of a Lambda Kurtosis module - a Kurtosis module that has exactly one function.
 
@@ -28,18 +28,18 @@ NetworkContext
 --------------
 This Kurtosis-provided class is the lowest-level representation of a test network, and provides methods for inspecting and manipulating the network. All [Network][network] implementations will encapsulate an instance of this class.
 
-### loadLambda(String moduleId, String moduleImage, String paramsJson) -\> [LambdaModuleContext][lambdamodulecontext] lambdaModuleContext
+### loadLambda(String lambdaId, String image, String paramsJson) -\> [LambdaContext][lambdacontext] lambdaContext
 Starts a new Kurtosis Lambda module inside the test network, which makes its function available for use.
 
 **Args**
 
-* `moduleId`: The ID that the new module should receive (must not exist).
-* `moduleImage`: The container image of the Lambda module to be loaded.
+* `lambdaId`: The ID that the new module should receive (must not exist).
+* `image`: The container image of the Lambda module to be loaded.
 * `paramsJson`: JSON-serialized parameters that will be passed to the module as it starts, to control overall module behaviour.
 
 **Returns**
 
-* `lambdaModuleContext`: The [LambdaModuleContext][lambdamodulecontext] representation of the running module, which allows execution of the Lambda function.
+* `lambdaContext`: The [LambdaContext][lambdacontext] representation of the running module, which allows execution of the Lambda function.
 
 
 ### addServiceToPartition(ServiceID serviceId, PartitionID partitionId, [ContainerCreationConfig][containercreationconfig] containerCreationConfig, Func(String ipAddr, Map\<String, String\> generatedFileFilepaths, Map\<String, String\> staticFileFilepaths) -\> [ContainerRunConfig][containerrunconfig] generateRunConfigFunc) -\> ([ServiceContext][servicecontext] serviceContext, Map\<String, PortBinding\> hostPortBindings)
@@ -252,7 +252,7 @@ _Found a bug? File it on [the repo](https://github.com/kurtosis-tech/kurtosis-cl
 
 [generatedfilefilepaths]: #generatedfilefilepaths
 
-[lambdamodulecontext]: #lambdamodulecontext
+[lambdacontext]: #lambdacontext
 
 [network]: #network
 
