@@ -2,7 +2,7 @@ package bulk_command_execution
 
 import (
 	"encoding/json"
-	v0_bulk_command_api2 "github.com/kurtosis-tech/kurtosis-client/golang/lib/bulk_command_execution/v0_bulk_command_api"
+	"github.com/kurtosis-tech/kurtosis-client/golang/lib/bulk_command_execution/v0_bulk_command_api"
 	"github.com/palantir/stacktrace"
 )
 
@@ -25,7 +25,7 @@ func NewBulkCommandSerializer() *BulkCommandSerializer {
 	return &BulkCommandSerializer{}
 }
 
-func (serializer BulkCommandSerializer) Serialize(bulkCommands v0_bulk_command_api2.V0BulkCommands) ([]byte, error) {
+func (serializer BulkCommandSerializer) Serialize(bulkCommands v0_bulk_command_api.V0BulkCommands) ([]byte, error) {
 	toSerialize := serializableBulkCommandsDocument{
 		VersionedBulkCommandsDocument: VersionedBulkCommandsDocument{
 			SchemaVersion: latestSchemaVersion,
