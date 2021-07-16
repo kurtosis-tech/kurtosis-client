@@ -1,7 +1,4 @@
 # TBD
-### Changes
-* Porting the services/ directory from golang to typescript
-
 # 0.6.0
 
 ### Breaking Changes
