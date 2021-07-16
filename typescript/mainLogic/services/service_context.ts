@@ -28,14 +28,14 @@ interface ServiceContext { //TODO lowerCamelCase ; maybe a class (I might not ne
 // 		ipAddress: string,
 // 		testVolumeMountpointOnTestsuiteContainer: string,
 // 		testVolumeMountpointOnServiceContainer: string) { //TODO - Return type for function, typescript doesn't need
-// 	let NewServiceContext = { //TODO - don't want this name to be the same as function name
+// 	let result = { //TODO - don't want this name to be the same as function name
 //         client:                                   client,
 //         serviceId:                                serviceId,
 //         ipAddress:                                ipAddress,
 //         testVolumeMountpointOnTestsuiteContainer: testVolumeMountpointOnTestsuiteContainer,
 //         testVolumeMountpointOnServiceContainer: testVolumeMountpointOnServiceContainer,
 //     }
-//     return NewServiceContext; //TODO (comment) return pointer in golang, but typescript's reference variables implciltly point into the heap
+//     return result; //TODO (comment) return pointer in golang, but typescript's reference variables implciltly point into the heap
 //}
 
 class ServiceContext { //TODO Should only be adding methods into a class, you can't link to a struct in typescript like in golang
