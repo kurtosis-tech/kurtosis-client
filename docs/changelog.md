@@ -1,4 +1,6 @@
 # TBD
+
+# 0.8.1
 ### Features
 * Added a `GetLambdaInfo` endpoint to the API container's API
 * Added a `NetworkContext.getLambdaContext` method for calling the API container method
