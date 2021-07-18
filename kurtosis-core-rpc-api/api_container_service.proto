@@ -13,6 +13,9 @@ service ApiContainerService {
   // Executes a Kurtosis Lambda function on behalf of the user 
   rpc ExecuteLambda(ExecuteLambdaArgs) returns (ExecuteLambdaResponse) {};
 
+  // Gets information about a loaded Lambda module
+  rpc GetLambdaInfo(GetLambdaInfoArgs) returns (GetLambdaInfoResponse) {};
+
   // Registers a service with the API container but doesn't start the container for it
   rpc RegisterService(RegisterServiceArgs) returns (RegisterServiceResponse) {};
 
@@ -25,7 +28,7 @@ service ApiContainerService {
   // Starts a previously-registered service by creating a Docker container for it
   rpc StartService(StartServiceArgs) returns (StartServiceResponse) {};
 
-  //Returns relevant information about the service
+  // Returns relevant information about the service
   rpc GetServiceInfo(GetServiceInfoArgs) returns (GetServiceInfoResponse) {};
 
   // Instructs the API container to remove the given service
@@ -73,6 +76,20 @@ message ExecuteLambdaResponse {
   // JSON-serialized response from the Lambda's execute function
   string response_json = 1;
 }
+
+
+
+// ==============================================================================================
+//                                     Get Lambda Info
+// ==============================================================================================
+message GetLambdaInfoArgs {
+  string lambda_id = 1;
+}
+
+message GetLambdaInfoResponse {
+  string ip_addr = 1;
+}
+
 
 
 // ==============================================================================================
@@ -189,6 +206,7 @@ message GetServiceInfoArgs {
 message GetServiceInfoResponse {
   // The IP address of the service
   string ip_addr = 1;
+
   // The full path where the test suite execution volume is mounted on the service
   string suite_execution_volume_mount_dirpath = 2;
 }

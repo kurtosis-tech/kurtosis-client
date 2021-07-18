@@ -67,6 +67,20 @@ func (networkCtx *NetworkContext) LoadLambda(
 }
 
 // Docs available at https://docs.kurtosistech.com/kurtosis-libs/lib-documentation
+func (networkCtx *NetworkContext) GetLambdaContext(lambdaId modules.LambdaID) (*modules.LambdaContext, error) {
+	args := &kurtosis_core_rpc_api_bindings.GetLambdaInfoArgs{
+		LambdaId: string(lambdaId),
+	}
+	// NOTE: As of 2021-07-18, we actually don't use any of the info that comes back because the LambdaContext doesn't require it!
+	_, err := networkCtx.client.GetLambdaInfo(context.Background(), args)
+	if err != nil {
+		return nil, stacktrace.Propagate(err, "An error occurred getting info for Lambda '%v'", lambdaId)
+	}
+	lambdaCtx := modules.NewLambdaContext(networkCtx.client, lambdaId)
+	return lambdaCtx, nil
+}
+
+// Docs available at https://docs.kurtosistech.com/kurtosis-libs/lib-documentation
 func (networkCtx *NetworkContext) AddService(
 	serviceId services.ServiceID,
 	containerCreationConfig *services.ContainerCreationConfig,

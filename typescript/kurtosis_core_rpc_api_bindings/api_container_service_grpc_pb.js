@@ -82,6 +82,28 @@ function deserialize_api_container_api_GenerateFilesResponse(buffer_arg) {
   return api_container_service_pb.GenerateFilesResponse.deserializeBinary(new Uint8Array(buffer_arg));
 }
 
+function serialize_api_container_api_GetLambdaInfoArgs(arg) {
+  if (!(arg instanceof api_container_service_pb.GetLambdaInfoArgs)) {
+    throw new Error('Expected argument of type api_container_api.GetLambdaInfoArgs');
+  }
+  return Buffer.from(arg.serializeBinary());
+}
+
+function deserialize_api_container_api_GetLambdaInfoArgs(buffer_arg) {
+  return api_container_service_pb.GetLambdaInfoArgs.deserializeBinary(new Uint8Array(buffer_arg));
+}
+
+function serialize_api_container_api_GetLambdaInfoResponse(arg) {
+  if (!(arg instanceof api_container_service_pb.GetLambdaInfoResponse)) {
+    throw new Error('Expected argument of type api_container_api.GetLambdaInfoResponse');
+  }
+  return Buffer.from(arg.serializeBinary());
+}
+
+function deserialize_api_container_api_GetLambdaInfoResponse(buffer_arg) {
+  return api_container_service_pb.GetLambdaInfoResponse.deserializeBinary(new Uint8Array(buffer_arg));
+}
+
 function serialize_api_container_api_GetServiceInfoArgs(arg) {
   if (!(arg instanceof api_container_service_pb.GetServiceInfoArgs)) {
     throw new Error('Expected argument of type api_container_api.GetServiceInfoArgs');
@@ -250,6 +272,18 @@ executeLambda: {
     requestDeserialize: deserialize_api_container_api_ExecuteLambdaArgs,
     responseSerialize: serialize_api_container_api_ExecuteLambdaResponse,
     responseDeserialize: deserialize_api_container_api_ExecuteLambdaResponse,
+  },
+  // Gets information about a loaded Lambda module
+getLambdaInfo: {
+    path: '/api_container_api.ApiContainerService/GetLambdaInfo',
+    requestStream: false,
+    responseStream: false,
+    requestType: api_container_service_pb.GetLambdaInfoArgs,
+    responseType: api_container_service_pb.GetLambdaInfoResponse,
+    requestSerialize: serialize_api_container_api_GetLambdaInfoArgs,
+    requestDeserialize: deserialize_api_container_api_GetLambdaInfoArgs,
+    responseSerialize: serialize_api_container_api_GetLambdaInfoResponse,
+    responseDeserialize: deserialize_api_container_api_GetLambdaInfoResponse,
   },
   // Registers a service with the API container but doesn't start the container for it
 registerService: {
