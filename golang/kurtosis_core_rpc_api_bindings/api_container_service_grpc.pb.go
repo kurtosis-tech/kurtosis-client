@@ -23,6 +23,8 @@ type ApiContainerServiceClient interface {
 	LoadLambda(ctx context.Context, in *LoadLambdaArgs, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	// Executes a Kurtosis Lambda function on behalf of the user
 	ExecuteLambda(ctx context.Context, in *ExecuteLambdaArgs, opts ...grpc.CallOption) (*ExecuteLambdaResponse, error)
+	// Gets information about a loaded Lambda module
+	GetLambdaInfo(ctx context.Context, in *GetLambdaInfoArgs, opts ...grpc.CallOption) (*GetLambdaInfoResponse, error)
 	// Registers a service with the API container but doesn't start the container for it
 	RegisterService(ctx context.Context, in *RegisterServiceArgs, opts ...grpc.CallOption) (*RegisterServiceResponse, error)
 	// Generates files inside the test volume on the filesystem for a container
@@ -31,7 +33,7 @@ type ApiContainerServiceClient interface {
 	LoadStaticFiles(ctx context.Context, in *LoadStaticFilesArgs, opts ...grpc.CallOption) (*LoadStaticFilesResponse, error)
 	// Starts a previously-registered service by creating a Docker container for it
 	StartService(ctx context.Context, in *StartServiceArgs, opts ...grpc.CallOption) (*StartServiceResponse, error)
-	//Returns relevant information about the service
+	// Returns relevant information about the service
 	GetServiceInfo(ctx context.Context, in *GetServiceInfoArgs, opts ...grpc.CallOption) (*GetServiceInfoResponse, error)
 	// Instructs the API container to remove the given service
 	RemoveService(ctx context.Context, in *RemoveServiceArgs, opts ...grpc.CallOption) (*emptypb.Empty, error)
@@ -65,6 +67,15 @@ func (c *apiContainerServiceClient) LoadLambda(ctx context.Context, in *LoadLamb
 func (c *apiContainerServiceClient) ExecuteLambda(ctx context.Context, in *ExecuteLambdaArgs, opts ...grpc.CallOption) (*ExecuteLambdaResponse, error) {
 	out := new(ExecuteLambdaResponse)
 	err := c.cc.Invoke(ctx, "/api_container_api.ApiContainerService/ExecuteLambda", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *apiContainerServiceClient) GetLambdaInfo(ctx context.Context, in *GetLambdaInfoArgs, opts ...grpc.CallOption) (*GetLambdaInfoResponse, error) {
+	out := new(GetLambdaInfoResponse)
+	err := c.cc.Invoke(ctx, "/api_container_api.ApiContainerService/GetLambdaInfo", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -169,6 +180,8 @@ type ApiContainerServiceServer interface {
 	LoadLambda(context.Context, *LoadLambdaArgs) (*emptypb.Empty, error)
 	// Executes a Kurtosis Lambda function on behalf of the user
 	ExecuteLambda(context.Context, *ExecuteLambdaArgs) (*ExecuteLambdaResponse, error)
+	// Gets information about a loaded Lambda module
+	GetLambdaInfo(context.Context, *GetLambdaInfoArgs) (*GetLambdaInfoResponse, error)
 	// Registers a service with the API container but doesn't start the container for it
 	RegisterService(context.Context, *RegisterServiceArgs) (*RegisterServiceResponse, error)
 	// Generates files inside the test volume on the filesystem for a container
@@ -177,7 +190,7 @@ type ApiContainerServiceServer interface {
 	LoadStaticFiles(context.Context, *LoadStaticFilesArgs) (*LoadStaticFilesResponse, error)
 	// Starts a previously-registered service by creating a Docker container for it
 	StartService(context.Context, *StartServiceArgs) (*StartServiceResponse, error)
-	//Returns relevant information about the service
+	// Returns relevant information about the service
 	GetServiceInfo(context.Context, *GetServiceInfoArgs) (*GetServiceInfoResponse, error)
 	// Instructs the API container to remove the given service
 	RemoveService(context.Context, *RemoveServiceArgs) (*emptypb.Empty, error)
@@ -201,6 +214,9 @@ func (UnimplementedApiContainerServiceServer) LoadLambda(context.Context, *LoadL
 }
 func (UnimplementedApiContainerServiceServer) ExecuteLambda(context.Context, *ExecuteLambdaArgs) (*ExecuteLambdaResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ExecuteLambda not implemented")
+}
+func (UnimplementedApiContainerServiceServer) GetLambdaInfo(context.Context, *GetLambdaInfoArgs) (*GetLambdaInfoResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetLambdaInfo not implemented")
 }
 func (UnimplementedApiContainerServiceServer) RegisterService(context.Context, *RegisterServiceArgs) (*RegisterServiceResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method RegisterService not implemented")
@@ -277,6 +293,24 @@ func _ApiContainerService_ExecuteLambda_Handler(srv interface{}, ctx context.Con
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(ApiContainerServiceServer).ExecuteLambda(ctx, req.(*ExecuteLambdaArgs))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ApiContainerService_GetLambdaInfo_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetLambdaInfoArgs)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ApiContainerServiceServer).GetLambdaInfo(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/api_container_api.ApiContainerService/GetLambdaInfo",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ApiContainerServiceServer).GetLambdaInfo(ctx, req.(*GetLambdaInfoArgs))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -475,6 +509,10 @@ var ApiContainerService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "ExecuteLambda",
 			Handler:    _ApiContainerService_ExecuteLambda_Handler,
+		},
+		{
+			MethodName: "GetLambdaInfo",
+			Handler:    _ApiContainerService_GetLambdaInfo_Handler,
 		},
 		{
 			MethodName: "RegisterService",
