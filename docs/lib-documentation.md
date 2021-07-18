@@ -28,6 +28,7 @@ NetworkContext
 --------------
 This Kurtosis-provided class is the lowest-level representation of a test network, and provides methods for inspecting and manipulating the network. All [Network][network] implementations will encapsulate an instance of this class.
 
+
 ### loadLambda(String lambdaId, String image, String paramsJson) -\> [LambdaContext][lambdacontext] lambdaContext
 Starts a new Kurtosis Lambda module inside the test network, which makes its function available for use.
 
@@ -39,7 +40,19 @@ Starts a new Kurtosis Lambda module inside the test network, which makes its fun
 
 **Returns**
 
-* `lambdaContext`: The [LambdaContext][lambdacontext] representation of the running module, which allows execution of the Lambda function.
+* `lambdaContext`: The [LambdaContext][lambdacontext] representation of the running Lambda container, which allows execution of the Lambda function.
+
+
+### getLambdaContext(String lambdaId) -\> [LambdaContext][lambdacontext] lambdaContext
+Gets the [LambdaContext][lambdacontext] associated with an already-running Lambda container identified by the given ID.
+
+**Args**
+
+* `lambdaId`: The ID of the Lambda to retrieve the context for.
+
+**Returns**
+
+* `lambdaContext`: The [LambdaContext][lambdacontext] representation of the running Lambda container, which allows execution of the Lambda function.
 
 
 ### addServiceToPartition(ServiceID serviceId, PartitionID partitionId, [ContainerCreationConfig][containercreationconfig] containerCreationConfig, Func(String ipAddr, Map\<String, String\> generatedFileFilepaths, Map\<String, String\> staticFileFilepaths) -\> [ContainerRunConfig][containerrunconfig] generateRunConfigFunc) -\> ([ServiceContext][servicecontext] serviceContext, Map\<String, PortBinding\> hostPortBindings)

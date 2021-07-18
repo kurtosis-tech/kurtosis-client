@@ -76,6 +76,46 @@ export namespace ExecuteLambdaResponse {
   }
 }
 
+export class GetLambdaInfoArgs extends jspb.Message {
+  getLambdaId(): string;
+  setLambdaId(value: string): void;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): GetLambdaInfoArgs.AsObject;
+  static toObject(includeInstance: boolean, msg: GetLambdaInfoArgs): GetLambdaInfoArgs.AsObject;
+  static extensions: {[key: number]: jspb.ExtensionFieldInfo<jspb.Message>};
+  static extensionsBinary: {[key: number]: jspb.ExtensionFieldBinaryInfo<jspb.Message>};
+  static serializeBinaryToWriter(message: GetLambdaInfoArgs, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): GetLambdaInfoArgs;
+  static deserializeBinaryFromReader(message: GetLambdaInfoArgs, reader: jspb.BinaryReader): GetLambdaInfoArgs;
+}
+
+export namespace GetLambdaInfoArgs {
+  export type AsObject = {
+    lambdaId: string,
+  }
+}
+
+export class GetLambdaInfoResponse extends jspb.Message {
+  getIpAddr(): string;
+  setIpAddr(value: string): void;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): GetLambdaInfoResponse.AsObject;
+  static toObject(includeInstance: boolean, msg: GetLambdaInfoResponse): GetLambdaInfoResponse.AsObject;
+  static extensions: {[key: number]: jspb.ExtensionFieldInfo<jspb.Message>};
+  static extensionsBinary: {[key: number]: jspb.ExtensionFieldBinaryInfo<jspb.Message>};
+  static serializeBinaryToWriter(message: GetLambdaInfoResponse, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): GetLambdaInfoResponse;
+  static deserializeBinaryFromReader(message: GetLambdaInfoResponse, reader: jspb.BinaryReader): GetLambdaInfoResponse;
+}
+
+export namespace GetLambdaInfoResponse {
+  export type AsObject = {
+    ipAddr: string,
+  }
+}
+
 export class RegisterServiceArgs extends jspb.Message {
   getServiceId(): string;
   setServiceId(value: string): void;
