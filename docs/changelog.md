@@ -1,4 +1,7 @@
 # TBD
+### Features
+* Support Lambda-loading and executing in the bulk command API
+
 ### Changes
 * Updated the values of the Lambda endpoints to reflect that the serialization format is dependent on the Lambda
 
