@@ -624,7 +624,7 @@ proto.api_container_api.LoadLambdaArgs.toObject = function(includeInstance, msg)
   var f, obj = {
     lambdaId: jspb.Message.getFieldWithDefault(msg, 1, ""),
     containerImage: jspb.Message.getFieldWithDefault(msg, 2, ""),
-    paramsJson: jspb.Message.getFieldWithDefault(msg, 3, "")
+    serializedParams: jspb.Message.getFieldWithDefault(msg, 3, "")
   };
 
   if (includeInstance) {
@@ -671,7 +671,7 @@ proto.api_container_api.LoadLambdaArgs.deserializeBinaryFromReader = function(ms
       break;
     case 3:
       var value = /** @type {string} */ (reader.readString());
-      msg.setParamsJson(value);
+      msg.setSerializedParams(value);
       break;
     default:
       reader.skipField();
@@ -716,7 +716,7 @@ proto.api_container_api.LoadLambdaArgs.serializeBinaryToWriter = function(messag
       f
     );
   }
-  f = message.getParamsJson();
+  f = message.getSerializedParams();
   if (f.length > 0) {
     writer.writeString(
       3,
@@ -763,10 +763,10 @@ proto.api_container_api.LoadLambdaArgs.prototype.setContainerImage = function(va
 
 
 /**
- * optional string params_json = 3;
+ * optional string serialized_params = 3;
  * @return {string}
  */
-proto.api_container_api.LoadLambdaArgs.prototype.getParamsJson = function() {
+proto.api_container_api.LoadLambdaArgs.prototype.getSerializedParams = function() {
   return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 3, ""));
 };
 
@@ -775,7 +775,7 @@ proto.api_container_api.LoadLambdaArgs.prototype.getParamsJson = function() {
  * @param {string} value
  * @return {!proto.api_container_api.LoadLambdaArgs} returns this
  */
-proto.api_container_api.LoadLambdaArgs.prototype.setParamsJson = function(value) {
+proto.api_container_api.LoadLambdaArgs.prototype.setSerializedParams = function(value) {
   return jspb.Message.setProto3StringField(this, 3, value);
 };
 
@@ -813,7 +813,7 @@ proto.api_container_api.ExecuteLambdaArgs.prototype.toObject = function(opt_incl
 proto.api_container_api.ExecuteLambdaArgs.toObject = function(includeInstance, msg) {
   var f, obj = {
     lambdaId: jspb.Message.getFieldWithDefault(msg, 1, ""),
-    paramsJson: jspb.Message.getFieldWithDefault(msg, 2, "")
+    serializedParams: jspb.Message.getFieldWithDefault(msg, 2, "")
   };
 
   if (includeInstance) {
@@ -856,7 +856,7 @@ proto.api_container_api.ExecuteLambdaArgs.deserializeBinaryFromReader = function
       break;
     case 2:
       var value = /** @type {string} */ (reader.readString());
-      msg.setParamsJson(value);
+      msg.setSerializedParams(value);
       break;
     default:
       reader.skipField();
@@ -894,7 +894,7 @@ proto.api_container_api.ExecuteLambdaArgs.serializeBinaryToWriter = function(mes
       f
     );
   }
-  f = message.getParamsJson();
+  f = message.getSerializedParams();
   if (f.length > 0) {
     writer.writeString(
       2,
@@ -923,10 +923,10 @@ proto.api_container_api.ExecuteLambdaArgs.prototype.setLambdaId = function(value
 
 
 /**
- * optional string params_json = 2;
+ * optional string serialized_params = 2;
  * @return {string}
  */
-proto.api_container_api.ExecuteLambdaArgs.prototype.getParamsJson = function() {
+proto.api_container_api.ExecuteLambdaArgs.prototype.getSerializedParams = function() {
   return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 2, ""));
 };
 
@@ -935,7 +935,7 @@ proto.api_container_api.ExecuteLambdaArgs.prototype.getParamsJson = function() {
  * @param {string} value
  * @return {!proto.api_container_api.ExecuteLambdaArgs} returns this
  */
-proto.api_container_api.ExecuteLambdaArgs.prototype.setParamsJson = function(value) {
+proto.api_container_api.ExecuteLambdaArgs.prototype.setSerializedParams = function(value) {
   return jspb.Message.setProto3StringField(this, 2, value);
 };
 
@@ -972,7 +972,7 @@ proto.api_container_api.ExecuteLambdaResponse.prototype.toObject = function(opt_
  */
 proto.api_container_api.ExecuteLambdaResponse.toObject = function(includeInstance, msg) {
   var f, obj = {
-    responseJson: jspb.Message.getFieldWithDefault(msg, 1, "")
+    serializedResult: jspb.Message.getFieldWithDefault(msg, 1, "")
   };
 
   if (includeInstance) {
@@ -1011,7 +1011,7 @@ proto.api_container_api.ExecuteLambdaResponse.deserializeBinaryFromReader = func
     switch (field) {
     case 1:
       var value = /** @type {string} */ (reader.readString());
-      msg.setResponseJson(value);
+      msg.setSerializedResult(value);
       break;
     default:
       reader.skipField();
@@ -1042,7 +1042,7 @@ proto.api_container_api.ExecuteLambdaResponse.prototype.serializeBinary = functi
  */
 proto.api_container_api.ExecuteLambdaResponse.serializeBinaryToWriter = function(message, writer) {
   var f = undefined;
-  f = message.getResponseJson();
+  f = message.getSerializedResult();
   if (f.length > 0) {
     writer.writeString(
       1,
@@ -1053,10 +1053,10 @@ proto.api_container_api.ExecuteLambdaResponse.serializeBinaryToWriter = function
 
 
 /**
- * optional string response_json = 1;
+ * optional string serialized_result = 1;
  * @return {string}
  */
-proto.api_container_api.ExecuteLambdaResponse.prototype.getResponseJson = function() {
+proto.api_container_api.ExecuteLambdaResponse.prototype.getSerializedResult = function() {
   return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 1, ""));
 };
 
@@ -1065,7 +1065,7 @@ proto.api_container_api.ExecuteLambdaResponse.prototype.getResponseJson = functi
  * @param {string} value
  * @return {!proto.api_container_api.ExecuteLambdaResponse} returns this
  */
-proto.api_container_api.ExecuteLambdaResponse.prototype.setResponseJson = function(value) {
+proto.api_container_api.ExecuteLambdaResponse.prototype.setSerializedResult = function(value) {
   return jspb.Message.setProto3StringField(this, 1, value);
 };
 

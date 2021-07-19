@@ -1,4 +1,10 @@
 # TBD
+### Changes
+* Updated the values of the Lambda endpoints to reflect that the serialization format is dependent on the Lambda
+
+### Breaking Changes
+* Renamed the `params_json` in the `LoadLambda` and `ExecuteLambda` API container endpoints to `serialized_params`, to reflect that the serialization format is dependent on the module
+* Renamed the `respones_json` in the `ExecuteLambda` API container endpoint to `serialized_result`, to reflect the Lambda-specific serialization format
 
 # 0.8.1
 ### Features

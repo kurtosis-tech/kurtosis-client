@@ -11,8 +11,8 @@ export class LoadLambdaArgs extends jspb.Message {
   getContainerImage(): string;
   setContainerImage(value: string): void;
 
-  getParamsJson(): string;
-  setParamsJson(value: string): void;
+  getSerializedParams(): string;
+  setSerializedParams(value: string): void;
 
   serializeBinary(): Uint8Array;
   toObject(includeInstance?: boolean): LoadLambdaArgs.AsObject;
@@ -28,7 +28,7 @@ export namespace LoadLambdaArgs {
   export type AsObject = {
     lambdaId: string,
     containerImage: string,
-    paramsJson: string,
+    serializedParams: string,
   }
 }
 
@@ -36,8 +36,8 @@ export class ExecuteLambdaArgs extends jspb.Message {
   getLambdaId(): string;
   setLambdaId(value: string): void;
 
-  getParamsJson(): string;
-  setParamsJson(value: string): void;
+  getSerializedParams(): string;
+  setSerializedParams(value: string): void;
 
   serializeBinary(): Uint8Array;
   toObject(includeInstance?: boolean): ExecuteLambdaArgs.AsObject;
@@ -52,13 +52,13 @@ export class ExecuteLambdaArgs extends jspb.Message {
 export namespace ExecuteLambdaArgs {
   export type AsObject = {
     lambdaId: string,
-    paramsJson: string,
+    serializedParams: string,
   }
 }
 
 export class ExecuteLambdaResponse extends jspb.Message {
-  getResponseJson(): string;
-  setResponseJson(value: string): void;
+  getSerializedResult(): string;
+  setSerializedResult(value: string): void;
 
   serializeBinary(): Uint8Array;
   toObject(includeInstance?: boolean): ExecuteLambdaResponse.AsObject;
@@ -72,7 +72,7 @@ export class ExecuteLambdaResponse extends jspb.Message {
 
 export namespace ExecuteLambdaResponse {
   export type AsObject = {
-    responseJson: string,
+    serializedResult: string,
   }
 }
 

@@ -9,16 +9,16 @@ LambdaContext
 <!-- TODO need to add docs for what Kurtosis modules are -->
 This Kurtosis-provided class is the lowest-level representation of a Lambda Kurtosis module - a Kurtosis module that has exactly one function.
 
-### execute(String argsJson) -\> String responseJson
-Executes the function packaged inside the Kurtosis Lambda module with the given JSON-serialized args.
+### execute(String serializedParams) -\> String serializedResult
+Executes the function packaged inside the Kurtosis Lambda module with the given serialized args, returning the serialized result. The serialization format will depend on the Lambda.
 
 **Args**
 
-* `argsJson`: An arbitrary JSON-serialized object containing args to the Lambda function. Consult the documentation for the module you're using to determine what this should contain.
+* `serializedParams`: Serialized data containing args to the Lambda function. Consult the documentation for the module you're using to determine what this should contain.
 
 **Returns**
 
-* `responseJson`: An arbitrary JSON-serialized object containing the results of executing the Lambda function. Consult the documentation for the module you're using to determine what this will contain.
+* `serializedResult`: Serialized data containing the results of executing the Lambda function. Consult the documentation for the module you're using to determine what this will contain.
 
 Network
 -------
@@ -29,14 +29,14 @@ NetworkContext
 This Kurtosis-provided class is the lowest-level representation of a test network, and provides methods for inspecting and manipulating the network. All [Network][network] implementations will encapsulate an instance of this class.
 
 
-### loadLambda(String lambdaId, String image, String paramsJson) -\> [LambdaContext][lambdacontext] lambdaContext
-Starts a new Kurtosis Lambda module inside the test network, which makes its function available for use.
+### loadLambda(String lambdaId, String image, String serializedParams) -\> [LambdaContext][lambdacontext] lambdaContext
+Starts a new Kurtosis Lambda module (configured using the serialized params) inside the test network, which makes its function available for use.
 
 **Args**
 
 * `lambdaId`: The ID that the new module should receive (must not exist).
 * `image`: The container image of the Lambda module to be loaded.
-* `paramsJson`: JSON-serialized parameters that will be passed to the module as it starts, to control overall module behaviour.
+* `serializedParams`: Serialized parameter data that will be passed to the module as it starts, to control overall module behaviour.
 
 **Returns**
 
