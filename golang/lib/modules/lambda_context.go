@@ -19,15 +19,15 @@ func NewLambdaContext(client kurtosis_core_rpc_api_bindings.ApiContainerServiceC
 }
 
 // Docs available at https://docs.kurtosistech.com/kurtosis-libs/lib-documentation
-func (moduleCtx *LambdaContext) Execute(argsJsonStr string) (responseJsonStr string, resultErr error) {
+func (moduleCtx *LambdaContext) Execute(serializedParams string) (serializedResult string, resultErr error) {
 	args := &kurtosis_core_rpc_api_bindings.ExecuteLambdaArgs{
-		LambdaId:   string(moduleCtx.lambdaId),
-		ParamsJson: argsJsonStr,
+		LambdaId:         string(moduleCtx.lambdaId),
+		SerializedParams: serializedParams,
 	}
 	resp, err := moduleCtx.client.ExecuteLambda(context.Background(), args)
 	if err != nil {
 		return "", stacktrace.Propagate(err, "An error occurred executing Lambda '%v'", moduleCtx.lambdaId)
 	}
-	return resp.ResponseJson, nil
+	return resp.SerializedResult, nil
 }
 
