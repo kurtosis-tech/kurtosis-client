@@ -51,16 +51,16 @@ func NewNetworkContext(
 func (networkCtx *NetworkContext) LoadLambda(
 		lambdaId modules.LambdaID,
 		image string,
-		paramsJsonStr string) (*modules.LambdaContext, error) {
+		serializedParams string) (*modules.LambdaContext, error) {
 	args := &kurtosis_core_rpc_api_bindings.LoadLambdaArgs{
 		LambdaId:       string(lambdaId),
 		ContainerImage: image,
-		ParamsJson:     paramsJsonStr,
+		SerializedParams:     serializedParams,
 	}
 	// We proxy calls to Lambda modules via the API container, so actually no need to use the response here
 	_, err := networkCtx.client.LoadLambda(context.Background(), args)
 	if err != nil {
-		return nil, stacktrace.Propagate(err, "An error occurred loading new module '%v' with image '%v' and params JSON '%v'", lambdaId, image, paramsJsonStr)
+		return nil, stacktrace.Propagate(err, "An error occurred loading new module '%v' with image '%v' and serialized params '%v'", lambdaId, image, serializedParams)
 	}
 	moduleCtx := modules.NewLambdaContext(networkCtx.client, lambdaId)
 	return moduleCtx, nil

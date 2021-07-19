@@ -56,8 +56,9 @@ message LoadLambdaArgs {
 
   string container_image = 2;
 
-  // The serialized-to-JSON params object that will be used to start the module
-  string params_json = 3;
+  // The serialized params object that will be passed, as-is, to the Lambda for starting
+  // The serialization format is dependent on the Lambda
+  string serialized_params = 3;
 }
 
 
@@ -68,13 +69,15 @@ message LoadLambdaArgs {
 message ExecuteLambdaArgs {
   string lambda_id = 1;
 
-  // JSON-serialized args to the Lambda's execute function
-  string params_json = 2;
+  // Serialized parameters data for the Lambda function
+  // The serialization format is dependent on the Lambda
+  string serialized_params = 2;
 }
 
 message ExecuteLambdaResponse {
-  // JSON-serialized response from the Lambda's execute function
-  string response_json = 1;
+  // Serialized result data from the Lambda function
+  // The serialization format is dependent on the Lambda
+  string serialized_result = 1;
 }
 
 
