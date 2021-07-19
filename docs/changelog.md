@@ -1,4 +1,6 @@
 # TBD
+
+# 0.9.0
 ### Features
 * Support Lambda-loading and executing in the bulk command API
 
