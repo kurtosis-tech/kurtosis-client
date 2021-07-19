@@ -2,11 +2,20 @@ syntax = "proto3";
 package api_container_api;
 // NOTE: It sucks that we have this Go-specific logic inside this file (which should be language-agnostic). However, the Protobuf team have
 // taken a hard stance on this being the way it should be done, so we have to do it this way.
-option go_package = "github.com/kurtosis-tech/kurtosis-client/golang/core_api_bindings";
+option go_package = "github.com/kurtosis-tech/kurtosis-client/golang/kurtosis_core_rpc_api_bindings";
 
 import "google/protobuf/empty.proto";
 
 service ApiContainerService {
+  // Starts a lambda container into the network
+  rpc LoadLambda(LoadLambdaArgs) returns (google.protobuf.Empty) {};
+
+  // Executes a Kurtosis Lambda function on behalf of the user 
+  rpc ExecuteLambda(ExecuteLambdaArgs) returns (ExecuteLambdaResponse) {};
+
+  // Gets information about a loaded Lambda module
+  rpc GetLambdaInfo(GetLambdaInfoArgs) returns (GetLambdaInfoResponse) {};
+
   // Registers a service with the API container but doesn't start the container for it
   rpc RegisterService(RegisterServiceArgs) returns (RegisterServiceResponse) {};
 
@@ -19,7 +28,7 @@ service ApiContainerService {
   // Starts a previously-registered service by creating a Docker container for it
   rpc StartService(StartServiceArgs) returns (StartServiceResponse) {};
 
-  //Returns relevant information about the service
+  // Returns relevant information about the service
   rpc GetServiceInfo(GetServiceInfoArgs) returns (GetServiceInfoResponse) {};
 
   // Instructs the API container to remove the given service
@@ -37,6 +46,54 @@ service ApiContainerService {
   // Executes multiple commands at once
   rpc ExecuteBulkCommands(ExecuteBulkCommandsArgs) returns (google.protobuf.Empty) {};
 }
+
+
+// ==============================================================================================
+//                                     Load Lambda
+// ==============================================================================================
+message LoadLambdaArgs {
+  string lambda_id = 1;
+
+  string container_image = 2;
+
+  // The serialized params object that will be passed, as-is, to the Lambda for starting
+  // The serialization format is dependent on the Lambda
+  string serialized_params = 3;
+}
+
+
+
+// ==============================================================================================
+//                                     Execute Lambda
+// ==============================================================================================
+message ExecuteLambdaArgs {
+  string lambda_id = 1;
+
+  // Serialized parameters data for the Lambda function
+  // The serialization format is dependent on the Lambda
+  string serialized_params = 2;
+}
+
+message ExecuteLambdaResponse {
+  // Serialized result data from the Lambda function
+  // The serialization format is dependent on the Lambda
+  string serialized_result = 1;
+}
+
+
+
+// ==============================================================================================
+//                                     Get Lambda Info
+// ==============================================================================================
+message GetLambdaInfoArgs {
+  string lambda_id = 1;
+}
+
+message GetLambdaInfoResponse {
+  string ip_addr = 1;
+}
+
+
 
 // ==============================================================================================
 //                                     Register Service
@@ -152,6 +209,7 @@ message GetServiceInfoArgs {
 message GetServiceInfoResponse {
   // The IP address of the service
   string ip_addr = 1;
+
   // The full path where the test suite execution volume is mounted on the service
   string suite_execution_volume_mount_dirpath = 2;
 }

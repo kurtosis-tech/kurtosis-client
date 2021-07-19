@@ -6,6 +6,8 @@ import "github.com/palantir/stacktrace"
 //  1) all enum cases can be exhaustively handled
 //  2) any changes in the enum will result in a compile break
 type V0CommandTypeVisitor interface {
+	VisitLoadLambda() error
+	VisitExecuteLambda() error
 	VisitRegisterService() error
 	VisitGenerateFiles() error
 	VisitLoadStaticFiles() error
@@ -20,20 +22,26 @@ type V0CommandTypeVisitor interface {
 type V0CommandType string
 const (
 	// vvvvvvvvvvvvvvvvvvvv Update the visitor whenever you add an enum value!!! vvvvvvvvvvvvvvvvvvvvvvvvvvv
-	RegisterServiceCommandType V0CommandType = "REGISTER_SERVICE"
-	GenerateFilesCommandType				 = "GENERATE_FILES"
-	LoadStaticFilesCommandType				 = "LOAD_STATIC_FILES"
-	StartServiceCommandType                  = "START_SERVICE"
-	RemoveServiceCommandType                 = "REMOVE_SERVICE"
-	RepartitionCommandType					 = "REPARTITION"
-	ExecCommandCommandType					 = "EXEC_COMMAND"
-	WaitForEndpointAvailabilityCommandType   = "WAIT_FOR_ENDPOINT_AVAILABILITY"
-	ExecuteBulkCommandsCommandType			 = "EXECUTE_BULK_COMMANDS"
+	LoadLambdaCommandType			       V0CommandType = "LOAD_LAMBDA"
+	ExecuteLambdaCommandType      		   V0CommandType = "EXECUTE_LAMBDA"
+	RegisterServiceCommandType             V0CommandType = "REGISTER_SERVICE"
+	GenerateFilesCommandType               V0CommandType = "GENERATE_FILES"
+	LoadStaticFilesCommandType             V0CommandType = "LOAD_STATIC_FILES"
+	StartServiceCommandType                V0CommandType = "START_SERVICE"
+	RemoveServiceCommandType               V0CommandType = "REMOVE_SERVICE"
+	RepartitionCommandType                 V0CommandType = "REPARTITION"
+	ExecCommandCommandType                 V0CommandType = "EXEC_COMMAND"
+	WaitForEndpointAvailabilityCommandType V0CommandType = "WAIT_FOR_ENDPOINT_AVAILABILITY"
+	ExecuteBulkCommandsCommandType         V0CommandType = "EXECUTE_BULK_COMMANDS"
 	// ^^^^^^^^^^^^^^^^^^^^ Update the visitor whenever you add an enum value!!! ^^^^^^^^^^^^^^^^^^^^^^^^^^^
 )
 func (commandType V0CommandType) AcceptVisitor(visitor V0CommandTypeVisitor) error {
 	var err error
 	switch commandType {
+	case LoadLambdaCommandType:
+		err = visitor.VisitLoadLambda()
+	case ExecuteLambdaCommandType:
+		err = visitor.VisitExecuteLambda()
 	case RegisterServiceCommandType:
 		err = visitor.VisitRegisterService()
 	case GenerateFilesCommandType:

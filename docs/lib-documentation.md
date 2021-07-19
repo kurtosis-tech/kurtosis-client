@@ -4,6 +4,22 @@ This documentation describes how to interact with the Kurtosis API from within a
 
 _Found a bug? File it on [the repo](https://github.com/kurtosis-tech/kurtosis-client/issues)!_
 
+LambdaContext
+-------------
+<!-- TODO need to add docs for what Kurtosis modules are -->
+This Kurtosis-provided class is the lowest-level representation of a Lambda Kurtosis module - a Kurtosis module that has exactly one function.
+
+### execute(String serializedParams) -\> String serializedResult
+Executes the function packaged inside the Kurtosis Lambda module with the given serialized args, returning the serialized result. The serialization format will depend on the Lambda.
+
+**Args**
+
+* `serializedParams`: Serialized data containing args to the Lambda function. Consult the documentation for the module you're using to determine what this should contain.
+
+**Returns**
+
+* `serializedResult`: Serialized data containing the results of executing the Lambda function. Consult the documentation for the module you're using to determine what this will contain.
+
 Network
 -------
 This interface provides the option to define a higher level of abstraction for manipulating your test network than is provided by [NetworkContext][networkcontext], so that test-writing is easier. This commonly looks like wrapping several [NetworkContext][networkcontext] methods into a single one - e.g. if you're running a Cassandra cluster that must bootstrap off three nodes, you might define a `CassandraNetwork` implementation with a `startBootstrappers` method that does the gruntwork so each test doesn't need to add the services manually. Each of your tests will then receive this custom implementation in their [Test.run][test_run] method.
@@ -11,6 +27,33 @@ This interface provides the option to define a higher level of abstraction for m
 NetworkContext
 --------------
 This Kurtosis-provided class is the lowest-level representation of a test network, and provides methods for inspecting and manipulating the network. All [Network][network] implementations will encapsulate an instance of this class.
+
+
+### loadLambda(String lambdaId, String image, String serializedParams) -\> [LambdaContext][lambdacontext] lambdaContext
+Starts a new Kurtosis Lambda module (configured using the serialized params) inside the test network, which makes its function available for use.
+
+**Args**
+
+* `lambdaId`: The ID that the new module should receive (must not exist).
+* `image`: The container image of the Lambda module to be loaded.
+* `serializedParams`: Serialized parameter data that will be passed to the module as it starts, to control overall module behaviour.
+
+**Returns**
+
+* `lambdaContext`: The [LambdaContext][lambdacontext] representation of the running Lambda container, which allows execution of the Lambda function.
+
+
+### getLambdaContext(String lambdaId) -\> [LambdaContext][lambdacontext] lambdaContext
+Gets the [LambdaContext][lambdacontext] associated with an already-running Lambda container identified by the given ID.
+
+**Args**
+
+* `lambdaId`: The ID of the Lambda to retrieve the context for.
+
+**Returns**
+
+* `lambdaContext`: The [LambdaContext][lambdacontext] representation of the running Lambda container, which allows execution of the Lambda function.
+
 
 ### addServiceToPartition(ServiceID serviceId, PartitionID partitionId, [ContainerCreationConfig][containercreationconfig] containerCreationConfig, Func(String ipAddr, Map\<String, String\> generatedFileFilepaths, Map\<String, String\> staticFileFilepaths) -\> [ContainerRunConfig][containerrunconfig] generateRunConfigFunc) -\> ([ServiceContext][servicecontext] serviceContext, Map\<String, PortBinding\> hostPortBindings)
 Starts a new service in the network with the given service ID, inside the partition with the given ID, using the given config factory.
@@ -30,7 +73,7 @@ Starts a new service in the network with the given service ID, inside the partit
 ### addService(ServiceID serviceId, [ContainerCreationConfig][containercreationconfig] containerCreationConfig, Func(String ipAddr, Map\<String, String\> generatedFileFilepaths, Map\<String, String\> staticFileFilepaths) -\> [ContainerRunConfig][containerrunconfig] generateRunConfigFunc ) -\> ([ServiceContext][servicecontext] serviceContext, Map\<String, PortBinding\> hostPortBindings)
 Convenience wrapper around [NetworkContext.addServiceToPartition][networkcontext_addservicetopartition], that adds the service to the default partition. Note that if the network has been repartitioned and the default partition doesn't exist anymore, this method will fail.
 
-### getServiceContext(ServiceID serviceId)
+### getServiceContext(ServiceID serviceId) -\> [ServiceContext][servicecontext]
 Gets relevant information about a service (identified by the given service ID) that is running in the network.
 
 **Args**
@@ -220,6 +263,10 @@ _Found a bug? File it on [the repo](https://github.com/kurtosis-tech/kurtosis-cl
 
 [containerrunconfigbuilder]: #containerrunconfigbuilder
 
+[generatedfilefilepaths]: #generatedfilefilepaths
+
+[lambdacontext]: #lambdacontext
+
 [network]: #network
 
 [networkcontext]: #networkcontext
@@ -231,8 +278,6 @@ _Found a bug? File it on [the repo](https://github.com/kurtosis-tech/kurtosis-cl
 [partitionconnectioninfo]: #partitionconnectioninfo
 
 [servicecontext]: #servicecontext
-
-[generatedfilefilepaths]: #generatedfilefilepaths
 
 [test]: ../kurtosis-libs/lib-documentation#testn-extends-network
 [test_configure]: ../kurtosis-libs/lib-documentation#configuretestconfigurationbuilder-builder

@@ -2,7 +2,7 @@ package bulk_command_execution
 
 import (
 	"encoding/json"
-	"github.com/kurtosis-tech/kurtosis-client/golang/bulk_command_execution/v0_bulk_command_api"
+	"github.com/kurtosis-tech/kurtosis-client/golang/lib/bulk_command_execution/v0_bulk_command_api"
 	"github.com/palantir/stacktrace"
 )
 
@@ -11,7 +11,7 @@ const (
 )
 
 type VersionedBulkCommandsDocument struct {
-	SchemaVersion SchemaVersion	`json:"schemaVersion"`
+	SchemaVersion SchemaVersion `json:"schemaVersion"`
 }
 
 type serializableBulkCommandsDocument struct {

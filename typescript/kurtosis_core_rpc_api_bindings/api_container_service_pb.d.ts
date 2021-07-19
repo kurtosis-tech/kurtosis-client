@@ -4,6 +4,118 @@
 import * as jspb from "google-protobuf";
 import * as google_protobuf_empty_pb from "google-protobuf/google/protobuf/empty_pb";
 
+export class LoadLambdaArgs extends jspb.Message {
+  getLambdaId(): string;
+  setLambdaId(value: string): void;
+
+  getContainerImage(): string;
+  setContainerImage(value: string): void;
+
+  getSerializedParams(): string;
+  setSerializedParams(value: string): void;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): LoadLambdaArgs.AsObject;
+  static toObject(includeInstance: boolean, msg: LoadLambdaArgs): LoadLambdaArgs.AsObject;
+  static extensions: {[key: number]: jspb.ExtensionFieldInfo<jspb.Message>};
+  static extensionsBinary: {[key: number]: jspb.ExtensionFieldBinaryInfo<jspb.Message>};
+  static serializeBinaryToWriter(message: LoadLambdaArgs, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): LoadLambdaArgs;
+  static deserializeBinaryFromReader(message: LoadLambdaArgs, reader: jspb.BinaryReader): LoadLambdaArgs;
+}
+
+export namespace LoadLambdaArgs {
+  export type AsObject = {
+    lambdaId: string,
+    containerImage: string,
+    serializedParams: string,
+  }
+}
+
+export class ExecuteLambdaArgs extends jspb.Message {
+  getLambdaId(): string;
+  setLambdaId(value: string): void;
+
+  getSerializedParams(): string;
+  setSerializedParams(value: string): void;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): ExecuteLambdaArgs.AsObject;
+  static toObject(includeInstance: boolean, msg: ExecuteLambdaArgs): ExecuteLambdaArgs.AsObject;
+  static extensions: {[key: number]: jspb.ExtensionFieldInfo<jspb.Message>};
+  static extensionsBinary: {[key: number]: jspb.ExtensionFieldBinaryInfo<jspb.Message>};
+  static serializeBinaryToWriter(message: ExecuteLambdaArgs, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): ExecuteLambdaArgs;
+  static deserializeBinaryFromReader(message: ExecuteLambdaArgs, reader: jspb.BinaryReader): ExecuteLambdaArgs;
+}
+
+export namespace ExecuteLambdaArgs {
+  export type AsObject = {
+    lambdaId: string,
+    serializedParams: string,
+  }
+}
+
+export class ExecuteLambdaResponse extends jspb.Message {
+  getSerializedResult(): string;
+  setSerializedResult(value: string): void;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): ExecuteLambdaResponse.AsObject;
+  static toObject(includeInstance: boolean, msg: ExecuteLambdaResponse): ExecuteLambdaResponse.AsObject;
+  static extensions: {[key: number]: jspb.ExtensionFieldInfo<jspb.Message>};
+  static extensionsBinary: {[key: number]: jspb.ExtensionFieldBinaryInfo<jspb.Message>};
+  static serializeBinaryToWriter(message: ExecuteLambdaResponse, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): ExecuteLambdaResponse;
+  static deserializeBinaryFromReader(message: ExecuteLambdaResponse, reader: jspb.BinaryReader): ExecuteLambdaResponse;
+}
+
+export namespace ExecuteLambdaResponse {
+  export type AsObject = {
+    serializedResult: string,
+  }
+}
+
+export class GetLambdaInfoArgs extends jspb.Message {
+  getLambdaId(): string;
+  setLambdaId(value: string): void;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): GetLambdaInfoArgs.AsObject;
+  static toObject(includeInstance: boolean, msg: GetLambdaInfoArgs): GetLambdaInfoArgs.AsObject;
+  static extensions: {[key: number]: jspb.ExtensionFieldInfo<jspb.Message>};
+  static extensionsBinary: {[key: number]: jspb.ExtensionFieldBinaryInfo<jspb.Message>};
+  static serializeBinaryToWriter(message: GetLambdaInfoArgs, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): GetLambdaInfoArgs;
+  static deserializeBinaryFromReader(message: GetLambdaInfoArgs, reader: jspb.BinaryReader): GetLambdaInfoArgs;
+}
+
+export namespace GetLambdaInfoArgs {
+  export type AsObject = {
+    lambdaId: string,
+  }
+}
+
+export class GetLambdaInfoResponse extends jspb.Message {
+  getIpAddr(): string;
+  setIpAddr(value: string): void;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): GetLambdaInfoResponse.AsObject;
+  static toObject(includeInstance: boolean, msg: GetLambdaInfoResponse): GetLambdaInfoResponse.AsObject;
+  static extensions: {[key: number]: jspb.ExtensionFieldInfo<jspb.Message>};
+  static extensionsBinary: {[key: number]: jspb.ExtensionFieldBinaryInfo<jspb.Message>};
+  static serializeBinaryToWriter(message: GetLambdaInfoResponse, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): GetLambdaInfoResponse;
+  static deserializeBinaryFromReader(message: GetLambdaInfoResponse, reader: jspb.BinaryReader): GetLambdaInfoResponse;
+}
+
+export namespace GetLambdaInfoResponse {
+  export type AsObject = {
+    ipAddr: string,
+  }
+}
+
 export class RegisterServiceArgs extends jspb.Message {
   getServiceId(): string;
   setServiceId(value: string): void;

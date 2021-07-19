@@ -1,7 +1,60 @@
 # TBD
 
-# 0.6.0
+# 0.9.0
+### Features
+* Support Lambda-loading and executing in the bulk command API
 
+### Changes
+* Updated the values of the Lambda endpoints to reflect that the serialization format is dependent on the Lambda
+
+### Breaking Changes
+* Renamed the `params_json` in the `LoadLambda` and `ExecuteLambda` API container endpoints to `serialized_params`, to reflect that the serialization format is dependent on the module
+* Renamed the `respones_json` in the `ExecuteLambda` API container endpoint to `serialized_result`, to reflect the Lambda-specific serialization format
+
+# 0.8.1
+### Features
+* Added a `GetLambdaInfo` endpoint to the API container's API
+* Added a `NetworkContext.getLambdaContext` method for calling the API container method
+
+# 0.8.0
+### Fixes
+* Fixed Protobuf binding generation, that got broken in 0.7.0
+
+### Changes
+* Renamed all the references to "modules" -> "lambdas" to more specifically match the purpose
+
+### Breaking Changes
+* Renamed the `ModuleID` type to `LambdaID`, to more closely match its purpose
+* Renamed `LambdaModuleContext` -> `LambdaContext`
+* Renamed `LoadModule` -> `LoadLambda`
+* Renamed `LoadModuleArgs` -> `LoadLambdaArgs`
+
+# 0.7.0
+### Changes
+* Added an explicit `kurtosis_` in the API binding packages, to clarify that they're Kurtosis specific (per feedback from a user research session)
+* Moved the `services`, `networks`, `bulk_command_execution`, and `modules` packages inside a `lib` directory
+
+### Breaking Changes
+* Renamed the `core_api_bindings` package -> `kurtosis_core_rpc_api_bindings`
+    * Users will need to update their import statements to reflect the new name
+* Renamed the `core_api_consts` package -> `kurtosis_core_rpc_api_consts`
+    * Users will need to update their import statements to reflect the new name
+* Moved the `services`, `networks`, `bulk_command_execution`, and `modules` packages inside a `lib` directory
+    * Users will need to update their import statements to reflect the new name
+
+# 0.6.2
+### Changes
+* Make the user specify module ID, rather than autogenerating one
+
+### Features
+* Added a `LoadModule` endpoint to the API container
+* Added a `NetworkContext.loadLambda` method that returns a `LambdaModuleContext` with a single method, `execute`, for using Kurtosis Lambda module functions
+
+# 0.6.1
+### Fixes
+* Fixed an error in this document
+
+# 0.6.0
 ### Breaking Changes
 * Replaced the argument `ContainerConfigFactory` in `AddService`and `AddServiceToPartition`with two arguments `ContainerCreationConfig`and an anonymous function which should returns `ContainerRunConfig`type
   * Users should use the `ContainerCreationConfig` struct, and the function that was defined in `GetRunConfig` in the `ContainerConfigFactory` implementations as the new arguments
@@ -21,9 +74,6 @@
 ### Breaking Changes
 * The `ContainerCreationConfigBuilder` constructor no longer takes in a test volume mountpoint
 * Added a `ContainerCreationConfigBuilder.WithTestVolumeMountpoint` for specifying the test volume mountpoint, which should be used instead if the default test volume mountpoint of `/kurtosis-test-volume` isn't acceptable
-* Replaced the argument `ContainerConfigFactory` in `AddService`and `AddServiceToPartition`with two arguments `ContainerCreationConfig`and an anonymous function which should returns `ContainerRunConfig`type;
-  users should use `ContainerCreationConfig` struct, and the function that was defined in `GetRunCongig` in the `ContainerConfigFactory` implementations as the new arguments
-* Removed `ContainerConfigFactory` interface
 
 # 0.4.0
 ### Features
