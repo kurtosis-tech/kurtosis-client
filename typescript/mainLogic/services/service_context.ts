@@ -1,9 +1,8 @@
-/*package services*/ //TODO Get rid of this, not needed in typescript
+/*package services*/ //TODO REMOVE
 
 //import ( //TODO TODO TODO!!!!!! - Make sure to adjust variable name to lowerCamelCase (except classes, enums, enum members)
-	//"context" //TODO Don't need context for typescript, golang specific
 import * as core_api_bindings_js_grpc from '../../core_api_bindings/api_container_service_grpc_pb.js'; //TODO - camelCase VS snake_case ; do I need asterisk?
-import * as core_api_bindings_js from '../../core_api_bindings/api_container_service_pb.js'; //TODO - extra line, I might be able to reduce this with line above ; * = importing everything ? Can I use this to get rid of this line
+import * as core_api_bindings_js from '../../core_api_bindings/api_container_service_pb.js'; //TODO - EXTRA, I might be able to reduce this with line above ; * = importing everything ? Can I use this to get rid of this line
 //import {ServiceID} from 'service'; //TODO - not working at the moment, but TS cannont find ServiceID so need to fix (need to export in service.ts!); (more import lines than golang)
 var path = require("path"); //"path" - TODO importing from node.js potentially
 //)
@@ -14,16 +13,16 @@ class GeneratedFileFilepaths { //TODO (comment) - try interface if class doesn't
 	absoluteFilepathOnServiceContainer:   string;
 }
 
-// Docs available at https://docs.kurtosistech.com/kurtosis-libs/lib-documentation
-interface ServiceContext { //TODO lowerCamelCase ; maybe a class (I might not need this, since I already have a class)
-	client:                                   core_api_bindings_js_grpc.ApiContainerServiceClient;
-	serviceId:                                ServiceID; //TODO - might need to import, but we'll see
-	ipAddress:                                string;
-	testVolumeMountpointOnTestsuiteContainer: string;
-	testVolumeMountpointOnServiceContainer:   string;
-}
+// // (TODO - REMOVE) Docs available at https://docs.kurtosistech.com/kurtosis-libs/lib-documentation
+// interface ServiceContext { //TODO lowerCamelCase ; maybe a class (I might not need this, since I already have a class)
+// 	client:                                   core_api_bindings_js_grpc.ApiContainerServiceClient;
+// 	serviceId:                                ServiceID; //TODO - might need to import, but we'll see
+// 	ipAddress:                                string;
+// 	testVolumeMountpointOnTestsuiteContainer: string;
+// 	testVolumeMountpointOnServiceContainer:   string;
+// }
 
-// function NewServiceContext ( //TODO lowerCamelCase - functions //TODO = The constructor in typescript replaces this
+// (TODO - REMOVE) function NewServiceContext ( //TODO lowerCamelCase - functions //TODO = The constructor in typescript replaces this
 // 		client: core_api_bindings_js_grpc.ApiContainerServiceClient,
 // 		serviceId: ServiceID,
 // 		ipAddress: string,
@@ -39,7 +38,7 @@ interface ServiceContext { //TODO lowerCamelCase ; maybe a class (I might not ne
 //     return result; //TODO (comment) return pointer in golang, but typescript's reference variables implciltly point into the heap
 //}
 
-class ServiceContext { //TODO Should only be adding methods into a class, you can't link to a struct in typescript like in golang
+class ServiceContext { //TODO (comment) Should only be adding methods into a class, you can't link to a struct in typescript like in golang
     
     client: core_api_bindings_js_grpc.ApiContainerServiceClient;
     serviceId: ServiceID;
