@@ -76,7 +76,10 @@ Starts a new service in the network with the given service ID, inside the partit
 * `serviceId`: The ID that the new service should have.
 * `partitionId`: The ID of the partition that the new service should be started in. This can be left blank to start the service in the default partition if it exists (i.e. if the network hasn't been repartitioned and the default partition removed).
 * `containerCreationConfig`: The definition of the necessary values that Kurtosis will use to start the container for the new service.
-* `generateRunConfigFunc`: An anonymous function, used to produce the [ContainerRunConfig][containerrunconfig] for starting the service, which receives three dynamic values as arguments: the IP address of the service being started, the filepaths of the generated files requested in the [ContainerCreationConfig][containercreationconfig], and the filepaths of the static files requested in [ContainerCreationConfig][containercreationconfig].
+* `generateRunConfigFunc`: An anonymous function, used to produce the [ContainerRunConfig][containerrunconfig] for starting the service, which receives three dynamic values as arguments: 
+    1. The IP address of the service being started
+    1. A map of generated_file_id -> filepath_on_service, where the keys correspond to the keys of the [ContainerCreationConfig.fileGeneratingFuncs][containercreationconfig_filegeneratingfuncs] map and the values are the filepaths _on the service container_ where the generated files can be found
+    1. A map of static_file_id -> filepath_on_service, where the keys correspond to the static file IDs requested in [ContainerCreationConfig.usedStaticFiles][containercreationconfig_usedstaticfiles] and the values are the filepaths _on the service container_ where the static files can be found
 
 **Returns**
 
