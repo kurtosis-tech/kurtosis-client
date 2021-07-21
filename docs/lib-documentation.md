@@ -56,6 +56,7 @@ Gets the [LambdaContext][lambdacontext] associated with an already-running Lambd
 
 ### TODO TODO registerStaticFiles
 
+### TODO TODO registerFilesArtifacts
 
 ### addServiceToPartition(ServiceID serviceId, PartitionID partitionId, [ContainerCreationConfig][containercreationconfig] containerCreationConfig, Func(String ipAddr, Map\<String, String\> generatedFileFilepaths, Map\<String, String\> staticFileFilepaths) -\> [ContainerRunConfig][containerrunconfig] generateRunConfigFunc) -\> ([ServiceContext][servicecontext] serviceContext, Map\<String, PortBinding\> hostPortBindings)
 Starts a new service in the network with the given service ID, inside the partition with the given ID, using the given config factory.

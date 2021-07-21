@@ -29,8 +29,6 @@ const (
 type NetworkContext struct {
 	client kurtosis_core_rpc_api_bindings.ApiContainerServiceClient
 
-	filesArtifactUrls map[services.FilesArtifactID]string
-
 	// The location on the filesystem where this code is running where the suite execution volume is mounted
 	suiteExVolMountpoint string
 }
@@ -40,11 +38,9 @@ Creates a new NetworkContext object with the given parameters.
 */
 func NewNetworkContext(
 	client kurtosis_core_rpc_api_bindings.ApiContainerServiceClient,
-	filesArtifactUrls map[services.FilesArtifactID]string,
 	suiteExVolMountpoint string) *NetworkContext {
 	return &NetworkContext{
 		client:               client,
-		filesArtifactUrls:    filesArtifactUrls,
 		suiteExVolMountpoint: suiteExVolMountpoint,
 	}
 }
@@ -138,6 +134,19 @@ func (networkCtx *NetworkContext) RegisterStaticFiles(staticFileFilepaths map[se
 }
 
 // Docs available at https://docs.kurtosistech.com/kurtosis-libs/lib-documentation
+func (networkCtx *NetworkContext) RegisterFilesArtifacts(filesArtifactUrls map[services.FilesArtifactID]string) error {
+	filesArtifactIdStrsToUrls := map[string]string{}
+	for artifactId, url := range filesArtifactUrls {
+		filesArtifactIdStrsToUrls[string(artifactId)] = url
+	}
+	args := &kurtosis_core_rpc_api_bindings.RegisterFilesArtifactsArgs{FilesArtifactUrls: filesArtifactIdStrsToUrls}
+	if _, err := networkCtx.client.RegisterFilesArtifacts(context.Background(), args); err != nil {
+		return stacktrace.Propagate(err, "An error occurred registering files artifacts: %+v", filesArtifactUrls)
+	}
+	return nil
+}
+
+// Docs available at https://docs.kurtosistech.com/kurtosis-libs/lib-documentation
 func (networkCtx *NetworkContext) AddService(
 	serviceId services.ServiceID,
 	containerCreationConfig *services.ContainerCreationConfig,
@@ -181,9 +190,6 @@ func (networkCtx *NetworkContext) AddServiceToPartition(
 	}
 	serviceIpAddr := registerServiceResp.IpAddr
 
-	if err != nil {
-		return nil, nil, stacktrace.Propagate(err, "An error occurred getting the container creation config")
-	}
 	serviceContext := services.NewServiceContext(
 		networkCtx.client,
 		serviceId,
@@ -234,20 +240,12 @@ func (networkCtx *NetworkContext) AddServiceToPartition(
 		return nil, nil, stacktrace.Propagate(err, "An error occurred getting the container run config")
 	}
 
-	logrus.Tracef("Creating files artifact URL -> mount dirpaths map...")
-	artifactUrlToMountDirpath := map[string]string{}
+	logrus.Tracef("Creating files artifact ID str -> mount dirpaths map...")
+	artifactIdStrToMountDirpath := map[string]string{}
 	for filesArtifactId, mountDirpath := range containerCreationConfig.GetFilesArtifactMountpoints() {
-		artifactUrl, found := networkCtx.filesArtifactUrls[filesArtifactId]
-		if !found {
-			return nil, nil, stacktrace.Propagate(
-				err,
-				"Service requested file artifact '%v', but the network"+
-					"context doesn't have a URL for that file artifact; this is a bug with Kurtosis itself",
-				filesArtifactId)
-		}
-		artifactUrlToMountDirpath[string(artifactUrl)] = mountDirpath
+		artifactIdStrToMountDirpath[string(filesArtifactId)] = mountDirpath
 	}
-	logrus.Tracef("Successfully created files artifact URL -> mount dirpaths map")
+	logrus.Tracef("Successfully created files artifact ID str -> mount dirpaths map")
 
 	logrus.Tracef("Starting new service with Kurtosis API...")
 	startServiceArgs := &kurtosis_core_rpc_api_bindings.StartServiceArgs{
@@ -258,7 +256,7 @@ func (networkCtx *NetworkContext) AddServiceToPartition(
 		CmdArgs:                     containerRunConfig.GetCmdOverrideArgs(),
 		DockerEnvVars:               containerRunConfig.GetEnvironmentVariableOverrides(),
 		SuiteExecutionVolMntDirpath: containerCreationConfig.GetTestVolumeMountpoint(),
-		FilesArtifactMountDirpaths:  artifactUrlToMountDirpath,
+		FilesArtifactMountDirpaths:  artifactIdStrToMountDirpath,
 	}
 	resp, err := networkCtx.client.StartService(ctx, startServiceArgs)
 	if err != nil {

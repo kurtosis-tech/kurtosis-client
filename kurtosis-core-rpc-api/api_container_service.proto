@@ -20,6 +20,10 @@ service ApiContainerService {
   // The API container will respond with paths inside the enclave directory where the client should put its files
   rpc RegisterStaticFiles(RegisterStaticFilesArgs) returns (RegisterStaticFilesResponse) {};
 
+  // Tells the API container that the client has files artifacts from the web that it would like the API container to know about
+  // The API container will download these artifacts locally, so they're available when launching services
+  rpc RegisterFilesArtifacts(RegisterFilesArtifactsArgs) returns (google.protobuf.Empty) {};
+
   // Registers a service with the API container but doesn't start the container for it
   rpc RegisterService(RegisterServiceArgs) returns (RegisterServiceResponse) {};
 
@@ -116,6 +120,15 @@ message RegisterStaticFilesResponse {
 
 
 // ==============================================================================================
+//                                       Register Files Artifacts
+// ==============================================================================================
+message RegisterFilesArtifactsArgs {
+  // A mapping of user_defined_id -> url_of_file_artifact
+  map<string, string> files_artifact_urls = 1;
+}
+
+
+// ==============================================================================================
 //                                     Register Service
 // ==============================================================================================
 message RegisterServiceArgs {
@@ -203,7 +216,7 @@ message StartServiceArgs {
   // The full path where the API container should execute the suite execution volume on the service container
   string suite_execution_vol_mnt_dirpath = 7;
 
-  // Mapping of artifact_url -> filepath_on_container_to_mount_artifact_contents
+  // Mapping of files_artifact_id -> filepath_on_container_to_mount_artifact_contents
   map<string, string> files_artifact_mount_dirpaths = 8;
 }
 
