@@ -319,7 +319,8 @@ getLambdaInfo: {
     responseDeserialize: deserialize_api_container_api_GetLambdaInfoResponse,
   },
   // Tells the API container that the client has static files it would like the API container to know about
-// The API container will respond with paths inside the enclave directory where the client should put its files
+// The API container will respond with paths inside the enclave directory; the client is then responsible for copying their
+//  files there
 registerStaticFiles: {
     path: '/api_container_api.ApiContainerService/RegisterStaticFiles',
     requestStream: false,
@@ -356,7 +357,7 @@ registerService: {
     responseSerialize: serialize_api_container_api_RegisterServiceResponse,
     responseDeserialize: deserialize_api_container_api_RegisterServiceResponse,
   },
-  // Generates files inside the test volume on the filesystem for a container
+  // Generates files inside the enclave data volume on the filesystem for a container
 generateFiles: {
     path: '/api_container_api.ApiContainerService/GenerateFiles',
     requestStream: false,

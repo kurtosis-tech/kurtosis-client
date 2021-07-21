@@ -26,14 +26,15 @@ type ApiContainerServiceClient interface {
 	// Gets information about a loaded Lambda module
 	GetLambdaInfo(ctx context.Context, in *GetLambdaInfoArgs, opts ...grpc.CallOption) (*GetLambdaInfoResponse, error)
 	// Tells the API container that the client has static files it would like the API container to know about
-	// The API container will respond with paths inside the enclave directory where the client should put its files
+	// The API container will respond with paths inside the enclave directory; the client is then responsible for copying their
+	//  files there
 	RegisterStaticFiles(ctx context.Context, in *RegisterStaticFilesArgs, opts ...grpc.CallOption) (*RegisterStaticFilesResponse, error)
 	// Tells the API container that the client has files artifacts from the web that it would like the API container to know about
 	// The API container will download these artifacts locally, so they're available when launching services
 	RegisterFilesArtifacts(ctx context.Context, in *RegisterFilesArtifactsArgs, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	// Registers a service with the API container but doesn't start the container for it
 	RegisterService(ctx context.Context, in *RegisterServiceArgs, opts ...grpc.CallOption) (*RegisterServiceResponse, error)
-	// Generates files inside the test volume on the filesystem for a container
+	// Generates files inside the enclave data volume on the filesystem for a container
 	GenerateFiles(ctx context.Context, in *GenerateFilesArgs, opts ...grpc.CallOption) (*GenerateFilesResponse, error)
 	// Copies static files that have been registered with the API container into the file namespace of the given service
 	LoadStaticFiles(ctx context.Context, in *LoadStaticFilesArgs, opts ...grpc.CallOption) (*LoadStaticFilesResponse, error)
@@ -207,14 +208,15 @@ type ApiContainerServiceServer interface {
 	// Gets information about a loaded Lambda module
 	GetLambdaInfo(context.Context, *GetLambdaInfoArgs) (*GetLambdaInfoResponse, error)
 	// Tells the API container that the client has static files it would like the API container to know about
-	// The API container will respond with paths inside the enclave directory where the client should put its files
+	// The API container will respond with paths inside the enclave directory; the client is then responsible for copying their
+	//  files there
 	RegisterStaticFiles(context.Context, *RegisterStaticFilesArgs) (*RegisterStaticFilesResponse, error)
 	// Tells the API container that the client has files artifacts from the web that it would like the API container to know about
 	// The API container will download these artifacts locally, so they're available when launching services
 	RegisterFilesArtifacts(context.Context, *RegisterFilesArtifactsArgs) (*emptypb.Empty, error)
 	// Registers a service with the API container but doesn't start the container for it
 	RegisterService(context.Context, *RegisterServiceArgs) (*RegisterServiceResponse, error)
-	// Generates files inside the test volume on the filesystem for a container
+	// Generates files inside the enclave data volume on the filesystem for a container
 	GenerateFiles(context.Context, *GenerateFilesArgs) (*GenerateFilesResponse, error)
 	// Copies static files that have been registered with the API container into the file namespace of the given service
 	LoadStaticFiles(context.Context, *LoadStaticFilesArgs) (*LoadStaticFilesResponse, error)

@@ -29,20 +29,19 @@ const (
 type NetworkContext struct {
 	client kurtosis_core_rpc_api_bindings.ApiContainerServiceClient
 
-	// TODO rename this to reflect that it's soon no longer going to be "suite execution" - just an enclave volume
-	// The location on the filesystem where this code is running where the suite execution volume is mounted
-	suiteExVolMountpoint string
+	// The location on the filesystem where this code is running where the enclave data volume is mounted
+	enclaveDataVolMountpoint string
 }
 
 /*
 Creates a new NetworkContext object with the given parameters.
 */
 func NewNetworkContext(
-	client kurtosis_core_rpc_api_bindings.ApiContainerServiceClient,
-	suiteExVolMountpoint string) *NetworkContext {
+		client kurtosis_core_rpc_api_bindings.ApiContainerServiceClient,
+		enclaveDataVolMountpoint string) *NetworkContext {
 	return &NetworkContext{
-		client:               client,
-		suiteExVolMountpoint: suiteExVolMountpoint,
+		client:                   client,
+		enclaveDataVolMountpoint: enclaveDataVolMountpoint,
 	}
 }
 
@@ -104,7 +103,7 @@ func (networkCtx *NetworkContext) RegisterStaticFiles(staticFileFilepaths map[se
 			return stacktrace.NewError("No source filepath found for static file '%v'; this is a bug in Kurtosis", staticFileId)
 		}
 
-		destAbsFilepath := path.Join(networkCtx.suiteExVolMountpoint, destFilepathRelativeToEnclaveVolRoot)
+		destAbsFilepath := path.Join(networkCtx.enclaveDataVolMountpoint, destFilepathRelativeToEnclaveVolRoot)
 		if _, err := os.Stat(destAbsFilepath); os.IsNotExist(err) {
 			return stacktrace.NewError(
 				"The Kurtosis API asked us to copy static file '%v' to path '%v' in the enclave volume which means that an empty file should exist there, " +
@@ -195,8 +194,8 @@ func (networkCtx *NetworkContext) AddServiceToPartition(
 		networkCtx.client,
 		serviceId,
 		serviceIpAddr,
-		networkCtx.suiteExVolMountpoint,
-		containerCreationConfig.GetTestVolumeMountpoint())
+		networkCtx.enclaveDataVolMountpoint,
+		containerCreationConfig.GetKurtosisVolumeMountpoint())
 	logrus.Tracef("New service successfully registered with Kurtosis API")
 
 	logrus.Trace("Loading static files into new service namespace...")
@@ -225,7 +224,7 @@ func (networkCtx *NetworkContext) AddServiceToPartition(
 				"Needed to initialize file for file ID '%v', but no generated file filepaths were found for that file ID; this is a Kurtosis bug",
 				fileId)
 		}
-		fp, err := os.Create(filepaths.AbsoluteFilepathOnTestsuiteContainer)
+		fp, err := os.Create(filepaths.AbsoluteFilepathHere)
 		if err != nil {
 			return nil, nil, stacktrace.Propagate(err, "An error occurred opening file pointer for file '%v'", fileId)
 		}
@@ -256,7 +255,7 @@ func (networkCtx *NetworkContext) AddServiceToPartition(
 		EntrypointArgs:              containerRunConfig.GetEntrypointOverrideArgs(),
 		CmdArgs:                     containerRunConfig.GetCmdOverrideArgs(),
 		DockerEnvVars:               containerRunConfig.GetEnvironmentVariableOverrides(),
-		SuiteExecutionVolMntDirpath: containerCreationConfig.GetTestVolumeMountpoint(),
+		EnclaveDataVolMntDirpath:    containerCreationConfig.GetKurtosisVolumeMountpoint(),
 		FilesArtifactMountDirpaths:  artifactIdStrToMountDirpath,
 	}
 	resp, err := networkCtx.client.StartService(ctx, startServiceArgs)
@@ -286,10 +285,10 @@ func (networkCtx *NetworkContext) GetServiceContext(serviceId services.ServiceID
 			serviceId)
 	}
 
-	suiteExVolMountpoint := serviceResponse.GetSuiteExecutionVolumeMountDirpath()
-	if suiteExVolMountpoint == "" {
+	enclaveDataVolMountDirpathOnSvcContainer := serviceResponse.GetEnclaveDataVolumeMountDirpath()
+	if enclaveDataVolMountDirpathOnSvcContainer == "" {
 		return nil, stacktrace.NewError(
-			"Kurtosis API reported an empty suite execution volume directory path for service '%v' - this should never happen, and is a bug with Kurtosis!",
+			"Kurtosis API reported an empty enclave data volume directory path for service '%v' - this should never happen, and is a bug with Kurtosis!",
 			serviceId)
 	}
 
@@ -297,8 +296,8 @@ func (networkCtx *NetworkContext) GetServiceContext(serviceId services.ServiceID
 		networkCtx.client,
 		serviceId,
 		serviceResponse.GetIpAddr(),
-		suiteExVolMountpoint,
-		suiteExVolMountpoint,
+		networkCtx.enclaveDataVolMountpoint,
+		enclaveDataVolMountDirpathOnSvcContainer,
 	)
 
 	return serviceContext, nil

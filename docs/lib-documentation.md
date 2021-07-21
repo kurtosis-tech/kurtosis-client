@@ -148,8 +148,8 @@ Object containing information Kurtosis needs to create the container. This confi
 ### String image
 The name of the container image that Kurtosis should use when creating the service's container (e.g. `my-repo/my-image:some-tag-name`).
 
-### String testVolumeMountpoint
-Kurtosis uses a Docker volume to keep track of test state, and needs to mount this volume on every container. Kurtosis by default tries to mount this at a location that probably won't be used, but it can't know for certain what paths won't conflict so this property can be used to tell Kurtosis a filepath that doesn't yet exist and is safe for mounting.
+### String kurtosisVolumeMountpoint
+Kurtosis uses a Docker volume to keep track of state, and needs to mount this volume on every container. Kurtosis by default tries to mount this at a location that probably won't be used, but it can't know for certain what paths won't conflict so this property can be used to tell Kurtosis a filepath that doesn't yet exist and is safe for mounting.
 
 ### Set\<String\> usedPorts
 The set of ports that the container will be listening on, in the format `NUM/PROTOCOL` (e.g. `80/tcp`, `9090/udp`, etc.).
@@ -231,7 +231,7 @@ Uses [Docker exec](https://docs.docker.com/engine/reference/commandline/exec/) f
 * `logs`: The bytes of the command logs. This isn't a string because Kurtosis can't know what text encoding scheme the container uses.
 
 ### generateFiles(Set\<String\> filesToGenerate) -\> Map\<String, [GeneratedFileFilepaths][generatedfilefilepaths]\>
-Generates files inside the suite execution volume, which is mounted on both the testsuite container and the service container. This allows the testsuite to write data to files that are immediately available to the service container, as if they shared a filesystem.
+Generates files inside the enclave data volume, which is mounted on both the container where this code is running and the service container. This allows the current container to write data to files that are immediately available to the service container, as if they shared a filesystem.
 
 **Args**
 
@@ -255,10 +255,10 @@ A map of the static file IDs (corresponding to the set passed in as input) mappe
 
 GeneratedFileFilepaths
 ----------------------
-Simple structure containing the filepaths to a generated file on either a) the testsuite container or b) on the service container for whom the file was generated. These filepaths are different because the path where the suite execution volume is mounted on the testsuite container can be different from the path where the volume is mounted on the service container.
+Simple structure containing the filepaths to a generated file on a) the current container and b) on the service container for whom the file was generated. These filepaths are different because the path where the enclave data volume is mounted on the testsuite container can be different from the path where the volume is mounted on the service container.
 
-### String absoluteFilepathOnTestsuiteContainer
-The absolute filepath where the file lives on the testsuite container, which would be used if the testsuite code wants to read or write data to the file.
+### String absoluteFilepathHere
+The absolute filepath where the file lives on the current container, which would be used if the testsuite code wants to read or write data to the file.
 
 ### String absoluteFilepathOnServiceContainer
 The absolute filepath where the file lives on the service container, which would be used if the service wants to read or write data to the file.
