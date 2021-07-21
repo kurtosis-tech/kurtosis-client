@@ -57,7 +57,16 @@ Gets the [LambdaContext][lambdacontext] associated with an already-running Lambd
 ### registerStaticFiles(Map\<StaticFileID, String\> staticFileFilepaths)
 Registers the given files with the Kurtosis engine, so they can be loaded inside a service's filespace via [ContainerCreationConfig.usedStaticFiles][containercreationconfig_usedstaticfiles] and [ServiceContext.loadStaticFiles][servicecontext_loadstaticfiles].
 
-### TODO TODO registerFilesArtifacts
+**Args**
+
+* `staticFileFilepaths`: A map of static_file_id -> absolute_filepath containing the files to register and the ID by which they'll be referenced via [ContainerCreationConfig.usedStaticFiles][containercreationconfig_usedstaticfiles] and [ServiceContext.loadStaticFiles][servicecontext_loadstaticfiles].
+
+### registerFilesArtifacts(Map\<FilesArtifactID, String\> filesArtifactUrls)
+Downloads the given files artifacts to the Kurtosis engine, associating them with the given IDs, so they can be mounted inside a service's filespace at creation time via [ContainerCreationConfig.filesArtifactMountpoints][containercreationconfig_filesartifactmountpoints].
+
+**Args**
+
+* `filesArtifactUrls`: A map of files_artifact_id -> url, where the ID is how the artifact will be referenced in [ContainerCreationConfig.filesArtifactMountpoints][containercreationconfig_filesartifactmountpoints] and the URL is the URL on the web where the files artifact should be downloaded from.
 
 ### addServiceToPartition(ServiceID serviceId, PartitionID partitionId, [ContainerCreationConfig][containercreationconfig] containerCreationConfig, Func(String ipAddr, Map\<String, String\> generatedFileFilepaths, Map\<String, String\> staticFileFilepaths) -\> [ContainerRunConfig][containerrunconfig] generateRunConfigFunc) -\> ([ServiceContext][servicecontext] serviceContext, Map\<String, PortBinding\> hostPortBindings)
 Starts a new service in the network with the given service ID, inside the partition with the given ID, using the given config factory.
@@ -150,7 +159,7 @@ E.g. if your service needs a config file and a log file, you might return a map 
 ### Map\<String, String\> filesArtifactMountpoints
 Sometimes a service needs files to be available before it starts, but creating those files via [ContainerCreationConfig.fileGeneratingFuncs][containercreationconfig_filegeneratingfuncs] is slow, difficult, or would require committing a very large artifact to the testsuite's Git repo (e.g. starting a service with a 5 GB Postgres database mounted). To ease this pain, Kurtosis allows you to specify URLs of gzipped TAR files that Kurtosis will download, uncompress, and mount inside your service containers. 
 
-This property is therefore a map of the file artifact ID -> path on the container where the uncompressed artifact contents should be mounted, with the file artifact IDs corresponding matching the files artifacts declared in the [TestConfiguration][testconfiguration] object returned by [Test.getTestConfiguration][test_gettestconfiguration]. 
+This property is therefore a map of the file artifact ID -> path on the container where the uncompressed artifact contents should be mounted, with the file artifact IDs corresponding to the files artifacts registered via [NetworkContext.registerFilesArtifacts][networkcontext_registerfilesartifacts]. 
 
 E.g. if my test declares an artifact called `5gb-database` that lives at `https://my-site.com/test-artifacts/5gb-database.tgz`, I might return the following map from this function to mount the artifact at the `/database` path inside my container: `{"5gb-database": "/database"}`.
 
@@ -279,6 +288,7 @@ _Found a bug? File it on [the repo](https://github.com/kurtosis-tech/kurtosis-cl
 
 [networkcontext]: #networkcontext
 [networkcontext_registerstaticfiles]: #registerstaticfilesmapstaticfileid-string-staticfilefilepaths
+[networkcontext_registerfilesartifacts]: #registerfilesartifactsmapfilesartifactid-string-filesartifacturls
 [networkcontext_addservice]: #addserviceserviceid-serviceid-containercreationconfig-containercreationconfig-funcstring-ipaddr-mapstring-string-generatedfilefilepaths-mapstaticfileid-string-staticfilefilepaths---containerrunconfig-error-generaterunconfigfunc----servicecontext-servicecontext-mapstring-portbinding-hostportbindings
 [networkcontext_addservicetopartition]: #addservicetopartitionserviceid-serviceid-partitionid-partitionid-containercreationconfig-containercreationconfig-funcstring-ipaddr-mapstring-string-generatedfilefilepaths-mapstring-string-staticfilefilepaths---containerrunconfig-generaterunconfigfunc---servicecontext-servicecontext-mapstring-portbinding-hostportbindings
 [networkcontext_repartitionnetwork]: #repartitionnetworkmappartitionid-setserviceid-partitionservices-mappartitionid-mappartitionid-partitionconnectioninfo-partitionconnections-partitionconnectioninfo-defaultconnection
