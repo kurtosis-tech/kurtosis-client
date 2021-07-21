@@ -54,7 +54,8 @@ Gets the [LambdaContext][lambdacontext] associated with an already-running Lambd
 
 * `lambdaContext`: The [LambdaContext][lambdacontext] representation of the running Lambda container, which allows execution of the Lambda function.
 
-### TODO TODO registerStaticFiles
+### registerStaticFiles(Map\<StaticFileID, String\> staticFileFilepaths)
+Registers the given files with the Kurtosis engine, so they can be loaded inside a service's filespace via [ContainerCreationConfig.usedStaticFiles][containercreationconfig_usedstaticfiles] and [ServiceContext.loadStaticFiles][servicecontext_loadstaticfiles].
 
 ### TODO TODO registerFilesArtifacts
 
@@ -66,7 +67,7 @@ Starts a new service in the network with the given service ID, inside the partit
 * `serviceId`: The ID that the new service should have.
 * `partitionId`: The ID of the partition that the new service should be started in. This can be left blank to start the service in the default partition if it exists (i.e. if the network hasn't been repartitioned and the default partition removed).
 * `containerCreationConfig`: The definition of the necessary values that Kurtosis will use to start the container for the new service.
-* `generateRunConfigFunc`: An anonymous function, used to produce the [ContainerRunConfig][containerrunconfig] for starting the service, which receives three dynamic values as arguments: the IP address of the service being started, the filepaths of the generated files specified in the [ContainerCreationConfig][containercreationconfig], and the filepaths of the static files specifid in [ContainerCreationConfig][containercreationconfig].
+* `generateRunConfigFunc`: An anonymous function, used to produce the [ContainerRunConfig][containerrunconfig] for starting the service, which receives three dynamic values as arguments: the IP address of the service being started, the filepaths of the generated files requested in the [ContainerCreationConfig][containercreationconfig], and the filepaths of the static files requested in [ContainerCreationConfig][containercreationconfig].
 
 **Returns**
 
@@ -153,6 +154,9 @@ This property is therefore a map of the file artifact ID -> path on the containe
 
 E.g. if my test declares an artifact called `5gb-database` that lives at `https://my-site.com/test-artifacts/5gb-database.tgz`, I might return the following map from this function to mount the artifact at the `/database` path inside my container: `{"5gb-database": "/database"}`.
 
+### Set\<StaticFileID\> usedStaticFiles
+Set of IDs of static files that should be mounted inside the service-to-be-created's filespace. These IDs must correspond to the IDs registered via [NetworkContext.registerStaticFiles][networkcontext_registerstaticfiles].
+
 
 
 ContainerCreationConfigBuilder
@@ -226,11 +230,11 @@ Generates files inside the suite execution volume, which is mounted on both the 
 A map of the file IDs (corresponding to the set passed in as input) mapped to a [GeneratedFileFilepaths][generatedfilefilepaths] object containing the filepaths on a) the testsuite container and b) the service container where the generated file was created.
 
 ### loadStaticFiles(Set\<String\> usedStaticFiles) -\> Map\<String, String\>
-Loads static files that have been registered with the Kurtosis API into the filespace of the service, so that the service can use it. You'd use this function if, e.g., you had a test database file that you wanted to mount on your service.
+Loads static files that have been previously registered with the Kurtosis API via [NetworkContext.registerStaticFiles][networkcontext_registerstaticfiles] into the filespace of the service, so that the service can use it. You'd use this function if, e.g., you had a test database file that you wanted to mount on your service.
 
 **Args**
 
-* `usedStaticFiles`: A set of IDs corresponding to the static files that should be loaded, where the IDs have been registered with the Kurtosis API in advance via the testsuite.
+* `usedStaticFiles`: A set of IDs identifying the static files that should be loaded, where the IDs have been registered with the Kurtosis API in advance via [NetworkContext.registerStaticFiles][networkcontext_registerstaticfiles].
 
 **Returns**
 
@@ -259,6 +263,7 @@ _Found a bug? File it on [the repo](https://github.com/kurtosis-tech/kurtosis-cl
 [containercreationconfig_usedports]: #setstring-usedports
 [containercreationconfig_filegeneratingfuncs]: #mapstring-funcfile-filegeneratingfuncs
 [containercreationconfig_filesartifactmountpoints]: #mapstring-string-filesartifactmountpoints
+[containercreationconfig_usedstaticfiles]: #setstaticfileid-usedstaticfiles
 
 [containercreationconfigbuilder]: #containercreationconfigbuilder
 
@@ -273,7 +278,7 @@ _Found a bug? File it on [the repo](https://github.com/kurtosis-tech/kurtosis-cl
 [network]: #network
 
 [networkcontext]: #networkcontext
-
+[networkcontext_registerstaticfiles]: #registerstaticfilesmapstaticfileid-string-staticfilefilepaths
 [networkcontext_addservice]: #addserviceserviceid-serviceid-containercreationconfig-containercreationconfig-funcstring-ipaddr-mapstring-string-generatedfilefilepaths-mapstaticfileid-string-staticfilefilepaths---containerrunconfig-error-generaterunconfigfunc----servicecontext-servicecontext-mapstring-portbinding-hostportbindings
 [networkcontext_addservicetopartition]: #addservicetopartitionserviceid-serviceid-partitionid-partitionid-containercreationconfig-containercreationconfig-funcstring-ipaddr-mapstring-string-generatedfilefilepaths-mapstring-string-staticfilefilepaths---containerrunconfig-generaterunconfigfunc---servicecontext-servicecontext-mapstring-portbinding-hostportbindings
 [networkcontext_repartitionnetwork]: #repartitionnetworkmappartitionid-setserviceid-partitionservices-mappartitionid-mappartitionid-partitionconnectioninfo-partitionconnections-partitionconnectioninfo-defaultconnection
@@ -281,6 +286,7 @@ _Found a bug? File it on [the repo](https://github.com/kurtosis-tech/kurtosis-cl
 [partitionconnectioninfo]: #partitionconnectioninfo
 
 [servicecontext]: #servicecontext
+[servicecontext_loadstaticfiles]: #loadstaticfilessetstring-usedstaticfiles---mapstring-string
 
 [test]: ../kurtosis-libs/lib-documentation#testn-extends-network
 [test_configure]: ../kurtosis-libs/lib-documentation#configuretestconfigurationbuilder-builder
