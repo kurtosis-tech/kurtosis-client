@@ -3,6 +3,9 @@
 * Added a `RegisterStaticFiles` API container endpoint and corresponding `NetworkContext` method for telling the API container about static files that the user would like to use when starting services
 * Added a `RegisterFilesArtifacts` API container endpoint and corresponding `NetworkContext` method for telling the API container about files artifacts that the user would like to use when starting services
 
+### Fixes
+* Fixed broken documentation links now that testsuite API lib has been extracted from Kurtosis Libs
+
 ### Breaking Changes
 * The files artifacts URL map argument to the `StartService` endpoint takes in a files artifact ID as its key, rather than a files artifact URL
     * This key must be previously registered with the API container
