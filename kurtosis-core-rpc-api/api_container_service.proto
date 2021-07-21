@@ -17,7 +17,8 @@ service ApiContainerService {
   rpc GetLambdaInfo(GetLambdaInfoArgs) returns (GetLambdaInfoResponse) {};
 
   // Tells the API container that the client has static files it would like the API container to know about
-  // The API container will respond with paths inside the enclave directory where the client should put its files
+  // The API container will respond with paths inside the enclave directory; the client is then responsible for copying their
+  //  files there
   rpc RegisterStaticFiles(RegisterStaticFilesArgs) returns (RegisterStaticFilesResponse) {};
 
   // Tells the API container that the client has files artifacts from the web that it would like the API container to know about

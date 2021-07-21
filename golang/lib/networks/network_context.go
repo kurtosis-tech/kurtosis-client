@@ -29,6 +29,7 @@ const (
 type NetworkContext struct {
 	client kurtosis_core_rpc_api_bindings.ApiContainerServiceClient
 
+	// TODO rename this to reflect that it's soon no longer going to be "suite execution" - just an enclave volume
 	// The location on the filesystem where this code is running where the suite execution volume is mounted
 	suiteExVolMountpoint string
 }

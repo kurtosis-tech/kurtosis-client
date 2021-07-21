@@ -4,7 +4,8 @@
 * Added a `RegisterFilesArtifacts` API container endpoint and corresponding `NetworkContext` method for telling the API container about files artifacts that the user would like to use when starting services
 
 ### Breaking Changes
-* The `StartService` endpoint takes in a files artifact ID, rather than a files artifact URL
+* The files artifacts URL map argument to the `StartService` endpoint takes in a files artifact ID as its key, rather than a files artifact URL
+    * This key must be previously registered with the API container
 * The `NetworkContext` object no longer requires a files artifact map
 
 # 0.9.0
