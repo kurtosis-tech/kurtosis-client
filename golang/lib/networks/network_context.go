@@ -12,7 +12,9 @@ import (
 	"github.com/kurtosis-tech/kurtosis-client/golang/lib/services"
 	"github.com/palantir/stacktrace"
 	"github.com/sirupsen/logrus"
+	"io"
 	"os"
+	"path"
 )
 
 type PartitionID string
@@ -78,6 +80,61 @@ func (networkCtx *NetworkContext) GetLambdaContext(lambdaId modules.LambdaID) (*
 	}
 	lambdaCtx := modules.NewLambdaContext(networkCtx.client, lambdaId)
 	return lambdaCtx, nil
+}
+
+// Docs available at https://docs.kurtosistech.com/kurtosis-libs/lib-documentation
+func (networkCtx *NetworkContext) RegisterStaticFiles(staticFileFilepaths map[services.StaticFileID]string) error {
+	strSet := map[string]bool{}
+	for staticFileId, srcAbsFilepath := range staticFileFilepaths {
+		// Sanity-check that the source filepath exists
+		if _, err := os.Stat(srcAbsFilepath); os.IsNotExist(err) {
+			return stacktrace.NewError("Source filepath '%v' associated with static file '%v' doesn't exist", srcAbsFilepath, staticFileId)
+		}
+		strSet[string(staticFileId)] = true
+	}
+
+	args := &kurtosis_core_rpc_api_bindings.RegisterStaticFilesArgs{StaticFilesSet: strSet}
+	resp, err := networkCtx.client.RegisterStaticFiles(context.Background(), args)
+	if err != nil {
+		return stacktrace.Propagate(err, "An error occurred registering static files: %+v", staticFileFilepaths)
+	}
+
+	for staticFileIdStr, destFilepathRelativeToEnclaveVolRoot := range resp.StaticFileDestRelativeFilepaths {
+		staticFileId := services.StaticFileID(staticFileIdStr)
+
+		srcAbsFilepath, found := staticFileFilepaths[staticFileId]
+		if !found {
+			return stacktrace.NewError("No source filepath found for static file '%v'; this is a bug in Kurtosis", staticFileId)
+		}
+
+		destAbsFilepath := path.Join(networkCtx.suiteExVolMountpoint, destFilepathRelativeToEnclaveVolRoot)
+		if _, err := os.Stat(destAbsFilepath); os.IsNotExist(err) {
+			return stacktrace.NewError(
+				"The Kurtosis API asked us to copy static file '%v' to path '%v' in the enclave volume which means that an empty file should exist there, " +
+					"but no file exists at that path - this is a bug in Kurtosis!",
+				staticFileId,
+				destFilepathRelativeToEnclaveVolRoot,
+			)
+		}
+
+		srcFp, err := os.Open(srcAbsFilepath)
+		if err != nil {
+			return stacktrace.Propagate(err, "An error occurred opening static file '%v' source file '%v' for reading", staticFileId, srcAbsFilepath)
+		}
+		defer srcFp.Close()
+
+		destFp, err := os.Create(destAbsFilepath)
+		if err != nil {
+			return stacktrace.Propagate(err, "An error occurred opening static file '%v' destination file '%v' for writing", staticFileId, destAbsFilepath)
+		}
+		defer destFp.Close()
+
+		if _, err := io.Copy(destFp, srcFp); err != nil {
+			return stacktrace.Propagate(err, "An error occurred copying all the bytes from static file '%v' source filepath '%v' to destination filepath '%v'", staticFileId, srcAbsFilepath, destAbsFilepath)
+		}
+
+	}
+	return nil
 }
 
 // Docs available at https://docs.kurtosistech.com/kurtosis-libs/lib-documentation

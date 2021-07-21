@@ -1,4 +1,6 @@
 # TBD
+### Features
+* Added a `RegisterStaticFiles` API container endpoint and corresponding `NetworkContext` method for telling the API container about static files that the user would like to use when starting services
 
 # 0.9.0
 ### Features

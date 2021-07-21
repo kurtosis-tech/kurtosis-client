@@ -181,6 +181,28 @@ function deserialize_api_container_api_RegisterServiceResponse(buffer_arg) {
   return api_container_service_pb.RegisterServiceResponse.deserializeBinary(new Uint8Array(buffer_arg));
 }
 
+function serialize_api_container_api_RegisterStaticFilesArgs(arg) {
+  if (!(arg instanceof api_container_service_pb.RegisterStaticFilesArgs)) {
+    throw new Error('Expected argument of type api_container_api.RegisterStaticFilesArgs');
+  }
+  return Buffer.from(arg.serializeBinary());
+}
+
+function deserialize_api_container_api_RegisterStaticFilesArgs(buffer_arg) {
+  return api_container_service_pb.RegisterStaticFilesArgs.deserializeBinary(new Uint8Array(buffer_arg));
+}
+
+function serialize_api_container_api_RegisterStaticFilesResponse(arg) {
+  if (!(arg instanceof api_container_service_pb.RegisterStaticFilesResponse)) {
+    throw new Error('Expected argument of type api_container_api.RegisterStaticFilesResponse');
+  }
+  return Buffer.from(arg.serializeBinary());
+}
+
+function deserialize_api_container_api_RegisterStaticFilesResponse(buffer_arg) {
+  return api_container_service_pb.RegisterStaticFilesResponse.deserializeBinary(new Uint8Array(buffer_arg));
+}
+
 function serialize_api_container_api_RemoveServiceArgs(arg) {
   if (!(arg instanceof api_container_service_pb.RemoveServiceArgs)) {
     throw new Error('Expected argument of type api_container_api.RemoveServiceArgs');
@@ -308,6 +330,19 @@ generateFiles: {
     requestDeserialize: deserialize_api_container_api_GenerateFilesArgs,
     responseSerialize: serialize_api_container_api_GenerateFilesResponse,
     responseDeserialize: deserialize_api_container_api_GenerateFilesResponse,
+  },
+  // Tells the API container that the client has static files it would like the API container to know about
+// The API container will respond with paths inside the enclave directory where the client should put its files
+registerStaticFiles: {
+    path: '/api_container_api.ApiContainerService/RegisterStaticFiles',
+    requestStream: false,
+    responseStream: false,
+    requestType: api_container_service_pb.RegisterStaticFilesArgs,
+    responseType: api_container_service_pb.RegisterStaticFilesResponse,
+    requestSerialize: serialize_api_container_api_RegisterStaticFilesArgs,
+    requestDeserialize: deserialize_api_container_api_RegisterStaticFilesArgs,
+    responseSerialize: serialize_api_container_api_RegisterStaticFilesResponse,
+    responseDeserialize: deserialize_api_container_api_RegisterStaticFilesResponse,
   },
   // Copies static files that have been registered with the API container into the file namespace of the given service
 loadStaticFiles: {
