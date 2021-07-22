@@ -3,7 +3,7 @@ package services
 import "os"
 
 const (
-	defaultTestVolumeMountpoint = "/kurtosis-test-volume"
+	defaultKurtosisVolumeMountpoint = "/kurtosis-enclave-data"
 )
 
 type StaticFileID string
@@ -18,7 +18,7 @@ type FilesArtifactID string
 // Docs available at https://docs.kurtosistech.com/kurtosis-libs/lib-documentation
 type ContainerCreationConfig struct {
 	image                    string
-	testVolumeMountpoint     string
+	kurtosisVolumeMountpoint string   // Technically the enclave data volume, but we call it this for simplicity for the user
 	usedPortsSet             map[string]bool
 	fileGeneratingFuncs      map[string]func(*os.File) error
 	usedStaticFilesSet       map[StaticFileID]bool
@@ -29,8 +29,8 @@ func (config *ContainerCreationConfig) GetImage() string {
 	return config.image
 }
 
-func (config *ContainerCreationConfig) GetTestVolumeMountpoint() string {
-	return config.testVolumeMountpoint
+func (config *ContainerCreationConfig) GetKurtosisVolumeMountpoint() string {
+	return config.kurtosisVolumeMountpoint
 }
 
 func (config *ContainerCreationConfig) GetUsedPortsSet() map[string]bool {
@@ -56,7 +56,7 @@ func (config *ContainerCreationConfig) GetUsedStaticFiles() map[StaticFileID]boo
 // Docs available at https://docs.kurtosistech.com/kurtosis-libs/lib-documentation
 type ContainerCreationConfigBuilder struct {
 	image                    string
-	testVolumeMountpoint     string
+	kurtosisVolumeMountpoint string
 	usedPortsSet             map[string]bool
 	usedStaticFilesSet       map[StaticFileID]bool
 	fileGeneratingFuncs      map[string]func(*os.File) error
@@ -66,15 +66,15 @@ type ContainerCreationConfigBuilder struct {
 func NewContainerCreationConfigBuilder(image string) *ContainerCreationConfigBuilder {
 	return &ContainerCreationConfigBuilder{
 		image:                    image,
-		testVolumeMountpoint:     defaultTestVolumeMountpoint,
+		kurtosisVolumeMountpoint: defaultKurtosisVolumeMountpoint,
 		usedPortsSet:             map[string]bool{},
 		fileGeneratingFuncs:      map[string]func(file *os.File) error{},
 		filesArtifactMountpoints: map[FilesArtifactID]string{},
 	}
 }
 
-func (builder *ContainerCreationConfigBuilder) WithTestVolumeMountpoint(testVolumeMountpoint string) *ContainerCreationConfigBuilder {
-	builder.testVolumeMountpoint = testVolumeMountpoint
+func (builder *ContainerCreationConfigBuilder) WithKurtosisVolumeMountpoint(kurtosisVolumeMountpoint string) *ContainerCreationConfigBuilder {
+	builder.kurtosisVolumeMountpoint = kurtosisVolumeMountpoint
 	return builder
 }
 
@@ -101,7 +101,7 @@ func (builder *ContainerCreationConfigBuilder) WithFilesArtifacts(filesArtifactM
 func (builder *ContainerCreationConfigBuilder) Build() *ContainerCreationConfig {
 	return &ContainerCreationConfig{
 		image:                    builder.image,
-		testVolumeMountpoint:     builder.testVolumeMountpoint,
+		kurtosisVolumeMountpoint: builder.kurtosisVolumeMountpoint,
 		usedPortsSet:             builder.usedPortsSet,
 		fileGeneratingFuncs:      builder.fileGeneratingFuncs,
 		usedStaticFilesSet:       builder.usedStaticFilesSet,

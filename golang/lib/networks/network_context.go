@@ -12,7 +12,9 @@ import (
 	"github.com/kurtosis-tech/kurtosis-client/golang/lib/services"
 	"github.com/palantir/stacktrace"
 	"github.com/sirupsen/logrus"
+	"io"
 	"os"
+	"path"
 )
 
 type PartitionID string
@@ -27,23 +29,19 @@ const (
 type NetworkContext struct {
 	client kurtosis_core_rpc_api_bindings.ApiContainerServiceClient
 
-	filesArtifactUrls map[services.FilesArtifactID]string
-
-	// The location on the filesystem where this code is running where the suite execution volume is mounted
-	suiteExVolMountpoint string
+	// The location on the filesystem where this code is running where the enclave data volume is mounted
+	enclaveDataVolMountpoint string
 }
 
 /*
 Creates a new NetworkContext object with the given parameters.
 */
 func NewNetworkContext(
-	client kurtosis_core_rpc_api_bindings.ApiContainerServiceClient,
-	filesArtifactUrls map[services.FilesArtifactID]string,
-	suiteExVolMountpoint string) *NetworkContext {
+		client kurtosis_core_rpc_api_bindings.ApiContainerServiceClient,
+		enclaveDataVolMountpoint string) *NetworkContext {
 	return &NetworkContext{
-		client:               client,
-		filesArtifactUrls:    filesArtifactUrls,
-		suiteExVolMountpoint: suiteExVolMountpoint,
+		client:                   client,
+		enclaveDataVolMountpoint: enclaveDataVolMountpoint,
 	}
 }
 
@@ -78,6 +76,74 @@ func (networkCtx *NetworkContext) GetLambdaContext(lambdaId modules.LambdaID) (*
 	}
 	lambdaCtx := modules.NewLambdaContext(networkCtx.client, lambdaId)
 	return lambdaCtx, nil
+}
+
+// Docs available at https://docs.kurtosistech.com/kurtosis-libs/lib-documentation
+func (networkCtx *NetworkContext) RegisterStaticFiles(staticFileFilepaths map[services.StaticFileID]string) error {
+	strSet := map[string]bool{}
+	for staticFileId, srcAbsFilepath := range staticFileFilepaths {
+		// Sanity-check that the source filepath exists
+		if _, err := os.Stat(srcAbsFilepath); os.IsNotExist(err) {
+			return stacktrace.NewError("Source filepath '%v' associated with static file '%v' doesn't exist", srcAbsFilepath, staticFileId)
+		}
+		strSet[string(staticFileId)] = true
+	}
+
+	args := &kurtosis_core_rpc_api_bindings.RegisterStaticFilesArgs{StaticFilesSet: strSet}
+	resp, err := networkCtx.client.RegisterStaticFiles(context.Background(), args)
+	if err != nil {
+		return stacktrace.Propagate(err, "An error occurred registering static files: %+v", staticFileFilepaths)
+	}
+
+	for staticFileIdStr, destFilepathRelativeToEnclaveVolRoot := range resp.StaticFileDestRelativeFilepaths {
+		staticFileId := services.StaticFileID(staticFileIdStr)
+
+		srcAbsFilepath, found := staticFileFilepaths[staticFileId]
+		if !found {
+			return stacktrace.NewError("No source filepath found for static file '%v'; this is a bug in Kurtosis", staticFileId)
+		}
+
+		destAbsFilepath := path.Join(networkCtx.enclaveDataVolMountpoint, destFilepathRelativeToEnclaveVolRoot)
+		if _, err := os.Stat(destAbsFilepath); os.IsNotExist(err) {
+			return stacktrace.NewError(
+				"The Kurtosis API asked us to copy static file '%v' to path '%v' in the enclave volume which means that an empty file should exist there, " +
+					"but no file exists at that path - this is a bug in Kurtosis!",
+				staticFileId,
+				destFilepathRelativeToEnclaveVolRoot,
+			)
+		}
+
+		srcFp, err := os.Open(srcAbsFilepath)
+		if err != nil {
+			return stacktrace.Propagate(err, "An error occurred opening static file '%v' source file '%v' for reading", staticFileId, srcAbsFilepath)
+		}
+		defer srcFp.Close()
+
+		destFp, err := os.Create(destAbsFilepath)
+		if err != nil {
+			return stacktrace.Propagate(err, "An error occurred opening static file '%v' destination file '%v' for writing", staticFileId, destAbsFilepath)
+		}
+		defer destFp.Close()
+
+		if _, err := io.Copy(destFp, srcFp); err != nil {
+			return stacktrace.Propagate(err, "An error occurred copying all the bytes from static file '%v' source filepath '%v' to destination filepath '%v'", staticFileId, srcAbsFilepath, destAbsFilepath)
+		}
+
+	}
+	return nil
+}
+
+// Docs available at https://docs.kurtosistech.com/kurtosis-libs/lib-documentation
+func (networkCtx *NetworkContext) RegisterFilesArtifacts(filesArtifactUrls map[services.FilesArtifactID]string) error {
+	filesArtifactIdStrsToUrls := map[string]string{}
+	for artifactId, url := range filesArtifactUrls {
+		filesArtifactIdStrsToUrls[string(artifactId)] = url
+	}
+	args := &kurtosis_core_rpc_api_bindings.RegisterFilesArtifactsArgs{FilesArtifactUrls: filesArtifactIdStrsToUrls}
+	if _, err := networkCtx.client.RegisterFilesArtifacts(context.Background(), args); err != nil {
+		return stacktrace.Propagate(err, "An error occurred registering files artifacts: %+v", filesArtifactUrls)
+	}
+	return nil
 }
 
 // Docs available at https://docs.kurtosistech.com/kurtosis-libs/lib-documentation
@@ -124,15 +190,12 @@ func (networkCtx *NetworkContext) AddServiceToPartition(
 	}
 	serviceIpAddr := registerServiceResp.IpAddr
 
-	if err != nil {
-		return nil, nil, stacktrace.Propagate(err, "An error occurred getting the container creation config")
-	}
 	serviceContext := services.NewServiceContext(
 		networkCtx.client,
 		serviceId,
 		serviceIpAddr,
-		networkCtx.suiteExVolMountpoint,
-		containerCreationConfig.GetTestVolumeMountpoint())
+		networkCtx.enclaveDataVolMountpoint,
+		containerCreationConfig.GetKurtosisVolumeMountpoint())
 	logrus.Tracef("New service successfully registered with Kurtosis API")
 
 	logrus.Trace("Loading static files into new service namespace...")
@@ -161,7 +224,7 @@ func (networkCtx *NetworkContext) AddServiceToPartition(
 				"Needed to initialize file for file ID '%v', but no generated file filepaths were found for that file ID; this is a Kurtosis bug",
 				fileId)
 		}
-		fp, err := os.Create(filepaths.AbsoluteFilepathOnTestsuiteContainer)
+		fp, err := os.Create(filepaths.AbsoluteFilepathHere)
 		if err != nil {
 			return nil, nil, stacktrace.Propagate(err, "An error occurred opening file pointer for file '%v'", fileId)
 		}
@@ -177,20 +240,12 @@ func (networkCtx *NetworkContext) AddServiceToPartition(
 		return nil, nil, stacktrace.Propagate(err, "An error occurred getting the container run config")
 	}
 
-	logrus.Tracef("Creating files artifact URL -> mount dirpaths map...")
-	artifactUrlToMountDirpath := map[string]string{}
+	logrus.Tracef("Creating files artifact ID str -> mount dirpaths map...")
+	artifactIdStrToMountDirpath := map[string]string{}
 	for filesArtifactId, mountDirpath := range containerCreationConfig.GetFilesArtifactMountpoints() {
-		artifactUrl, found := networkCtx.filesArtifactUrls[filesArtifactId]
-		if !found {
-			return nil, nil, stacktrace.Propagate(
-				err,
-				"Service requested file artifact '%v', but the network"+
-					"context doesn't have a URL for that file artifact; this is a bug with Kurtosis itself",
-				filesArtifactId)
-		}
-		artifactUrlToMountDirpath[string(artifactUrl)] = mountDirpath
+		artifactIdStrToMountDirpath[string(filesArtifactId)] = mountDirpath
 	}
-	logrus.Tracef("Successfully created files artifact URL -> mount dirpaths map")
+	logrus.Tracef("Successfully created files artifact ID str -> mount dirpaths map")
 
 	logrus.Tracef("Starting new service with Kurtosis API...")
 	startServiceArgs := &kurtosis_core_rpc_api_bindings.StartServiceArgs{
@@ -200,8 +255,8 @@ func (networkCtx *NetworkContext) AddServiceToPartition(
 		EntrypointArgs:              containerRunConfig.GetEntrypointOverrideArgs(),
 		CmdArgs:                     containerRunConfig.GetCmdOverrideArgs(),
 		DockerEnvVars:               containerRunConfig.GetEnvironmentVariableOverrides(),
-		SuiteExecutionVolMntDirpath: containerCreationConfig.GetTestVolumeMountpoint(),
-		FilesArtifactMountDirpaths:  artifactUrlToMountDirpath,
+		EnclaveDataVolMntDirpath:    containerCreationConfig.GetKurtosisVolumeMountpoint(),
+		FilesArtifactMountDirpaths:  artifactIdStrToMountDirpath,
 	}
 	resp, err := networkCtx.client.StartService(ctx, startServiceArgs)
 	if err != nil {
@@ -230,10 +285,10 @@ func (networkCtx *NetworkContext) GetServiceContext(serviceId services.ServiceID
 			serviceId)
 	}
 
-	suiteExVolMountpoint := serviceResponse.GetSuiteExecutionVolumeMountDirpath()
-	if suiteExVolMountpoint == "" {
+	enclaveDataVolMountDirpathOnSvcContainer := serviceResponse.GetEnclaveDataVolumeMountDirpath()
+	if enclaveDataVolMountDirpathOnSvcContainer == "" {
 		return nil, stacktrace.NewError(
-			"Kurtosis API reported an empty suite execution volume directory path for service '%v' - this should never happen, and is a bug with Kurtosis!",
+			"Kurtosis API reported an empty enclave data volume directory path for service '%v' - this should never happen, and is a bug with Kurtosis!",
 			serviceId)
 	}
 
@@ -241,8 +296,8 @@ func (networkCtx *NetworkContext) GetServiceContext(serviceId services.ServiceID
 		networkCtx.client,
 		serviceId,
 		serviceResponse.GetIpAddr(),
-		suiteExVolMountpoint,
-		suiteExVolMountpoint,
+		networkCtx.enclaveDataVolMountpoint,
+		enclaveDataVolMountDirpathOnSvcContainer,
 	)
 
 	return serviceContext, nil

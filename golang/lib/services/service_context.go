@@ -9,31 +9,31 @@ import (
 
 // Docs available at https://docs.kurtosistech.com/kurtosis-libs/lib-documentation
 type GeneratedFileFilepaths struct {
-	AbsoluteFilepathOnTestsuiteContainer string
-	AbsoluteFilepathOnServiceContainer   string
+	AbsoluteFilepathHere               string
+	AbsoluteFilepathOnServiceContainer string
 }
 
 // Docs available at https://docs.kurtosistech.com/kurtosis-libs/lib-documentation
 type ServiceContext struct {
-	client                                   kurtosis_core_rpc_api_bindings.ApiContainerServiceClient
-	serviceId                                ServiceID
-	ipAddress                                string
-	testVolumeMountpointOnTestsuiteContainer string
-	testVolumeMountpointOnServiceContainer   string
+	client                                     kurtosis_core_rpc_api_bindings.ApiContainerServiceClient
+	serviceId                                  ServiceID
+	ipAddress                                  string
+	enclaveDataVolMountpointHere               string
+	enclaveDataVolMountpointOnServiceContainer string
 }
 
 func NewServiceContext(
 		client kurtosis_core_rpc_api_bindings.ApiContainerServiceClient,
 		serviceId ServiceID,
 		ipAddress string,
-		testVolumeMountpointOnTestsuiteContainer string,
-		testVolumeMountpointOnServiceContainer string) *ServiceContext {
+		enclaveDataVolumeMountpointHere string,
+		enclaveDataVolumeMountpointOnServiceContainer string) *ServiceContext {
 	return &ServiceContext{
-		client:                                   client,
-		serviceId:                                serviceId,
-		ipAddress:                                ipAddress,
-		testVolumeMountpointOnTestsuiteContainer: testVolumeMountpointOnTestsuiteContainer,
-		testVolumeMountpointOnServiceContainer: testVolumeMountpointOnServiceContainer,
+		client:                       client,
+		serviceId:                    serviceId,
+		ipAddress:                    ipAddress,
+		enclaveDataVolMountpointHere: enclaveDataVolumeMountpointHere,
+		enclaveDataVolMountpointOnServiceContainer:   enclaveDataVolumeMountpointOnServiceContainer,
 	}
 }
 
@@ -89,14 +89,14 @@ func (self *ServiceContext) GenerateFiles(filesToGenerateSet map[string]bool) (m
 		relativeFilepath, found := generatedFileRelativeFilepaths[fileId]
 		if !found {
 			return nil, stacktrace.NewError(
-				"No filepath (relative to test volume root) was returned for file '%v', even though we requested it; this is a Kurtosis bug",
+				"No filepath (relative to enclave data volume root) was returned for file '%v', even though we requested it; this is a Kurtosis bug",
 				fileId)
 		}
-		absFilepathOnTestsuite := path.Join(self.testVolumeMountpointOnTestsuiteContainer, relativeFilepath)
-		absFilepathOnService := path.Join(self.testVolumeMountpointOnServiceContainer, relativeFilepath)
+		absFilepathHere := path.Join(self.enclaveDataVolMountpointHere, relativeFilepath)
+		absFilepathOnService := path.Join(self.enclaveDataVolMountpointOnServiceContainer, relativeFilepath)
 		result[fileId] = &GeneratedFileFilepaths{
-			AbsoluteFilepathOnTestsuiteContainer: absFilepathOnTestsuite,
-			AbsoluteFilepathOnServiceContainer:   absFilepathOnService,
+			AbsoluteFilepathHere:               absFilepathHere,
+			AbsoluteFilepathOnServiceContainer: absFilepathOnService,
 		}
 	}
 	return result, nil
@@ -119,7 +119,7 @@ func (self *ServiceContext) LoadStaticFiles(usedStaticFilesSet map[StaticFileID]
 	}
 	staticFileAbsFilepathsOnService := map[StaticFileID]string{}
 	for staticFileId, filepathRelativeToExVolRoot := range loadStaticFilesResp.CopiedStaticFileRelativeFilepaths {
-		absFilepathOnContainer := path.Join(self.testVolumeMountpointOnServiceContainer, filepathRelativeToExVolRoot)
+		absFilepathOnContainer := path.Join(self.enclaveDataVolMountpointOnServiceContainer, filepathRelativeToExVolRoot)
 		staticFileAbsFilepathsOnService[StaticFileID(staticFileId)] = absFilepathOnContainer
 	}
 	return staticFileAbsFilepathsOnService, nil
