@@ -159,6 +159,17 @@ function deserialize_api_container_api_LoadStaticFilesResponse(buffer_arg) {
   return api_container_service_pb.LoadStaticFilesResponse.deserializeBinary(new Uint8Array(buffer_arg));
 }
 
+function serialize_api_container_api_RegisterFilesArtifactsArgs(arg) {
+  if (!(arg instanceof api_container_service_pb.RegisterFilesArtifactsArgs)) {
+    throw new Error('Expected argument of type api_container_api.RegisterFilesArtifactsArgs');
+  }
+  return Buffer.from(arg.serializeBinary());
+}
+
+function deserialize_api_container_api_RegisterFilesArtifactsArgs(buffer_arg) {
+  return api_container_service_pb.RegisterFilesArtifactsArgs.deserializeBinary(new Uint8Array(buffer_arg));
+}
+
 function serialize_api_container_api_RegisterServiceArgs(arg) {
   if (!(arg instanceof api_container_service_pb.RegisterServiceArgs)) {
     throw new Error('Expected argument of type api_container_api.RegisterServiceArgs');
@@ -179,6 +190,28 @@ function serialize_api_container_api_RegisterServiceResponse(arg) {
 
 function deserialize_api_container_api_RegisterServiceResponse(buffer_arg) {
   return api_container_service_pb.RegisterServiceResponse.deserializeBinary(new Uint8Array(buffer_arg));
+}
+
+function serialize_api_container_api_RegisterStaticFilesArgs(arg) {
+  if (!(arg instanceof api_container_service_pb.RegisterStaticFilesArgs)) {
+    throw new Error('Expected argument of type api_container_api.RegisterStaticFilesArgs');
+  }
+  return Buffer.from(arg.serializeBinary());
+}
+
+function deserialize_api_container_api_RegisterStaticFilesArgs(buffer_arg) {
+  return api_container_service_pb.RegisterStaticFilesArgs.deserializeBinary(new Uint8Array(buffer_arg));
+}
+
+function serialize_api_container_api_RegisterStaticFilesResponse(arg) {
+  if (!(arg instanceof api_container_service_pb.RegisterStaticFilesResponse)) {
+    throw new Error('Expected argument of type api_container_api.RegisterStaticFilesResponse');
+  }
+  return Buffer.from(arg.serializeBinary());
+}
+
+function deserialize_api_container_api_RegisterStaticFilesResponse(buffer_arg) {
+  return api_container_service_pb.RegisterStaticFilesResponse.deserializeBinary(new Uint8Array(buffer_arg));
 }
 
 function serialize_api_container_api_RemoveServiceArgs(arg) {
@@ -285,6 +318,33 @@ getLambdaInfo: {
     responseSerialize: serialize_api_container_api_GetLambdaInfoResponse,
     responseDeserialize: deserialize_api_container_api_GetLambdaInfoResponse,
   },
+  // Tells the API container that the client has static files it would like the API container to know about
+// The API container will respond with paths inside the enclave directory; the client is then responsible for copying their
+//  files there
+registerStaticFiles: {
+    path: '/api_container_api.ApiContainerService/RegisterStaticFiles',
+    requestStream: false,
+    responseStream: false,
+    requestType: api_container_service_pb.RegisterStaticFilesArgs,
+    responseType: api_container_service_pb.RegisterStaticFilesResponse,
+    requestSerialize: serialize_api_container_api_RegisterStaticFilesArgs,
+    requestDeserialize: deserialize_api_container_api_RegisterStaticFilesArgs,
+    responseSerialize: serialize_api_container_api_RegisterStaticFilesResponse,
+    responseDeserialize: deserialize_api_container_api_RegisterStaticFilesResponse,
+  },
+  // Tells the API container that the client has files artifacts from the web that it would like the API container to know about
+// The API container will download these artifacts locally, so they're available when launching services
+registerFilesArtifacts: {
+    path: '/api_container_api.ApiContainerService/RegisterFilesArtifacts',
+    requestStream: false,
+    responseStream: false,
+    requestType: api_container_service_pb.RegisterFilesArtifactsArgs,
+    responseType: google_protobuf_empty_pb.Empty,
+    requestSerialize: serialize_api_container_api_RegisterFilesArtifactsArgs,
+    requestDeserialize: deserialize_api_container_api_RegisterFilesArtifactsArgs,
+    responseSerialize: serialize_google_protobuf_Empty,
+    responseDeserialize: deserialize_google_protobuf_Empty,
+  },
   // Registers a service with the API container but doesn't start the container for it
 registerService: {
     path: '/api_container_api.ApiContainerService/RegisterService',
@@ -297,7 +357,7 @@ registerService: {
     responseSerialize: serialize_api_container_api_RegisterServiceResponse,
     responseDeserialize: deserialize_api_container_api_RegisterServiceResponse,
   },
-  // Generates files inside the test volume on the filesystem for a container
+  // Generates files inside the enclave data volume on the filesystem for a container
 generateFiles: {
     path: '/api_container_api.ApiContainerService/GenerateFiles',
     requestStream: false,

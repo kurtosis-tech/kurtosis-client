@@ -116,6 +116,63 @@ export namespace GetLambdaInfoResponse {
   }
 }
 
+export class RegisterStaticFilesArgs extends jspb.Message {
+  getStaticFilesSetMap(): jspb.Map<string, boolean>;
+  clearStaticFilesSetMap(): void;
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): RegisterStaticFilesArgs.AsObject;
+  static toObject(includeInstance: boolean, msg: RegisterStaticFilesArgs): RegisterStaticFilesArgs.AsObject;
+  static extensions: {[key: number]: jspb.ExtensionFieldInfo<jspb.Message>};
+  static extensionsBinary: {[key: number]: jspb.ExtensionFieldBinaryInfo<jspb.Message>};
+  static serializeBinaryToWriter(message: RegisterStaticFilesArgs, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): RegisterStaticFilesArgs;
+  static deserializeBinaryFromReader(message: RegisterStaticFilesArgs, reader: jspb.BinaryReader): RegisterStaticFilesArgs;
+}
+
+export namespace RegisterStaticFilesArgs {
+  export type AsObject = {
+    staticFilesSetMap: Array<[string, boolean]>,
+  }
+}
+
+export class RegisterStaticFilesResponse extends jspb.Message {
+  getStaticFileDestRelativeFilepathsMap(): jspb.Map<string, string>;
+  clearStaticFileDestRelativeFilepathsMap(): void;
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): RegisterStaticFilesResponse.AsObject;
+  static toObject(includeInstance: boolean, msg: RegisterStaticFilesResponse): RegisterStaticFilesResponse.AsObject;
+  static extensions: {[key: number]: jspb.ExtensionFieldInfo<jspb.Message>};
+  static extensionsBinary: {[key: number]: jspb.ExtensionFieldBinaryInfo<jspb.Message>};
+  static serializeBinaryToWriter(message: RegisterStaticFilesResponse, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): RegisterStaticFilesResponse;
+  static deserializeBinaryFromReader(message: RegisterStaticFilesResponse, reader: jspb.BinaryReader): RegisterStaticFilesResponse;
+}
+
+export namespace RegisterStaticFilesResponse {
+  export type AsObject = {
+    staticFileDestRelativeFilepathsMap: Array<[string, string]>,
+  }
+}
+
+export class RegisterFilesArtifactsArgs extends jspb.Message {
+  getFilesArtifactUrlsMap(): jspb.Map<string, string>;
+  clearFilesArtifactUrlsMap(): void;
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): RegisterFilesArtifactsArgs.AsObject;
+  static toObject(includeInstance: boolean, msg: RegisterFilesArtifactsArgs): RegisterFilesArtifactsArgs.AsObject;
+  static extensions: {[key: number]: jspb.ExtensionFieldInfo<jspb.Message>};
+  static extensionsBinary: {[key: number]: jspb.ExtensionFieldBinaryInfo<jspb.Message>};
+  static serializeBinaryToWriter(message: RegisterFilesArtifactsArgs, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): RegisterFilesArtifactsArgs;
+  static deserializeBinaryFromReader(message: RegisterFilesArtifactsArgs, reader: jspb.BinaryReader): RegisterFilesArtifactsArgs;
+}
+
+export namespace RegisterFilesArtifactsArgs {
+  export type AsObject = {
+    filesArtifactUrlsMap: Array<[string, string]>,
+  }
+}
+
 export class RegisterServiceArgs extends jspb.Message {
   getServiceId(): string;
   setServiceId(value: string): void;
@@ -291,8 +348,8 @@ export class StartServiceArgs extends jspb.Message {
 
   getDockerEnvVarsMap(): jspb.Map<string, string>;
   clearDockerEnvVarsMap(): void;
-  getSuiteExecutionVolMntDirpath(): string;
-  setSuiteExecutionVolMntDirpath(value: string): void;
+  getEnclaveDataVolMntDirpath(): string;
+  setEnclaveDataVolMntDirpath(value: string): void;
 
   getFilesArtifactMountDirpathsMap(): jspb.Map<string, string>;
   clearFilesArtifactMountDirpathsMap(): void;
@@ -314,7 +371,7 @@ export namespace StartServiceArgs {
     entrypointArgsList: Array<string>,
     cmdArgsList: Array<string>,
     dockerEnvVarsMap: Array<[string, string]>,
-    suiteExecutionVolMntDirpath: string,
+    enclaveDataVolMntDirpath: string,
     filesArtifactMountDirpathsMap: Array<[string, string]>,
   }
 }
@@ -386,8 +443,8 @@ export class GetServiceInfoResponse extends jspb.Message {
   getIpAddr(): string;
   setIpAddr(value: string): void;
 
-  getSuiteExecutionVolumeMountDirpath(): string;
-  setSuiteExecutionVolumeMountDirpath(value: string): void;
+  getEnclaveDataVolumeMountDirpath(): string;
+  setEnclaveDataVolumeMountDirpath(value: string): void;
 
   serializeBinary(): Uint8Array;
   toObject(includeInstance?: boolean): GetServiceInfoResponse.AsObject;
@@ -402,7 +459,7 @@ export class GetServiceInfoResponse extends jspb.Message {
 export namespace GetServiceInfoResponse {
   export type AsObject = {
     ipAddr: string,
-    suiteExecutionVolumeMountDirpath: string,
+    enclaveDataVolumeMountDirpath: string,
   }
 }
 
