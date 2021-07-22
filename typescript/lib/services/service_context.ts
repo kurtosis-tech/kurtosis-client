@@ -2,7 +2,7 @@ import * as bindingsJsGrpc from '../../kurtosis_core_rpc_api_bindings/api_contai
 import * as bindingsJs from '../../kurtosis_core_rpc_api_bindings/api_container_service_pb'; //TODO (comment) - I cannont merge with above line unfortunately, can only import one module at a time MAXIMUM
 import { ServiceID } from './service';
 import { StaticFileID } from './container_creation_config'; 
-import * as grpc from "grpc";
+import * as grpc from "grpc"; //TODO - this is needed for grpc callback, but this import is tentative 
 import * as constructors from "../constructor_calls";
 var path = require("path"); //TODO - I don't think this works
 
@@ -56,7 +56,7 @@ class ServiceContext {
 			    "An error occurred executing command '%v' on service '%v'", //TODO - I might not be able keep the '%v', but how I throw the actual error
             )]; //TODO (comment) cannot return multipe values in typescript function, need to wrap in array or object
         }
-        return resp.ExitCode, resp.LogOutput, null; //TODO (comment) resp.LogOuput was a pointer
+        return [resp.ExitCode, resp.LogOutput, null]; //TODO need to make sure resp is ExecCommandResponse if I want to return this ; (comment) resp.LogOuput was a pointer ; returning multiple values as an array
     }
 
     // Docs available at https://docs.kurtosistech.com/kurtosis-libs/lib-documentation
@@ -103,9 +103,9 @@ class ServiceContext {
     }
 
     // Docs available at https://docs.kurtosistech.com/kurtosis-libs/lib-documentation
-    public loadStaticFiles(usedStaticFilesSet: [Set<StaticFileID>, Error]): [Map<StaticFileID, string>, Error] { // TODO (comment) - changed Map into Set
+    public loadStaticFiles(usedStaticFilesSet: Set<StaticFileID>): [Map<StaticFileID, string>, Error] { // TODO (comment) - changed Map into Set; possible to return useful erorr messages in typescript
         let serviceId = this.serviceId;
-        let staticFilesToCopyStringSet = new Map(); //TODO (comment) = map[string]bool{}
+        let staticFilesToCopyStringSet = new Map(); //TODO (comment) = map[string]bool{} ; kept this as a map sinc call to loadStaticFile has map property that requires a boolean
         for (let staticFileId in usedStaticFilesSet) {
             staticFilesToCopyStringSet[String(staticFileId)] = true;
         }
@@ -113,7 +113,7 @@ class ServiceContext {
         let loadStaticFilesArgs = constructors.newGetLoadStaticFilesArgs(serviceId, staticFilesToCopyStringSet);
         let request: grpc.requestCallback<bindingsJs.LoadStaticFilesResponse>;
 
-    	let loadStaticFilesResp, err = this.client.loadStaticFiles(loadStaticFilesArgs, request);
+    	let loadStaticFilesResp, err = this.client.loadStaticFiles(loadStaticFilesArgs, request); //TODO - need to find another way to do error checking
     	if (err != null) {
     		return [null, new Error ("An error occurred loading the requested static files into the namespace of service '%v'")]; //TODO - remove the erorr, and need to be throwing back the erorr
     	}
@@ -123,7 +123,7 @@ class ServiceContext {
             let absFilepathOnContainer = path.Join(this.testVolumeMountpointOnServiceContainer, filepathRelativeToExVolRoot)
     		staticFileAbsFilepathsOnService[<StaticFileID>(staticFileId)] = absFilepathOnContainer; //TODO - see if I'm typecasting correctly
     	}
-    	return [staticFileAbsFilepathsOnService, null]
+    	return [staticFileAbsFilepathsOnService, null] //TODO - Design decision, returning multiple values as an array
 
     }
 }
