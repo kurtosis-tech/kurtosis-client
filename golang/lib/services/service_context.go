@@ -17,10 +17,12 @@ func newGeneratedFileFilepaths(absoluteFilepathHere string, absoluteFilepathOnSe
 	return &GeneratedFileFilepaths{absoluteFilepathHere: absoluteFilepathHere, absoluteFilepathOnServiceContainer: absoluteFilepathOnServiceContainer}
 }
 
+// Docs available at https://docs.kurtosistech.com/kurtosis-libs/lib-documentation
 func (generated *GeneratedFileFilepaths) GetAbsoluteFilepathHere() string {
 	return generated.absoluteFilepathHere
 }
 
+// Docs available at https://docs.kurtosistech.com/kurtosis-libs/lib-documentation
 func (generated *GeneratedFileFilepaths) GetAbsoluteFilepathOnServiceContainer() string {
 	return generated.absoluteFilepathOnServiceContainer
 }
