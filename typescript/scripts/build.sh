@@ -13,4 +13,12 @@ lang_root_dirpath="$(dirname "${script_dirpath}")"
 # # ==================================================================================================
 # #                                             Main Logic
 # # ==================================================================================================
-find "${lang_root_dirpath}/mainLogic" -name "*.ts" -exec tsc --out "${lang_root_dirpath}/build" {} \;
+#find "${lang_root_dirpath}/lib" -name "*.ts" -exec tsc --outFile "${lang_root_dirpath}/build/output.js" --module system --moduleResolution node {} \;
+
+totalFiles=""
+while read -r line
+do
+        totalFiles="$totalFiles$line "
+done <<< "$(find "${lang_root_dirpath}/lib" -name "*.ts")"
+
+tsc $totalFiles --outFile "${lang_root_dirpath}/build/output.js" --module system --moduleResolution node

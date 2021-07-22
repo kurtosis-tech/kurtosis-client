@@ -8,7 +8,7 @@
 /*
 The identifier used for services with the network.
 */
-type ServiceID = string;
+export type ServiceID = string;
 
 // // Docs available at https://docs.kurtosistech.com/kurtosis-libs/lib-documentation
 // interface Service {
