@@ -1,4 +1,6 @@
 # TBD
+
+# 0.10.0
 ### Features
 * Added a `RegisterStaticFiles` API container endpoint and corresponding `NetworkContext` method for telling the API container about static files that the user would like to use when starting services
 * Added a `RegisterFilesArtifacts` API container endpoint and corresponding `NetworkContext` method for telling the API container about files artifacts that the user would like to use when starting services
