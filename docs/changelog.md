@@ -1,4 +1,6 @@
 # TBD
+### Changes
+* Made `GeneratedFileFilepaths`
 
 # 0.10.0
 ### Features

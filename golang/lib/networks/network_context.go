@@ -224,14 +224,14 @@ func (networkCtx *NetworkContext) AddServiceToPartition(
 				"Needed to initialize file for file ID '%v', but no generated file filepaths were found for that file ID; this is a Kurtosis bug",
 				fileId)
 		}
-		fp, err := os.Create(filepaths.AbsoluteFilepathHere)
+		fp, err := os.Create(filepaths.absoluteFilepathHere)
 		if err != nil {
 			return nil, nil, stacktrace.Propagate(err, "An error occurred opening file pointer for file '%v'", fileId)
 		}
 		if err := initializingFunc(fp); err != nil {
 			return nil, nil, stacktrace.Propagate(err, "The function to initialize file with ID '%v' returned an error", fileId)
 		}
-		generatedFileAbsFilepathsOnService[fileId] = filepaths.AbsoluteFilepathOnServiceContainer
+		generatedFileAbsFilepathsOnService[fileId] = filepaths.absoluteFilepathOnServiceContainer
 	}
 	logrus.Trace("Successfully initialized generated files in suite execution volume")
 

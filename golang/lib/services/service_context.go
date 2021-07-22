@@ -9,9 +9,23 @@ import (
 
 // Docs available at https://docs.kurtosistech.com/kurtosis-libs/lib-documentation
 type GeneratedFileFilepaths struct {
-	AbsoluteFilepathHere               string
-	AbsoluteFilepathOnServiceContainer string
+	absoluteFilepathHere               string
+	absoluteFilepathOnServiceContainer string
 }
+
+func newGeneratedFileFilepaths(absoluteFilepathHere string, absoluteFilepathOnServiceContainer string) *GeneratedFileFilepaths {
+	return &GeneratedFileFilepaths{absoluteFilepathHere: absoluteFilepathHere, absoluteFilepathOnServiceContainer: absoluteFilepathOnServiceContainer}
+}
+
+func (generated *GeneratedFileFilepaths) GetAbsoluteFilepathHere() string {
+	return generated.absoluteFilepathHere
+}
+
+func (generated *GeneratedFileFilepaths) GetAbsoluteFilepathOnServiceContainer() string {
+	return generated.absoluteFilepathOnServiceContainer
+}
+
+
 
 // Docs available at https://docs.kurtosistech.com/kurtosis-libs/lib-documentation
 type ServiceContext struct {
@@ -94,10 +108,7 @@ func (self *ServiceContext) GenerateFiles(filesToGenerateSet map[string]bool) (m
 		}
 		absFilepathHere := path.Join(self.enclaveDataVolMountpointHere, relativeFilepath)
 		absFilepathOnService := path.Join(self.enclaveDataVolMountpointOnServiceContainer, relativeFilepath)
-		result[fileId] = &GeneratedFileFilepaths{
-			AbsoluteFilepathHere:               absFilepathHere,
-			AbsoluteFilepathOnServiceContainer: absFilepathOnService,
-		}
+		result[fileId] = newGeneratedFileFilepaths(absFilepathHere, absFilepathOnService)
 	}
 	return result, nil
 }
