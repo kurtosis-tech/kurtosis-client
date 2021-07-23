@@ -1,4 +1,4 @@
-import * as bindingsJs from '../kurtosis_core_rpc_api_bindings/api_container_service_pb'; //TODO (comment) - I cannont merge with above line unfortunately, can only import one module at a time MAXIMUM
+import * as bindingsJs from '../kurtosis_core_rpc_api_bindings/api_container_service_pb';
 import { ServiceID } from './services/service';
 
 
