@@ -3,7 +3,7 @@ import { ServiceID } from './services/service';
 
 
 export function newGetExecCommandArgs(serviceId: ServiceID, command: string[]): bindingsJs.ExecCommandArgs {
-    let result = new bindingsJs.ExecCommandArgs(); //TODO (comment) - this was also a pointer
+    const result = new bindingsJs.ExecCommandArgs();
     result.setServiceId(serviceId);
     result.setCommandArgsList(command);
 
@@ -11,9 +11,9 @@ export function newGetExecCommandArgs(serviceId: ServiceID, command: string[]): 
 }
 
 export function newGetGenerateFilesArgs(serviceId: ServiceID, fileGenerationOpts: Map<string, bindingsJs.FileGenerationOptions>): bindingsJs.GenerateFilesArgs {
-    let result = new bindingsJs.GenerateFilesArgs(); //TODO (comment) this was a pointer
+    const result = new bindingsJs.GenerateFilesArgs();
     result.setServiceId(String(serviceId)); 
-    for (let fileID in fileGenerationOpts) { // TODO - make sure this is an okay way to use instatiate the setter
+    for (let fileID in fileGenerationOpts) { //TODO - changing the following to a const, I'm also certain we don't
         result.getFilesToGenerateMap().set(fileID, fileGenerationOpts[fileID]);
     }
     
@@ -21,10 +21,11 @@ export function newGetGenerateFilesArgs(serviceId: ServiceID, fileGenerationOpts
 }
 
 export function newGetLoadStaticFilesArgs(serviceId: ServiceID, staticFilesToCopyStringSet: Map<String, boolean>): bindingsJs.LoadStaticFilesArgs {
-    let result = new bindingsJs.LoadStaticFilesArgs(); //TODO - (comment) pointer
+    const result = new bindingsJs.LoadStaticFilesArgs();
     result.setServiceId(String(serviceId));
-    for (let staticFildID in staticFilesToCopyStringSet) {
-        result.getStaticFilesMap().set(staticFildID, staticFilesToCopyStringSet[staticFildID]) //TODO TODO TODO - how to do this line
+    const staticFilesMap = result.getStaticFilesMap();
+    for (let staticFildID in staticFilesToCopyStringSet) { //TODO - changing the following to a const, I'm also certain we don't
+        staticFilesMap.set(staticFildID, staticFilesToCopyStringSet[staticFildID]);
     }
 
     return result;
