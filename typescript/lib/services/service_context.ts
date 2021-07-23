@@ -18,15 +18,15 @@ class ServiceContext {
     private readonly client: ApiContainerServiceClient;
     private readonly serviceId: ServiceID;
     private readonly ipAddress: string;
-	private readonly testVolumeMountpointOnTestsuiteContainer: string;
-	private readonly testVolumeMountpointOnServiceContainer: string;
+    private readonly testVolumeMountpointOnTestsuiteContainer: string;
+    private readonly testVolumeMountpointOnServiceContainer: string;
 
     constructor(
         client: ApiContainerServiceClient,
         serviceId: ServiceID,
-		ipAddress: string,
-		testVolumeMountpointOnTestsuiteContainer: string,
-		testVolumeMountpointOnServiceContainer: string) {
+        ipAddress: string,
+        testVolumeMountpointOnTestsuiteContainer: string,
+        testVolumeMountpointOnServiceContainer: string) {
             this.client = client;
             this.serviceId = serviceId;
             this.ipAddress = ipAddress;
