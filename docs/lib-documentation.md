@@ -257,11 +257,11 @@ GeneratedFileFilepaths
 ----------------------
 Simple structure containing the filepaths to a generated file on a) the current container and b) on the service container for whom the file was generated. These filepaths are different because the path where the enclave data volume is mounted on the testsuite container can be different from the path where the volume is mounted on the service container.
 
-### String absoluteFilepathHere
-The absolute filepath where the file lives on the current container, which would be used if the testsuite code wants to read or write data to the file.
+### getAbsoluteFilepathHere() -\> String
+Gets the absolute filepath where the file lives on the current container, which would be used if the testsuite code wants to read or write data to the file.
 
-### String absoluteFilepathOnServiceContainer
-The absolute filepath where the file lives on the service container, which would be used if the service wants to read or write data to the file.
+### getAbsoluteFilepathOnServiceContainer() -\> String
+Gets the absolute filepath where the file lives on the service container, which would be used if the service wants to read or write data to the file.
 
 ---
 

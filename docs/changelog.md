@@ -1,4 +1,10 @@
 # TBD
+### Changes
+* Made `GeneratedFileFilepaths` fields private and immutable with a constructor, and added getters to access the field values
+
+### Breaking Changes
+* Made the fields of the `GeneratedFileFilepaths` object private
+    * Users should use the new getters - `getAbsoluteFilepathHere` and `getAbsoluteFilepathOnService`
 
 # 0.10.0
 ### Features
