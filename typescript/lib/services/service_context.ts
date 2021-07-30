@@ -4,7 +4,17 @@ import { ServiceID } from './service';
 import { StaticFileID } from './container_creation_config'; 
 import * as grpc from "grpc"; 
 import { newGetExecCommandArgs, newGetGenerateFilesArgs, newGetFileGenerationOptions, newGetLoadStaticFilesArgs } from "../constructor_calls";
-var path = require("path"); //TODO - I don't think this works, but it has been installed with grpc
+import { ok, err, Result } from 'neverthrow'
+var path = require("path"); //TODO check if this works
+
+
+// we'll keep this simple
+type ResponseBody = {}
+
+interface ResponseData {
+  statusCode: number
+  responseBody?: ResponseBody
+}
 
 
 // Docs available at https://docs.kurtosistech.com/kurtosis-libs/lib-documentation
@@ -45,19 +55,53 @@ class ServiceContext {
     }
 
     // Docs available at https://docs.kurtosistech.com/kurtosis-libs/lib-documentation
-    public execCommand(command: string[]): [number, Uint8Array | string, Error] { //TODO In golang: [int32, pointer to []byte (comment), error ] ; Following types in _pb.d.ts
+    public execCommand(command: string[]): [number, Uint8Array | string, Error] { //TODO In golang: [int32, pointer to []byte (comment), error ] ; (comment) Following types in _pb.d.ts
         const serviceId: ServiceID = this.serviceId;
         const args: ExecCommandArgs = newGetExecCommandArgs(serviceId, command);
-        let request: grpc.requestCallback<ExecCommandResponse>; //TODO - Tried to implement callback through examples on Google while also respecting the actual Callback function inside grpc ; (comment) need to initalize if want to change it to const
+        //let request: grpc.requestCallback<ExecCommandResponse>; //TODO - Tried to implement callback through examples on Google while also respecting the actual Callback function inside grpc ; (comment) need to initalize if want to change it to const
+        //let resp, err = this.client.execCommand(args, request);
+        // if (err != null){ //TODO - does error checking work here (is this error assertion enough)
+        //     return [0, null, new Error("An error occurred executing command '%v' on service '%v'")]; //TODO - I might not be able keep the '%v', but how I throw the actual error
+        // } else {
+        //     return [resp.getExitCode(), resp.getLogOutput(), null]; 
+        // }
+        //
 
-        let resp, err = this.client.execCommand(args, request); //TODO - does error checking work here ; check the return type of execCommand, it's not an ExecCommandResponse ? ; (comment) need to initalize if want to change it to const ; try adding type assertion
+        //Do a callback call for appropriate resp and err since execCommand's return type is not useful
+        var resp: ExecCommandResponse;
+        var error: grpc.ServiceError;
+        this.client.execCommand(args, function(error, feature){ //TODO - does this function change/manipulate error or feature in any way
+            error = error; 
+            resp = feature;
+        });
         
-        if (err !== null) {
-            return [0, null, new Error( //TODO - Error type (do I need callback?)
-			    "An error occurred executing command '%v' on service '%v'", //TODO - I might not be able keep the '%v', but how I throw the actual error
-            )];
+
+        //Purpose of using Result (Ok, Err) is because we need to enforce error checking by the compiler
+        //result is returning a type of Promise<Result<ResponseData, Error>> 
+        var result;
+        if (error != null){
+            result = err(new Error('An error occured calling the grpc method execCommand.')) //TODO - only passing in a message, need to send actual error
+            //Error.captureStackTrace(this); //TODO - I don't think I need this unless I'm making a new Error subclass
+            //throw ..... I need to send an explicit throw OR catch call which would send the actual error (Kevin said no try and catch since they are bad practice and not compiler-safe)
+        } else {
+            result = ok( "execCommand executed successfully." )
         }
-        return [resp.ExitCode, resp.LogOutput, null]; //TODO need to make sure resp is ExecCommandResponse if I want to return this
+
+        //COMMENNT NEEDED - THINK of WHY
+        var theGoodValue;
+        result
+        .map(responseData => {
+            // do something with the success value
+            theGoodValue = responseData; //TODO - I am not doing anything with this value, I don't think I need to do anything with this
+        })
+        .mapErr(errorInstance => {
+            // do something with the failure value
+            return [0, null, result]; //TODO - will this return normally since this is inside a function at the moment + we need to throw the error up the stacktrace?
+
+        })
+
+        return [resp.getExitCode(), resp.getLogOutput(), null]; //TODO - I was thinking of replacing the null with responseData but this will change the return type which I don't know if I should be doing
+
     }
 
     // Docs available at https://docs.kurtosistech.com/kurtosis-libs/lib-documentation
