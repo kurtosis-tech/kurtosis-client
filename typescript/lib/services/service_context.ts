@@ -2,46 +2,56 @@ import { ApiContainerServiceClient } from '../../kurtosis_core_rpc_api_bindings/
 import { ExecCommandArgs, ExecCommandResponse, FileGenerationOptions, GenerateFilesArgs, GenerateFilesResponse, LoadStaticFilesArgs, LoadStaticFilesResponse } from '../../kurtosis_core_rpc_api_bindings/api_container_service_pb';
 import { ServiceID } from './service';
 import { StaticFileID } from './container_creation_config'; 
-import * as grpc from "grpc"; 
+import * as grpc from "grpc"; //TODO - better practice to add explicit import instead of general asterisk
 import { newGetExecCommandArgs, newGetGenerateFilesArgs, newGetFileGenerationOptions, newGetLoadStaticFilesArgs } from "../constructor_calls";
-import { ok, err, Result } from 'neverthrow'
-var path = require("path"); //TODO check if this works
-
-
-// we'll keep this simple
-type ResponseBody = {}
-
-interface ResponseData {
-  statusCode: number
-  responseBody?: ResponseBody
-}
+var path = require("path"); //TODO - check if this works in a local file
 
 
 // Docs available at https://docs.kurtosistech.com/kurtosis-libs/lib-documentation
-class GeneratedFileFilepaths { //TODO (comment) - try interface if class doesn't work
-	absoluteFilepathOnTestsuiteContainer: string;
-	absoluteFilepathOnServiceContainer:   string;
+class GeneratedFileFilepaths {
+	
+    private readonly absoluteFilepathHere: string;
+	private readonly absoluteFilepathOnServiceContainer: string;
+
+    constructor (
+        absoluteFilepath: string,
+        absoluteFilepathOnServiceContainer: string) {
+            this.absoluteFilepathHere = absoluteFilepath;
+            this.absoluteFilepathOnServiceContainer = absoluteFilepathOnServiceContainer;
+    }   
+
+    // Docs available at https://docs.kurtosistech.com/kurtosis-libs/lib-documentation
+    public getAbsoluteFilepathHere(): string { 
+        return this.absoluteFilepathHere;
+    }
+
+    // Docs available at https://docs.kurtosistech.com/kurtosis-libs/lib-documentation
+    public getAbsoluteFilepathOnServiceContainer(): string { 
+        return this.absoluteFilepathOnServiceContainer;
+    }
+
 }
+
 
 class ServiceContext {
     
     private readonly client: ApiContainerServiceClient;
     private readonly serviceId: ServiceID;
     private readonly ipAddress: string;
-    private readonly testVolumeMountpointOnTestsuiteContainer: string;
-    private readonly testVolumeMountpointOnServiceContainer: string;
+    private readonly enclaveDataVolMountpointHere: string;
+    private readonly enclaveDataVolMountpointOnServiceContainer: string;
 
     constructor(
         client: ApiContainerServiceClient,
         serviceId: ServiceID,
         ipAddress: string,
-        testVolumeMountpointOnTestsuiteContainer: string,
-        testVolumeMountpointOnServiceContainer: string) {
+        enclaveDataVolMountpointHere: string,
+        enclaveDataVolMountpointOnServiceContainer: string) {
             this.client = client;
             this.serviceId = serviceId;
             this.ipAddress = ipAddress;
-            this.testVolumeMountpointOnTestsuiteContainer = testVolumeMountpointOnTestsuiteContainer;
-            this.testVolumeMountpointOnServiceContainer = testVolumeMountpointOnServiceContainer;
+            this.enclaveDataVolMountpointHere = enclaveDataVolMountpointHere;
+            this.enclaveDataVolMountpointOnServiceContainer = enclaveDataVolMountpointOnServiceContainer;
     }
 
     // Docs available at https://docs.kurtosistech.com/kurtosis-libs/lib-documentation
@@ -55,19 +65,10 @@ class ServiceContext {
     }
 
     // Docs available at https://docs.kurtosistech.com/kurtosis-libs/lib-documentation
-    public execCommand(command: string[]): [number, Uint8Array | string, Error] { //TODO In golang: [int32, pointer to []byte (comment), error ] ; (comment) Following types in _pb.d.ts
+    public execCommand(command: string[]): [number, Uint8Array | string, Error] {
         const serviceId: ServiceID = this.serviceId;
         const args: ExecCommandArgs = newGetExecCommandArgs(serviceId, command);
-        //let request: grpc.requestCallback<ExecCommandResponse>; //TODO - Tried to implement callback through examples on Google while also respecting the actual Callback function inside grpc ; (comment) need to initalize if want to change it to const
-        //let resp, err = this.client.execCommand(args, request);
-        // if (err != null){ //TODO - does error checking work here (is this error assertion enough)
-        //     return [0, null, new Error("An error occurred executing command '%v' on service '%v'")]; //TODO - I might not be able keep the '%v', but how I throw the actual error
-        // } else {
-        //     return [resp.getExitCode(), resp.getLogOutput(), null]; 
-        // }
-        //
 
-        //Do a callback call for appropriate resp and err since execCommand's return type is not useful
         var resp: ExecCommandResponse;
         var error: grpc.ServiceError;
         this.client.execCommand(args, function(error, feature){ //TODO - does this function change/manipulate error or feature in any way
@@ -75,33 +76,11 @@ class ServiceContext {
             resp = feature;
         });
         
-
-        //Purpose of using Result (Ok, Err) is because we need to enforce error checking by the compiler
-        //result is returning a type of Promise<Result<ResponseData, Error>> 
-        var result;
-        if (error != null){
-            result = err(new Error('An error occured calling the grpc method execCommand.')) //TODO - only passing in a message, need to send actual error
-            //Error.captureStackTrace(this); //TODO - I don't think I need this unless I'm making a new Error subclass
-            //throw ..... I need to send an explicit throw OR catch call which would send the actual error (Kevin said no try and catch since they are bad practice and not compiler-safe)
-        } else {
-            result = ok( "execCommand executed successfully." )
+        //TODO - Will this error checking propoagate as needed (Kevin mentioned that returning error as-is is good enough)
+        if (error != null) {
+            return [0, null, error] //TODO - passing in actual error, but I'm not passing in a personalized message
         }
-
-        //COMMENNT NEEDED - THINK of WHY
-        var theGoodValue;
-        result
-        .map(responseData => {
-            // do something with the success value
-            theGoodValue = responseData; //TODO - I am not doing anything with this value, I don't think I need to do anything with this
-        })
-        .mapErr(errorInstance => {
-            // do something with the failure value
-            return [0, null, result]; //TODO - will this return normally since this is inside a function at the moment + we need to throw the error up the stacktrace?
-
-        })
-
-        return [resp.getExitCode(), resp.getLogOutput(), null]; //TODO - I was thinking of replacing the null with responseData but this will change the return type which I don't know if I should be doing
-
+        return [resp.getExitCode(), resp.getLogOutput(), null];
     }
 
     // Docs available at https://docs.kurtosistech.com/kurtosis-libs/lib-documentation
@@ -124,24 +103,21 @@ class ServiceContext {
             var relativeFilepath: string;
             if (!generatedFileRelativeFilepaths.has(fileId)) {
                 return [null, new Error(
-                    "No filepath (relative to test volume root) was returned for file '%v', even though we requested it; this is a Kurtosis bug", //TODO - no %v maybe
+                    "No filepath (relative to test volume root) was returned for file '%v', even though we requested it; this is a Kurtosis bug", //TODO - no %v maybe, should I pass in fileID
                     )];
             }
             relativeFilepath = generatedFileRelativeFilepaths[fileId];
 
-            const absFilepathOnTestsuite: string = path.Join(this.testVolumeMountpointOnTestsuiteContainer, relativeFilepath);
-            const absFilepathOnService: string = path.Join(this.testVolumeMountpointOnServiceContainer, relativeFilepath);
-            const genFilePath: GeneratedFileFilepaths = new GeneratedFileFilepaths();
-
-            genFilePath.absoluteFilepathOnTestsuiteContainer = absFilepathOnTestsuite;
-            genFilePath.absoluteFilepathOnServiceContainer = absFilepathOnService;
+            const absFilepathHere: string = path.Join(this.enclaveDataVolMountpointHere, relativeFilepath);
+            const absFilepathOnService: string = path.Join(this.enclaveDataVolMountpointOnServiceContainer, relativeFilepath);
+            const genFilePath: GeneratedFileFilepaths = new GeneratedFileFilepaths(absFilepathHere, absFilepathOnService);
             result.set(fileId, genFilePath); 
         }
         return [result, null];
     }
 
     // Docs available at https://docs.kurtosistech.com/kurtosis-libs/lib-documentation
-    public loadStaticFiles(usedStaticFilesSet: Set<StaticFileID>): [Map<StaticFileID, string>, Error] { // TODO (comment) - changed Map into Set; possible to return useful erorr messages in typescript
+    public loadStaticFiles(usedStaticFilesSet: Set<StaticFileID>): [Map<StaticFileID, string>, Error] { 
         const serviceId: ServiceID = this.serviceId;
         const staticFilesToCopyStringSet: Map<string, boolean> = new Map(); 
         for (let staticFileId in usedStaticFilesSet) { //TODO - change to const?
@@ -158,7 +134,7 @@ class ServiceContext {
     	const staticFileAbsFilepathsOnService: Map<StaticFileID, string> = new Map();
     	for (let staticFileId in loadStaticFilesResp.CopiedStaticFileRelativeFilepaths) { //TODO should I change to const
     		const filepathRelativeToExVolRoot: string = loadStaticFilesResp.CopiedStaticFileRelativeFilepaths[staticFileId];
-            const absFilepathOnContainer: string = path.Join(this.testVolumeMountpointOnServiceContainer, filepathRelativeToExVolRoot)
+            const absFilepathOnContainer: string = path.Join(this.enclaveDataVolMountpointOnServiceContainer, filepathRelativeToExVolRoot)
     		staticFileAbsFilepathsOnService[<StaticFileID>(staticFileId)] = absFilepathOnContainer; //TODO - see if I'm typecasting correctly
     	}
     	return [staticFileAbsFilepathsOnService, null] 
