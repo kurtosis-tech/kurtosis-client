@@ -1,5 +1,3 @@
-//import "os"
-
 const defaultKurtosisVolumeMountpoint = "/kurtosis-enclave-data";
 
 export type StaticFileID = string;
@@ -78,7 +76,7 @@ class ContainerCreationConfigBuilder {
     constructor (image: string) {
             this.image = image;
             this.kurtosisVolumeMountpoint = defaultKurtosisVolumeMountpoint;
-            this.usedPortsSet = new Map(); //TODO (comment) = added type assertion above
+            this.usedPortsSet = new Map();
             this.fileGeneratingFuncs = new Map();
             this.filesArtifactMountpoints = new Map();
     }
