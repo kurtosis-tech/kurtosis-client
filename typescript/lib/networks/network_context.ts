@@ -8,19 +8,21 @@
 //import (
 	//"context"
 import { ApiContainerServiceClient } from "../..//kurtosis_core_rpc_api_bindings/api_container_service_grpc_pb";
-import { LoadLambdaArgs, GetLambdaInfoArgs, RegisterStaticFilesArgs, RegisterStaticFilesResponse, RegisterFilesArtifactsArgs, PortBinding } from "../..//kurtosis_core_rpc_api_bindings/api_container_service_pb";
+import { LoadLambdaArgs, GetLambdaInfoArgs, RegisterStaticFilesArgs, RegisterStaticFilesResponse, RegisterFilesArtifactsArgs, PortBinding, RegisterServiceArgs, RegisterServiceResponse, StartServiceArgs, GetServiceInfoArgs, GetServiceInfoResponse, RemoveServiceArgs, PartitionConnectionInfo, PartitionServices, PartitionConnections, RepartitionArgs, WaitForEndpointAvailabilityArgs, ExecuteBulkCommandsArgs } from "../..//kurtosis_core_rpc_api_bindings/api_container_service_pb"; //TODO - potentially change to asterisk since many imports
 import { LambdaID, LambdaContext } from "../modules/lambda_context";
 import { ServiceID } from "../services/service";
-import { StaticFileID, FilesArtifactID } from '../services/container_creation_config'; 
-import { newGetLoadLambdaArgs, newGetLambdaInfoArgs, newRegisterStaticFilesArgs, newRegisterFilesArtifactsArgs } from "../constructor_calls";
-	//"github.com/palantir/stacktrace"
-import * as logger from "tslog"; //"github.com/sirupsen/logrus" //TODO
+import { ServiceContext, GeneratedFileFilepaths } from "../services/service";
+import { StaticFileID, FilesArtifactID, ContainerCreationConfig } from '../services/container_creation_config'; 
+//import {} from '../services/container_run_config'
+import { newGetLoadLambdaArgs, newGetLambdaInfoArgs, newRegisterStaticFilesArgs, newRegisterFilesArtifactsArgs, newRegisterServiceArgs, newStartServiceArgs, newGetServiceInfoArgs, newRemoveServiceArgs, newPartitionServices, newPartitionConnections, newRepartitionArgs, newWaitForEndpointAvailabilityArgs, newExecuteBulkCommandsArgs } from "../constructor_calls"; //TODO - potentially change to asterisk since many imports
+	//"github.com/palantir/stacktrace" TOOD
+import * as logger from "tslog";
 	"io" //TODO
 import * as path from "path";
-import * as fs from 'fs'; //os
+import * as fs from 'fs';
 //)
 
-type PartitionID = string;
+export type PartitionID = string;
 
 // This will always resolve to the default partition ID (regardless of whether such a partition exists in the network,
 //  or it was repartitioned away)
@@ -94,7 +96,7 @@ class NetworkContext {
         // if err != nil {
         //     return stacktrace.Propagate(err, "An error occurred registering static files: %+v", staticFileFilepaths)
         // }
-        const resp: RegisterStaticFilesResponse;
+        const resp: RegisterStaticFilesResponse; //TODO - remove
         const staticFileDestRelativeFilepathsMap: Map<string, string> = resp.getStaticFileDestRelativeFilepathsMap();
         for (let staticFileIdStr in staticFileDestRelativeFilepathsMap) {
             const destFilepathRelativeToEnclaveVolRoot: string = staticFileDestRelativeFilepathsMap[staticFileIdStr];
@@ -177,245 +179,261 @@ class NetworkContext {
     ): [ServiceContext, Map<string, PortBinding>, Error] {
 
         //ctx := context.Background()
+        const log: logger.Logger = new logger.Logger();
 
-        logrus.Tracef("Registering new service ID with Kurtosis API...")
-        registerServiceArgs := &kurtosis_core_rpc_api_bindings.RegisterServiceArgs{
-            ServiceId:   string(serviceId),
-            PartitionId: string(partitionId),
-        }
-        registerServiceResp, err := networkCtx.client.RegisterService(ctx, registerServiceArgs)
-        if err != nil {
-            return nil, nil, stacktrace.Propagate(
-                err,
-                "An error occurred registering service with ID '%v' with the Kurtosis API",
-                serviceId)
-        }
-        serviceIpAddr := registerServiceResp.IpAddr
+        log.trace("Registering new service ID with Kurtosis API...");
+        const registerServiceArgs: RegisterServiceArgs = newRegisterServiceArgs(serviceId, partitionId);
+        // TODO TODO TODO - CALLBACK & ERROR-HANDLING
+        // registerServiceResp, err := networkCtx.client.RegisterService(ctx, registerServiceArgs)
+        // if err != nil {
+        //     return nil, nil, stacktrace.Propagate(
+        //         err,
+        //         "An error occurred registering service with ID '%v' with the Kurtosis API",
+        //         serviceId)
+        // }
+        const registerServiceResp: RegisterServiceResponse; //TODO - remove
+        const serviceIpAddr = registerServiceResp.getIpAddr();
 
-        serviceContext := services.NewServiceContext(
-            networkCtx.client,
+        const serviceContext: ServiceContext = ServiceContext(
+            this.client,
             serviceId,
             serviceIpAddr,
-            networkCtx.enclaveDataVolMountpoint,
-            containerCreationConfig.GetKurtosisVolumeMountpoint())
-        logrus.Tracef("New service successfully registered with Kurtosis API")
+            this.enclaveDataVolMountpoint,
+            containerCreationConfig.GetKurtosisVolumeMountpoint());
+        log.trace("New service successfully registered with Kurtosis API");
 
-        logrus.Trace("Loading static files into new service namespace...")
-        usedStaticFiles := containerCreationConfig.GetUsedStaticFiles()
-        staticFileAbsFilepathsOnService, err := serviceContext.LoadStaticFiles(usedStaticFiles)
-        if err != nil {
-            return nil, nil, stacktrace.Propagate(err, "An error occurred loading the following static files to service '%v': %+v", serviceId, usedStaticFiles)
+        log.trace("Loading static files into new service namespace...");
+        const usedStaticFiles = containerCreationConfig.GetUsedStaticFiles();
+        var [staticFileAbsFilepathsOnService, err] = serviceContext.LoadStaticFiles(usedStaticFiles);
+        if (err != null) {
+            return [ null, null, err ]; //TODO - no personalized message
         }
-        logrus.Trace("Successfully loaded static files")
+        log.trace("Successfully loaded static files");
 
-        logrus.Trace("Initializing generated files...")
-        filesToGenerate := map[string]bool{}
-        for fileId := range containerCreationConfig.GetFileGeneratingFuncs() {
-            filesToGenerate[fileId] = true
+        log.trace("Initializing generated files...");
+        const filesToGenerate: Map<string, boolean> = new Map();
+        for (let fileId in containerCreationConfig.GetFileGeneratingFuncs()) {
+            filesToGenerate[fileId] = true;
         }
-        generatedFileFilepaths, err := serviceContext.GenerateFiles(filesToGenerate)
-        if err != nil {
-            return nil, nil, stacktrace.Propagate(err, "An error occurred generating the files needed for service startup")
+        var [generatedFileFilepaths, err] = serviceContext.GenerateFiles(filesToGenerate);
+        if (err != null) {
+            return [null, null, err ] //TODO - no personalized message
         }
-        generatedFileAbsFilepathsOnService := map[string]string{}
-        for fileId, initializingFunc := range containerCreationConfig.GetFileGeneratingFuncs() {
-            filepaths, found := generatedFileFilepaths[fileId]
-            if !found {
-                return nil, nil, stacktrace.Propagate(
-                    err,
-                    "Needed to initialize file for file ID '%v', but no generated file filepaths were found for that file ID; this is a Kurtosis bug",
-                    fileId)
+        const generatedFileAbsFilepathsOnService: Map<string, string> = new Map();
+        for (let fileId in containerCreationConfig.GetFileGeneratingFuncs()) {
+            const initializingFunc: (num: number) => Error = containerCreationConfig.GetFileGeneratingFuncs()[fileId];
+
+            //filepaths, found := generatedFileFilepaths[fileId]
+            if (!generatedFileFilepaths.has(fileId)) {
+                return [null, null, err ] //TODO - no personalize message
+                    //"Needed to initialize file for file ID '%v', but no generated file filepaths were found for that file ID; this is a Kurtosis bug",
+                    //fileId)]
             }
-            fp, err := os.Create(filepaths.GetAbsoluteFilepathHere())
-            if err != nil {
-                return nil, nil, stacktrace.Propagate(err, "An error occurred opening file pointer for file '%v'", fileId)
-            }
-            if err := initializingFunc(fp); err != nil {
-                return nil, nil, stacktrace.Propagate(err, "The function to initialize file with ID '%v' returned an error", fileId)
-            }
-            generatedFileAbsFilepathsOnService[fileId] = filepaths.GetAbsoluteFilepathOnServiceContainer()
+            //TODO - make sure to add a case after the ! (check other files for this)
+            const filepaths: GeneratedFileFilepaths = generatedFileFilepaths[fileId];
+            // TODO TODO TODO 
+            // fp, err := os.Create(filepaths.GetAbsoluteFilepathHere())
+            // if err != nil {
+            //     return nil, nil, stacktrace.Propagate(err, "An error occurred opening file pointer for file '%v'", fileId)
+            // }
+            // if err := initializingFunc(fp); err != nil {
+            //     return nil, nil, stacktrace.Propagate(err, "The function to initialize file with ID '%v' returned an error", fileId)
+            // }
+            generatedFileAbsFilepathsOnService[fileId] = filepaths.GetAbsoluteFilepathOnServiceContainer();
         }
-        logrus.Trace("Successfully initialized generated files in suite execution volume")
+        log.trace("Successfully initialized generated files in suite execution volume")
 
-        containerRunConfig, err := generateRunConfigFunc(serviceIpAddr, generatedFileAbsFilepathsOnService, staticFileAbsFilepathsOnService)
-        if err != nil {
-            return nil, nil, stacktrace.Propagate(err, "An error occurred getting the container run config")
+        var [containerRunConfig, err] = generateRunConfigFunc(serviceIpAddr, generatedFileAbsFilepathsOnService, staticFileAbsFilepathsOnService);
+        if (err != null) {
+            return [null, null, err] //TODO - no personalized message
         }
 
-        logrus.Tracef("Creating files artifact ID str -> mount dirpaths map...")
-        artifactIdStrToMountDirpath := map[string]string{}
-        for filesArtifactId, mountDirpath := range containerCreationConfig.GetFilesArtifactMountpoints() {
-            artifactIdStrToMountDirpath[string(filesArtifactId)] = mountDirpath
-        }
-        logrus.Tracef("Successfully created files artifact ID str -> mount dirpaths map")
+        log.trace("Creating files artifact ID str -> mount dirpaths map...")
+        const artifactIdStrToMountDirpath: Map<string, string> = new Map();
+        for (let filesArtifactId in containerCreationConfig.GetFilesArtifactMountpoints()) {
+            const mountDirpath: string = containerCreationConfig.GetFilesArtifactMountpoints()[filesArtifactId];
 
-        logrus.Tracef("Starting new service with Kurtosis API...")
-        startServiceArgs := &kurtosis_core_rpc_api_bindings.StartServiceArgs{
-            ServiceId:                   string(serviceId),
-            DockerImage:                 containerCreationConfig.GetImage(),
-            UsedPorts:                   containerCreationConfig.GetUsedPortsSet(),
-            EntrypointArgs:              containerRunConfig.GetEntrypointOverrideArgs(),
-            CmdArgs:                     containerRunConfig.GetCmdOverrideArgs(),
-            DockerEnvVars:               containerRunConfig.GetEnvironmentVariableOverrides(),
-            EnclaveDataVolMntDirpath:    containerCreationConfig.GetKurtosisVolumeMountpoint(),
-            FilesArtifactMountDirpaths:  artifactIdStrToMountDirpath,
+            artifactIdStrToMountDirpath[String(filesArtifactId)] = mountDirpath;
         }
-        resp, err := networkCtx.client.StartService(ctx, startServiceArgs)
-        if err != nil {
-            return nil, nil, stacktrace.Propagate(err, "An error occurred starting the service with the Kurtosis API")
-        }
-        logrus.Tracef("Successfully started service with Kurtosis API")
+        log.trace("Successfully created files artifact ID str -> mount dirpaths map")
 
-        return serviceContext, resp.UsedPortsHostPortBindings, nil
+        log.trace("Starting new service with Kurtosis API...")
+        const startServiceArgs: StartServiceArgs = newStartServiceArgs(
+            serviceId, 
+            containerCreationConfig.getImage(), 
+            containerCreationConfig.getUsedPortsSet(),
+            containerRunConfig.getEntrypointOverrideArgs(),
+            containerRunConfig.getCmdOverrideArgs(),
+            containerRunConfig.getEnvironmentVariableOverrides(),
+            containerCreationConfig.getKurtosisVolumeMountpoint(),
+            artifactIdStrToMountDirpath);
+        //TODO TODO TODO - CALLBACK & ERROR-HANDLING
+        // resp, err := this.client.StartService(ctx, startServiceArgs)
+        // if err != nil {
+        //     return nil, nil, stacktrace.Propagate(err, "An error occurred starting the service with the Kurtosis API")
+        // }
+        log.trace("Successfully started service with Kurtosis API");
+
+        return [serviceContext, resp.UsedPortsHostPortBindings, null]
     }
 
     // Docs available at https://docs.kurtosistech.com/kurtosis-libs/lib-documentation
-    func (networkCtx *NetworkContext) GetServiceContext(serviceId services.ServiceID) (*services.ServiceContext, error) {
-        getServiceInfoArgs := &kurtosis_core_rpc_api_bindings.GetServiceInfoArgs{
-            ServiceId: string(serviceId),
-        }
-        serviceResponse, err := networkCtx.client.GetServiceInfo(context.Background(), getServiceInfoArgs)
-        if err != nil {
-            return nil, stacktrace.Propagate(
-                err,
-                "An error occurred when trying to get info for service '%v'",
-                serviceId)
-        }
-        if serviceResponse.GetIpAddr() == "" {
-            return nil, stacktrace.NewError(
-                "Kurtosis API reported an empty IP address for service '%v' - this should never happen, and is a bug with Kurtosis!",
-                serviceId)
-        }
-
-        enclaveDataVolMountDirpathOnSvcContainer := serviceResponse.GetEnclaveDataVolumeMountDirpath()
-        if enclaveDataVolMountDirpathOnSvcContainer == "" {
-            return nil, stacktrace.NewError(
-                "Kurtosis API reported an empty enclave data volume directory path for service '%v' - this should never happen, and is a bug with Kurtosis!",
-                serviceId)
+    public getServiceContext(serviceId: ServiceID): [ServiceContext, Error] {
+        const getServiceInfoArgs: GetServiceInfoArgs = newGetServiceInfoArgs(serviceId);
+        //TODO TODO TODO - CALLBACK & ERROR-HANDLING
+        // serviceResponse, err := networkCtx.client.GetServiceInfo(context.Background(), getServiceInfoArgs)
+        // if err != nil {
+        //     return nil, stacktrace.Propagate(
+        //         err,
+        //         "An error occurred when trying to get info for service '%v'",
+        //         serviceId)
+        // }
+        const serviceResponse: GetServiceInfoResponse; //TODO - Remove
+        if (serviceResponse.GetIpAddr() == "") {
+            return [null, new Error(
+                "Kurtosis API reported an empty IP address for service " + serviceId +  " - this should never happen, and is a bug with Kurtosis!",
+                )
+            ]
         }
 
-        serviceContext := services.NewServiceContext(
-            networkCtx.client,
+        const enclaveDataVolMountDirpathOnSvcContainer: string = serviceResponse.getEnclaveDataVolumeMountDirpath();
+        if (enclaveDataVolMountDirpathOnSvcContainer == "") {
+            return [null, new Error(
+                "Kurtosis API reported an empty enclave data volume directory path for service " + serviceId + " - this should never happen, and is a bug with Kurtosis!",
+                )
+            ]
+        }
+
+        const serviceContext: ServiceContext = ServiceContext(
+            this.client,
             serviceId,
-            serviceResponse.GetIpAddr(),
-            networkCtx.enclaveDataVolMountpoint,
+            serviceResponse.getIpAddr(),
+            this.enclaveDataVolMountpoint,
             enclaveDataVolMountDirpathOnSvcContainer,
         )
 
-        return serviceContext, nil
+        return [serviceContext, null]
     }
 
     // Docs available at https://docs.kurtosistech.com/kurtosis-libs/lib-documentation
-    func (networkCtx *NetworkContext) RemoveService(serviceId services.ServiceID, containerStopTimeoutSeconds uint64) error {
+    public removeService(serviceId: ServiceID, containerStopTimeoutSeconds: number): Error {
 
-        logrus.Debugf("Removing service '%v'...", serviceId)
-        args := &kurtosis_core_rpc_api_bindings.RemoveServiceArgs{
-            ServiceId: string(serviceId),
-            // NOTE: This is kinda weird - when we remove a service we can never get it back so having a container
-            //  stop timeout doesn't make much sense. It will make more sense when we can stop/start containers
-            // Independent of adding/removing them from the network
-            ContainerStopTimeoutSeconds: containerStopTimeoutSeconds,
-        }
-        if _, err := networkCtx.client.RemoveService(context.Background(), args); err != nil {
-            return stacktrace.Propagate(err, "An error occurred removing service '%v' from the network", serviceId)
-        }
+        const log: logger.Logger = new logger.Logger();
+        log.debug("Removing service '%v'...", serviceId)
+        // NOTE: This is kinda weird - when we remove a service we can never get it back so having a container
+        //  stop timeout doesn't make much sense. It will make more sense when we can stop/start containers
+        // Independent of adding/removing them from the network
+        const args: RemoveServiceArgs = newRemoveServiceArgs(serviceId, containerStopTimeoutSeconds);
+        
+        // TODO TODO TODO - CALLBACK & ERROR-HANDLING
+        // if _, err := networkCtx.client.RemoveService(context.Background(), args); err != nil {
+        //     return stacktrace.Propagate(err, "An error occurred removing service '%v' from the network", serviceId)
+        // }
 
-        logrus.Debugf("Successfully removed service ID %v", serviceId)
+        log.debug("Successfully removed service ID %v", serviceId)
 
-        return nil
+        return null;
     }
 
     // Docs available at https://docs.kurtosistech.com/kurtosis-libs/lib-documentation
-    func (networkCtx *NetworkContext) RepartitionNetwork(
-        partitionServices map[PartitionID]map[services.ServiceID]bool,
-        partitionConnections map[PartitionID]map[PartitionID]*kurtosis_core_rpc_api_bindings.PartitionConnectionInfo,
-        defaultConnection *kurtosis_core_rpc_api_bindings.PartitionConnectionInfo) error {
+    public repartitionNetwork(
+        partitionServices: Map<PartitionID, Map<ServiceID, boolean>>,
+        partitionConnections: Map<PartitionID, Map<PartitionID, PartitionConnectionInfo>>,
+        defaultConnection: PartitionConnectionInfo): Error {
 
-        if partitionServices == nil {
-            return stacktrace.NewError("Partition services map cannot be nil")
+        if (partitionServices == null) {
+            return new Error("Partition services map cannot be nil");
         }
-        if defaultConnection == nil {
-            return stacktrace.NewError("Default connection cannot be nil")
+        if (defaultConnection == null) {
+            return new Error("Default connection cannot be nil");
         }
 
         // Cover for lazy/confused users
-        if partitionConnections == nil {
-            partitionConnections = map[PartitionID]map[PartitionID]*kurtosis_core_rpc_api_bindings.PartitionConnectionInfo{}
+        if (partitionConnections == null) {
+            partitionConnections = new Map();
         }
 
-        reqPartitionServices := map[string]*kurtosis_core_rpc_api_bindings.PartitionServices{}
-        for partitionId, serviceIdSet := range partitionServices {
-            serviceIdStrPseudoSet := map[string]bool{}
-            for serviceId := range serviceIdSet {
-                serviceIdStr := string(serviceId)
-                serviceIdStrPseudoSet[serviceIdStr] = true
+        const reqPartitionServices: Map<string, PartitionServices> = new Map();
+        for (let partitionId in partitionServices) {
+            const serviceIdSet = partitionServices[partitionId];
+
+            const serviceIdStrPseudoSet: Map<string, boolean> = new Map();
+            for (let serviceId in serviceIdSet) {
+                const serviceIdStr: string = String(serviceId);
+                serviceIdStrPseudoSet[serviceIdStr] = true;
             }
-            partitionIdStr := string(partitionId)
-            reqPartitionServices[partitionIdStr] = &kurtosis_core_rpc_api_bindings.PartitionServices{
-                ServiceIdSet: serviceIdStrPseudoSet,
-            }
+            const partitionIdStr: string = String(partitionId);
+            reqPartitionServices[partitionIdStr] = newPartitionServices(serviceIdStrPseudoSet);
         }
 
-        reqPartitionConns := map[string]*kurtosis_core_rpc_api_bindings.PartitionConnections{}
-        for partitionAId, partitionAConnsMap := range partitionConnections {
-            partitionAConnsStrMap := map[string]*kurtosis_core_rpc_api_bindings.PartitionConnectionInfo{}
-            for partitionBId, connInfo := range partitionAConnsMap {
-                partitionBIdStr := string(partitionBId)
-                partitionAConnsStrMap[partitionBIdStr] = connInfo
+        const reqPartitionConns: Map<string, PartitionConnections> = new Map();
+        for (let partitionAId in partitionConnections) {
+            const partitionAConnsMap: PartitionConnections = partitionConnections[partitionAId];
+            
+            const partitionAConnsStrMap: Map<string, PartitionConnectionInfo> = new Map();
+            for (let partitionBId in partitionAConnsMap) {
+                const connInfo: PartitionConnectionInfo = partitionAConnsMap[partitionBId];
+
+                const partitionBIdStr: string = String(partitionBId);
+                partitionAConnsStrMap[partitionBIdStr] = connInfo;
             }
-            partitionAConns := &kurtosis_core_rpc_api_bindings.PartitionConnections{
-                ConnectionInfo: partitionAConnsStrMap,
-            }
-            partitionAIdStr := string(partitionAId)
-            reqPartitionConns[partitionAIdStr] = partitionAConns
+            const partitionAConns: PartitionConnections = newPartitionConnections(partitionAConnsStrMap);
+            const partitionAIdStr: string = String(partitionAId);
+            reqPartitionConns[partitionAIdStr] = partitionAConns;
         }
 
-        repartitionArgs := &kurtosis_core_rpc_api_bindings.RepartitionArgs{
-            PartitionServices:    reqPartitionServices,
-            PartitionConnections: reqPartitionConns,
-            DefaultConnection:    defaultConnection,
-        }
-        if _, err := networkCtx.client.Repartition(context.Background(), repartitionArgs); err != nil {
-            return stacktrace.Propagate(err, "An error occurred repartitioning the test network")
-        }
-        return nil
+        const repartitionArgs: RepartitionArgs = newRepartitionArgs(reqPartitionServices, reqPartitionConns, defaultConnection);
+
+        // TODO TODO TODO - CALLBACK & ERROR-HANDLING
+        // if _, err := networkCtx.client.Repartition(context.Background(), repartitionArgs); err != nil {
+        //     return stacktrace.Propagate(err, "An error occurred repartitioning the test network")
+        // }
+        return null;
     }
 
     // Docs available at https://docs.kurtosistech.com/kurtosis-libs/lib-documentation
-    func (networkCtx *NetworkContext) WaitForEndpointAvailability(serviceId services.ServiceID, port uint32, path string, initialDelaySeconds uint32, retries uint32, retriesDelayMilliseconds uint32, bodyText string) error {
-        availabilityArgs := &kurtosis_core_rpc_api_bindings.WaitForEndpointAvailabilityArgs{
-            ServiceId:                string(serviceId),
-            Port:                     port,
-            Path:                     path,
-            InitialDelaySeconds:      initialDelaySeconds,
-            Retries:                  retries,
-            RetriesDelayMilliseconds: retriesDelayMilliseconds,
-            BodyText:                 bodyText,
-        }
-        if _, err := networkCtx.client.WaitForEndpointAvailability(context.Background(), availabilityArgs); err != nil {
-            return stacktrace.Propagate(
-                err,
-                "Endpoint '%v' on port '%v' for service '%v' did not become available despite polling %v times with %v between polls",
-                path,
-                port,
-                serviceId,
-                retries,
-                retriesDelayMilliseconds,
-            )
-        }
+    public waitForEndpointAvailability(
+        serviceId: ServiceID,
+        port: number, 
+        path: string, 
+        initialDelaySeconds: number, 
+        retries: number, 
+        retriesDelayMilliseconds: number, 
+        bodyText: string): Error {
+        const availabilityArgs: WaitForEndpointAvailabilityArgs = newWaitForEndpointAvailabilityArgs(
+            serviceId,
+            port,
+            path,
+            initialDelaySeconds,
+            retries,
+            retriesDelayMilliseconds,
+            bodyText);
 
-        return nil
+        //TODO TODO TODO - CALLBACK & ERROR-HANDLING
+        // if _, err := networkCtx.client.WaitForEndpointAvailability(context.Background(), availabilityArgs); err != nil {
+        //     return stacktrace.Propagate(
+        //         err,
+        //         "Endpoint '%v' on port '%v' for service '%v' did not become available despite polling %v times with %v between polls",
+        //         path,
+        //         port,
+        //         serviceId,
+        //         retries,
+        //         retriesDelayMilliseconds,
+        //     )
+        // }
+
+        return null;
     }
 
     // Docs available at https://docs.kurtosistech.com/kurtosis-libs/lib-documentation
-    func (networkCtx *NetworkContext) ExecuteBulkCommands(bulkCommandsJson string) error {
+    public executeBulkCommands(bulkCommandsJson: string): Error {
 
-        args := &kurtosis_core_rpc_api_bindings.ExecuteBulkCommandsArgs{
-            SerializedCommands: bulkCommandsJson,
-        }
-        if _, err := networkCtx.client.ExecuteBulkCommands(context.Background(), args); err != nil {
-            return stacktrace.Propagate(err, "An error occurred executing the following bulk commands: %v", bulkCommandsJson)
-        }
-        return nil
+        const args: ExecuteBulkCommandsArgs = newExecuteBulkCommandsArgs(bulkCommandsJson);
+        
+        //
+        // if _, err := networkCtx.client.ExecuteBulkCommands(context.Background(), args); err != nil {
+        //     return stacktrace.Propagate(err, "An error occurred executing the following bulk commands: %v", bulkCommandsJson)
+        // }
+        return null
     }
 }
