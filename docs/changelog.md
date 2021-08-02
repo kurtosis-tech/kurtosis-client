@@ -2,6 +2,9 @@
 ### Changes
 * Made `GeneratedFileFilepaths` fields private and immutable with a constructor, and added getters to access the field values
 
+### Fixes
+* Updated the build script so that it correctly compiles the typescript files found inside the lib/ directory into one single javascript file 
+
 ### Breaking Changes
 * Made the fields of the `GeneratedFileFilepaths` object private
     * Users should use the new getters - `getAbsoluteFilepathHere` and `getAbsoluteFilepathOnService`
