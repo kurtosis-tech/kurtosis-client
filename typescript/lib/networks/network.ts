@@ -4,4 +4,4 @@
  */
 
 // Docs available at https://docs.kurtosistech.com/kurtosis-libs/lib-documentation
-//type Network interface{}
+interface Network {};
