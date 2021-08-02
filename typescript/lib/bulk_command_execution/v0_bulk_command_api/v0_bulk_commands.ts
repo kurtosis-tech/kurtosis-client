@@ -1,33 +1,33 @@
 //package v0_bulk_command_api
 
 //import (
-	//"encoding/json"
-	"github.com/kurtosis-tech/kurtosis-client/golang/kurtosis_core_rpc_api_bindings"
+	//"encoding/json" //TODO
+import {} from "../../../kurtosis_core_rpc_api_binding/api_container_service_pb"
+import {} from "../../../kurtosis_core_rpc_api_binding/api_container_service_grpc_pb";
 	//"github.com/palantir/stacktrace"
-	"google.golang.org/protobuf/proto"
+	"google.golang.org/protobuf/proto" //TODO
 //)
 
-// // ====================================================================================================
-// //                                   Command Arg Deserialization Visitor
-// // ====================================================================================================
+// ====================================================================================================
+//                                   Command Arg Deserialization Visitor
+// ====================================================================================================
 
-// // Visitor that will be used to deserialize command args into
-// type cmdArgDeserializingVisitor struct {
-// 	bytesToDeserialize         []byte
-// 	deserializedCommandArgsPtr proto.Message
-// }
+// Visitor that will be used to deserialize command args into
+class cmdArgDeserializingVisitor {
+	bytesToDeserialize: string; //TODO - string okay to represent []byte here?
+	deserializedCommandArgsPtr: proto.Message; //TODO - how to import
 
-// func newCmdArgDeserializingVisitor(bytesToDeserialize []byte) *cmdArgDeserializingVisitor {
-// 	return &cmdArgDeserializingVisitor{bytesToDeserialize: bytesToDeserialize}
-// }
+constructor (bytesToDeserialize: string) {
+	this.bytesToDeserialize = bytesToDeserialize;
+}
 
-// func (visitor *cmdArgDeserializingVisitor) VisitLoadLambda() error {
+// public VisitLoadLambda(): Error {
 // 	args := &kurtosis_core_rpc_api_bindings.LoadLambdaArgs{}
 // 	if err := json.Unmarshal(visitor.bytesToDeserialize, args); err != nil {
 // 		return stacktrace.Propagate(err, "An error occurred deserializing the Lambda-loading args")
 // 	}
 // 	visitor.deserializedCommandArgsPtr = args
-// 	return nil
+// 	return null;
 // }
 
 // func (visitor *cmdArgDeserializingVisitor) VisitExecuteLambda() error {
@@ -123,6 +123,7 @@
 // func (visitor *cmdArgDeserializingVisitor) GetDeserializedCommandArgs() proto.Message {
 // 	return visitor.deserializedCommandArgsPtr
 // }
+}
 
 // // ====================================================================================================
 // //                                        Serializable Command
