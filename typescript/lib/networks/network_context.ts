@@ -8,12 +8,12 @@
 //import (
 	//"context"
 import { ApiContainerServiceClient } from "../..//kurtosis_core_rpc_api_bindings/api_container_service_grpc_pb";
-import { LoadLambdaArgs, GetLambdaInfoArgs, RegisterStaticFilesArgs, RegisterStaticFilesResponse, RegisterFilesArtifactsArgs, PortBinding, RegisterServiceArgs, RegisterServiceResponse, StartServiceArgs, GetServiceInfoArgs, GetServiceInfoResponse, RemoveServiceArgs, PartitionConnectionInfo, PartitionServices, PartitionConnections, RepartitionArgs, WaitForEndpointAvailabilityArgs, ExecuteBulkCommandsArgs } from "../..//kurtosis_core_rpc_api_bindings/api_container_service_pb"; //TODO - potentially change to asterisk since many imports
+import { LoadLambdaArgs, GetLambdaInfoArgs, RegisterStaticFilesArgs, RegisterStaticFilesResponse, RegisterFilesArtifactsArgs, PortBinding, RegisterServiceArgs, RegisterServiceResponse, StartServiceArgs, GetServiceInfoArgs, GetServiceInfoResponse, RemoveServiceArgs, PartitionConnectionInfo, PartitionServices, PartitionConnections, RepartitionArgs, WaitForEndpointAvailabilityArgs, ExecuteBulkCommandsArgs, StartServiceResponse } from "../..//kurtosis_core_rpc_api_bindings/api_container_service_pb"; //TODO - potentially change to asterisk since many imports
 import { LambdaID, LambdaContext } from "../modules/lambda_context";
 import { ServiceID } from "../services/service";
 import { ServiceContext, GeneratedFileFilepaths } from "../services/service";
 import { StaticFileID, FilesArtifactID, ContainerCreationConfig } from '../services/container_creation_config'; 
-//import {} from '../services/container_run_config'
+import { ContainerRunConfig } from '../services/container_run_config'
 import { newGetLoadLambdaArgs, newGetLambdaInfoArgs, newRegisterStaticFilesArgs, newRegisterFilesArtifactsArgs, newRegisterServiceArgs, newStartServiceArgs, newGetServiceInfoArgs, newRemoveServiceArgs, newPartitionServices, newPartitionConnections, newRepartitionArgs, newWaitForEndpointAvailabilityArgs, newExecuteBulkCommandsArgs } from "../constructor_calls"; //TODO - potentially change to asterisk since many imports
 	//"github.com/palantir/stacktrace" TOOD
 import * as logger from "tslog";
@@ -41,7 +41,7 @@ class NetworkContext {
     */
     constructor(
             client: ApiContainerServiceClient,
-            enclaveDataVolMountpoint: string): NetworkContext {
+            enclaveDataVolMountpoint: string) {
                 this.client = client;
                 this.enclaveDataVolMountpoint = enclaveDataVolMountpoint;
     }
@@ -96,7 +96,7 @@ class NetworkContext {
         // if err != nil {
         //     return stacktrace.Propagate(err, "An error occurred registering static files: %+v", staticFileFilepaths)
         // }
-        const resp: RegisterStaticFilesResponse; //TODO - remove
+        let resp: RegisterStaticFilesResponse; //TODO - remove
         const staticFileDestRelativeFilepathsMap: Map<string, string> = resp.getStaticFileDestRelativeFilepathsMap();
         for (let staticFileIdStr in staticFileDestRelativeFilepathsMap) {
             const destFilepathRelativeToEnclaveVolRoot: string = staticFileDestRelativeFilepathsMap[staticFileIdStr];
@@ -147,7 +147,7 @@ class NetworkContext {
         // if _, err := networkCtx.client.RegisterFilesArtifacts(context.Background(), args); err != nil {
         //     return stacktrace.Propagate(err, "An error occurred registering files artifacts: %+v", filesArtifactUrls)
         // }
-        // return null;
+        return null;
     }
 
     // Docs available at https://docs.kurtosistech.com/kurtosis-libs/lib-documentation
@@ -191,7 +191,7 @@ class NetworkContext {
         //         "An error occurred registering service with ID '%v' with the Kurtosis API",
         //         serviceId)
         // }
-        const registerServiceResp: RegisterServiceResponse; //TODO - remove
+        let registerServiceResp: RegisterServiceResponse; //TODO - remove
         const serviceIpAddr = registerServiceResp.getIpAddr();
 
         const serviceContext: ServiceContext = ServiceContext(
@@ -274,7 +274,8 @@ class NetworkContext {
         // }
         log.trace("Successfully started service with Kurtosis API");
 
-        return [serviceContext, resp.UsedPortsHostPortBindings, null]
+        let resp: StartServiceResponse; //TODO - remove
+        return [serviceContext, resp.getUsedPortsHostPortBindingsMap(), null]
     }
 
     // Docs available at https://docs.kurtosistech.com/kurtosis-libs/lib-documentation
@@ -288,8 +289,8 @@ class NetworkContext {
         //         "An error occurred when trying to get info for service '%v'",
         //         serviceId)
         // }
-        const serviceResponse: GetServiceInfoResponse; //TODO - Remove
-        if (serviceResponse.GetIpAddr() == "") {
+        let serviceResponse: GetServiceInfoResponse; //TODO - Remove
+        if (serviceResponse.getIpAddr() == "") {
             return [null, new Error(
                 "Kurtosis API reported an empty IP address for service " + serviceId +  " - this should never happen, and is a bug with Kurtosis!",
                 )

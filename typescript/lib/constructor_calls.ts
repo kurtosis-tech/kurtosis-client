@@ -166,8 +166,8 @@ export function newPartitionConnections(partitionAConnsStrMap: Map<string, Parti
 }
 
 export function newRepartitionArgs(
-    partitionServices: Map<PartitionID, Map<ServiceID, boolean>>, 
-    partitionConns: Map<PartitionID, Map<PartitionID, PartitionConnectionInfo>>,
+    partitionServices: Map<string, PartitionServices>, 
+    partitionConns: Map<string, PartitionConnections>,
     defaultConnection: PartitionConnectionInfo): RepartitionArgs {
     const result: RepartitionArgs = new RepartitionArgs();
     const partitionServicesMap: Map<PartitionID, Map<ServiceID, boolean>> = new Map();
