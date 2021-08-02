@@ -10,7 +10,6 @@
 ### Breaking Changes
 * Made the fields of the `GeneratedFileFilepaths` object private
     * Users should use the new getters - `getAbsoluteFilepathHere` and `getAbsoluteFilepathOnService`
-* Users can know compile the exisiting typescript files inside of the `lib` directory into a single javascript file found locally inside `typescript/build/output.js`
 
 # 0.10.0
 ### Features
