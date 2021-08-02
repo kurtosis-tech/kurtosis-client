@@ -78,7 +78,10 @@ class ServiceContext {
         
         //TODO (comment) - Will this error checking propogate as needed (Kevin mentioned that returning error as-is is good enough)
         if (error != null) {
-            return [0, null, error] //TODO - passing in actual error, but no personalized message
+            return [0, null, error]; 
+            //TODO - passing in actual error, but no personalized message
+            //I was thinking of `new Error("An error occurred executing command " + command +  " on service " + serviceId + 
+            //". Here is the error message: " + error)` but don't think this propogates the error as needed, just instantiates an error
         }
         return [resp.getExitCode(), resp.getLogOutput(), null];
     }
@@ -105,7 +108,7 @@ class ServiceContext {
             var relativeFilepath: string;
             if (!generatedFileRelativeFilepaths.has(fileId)) {
                 return [null, new Error(
-                    "No filepath (relative to test volume root) was returned for a fileId, even though we requested it; this is a Kurtosis bug" //TODO (comment) - passing in filename is non-standard practice (MDN)
+                    "No filepath (relative to test volume root) was returned for file " + fileId +  ", even though we requested it; this is a Kurtosis bug"
                     )
                 ];
             }
