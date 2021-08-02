@@ -13,4 +13,7 @@ lang_root_dirpath="$(dirname "${script_dirpath}")"
 # # ==================================================================================================
 # #                                             Main Logic
 # # ==================================================================================================
-find "${lang_root_dirpath}/mainLogic" -name "*.ts" -exec tsc --out "${lang_root_dirpath}/build" {} \;
+#find "${lang_root_dirpath}/mainLogic" -name "*.ts" -exec tsc --out "${lang_root_dirpath}/build" {} \;
+
+find_results="$(find ${lang_root_dirpath}/lib -name "*.ts")"
+tsc ${find_results} --outFile ${lang_root_dirpath}/build/output.js --module system --moduleResolution node
