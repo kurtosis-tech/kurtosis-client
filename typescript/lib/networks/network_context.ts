@@ -14,11 +14,10 @@ import { ServiceID } from "../services/service";
 import { StaticFileID, FilesArtifactID } from '../services/container_creation_config'; 
 import { newGetLoadLambdaArgs, newGetLambdaInfoArgs, newRegisterStaticFilesArgs, newRegisterFilesArtifactsArgs } from "../constructor_calls";
 	//"github.com/palantir/stacktrace"
-	"github.com/sirupsen/logrus" //TODO
+import * as logger from "tslog"; //"github.com/sirupsen/logrus" //TODO
 	"io" //TODO
-	//"os" //TODO
 import * as path from "path";
-import * as fs from 'fs';
+import * as fs from 'fs'; //os
 //)
 
 type PartitionID = string;
@@ -153,8 +152,8 @@ class NetworkContext {
     public addService(
         serviceId: ServiceID,
         containerCreationConfig: ContainerCreationConfig, //TODO
-        (ipAddr: string, generatedFileFilepaths: Map<string, string>, staticFileFilepaths: Map<StaticFileID, string>) => [ContainerRunConfig, Error]
-    ) [ServiceContext, Map<string, PortBinding>, Error] { //TODO
+        generateRunConfigFunc: (ipAddr: string, generatedFileFilepaths: Map<string, string>, staticFileFilepaths: Map<StaticFileID, string>) => [ContainerRunConfig, Error]
+    ): [ServiceContext, Map<string, PortBinding>, Error] { //TODO
 
         const [serviceContext, hostPortBindings, err] = this.AddServiceToPartition(
             serviceId,
@@ -162,22 +161,22 @@ class NetworkContext {
             containerCreationConfig,
             generateRunConfigFunc,
             )
-        if err != nil {
-            return nil, nil, stacktrace.Propagate(err, "An error occurred adding service '%v' to the network in the default partition", serviceId)
+        if (err != null) {
+            return [null, null, err ] //TODO no personalized error message
         }
 
-        return [serviceContext, hostPortBindings, nil]
+        return [serviceContext, hostPortBindings, null]
     }
 
     // Docs available at https://docs.kurtosistech.com/kurtosis-libs/lib-documentation
     public AddServiceToPartition(
-        serviceId services.ServiceID,
-        partitionId PartitionID,
-        containerCreationConfig *services.ContainerCreationConfig,
-        generateRunConfigFunc func(ipAddr string, generatedFileFilepaths map[string]string, staticFileFilepaths map[services.StaticFileID]string) (*services.ContainerRunConfig, error),
-    ) (*services.ServiceContext, map[string]*kurtosis_core_rpc_api_bindings.PortBinding, error) {
+        serviceId: ServiceID,
+        partitionId: PartitionID,
+        containerCreationConfig: ContainerCreationConfig,
+        generateRunConfigFunc: (ipAddr: string, generatedFileFilepaths: Map<string, string>, staticFileFilepaths: Map<StaticFileID, string>) => [ContainerRunConfig, Error],
+    ): [ServiceContext, Map<string, PortBinding>, Error] {
 
-        ctx := context.Background()
+        //ctx := context.Background()
 
         logrus.Tracef("Registering new service ID with Kurtosis API...")
         registerServiceArgs := &kurtosis_core_rpc_api_bindings.RegisterServiceArgs{
