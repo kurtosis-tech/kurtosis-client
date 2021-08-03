@@ -15,7 +15,7 @@ class ContainerCreationConfig {
     private readonly image: string;
 	private readonly kurtosisVolumeMountpoint: string;   // Technically the enclave data volume, but we call it this for simplicity for the user
 	private readonly usedPortsSet: Map<string, boolean>
-	private readonly fileGeneratingFuncs: Map<string, (func: number) => Error>; // TODO (comment) = file descriptors are just integers
+	private readonly fileGeneratingFuncs: Map<string, (fp: number) => Error>; // File descriptors are just integers
 	private readonly usedStaticFilesSet: Map<StaticFileID, boolean>;
 	private readonly filesArtifactMountpoints: Map<FilesArtifactID, string>;
 
@@ -23,7 +23,7 @@ class ContainerCreationConfig {
         image: string,
         kurtosisVolumeMountpoint: string,
         usedPortsSet: Map<string, boolean>,
-        fileGeneratingFuncs: Map<string, (func: number) => Error>,
+        fileGeneratingFuncs: Map<string, (fp: number) => Error>,
         usedStaticFilesSet: Map<StaticFileID, boolean>,
         filesArtifactMountpoints: Map<FilesArtifactID, string>
     ){
@@ -47,7 +47,7 @@ class ContainerCreationConfig {
         return this.usedPortsSet;
     }
 
-    public getFileGeneratingFuncs(): Map<string, (func: number) => Error> {
+    public getFileGeneratingFuncs(): Map<string, (fp: number) => Error> {
         return this.fileGeneratingFuncs;
     }
 
@@ -70,7 +70,7 @@ class ContainerCreationConfigBuilder {
 	private kurtosisVolumeMountpoint: string;
 	private usedPortsSet: Map<string, boolean>;
 	private usedStaticFilesSet: Map<StaticFileID, boolean>;
-	private fileGeneratingFuncs: Map<string, (func: number) => Error>;
+	private fileGeneratingFuncs: Map<string, (fp: number) => Error>;
 	private filesArtifactMountpoints: Map<FilesArtifactID, string>;
 
     constructor (image: string) {
@@ -91,7 +91,7 @@ class ContainerCreationConfigBuilder {
         return this;
     }
 
-    public withGeneratedFiles(fileGeneratingFuncs: Map<string, (func: number) => Error>): ContainerCreationConfigBuilder {
+    public withGeneratedFiles(fileGeneratingFuncs: Map<string, (fp: number) => Error>): ContainerCreationConfigBuilder {
         this.fileGeneratingFuncs = fileGeneratingFuncs;
         return this;
     }
