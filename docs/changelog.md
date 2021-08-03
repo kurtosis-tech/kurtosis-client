@@ -1,4 +1,6 @@
 # TBD
+
+# 1.11.0
 ### Changes
 * Made `GeneratedFileFilepaths` fields private and immutable with a constructor, and added getters to access the field values
 
