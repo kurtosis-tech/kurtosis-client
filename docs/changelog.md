@@ -2,6 +2,9 @@
 ### Changes
 * Made `GeneratedFileFilepaths` fields private and immutable with a constructor, and added getters to access the field values
 
+### Removed
+* `MockService`, which is no longer needed or used now that we've removed the `Service` interface
+
 ### Breaking Changes
 * Made the fields of the `GeneratedFileFilepaths` object private
     * Users should use the new getters - `getAbsoluteFilepathHere` and `getAbsoluteFilepathOnService`
