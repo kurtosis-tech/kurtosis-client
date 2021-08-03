@@ -1,7 +1,12 @@
 # TBD
+### Features
+* Ported `service.go` and `service_context.go` to typescript inside `lib/services/` directory
+* Added a file inside of `typescript/lib` directory that holds a template of constructor calls
+
 ### Changes
 * Made `GeneratedFileFilepaths` fields private and immutable with a constructor, and added getters to access the field values
 * Ported over config factory files inside of `services` to typescript
+* Added grpc and google-protobuf to package.json inside of `typescript` folder
 
 ### Breaking Changes
 * Made the fields of the `GeneratedFileFilepaths` object private
