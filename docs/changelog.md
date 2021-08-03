@@ -1,5 +1,19 @@
 # TBD
 
+# 1.11.0
+### Changes
+* Made `GeneratedFileFilepaths` fields private and immutable with a constructor, and added getters to access the field values
+
+### Fixes
+* Updated the build script so that it correctly compiles the typescript files found inside the lib/ directory into one single javascript file 
+
+### Removed
+* `MockService`, which is no longer needed or used now that we've removed the `Service` interface
+
+### Breaking Changes
+* Made the fields of the `GeneratedFileFilepaths` object private
+    * Users should use the new getters - `getAbsoluteFilepathHere` and `getAbsoluteFilepathOnService`
+
 # 0.10.0
 ### Features
 * Added a `RegisterStaticFiles` API container endpoint and corresponding `NetworkContext` method for telling the API container about static files that the user would like to use when starting services
