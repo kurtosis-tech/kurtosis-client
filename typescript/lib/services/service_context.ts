@@ -9,9 +9,9 @@ import * as path from "path";
 
 // Docs available at https://docs.kurtosistech.com/kurtosis-libs/lib-documentation
 class GeneratedFileFilepaths {
-	
+    
     private readonly absoluteFilepathHere: string;
-	private readonly absoluteFilepathOnServiceContainer: string;
+    private readonly absoluteFilepathOnServiceContainer: string;
 
     constructor (
         absoluteFilepath: string,
@@ -134,18 +134,18 @@ class ServiceContext {
         
         //TODO - pending implementation of callback and error handling like execCommand
         let request: grpc.requestCallback<LoadStaticFilesResponse>;
-    	let loadStaticFilesResp, err = this.client.loadStaticFiles(loadStaticFilesArgs, request);
-    	if (err !== null) {
-    		return [null, new Error ("An error occurred loading the requested static files into the namespace of service '%v'")];
-    	}
+        let loadStaticFilesResp, err = this.client.loadStaticFiles(loadStaticFilesArgs, request);
+        if (err !== null) {
+            return [null, new Error ("An error occurred loading the requested static files into the namespace of service '%v'")];
+        }
 
-    	const staticFileAbsFilepathsOnService: Map<StaticFileID, string> = new Map();
-    	for (let staticFileId in loadStaticFilesResp.CopiedStaticFileRelativeFilepaths) {
-    		const filepathRelativeToExVolRoot: string = loadStaticFilesResp.CopiedStaticFileRelativeFilepaths[staticFileId];
+        const staticFileAbsFilepathsOnService: Map<StaticFileID, string> = new Map();
+        for (let staticFileId in loadStaticFilesResp.CopiedStaticFileRelativeFilepaths) {
+            const filepathRelativeToExVolRoot: string = loadStaticFilesResp.CopiedStaticFileRelativeFilepaths[staticFileId];
             const absFilepathOnContainer: string = path.join(this.enclaveDataVolMountpointOnServiceContainer, filepathRelativeToExVolRoot)
-    		staticFileAbsFilepathsOnService[<StaticFileID>(staticFileId)] = absFilepathOnContainer;
-    	}
-    	return [staticFileAbsFilepathsOnService, null] 
+            staticFileAbsFilepathsOnService[<StaticFileID>(staticFileId)] = absFilepathOnContainer;
+        }
+        return [staticFileAbsFilepathsOnService, null] 
 
     }
 }
