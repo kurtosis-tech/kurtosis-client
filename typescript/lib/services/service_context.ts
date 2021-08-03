@@ -14,9 +14,9 @@ class GeneratedFileFilepaths {
     private readonly absoluteFilepathOnServiceContainer: string;
 
     constructor (
-        absoluteFilepath: string,
+        absoluteFilepathHere: string,
         absoluteFilepathOnServiceContainer: string) {
-            this.absoluteFilepathHere = absoluteFilepath;
+            this.absoluteFilepathHere = absoluteFilepathHere;
             this.absoluteFilepathOnServiceContainer = absoluteFilepathOnServiceContainer;
     }   
 
@@ -77,7 +77,7 @@ class ServiceContext {
         });
         
         //TODO (comment) - Will this error checking propogate as needed (Kevin mentioned that returning error as-is is good enough)
-        if (error != null) {
+        if (error !== null) {
             return [0, null, error]; 
             //TODO - passing in actual error, but no personalized message
             //I was thinking of `new Error("An error occurred executing command " + command +  " on service " + serviceId + 
