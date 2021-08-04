@@ -2,10 +2,10 @@
 
 //import (
 	//"encoding/json" //TODO
-import {} from "../../../kurtosis_core_rpc_api_binding/api_container_service_pb"
+import { LoadLambdaArgs } from "../../../kurtosis_core_rpc_api_binding/api_container_service_pb"
 import {} from "../../../kurtosis_core_rpc_api_binding/api_container_service_grpc_pb";
 	//"github.com/palantir/stacktrace"
-	"google.golang.org/protobuf/proto" //TODO
+import * as proto from "proto";	//"google.golang.org/protobuf/proto" //TODO
 //)
 
 // ====================================================================================================
@@ -14,21 +14,21 @@ import {} from "../../../kurtosis_core_rpc_api_binding/api_container_service_grp
 
 // Visitor that will be used to deserialize command args into
 class cmdArgDeserializingVisitor {
-	bytesToDeserialize: string; //TODO - string okay to represent []byte here?
-	deserializedCommandArgsPtr: proto.Message; //TODO - how to import
+	private readonly bytesToDeserialize: string; //TODO - string okay to represent []byte here?
+	private readonly deserializedCommandArgsPtr: proto.Message; //TODO - how to import
 
-constructor (bytesToDeserialize: string) {
-	this.bytesToDeserialize = bytesToDeserialize;
-}
+    constructor (bytesToDeserialize: string) {
+        this.bytesToDeserialize = bytesToDeserialize;
+    }
 
-// public VisitLoadLambda(): Error {
-// 	args := &kurtosis_core_rpc_api_bindings.LoadLambdaArgs{}
-// 	if err := json.Unmarshal(visitor.bytesToDeserialize, args); err != nil {
-// 		return stacktrace.Propagate(err, "An error occurred deserializing the Lambda-loading args")
-// 	}
-// 	visitor.deserializedCommandArgsPtr = args
-// 	return null;
-// }
+    public VisitLoadLambda(): Error {
+        const args: LoadLambdaArgs = &kurtosis_core_rpc_api_bindings.LoadLambdaArgs{}
+        if err := json.Unmarshal(visitor.bytesToDeserialize, args); err != nil {
+            return stacktrace.Propagate(err, "An error occurred deserializing the Lambda-loading args")
+        }
+        visitor.deserializedCommandArgsPtr = args
+        return null;
+    }
 
 // func (visitor *cmdArgDeserializingVisitor) VisitExecuteLambda() error {
 // 	args := &kurtosis_core_rpc_api_bindings.ExecuteLambdaArgs{}
@@ -166,3 +166,4 @@ constructor (bytesToDeserialize: string) {
 // type V0BulkCommands struct {
 // 	Commands []V0SerializableCommand `json:"commands"`
 // }
+}
