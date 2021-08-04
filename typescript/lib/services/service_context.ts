@@ -71,35 +71,35 @@ class ServiceContext {
         const args: ExecCommandArgs = newGetExecCommandArgs(serviceId, command);
 
         const execCommand: (args: ExecCommandArgs) => Promise<unknown> = util.promisify(this.client.execCommand); //TODO - unknown?
-        const promise: (args: ExecCommandArgs) => Promise<ExecCommandResponse> = async (args: ExecCommandArgs) => { //TODO - void?, async funcs bubbling up problem
+        const promise: (args: ExecCommandArgs) => Promise<ExecCommandResponse> = async (args: ExecCommandArgs) => { //TODO (comment) - async funcs bubbling up problem
             const feature: ExecCommandResponse = await execCommand(args); //TODO - Shouldn't this be ExecCommandResponse, and not be unknown
-            // TODO (above) - fs.readdir example has same format and it returns the second argument of the callback - files
+            // TODO (above) - fs.readdir example has same format and it returns the second argument of the callback - files ()
             // TODO (above) - exeCommand (args, callback (Error, ExecCommandResponse)) and should return ExecCommandResponse following this logic
+            return feature;
         }
         
-        var result;
+        var result: [number, Uint8Array | string, Error];
         promise(args).then(resp => {
             result = [resp.getExitCode(), resp.getLogOutput(), null];
         })
         promise(args).catch(err => {
-            result = [0, null, err]; //TODO - no personalized error messages
+            result = [0, null, err]; //TODO - no personalized error message
         })
-        return result; //TODO (comment) - shoiuld be returning promise, but wanted to see if this implementation worked to stay consistent with golang
+        return result; //TODO (comment) - should return promise, but wanted to see if this implementation worked to stay consistent with golang
 
 
-        //TODO - Remove old implementation
+        //TODO TODO TODO - Remove old implementation if current one works
         //var resp: ExecCommandResponse;
         //var error: grpc.ServiceError;
         //
-        // this.client.execCommand(args, function(error, feature){ //TODO (comment) - don't use return value, but use callback parameters
+        // this.client.execCommand(args, function(error, feature){ //
         //     error = error; 
         //     resp = feature;
         // });
         //
-        // //TODO (comment) - Will this error checking propogate as needed (Kevin mentioned that returning error as-is is good enough)
         // if (error !== null) {
         //     return [0, null, error]; 
-        //     //TODO - passing in actual error, but no personalized message
+        //     //(Comment) - no personalized message
         //     //I was thinking of `new Error("An error occurred executing command " + command +  " on service " + serviceId + 
         //     //". Here is the error message: " + error)` but don't think this propogates the error as needed, just instantiates an error
         // }
