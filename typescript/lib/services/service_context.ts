@@ -74,7 +74,7 @@ class ServiceContext {
         const promise: (args: ExecCommandArgs) => Promise<ExecCommandResponse> = async (args: ExecCommandArgs) => { //TODO (comment) - async funcs bubbling up problem
             const feature: ExecCommandResponse = await execCommand(args); //TODO - Shouldn't this be ExecCommandResponse, and not be unknown
             // TODO (above) - fs.readdir example has same format and it returns the second argument of the callback - files ()
-            // TODO (above) - exeCommand (args, callback (Error, ExecCommandResponse)) and should return ExecCommandResponse following this logic
+            // TODO (above) - execCommand (args, callback (Error, ExecCommandResponse)) and should return ExecCommandResponse following this logic
             return feature;
         }
         
