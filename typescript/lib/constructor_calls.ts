@@ -1,4 +1,4 @@
-import { ExecCommandArgs, GenerateFilesArgs, FileGenerationOptions, LoadStaticFilesArgs, LoadLambdaArgs, ExecuteLambdaArgs, RegisterServiceArgs, StartServiceArgs, RemoveServiceArgs, RepartitionArgs, WaitForEndpointAvailabilityArgs } from '../kurtosis_core_rpc_api_bindings/api_container_service_pb';
+import { ExecCommandArgs, GenerateFilesArgs, FileGenerationOptions, LoadStaticFilesArgs, LoadLambdaArgs, ExecuteLambdaArgs, RegisterServiceArgs, StartServiceArgs, RemoveServiceArgs, RepartitionArgs, WaitForEndpointAvailabilityArgs, ExecuteBulkCommandsArgs } from '../kurtosis_core_rpc_api_bindings/api_container_service_pb';
 import { LambdaID } from './modules/lambda_context';
 import { ServiceID } from './services/service';
 
@@ -102,6 +102,12 @@ export function newGetEmptyExecCommandArgs(): ExecCommandArgs {
 
 export function newGetEmptyWaitForEndpointAvailabilityArgs(): WaitForEndpointAvailabilityArgs {
     const result: WaitForEndpointAvailabilityArgs = new WaitForEndpointAvailabilityArgs();
+
+    return result;
+}
+
+export function newGetEmptyExecuteBulkCommandsArgs(): ExecuteBulkCommandsArgs {
+    const result: ExecuteBulkCommandsArgs = new ExecuteBulkCommandsArgs();
 
     return result;
 }
