@@ -1,4 +1,4 @@
-import { ExecCommandArgs, GenerateFilesArgs, FileGenerationOptions, LoadStaticFilesArgs, LoadLambdaArgs, GetLambdaInfoArgs, RegisterStaticFilesArgs, RegisterFilesArtifactsArgs, RegisterServiceArgs, StartServiceArgs, GetServiceInfoArgs, RemoveServiceArgs, PartitionServices, PartitionConnections, PartitionConnectionInfo, RepartitionArgs, WaitForEndpointAvailabilityArgs, ExecuteBulkCommandsArgs } from '../kurtosis_core_rpc_api_bindings/api_container_service_pb'; //TODO - potentially change to asterisk since many imports
+import { ExecCommandArgs, GenerateFilesArgs, FileGenerationOptions, LoadStaticFilesArgs, LoadLambdaArgs, GetLambdaInfoArgs, RegisterStaticFilesArgs, RegisterFilesArtifactsArgs, RegisterServiceArgs, StartServiceArgs, GetServiceInfoArgs, RemoveServiceArgs, PartitionServices, PartitionConnections, PartitionConnectionInfo, RepartitionArgs, WaitForEndpointAvailabilityArgs, ExecuteBulkCommandsArgs, ExecuteLambdaArgs } from '../kurtosis_core_rpc_api_bindings/api_container_service_pb'; //TODO - potentially change to asterisk since many imports
 import { ServiceID } from './services/service';
 import { PartitionID } from './networks/network_context';
 import { LambdaID, LambdaContext } from "./modules/lambda_context";
@@ -145,11 +145,11 @@ export function newRemoveServiceArgs(serviceId: ServiceID, containerStopTimeoutS
     return result;
 }
 
-export function newPartitionServices(serviceIdStrPseudoSet: Map<string, boolean>): PartitionServices{
+export function newPartitionServices(serviceIdStrSet: Set<string>): PartitionServices{
     const result: PartitionServices = new PartitionServices();
     const partitionServicesMap: Map<string, boolean> = result.getServiceIdSetMap();
-    for (let serviceIdStr in serviceIdStrPseudoSet) {
-        partitionServicesMap.set(serviceIdStr, serviceIdStrPseudoSet[serviceIdStr]);
+    for (let serviceIdStr in serviceIdStrSet) {
+        partitionServicesMap.set(serviceIdStr, true); //TODO - make sure this is correct
     }
 
     return result;
@@ -206,6 +206,18 @@ export function newWaitForEndpointAvailabilityArgs(
 export function newExecuteBulkCommandsArgs(serializedCommands: string): ExecuteBulkCommandsArgs {
     const result: ExecuteBulkCommandsArgs = new ExecuteBulkCommandsArgs();
     result.setSerializedCommands(serializedCommands);
+
+    return result;
+}
+
+// // ====================================================================================================
+// //                                    Network Context
+// // ====================================================================================================
+
+export function newExecuteLambdaArgs(lamdaId: LambdaID, serializedParams: string): ExecuteLambdaArgs {
+    const result: ExecuteLambdaArgs = new ExecuteLambdaArgs();
+    result.setLambdaId(String(lamdaId));
+    result.setSerializedParams(serializedParams);
 
     return result;
 }

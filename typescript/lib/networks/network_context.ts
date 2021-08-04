@@ -55,7 +55,7 @@ class NetworkContext {
         // TODO TODO TODO - CALLBACK & ERROR-HANDLING
         // // We proxy calls to Lambda modules via the API container, so actually no need to use the response here
         // _, err := networkCtx.client.LoadLambda(context.Background(), args)
-        // if err != nil {
+        // if err !== nil {
         //     return nil, stacktrace.Propagate(err, "An error occurred loading new module '%v' with image '%v' and serialized params '%v'", lambdaId, image, serializedParams)
         // }
         const moduleCtx: LambdaContext = new LambdaContext(this.client, lambdaId); //TODO - move to constructor calls?
@@ -68,7 +68,7 @@ class NetworkContext {
         // TODO TODO TODO - CALLBACK & ERROR-HANDLING
         // // NOTE: As of 2021-07-18, we actually don't use any of the info that comes back because the LambdaContext doesn't require it!
         // _, err := networkCtx.client.GetLambdaInfo(context.Background(), args)
-        // if err != nil {
+        // if err !== nil {
         //     return nil, stacktrace.Propagate(err, "An error occurred getting info for Lambda '%v'", lambdaId)
         // }
         const lambdaCtx: LambdaContext = new LambdaContext(this.client, lambdaId); //TODO - move to constructor calls?
@@ -83,7 +83,7 @@ class NetworkContext {
             
             // Sanity-check that the source filepath exists
             fs.stat(srcAbsFilepath, (exists) => {
-                if (exists != null) {
+                if (exists !== null) {
                     return new Error("Source filepath " + srcAbsFilepath + " associated with static file " + staticFileId + " doesn't exist");
                 }
             })
@@ -93,7 +93,7 @@ class NetworkContext {
         const args: RegisterStaticFilesArgs = newRegisterStaticFilesArgs(strSet);
         // TODO TODO TODO - CALLBACK & ERROR-HANDLING
         // resp, err := networkCtx.client.RegisterStaticFiles(context.Background(), args)
-        // if err != nil {
+        // if err !== nil {
         //     return stacktrace.Propagate(err, "An error occurred registering static files: %+v", staticFileFilepaths)
         // }
         let resp: RegisterStaticFilesResponse; //TODO - remove
@@ -109,25 +109,25 @@ class NetworkContext {
 
             const destAbsFilepath: string = path.join(this.enclaveDataVolMountpoint, destFilepathRelativeToEnclaveVolRoot);
             fs.stat(destAbsFilepath, (exists) => {
-                if (exists != null) {
+                if (exists !== null) {
                     return new Error("The Kurtosis API asked us to copy static file " + staticFileId + " to path " + destFilepathRelativeToEnclaveVolRoot + 
                     " in the enclave volume which means that an empty file should exist there, " + "but no file exists at that path - this is a bug in Kurtosis!");
                 }
             })
             //TODO TODO TODO
             // srcFp, err := os.Open(srcAbsFilepath)
-            // if err != nil {
+            // if err !== nil {
             //     return stacktrace.Propagate(err, "An error occurred opening static file '%v' source file '%v' for reading", staticFileId, srcAbsFilepath)
             // }
             // defer srcFp.Close()
 
             // destFp, err := os.Create(destAbsFilepath)
-            // if err != nil {
+            // if err !== nil {
             //     return stacktrace.Propagate(err, "An error occurred opening static file '%v' destination file '%v' for writing", staticFileId, destAbsFilepath)
             // }
             // defer destFp.Close()
 
-            // if _, err := io.Copy(destFp, srcFp); err != nil {
+            // if _, err := io.Copy(destFp, srcFp); err !== nil {
             //     return stacktrace.Propagate(err, "An error occurred copying all the bytes from static file '%v' source filepath '%v' to destination filepath '%v'", staticFileId, srcAbsFilepath, destAbsFilepath)
             // }
 
@@ -144,7 +144,7 @@ class NetworkContext {
         }
         const args: RegisterFilesArtifactsArgs = newRegisterFilesArtifactsArgs(filesArtifactIdStrsToUrls);
         // TODO TODO TODO - CALLBACK & ERROR-HANDLING
-        // if _, err := networkCtx.client.RegisterFilesArtifacts(context.Background(), args); err != nil {
+        // if _, err := networkCtx.client.RegisterFilesArtifacts(context.Background(), args); err !== nil {
         //     return stacktrace.Propagate(err, "An error occurred registering files artifacts: %+v", filesArtifactUrls)
         // }
         return null;
@@ -157,13 +157,13 @@ class NetworkContext {
         generateRunConfigFunc: (ipAddr: string, generatedFileFilepaths: Map<string, string>, staticFileFilepaths: Map<StaticFileID, string>) => [ContainerRunConfig, Error]
     ): [ServiceContext, Map<string, PortBinding>, Error] { //TODO
 
-        const [serviceContext, hostPortBindings, err] = this.AddServiceToPartition(
+        const [serviceContext, hostPortBindings, err] = this.addServiceToPartition(
             serviceId,
             defaultPartitionId,
             containerCreationConfig,
             generateRunConfigFunc,
             )
-        if (err != null) {
+        if (err !== null) {
             return [null, null, err ] //TODO no personalized error message
         }
 
@@ -171,7 +171,7 @@ class NetworkContext {
     }
 
     // Docs available at https://docs.kurtosistech.com/kurtosis-libs/lib-documentation
-    public AddServiceToPartition(
+    public addServiceToPartition(
         serviceId: ServiceID,
         partitionId: PartitionID,
         containerCreationConfig: ContainerCreationConfig,
@@ -185,7 +185,7 @@ class NetworkContext {
         const registerServiceArgs: RegisterServiceArgs = newRegisterServiceArgs(serviceId, partitionId);
         // TODO TODO TODO - CALLBACK & ERROR-HANDLING
         // registerServiceResp, err := networkCtx.client.RegisterService(ctx, registerServiceArgs)
-        // if err != nil {
+        // if err !== nil {
         //     return nil, nil, stacktrace.Propagate(
         //         err,
         //         "An error occurred registering service with ID '%v' with the Kurtosis API",
@@ -205,7 +205,7 @@ class NetworkContext {
         log.trace("Loading static files into new service namespace...");
         const usedStaticFiles = containerCreationConfig.getUsedStaticFiles();
         var [staticFileAbsFilepathsOnService, err] = serviceContext.loadStaticFiles(usedStaticFiles);
-        if (err != null) {
+        if (err !== null) {
             return [ null, null, err ]; //TODO - no personalized message
         }
         log.trace("Successfully loaded static files");
@@ -216,12 +216,12 @@ class NetworkContext {
             filesToGenerate[fileId] = true;
         }
         var [generatedFileFilepaths, err] = serviceContext.generateFiles(filesToGenerate);
-        if (err != null) {
+        if (err !== null) {
             return [null, null, err ] //TODO - no personalized message
         }
         const generatedFileAbsFilepathsOnService: Map<string, string> = new Map();
         for (let fileId in containerCreationConfig.getFileGeneratingFuncs()) {
-            const initializingFunc: (num: number) => Error = containerCreationConfig.getFileGeneratingFuncs()[fileId];
+            const initializingFunc: (fileDescriptorNum: number) => Error = containerCreationConfig.getFileGeneratingFuncs()[fileId];
 
             //filepaths, found := generatedFileFilepaths[fileId]
             if (!generatedFileFilepaths.has(fileId)) {
@@ -233,10 +233,10 @@ class NetworkContext {
             const filepaths: GeneratedFileFilepaths = generatedFileFilepaths[fileId];
             // TODO TODO TODO 
             // fp, err := os.Create(filepaths.GetAbsoluteFilepathHere())
-            // if err != nil {
+            // if err !== nil {
             //     return nil, nil, stacktrace.Propagate(err, "An error occurred opening file pointer for file '%v'", fileId)
             // }
-            // if err := initializingFunc(fp); err != nil {
+            // if err := initializingFunc(fp); err !== nil {
             //     return nil, nil, stacktrace.Propagate(err, "The function to initialize file with ID '%v' returned an error", fileId)
             // }
             generatedFileAbsFilepathsOnService[fileId] = filepaths.getAbsoluteFilepathOnServiceContainer();
@@ -244,7 +244,7 @@ class NetworkContext {
         log.trace("Successfully initialized generated files in suite execution volume")
 
         var [containerRunConfig, err] = generateRunConfigFunc(serviceIpAddr, generatedFileAbsFilepathsOnService, staticFileAbsFilepathsOnService);
-        if (err != null) {
+        if (err !== null) {
             return [null, null, err] //TODO - no personalized message
         }
 
@@ -269,7 +269,7 @@ class NetworkContext {
             artifactIdStrToMountDirpath);
         //TODO TODO TODO - CALLBACK & ERROR-HANDLING
         // resp, err := this.client.StartService(ctx, startServiceArgs)
-        // if err != nil {
+        // if err !== nil {
         //     return nil, nil, stacktrace.Propagate(err, "An error occurred starting the service with the Kurtosis API")
         // }
         log.trace("Successfully started service with Kurtosis API");
@@ -283,14 +283,14 @@ class NetworkContext {
         const getServiceInfoArgs: GetServiceInfoArgs = newGetServiceInfoArgs(serviceId);
         //TODO TODO TODO - CALLBACK & ERROR-HANDLING
         // serviceResponse, err := networkCtx.client.GetServiceInfo(context.Background(), getServiceInfoArgs)
-        // if err != nil {
+        // if err !== nil {
         //     return nil, stacktrace.Propagate(
         //         err,
         //         "An error occurred when trying to get info for service '%v'",
         //         serviceId)
         // }
         let serviceResponse: GetServiceInfoResponse; //TODO - Remove
-        if (serviceResponse.getIpAddr() == "") {
+        if (serviceResponse.getIpAddr() === "") {
             return [null, new Error(
                 "Kurtosis API reported an empty IP address for service " + serviceId +  " - this should never happen, and is a bug with Kurtosis!",
                 )
@@ -298,7 +298,7 @@ class NetworkContext {
         }
 
         const enclaveDataVolMountDirpathOnSvcContainer: string = serviceResponse.getEnclaveDataVolumeMountDirpath();
-        if (enclaveDataVolMountDirpathOnSvcContainer == "") {
+        if (enclaveDataVolMountDirpathOnSvcContainer === "") {
             return [null, new Error(
                 "Kurtosis API reported an empty enclave data volume directory path for service " + serviceId + " - this should never happen, and is a bug with Kurtosis!",
                 )
@@ -327,7 +327,7 @@ class NetworkContext {
         const args: RemoveServiceArgs = newRemoveServiceArgs(serviceId, containerStopTimeoutSeconds);
         
         // TODO TODO TODO - CALLBACK & ERROR-HANDLING
-        // if _, err := networkCtx.client.RemoveService(context.Background(), args); err != nil {
+        // if _, err := networkCtx.client.RemoveService(context.Background(), args); err !== nil {
         //     return stacktrace.Propagate(err, "An error occurred removing service '%v' from the network", serviceId)
         // }
 
@@ -338,33 +338,32 @@ class NetworkContext {
 
     // Docs available at https://docs.kurtosistech.com/kurtosis-libs/lib-documentation
     public repartitionNetwork(
-        partitionServices: Map<PartitionID, Map<ServiceID, boolean>>,
+        partitionServices: Map<PartitionID, Set<ServiceID>>,
         partitionConnections: Map<PartitionID, Map<PartitionID, PartitionConnectionInfo>>,
         defaultConnection: PartitionConnectionInfo): Error {
 
-        if (partitionServices == null) {
+        if (partitionServices === null) {
             return new Error("Partition services map cannot be nil");
         }
-        if (defaultConnection == null) {
+        if (defaultConnection === null) {
             return new Error("Default connection cannot be nil");
         }
 
         // Cover for lazy/confused users
-        if (partitionConnections == null) {
+        if (partitionConnections === null) {
             partitionConnections = new Map();
         }
 
         const reqPartitionServices: Map<string, PartitionServices> = new Map();
         for (let partitionId in partitionServices) {
-            const serviceIdSet = partitionServices[partitionId];
+            const serviceIdSet: Set<ServiceID> = partitionServices[partitionId];
 
-            const serviceIdStrPseudoSet: Map<string, boolean> = new Map();
+            const serviceIdStrSet: Set<string> = new Set();
             for (let serviceId in serviceIdSet) {
-                const serviceIdStr: string = String(serviceId);
-                serviceIdStrPseudoSet[serviceIdStr] = true;
+                serviceIdStrSet.add(serviceId);
             }
             const partitionIdStr: string = String(partitionId);
-            reqPartitionServices[partitionIdStr] = newPartitionServices(serviceIdStrPseudoSet);
+            reqPartitionServices[partitionIdStr] = newPartitionServices(serviceIdStrSet);
         }
 
         const reqPartitionConns: Map<string, PartitionConnections> = new Map();
@@ -386,7 +385,7 @@ class NetworkContext {
         const repartitionArgs: RepartitionArgs = newRepartitionArgs(reqPartitionServices, reqPartitionConns, defaultConnection);
 
         // TODO TODO TODO - CALLBACK & ERROR-HANDLING
-        // if _, err := networkCtx.client.Repartition(context.Background(), repartitionArgs); err != nil {
+        // if _, err := networkCtx.client.Repartition(context.Background(), repartitionArgs); err !== nil {
         //     return stacktrace.Propagate(err, "An error occurred repartitioning the test network")
         // }
         return null;
@@ -411,7 +410,7 @@ class NetworkContext {
             bodyText);
 
         //TODO TODO TODO - CALLBACK & ERROR-HANDLING
-        // if _, err := networkCtx.client.WaitForEndpointAvailability(context.Background(), availabilityArgs); err != nil {
+        // if _, err := networkCtx.client.WaitForEndpointAvailability(context.Background(), availabilityArgs); err !== nil {
         //     return stacktrace.Propagate(
         //         err,
         //         "Endpoint '%v' on port '%v' for service '%v' did not become available despite polling %v times with %v between polls",
@@ -432,7 +431,7 @@ class NetworkContext {
         const args: ExecuteBulkCommandsArgs = newExecuteBulkCommandsArgs(bulkCommandsJson);
         
         //
-        // if _, err := networkCtx.client.ExecuteBulkCommands(context.Background(), args); err != nil {
+        // if _, err := networkCtx.client.ExecuteBulkCommands(context.Background(), args); err !== nil {
         //     return stacktrace.Propagate(err, "An error occurred executing the following bulk commands: %v", bulkCommandsJson)
         // }
         return null
