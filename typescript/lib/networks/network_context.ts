@@ -20,6 +20,7 @@ import * as winston from "winston";
 	//"io" //TODO - remove
 import * as path from "path";
 import * as fs from 'fs';
+import * as fsPromises from "fs/promises";
 //)
 
 export type PartitionID = string;
@@ -81,12 +82,23 @@ class NetworkContext {
         for (let [staticFileId, srcAbsFilepath] of staticFileFilepaths.entries()) {
             
             // Sanity-check that the source filepath exists
-            fs.stat(srcAbsFilepath, (exists) => { //TODO - error returned inside function, not inside `registerStaticFiles`
-                if (exists !== null) {
-                    return new Error("Source filepath " + srcAbsFilepath + " associated with static file " + staticFileId + " doesn't exist");
-                }
-            })
+            const filepathExsits: (path: string) => Promise<fs.Stats> = async (path: string) => {
+                const stats: fs.Stats = await fsPromises.stat(path);
+                return stats;
+            }
+
+            filepathExsits(srcAbsFilepath).catch( err => {
+                return new Error("Source filepath " + srcAbsFilepath + " associated with static file " + staticFileId + " doesn't exist");
+            });
             strSet[String(staticFileId)] = true;
+
+            //TODO TODO TODO - Remove
+            // fs.stat(srcAbsFilepath, (exists) => { //TODO - error returned inside function, not inside `registerStaticFiles`
+            //     if (exists !== null) {
+            //         return new Error("Source filepath " + srcAbsFilepath + " associated with static file " + staticFileId + " doesn't exist");
+            //     } 
+            // })
+            // strSet[String(staticFileId)] = true;
         }
 
         const args: RegisterStaticFilesArgs = newRegisterStaticFilesArgs(strSet);
