@@ -17,7 +17,7 @@ import { ContainerRunConfig } from "../services/container_run_config";
 import { newGetLoadLambdaArgs, newGetLambdaInfoArgs, newRegisterStaticFilesArgs, newRegisterFilesArtifactsArgs, newRegisterServiceArgs, newStartServiceArgs, newGetServiceInfoArgs, newRemoveServiceArgs, newPartitionServices, newPartitionConnections, newRepartitionArgs, newWaitForEndpointAvailabilityArgs, newExecuteBulkCommandsArgs } from "../constructor_calls"; //TODO - potentially change to asterisk since many imports
 	//"github.com/palantir/stacktrace" TOOD
 import * as winston from "winston";
-	"io" //TODO
+	//"io" //TODO - remove
 import * as path from "path";
 import * as fs from 'fs';
 //)
@@ -79,10 +79,9 @@ class NetworkContext {
     public registerStaticFiles(staticFileFilepaths: Map<StaticFileID, string>): Error {
         const strSet: Map<string, boolean> = new Map();
         for (let [staticFileId, srcAbsFilepath] of staticFileFilepaths.entries()) {
-            //const srcAbsFilepath: string = staticFileFilepaths[staticFileId]; //TODO - remove
             
             // Sanity-check that the source filepath exists
-            fs.stat(srcAbsFilepath, (exists) => {
+            fs.stat(srcAbsFilepath, (exists) => { //TODO - error returned inside function, not inside `registerStaticFiles`
                 if (exists !== null) {
                     return new Error("Source filepath " + srcAbsFilepath + " associated with static file " + staticFileId + " doesn't exist");
                 }
@@ -99,13 +98,13 @@ class NetworkContext {
         let resp: RegisterStaticFilesResponse; //TODO - remove
         const staticFileDestRelativeFilepathsMap: Map<string, string> = resp.getStaticFileDestRelativeFilepathsMap();
         for (let [staticFileIdStr, destFilepathRelativeToEnclaveVolRoot] of staticFileDestRelativeFilepathsMap.entries()) {
-            //const destFilepathRelativeToEnclaveVolRoot: string = staticFileDestRelativeFilepathsMap[staticFileIdStr]; //TODO - remove
 
             const staticFileId: StaticFileID = <StaticFileID>(staticFileIdStr);
 
             if (!staticFileFilepaths.has(staticFileId)) {
                 return new Error("No source filepath found for static file " + staticFileId + "; this is a bug in Kurtosis");
             }
+            const srcAbsFilepath: string = staticFileFilepaths[staticFileId];
 
             const destAbsFilepath: string = path.join(this.enclaveDataVolMountpoint, destFilepathRelativeToEnclaveVolRoot);
             fs.stat(destAbsFilepath, (exists) => {
@@ -115,19 +114,20 @@ class NetworkContext {
                 }
             })
             //TODO TODO TODO
+            // srcFp, err := os.Open(srcAbsFilepath) TODO => fs.open(srcAbsFilepath, 'r', ) (fs.open)
             // srcFp, err := os.Open(srcAbsFilepath)
             // if err !== nil {
             //     return stacktrace.Propagate(err, "An error occurred opening static file '%v' source file '%v' for reading", staticFileId, srcAbsFilepath)
             // }
-            // defer srcFp.Close()
+            // defer srcFp.Close() TODO => (fs.Close)
 
-            // destFp, err := os.Create(destAbsFilepath)
+            // destFp, err := os.Create(destAbsFilepath) TODO => (fs.createReadStream maybe)
             // if err !== nil {
             //     return stacktrace.Propagate(err, "An error occurred opening static file '%v' destination file '%v' for writing", staticFileId, destAbsFilepath)
             // }
-            // defer destFp.Close()
+            // defer destFp.Close() TODO => (fs.Close)
 
-            // if _, err := io.Copy(destFp, srcFp); err !== nil {
+            // if _, err := io.Copy(destFp, srcFp); err !== nil { TODO => (fs.copyFile)
             //     return stacktrace.Propagate(err, "An error occurred copying all the bytes from static file '%v' source filepath '%v' to destination filepath '%v'", staticFileId, srcAbsFilepath, destAbsFilepath)
             // }
 
@@ -139,7 +139,6 @@ class NetworkContext {
     public registerFilesArtifacts(filesArtifactUrls: Map<FilesArtifactID, string>): Error {
         const filesArtifactIdStrsToUrls: Map<string, string> = new Map();
         for (let [artifactId, url] of filesArtifactUrls.entries()) {
-            //const url: string = filesArtifactUrls[artifactId]; //TODO - remove
             filesArtifactIdStrsToUrls[String(artifactId)] = url;
         }
         const args: RegisterFilesArtifactsArgs = newRegisterFilesArtifactsArgs(filesArtifactIdStrsToUrls);
@@ -153,9 +152,9 @@ class NetworkContext {
     // Docs available at https://docs.kurtosistech.com/kurtosis-libs/lib-documentation
     public addService(
         serviceId: ServiceID,
-        containerCreationConfig: ContainerCreationConfig, //TODO
+        containerCreationConfig: ContainerCreationConfig,
         generateRunConfigFunc: (ipAddr: string, generatedFileFilepaths: Map<string, string>, staticFileFilepaths: Map<StaticFileID, string>) => [ContainerRunConfig, Error]
-    ): [ServiceContext, Map<string, PortBinding>, Error] { //TODO
+    ): [ServiceContext, Map<string, PortBinding>, Error] {
 
         const [serviceContext, hostPortBindings, err] = this.addServiceToPartition(
             serviceId,
@@ -164,7 +163,7 @@ class NetworkContext {
             generateRunConfigFunc,
             )
         if (err !== null) {
-            return [null, null, err ] //TODO no personalized error message
+            return [null, null, err] //TODO no personalized error message
         }
 
         return [serviceContext, hostPortBindings, null]
@@ -177,8 +176,6 @@ class NetworkContext {
         containerCreationConfig: ContainerCreationConfig,
         generateRunConfigFunc: (ipAddr: string, generatedFileFilepaths: Map<string, string>, staticFileFilepaths: Map<StaticFileID, string>) => [ContainerRunConfig, Error],
     ): [ServiceContext, Map<string, PortBinding>, Error] {
-
-        //ctx := context.Background()
 
         winston.info("Registering new service ID with Kurtosis API..."); //TODO logrus.Trace is meant for something for low level, but I could find winston.info to be closest to this
         const registerServiceArgs: RegisterServiceArgs = newRegisterServiceArgs(serviceId, partitionId);
@@ -226,9 +223,7 @@ class NetworkContext {
         }
         const generatedFileAbsFilepathsOnService: Map<string, string> = new Map();
         for (let [fileId, initializingFunc] of containerCreationConfig.getFileGeneratingFuncs().entries()) {
-            //const initializingFunc: (fileDescriptorNum: number) => Error = containerCreationConfig.getFileGeneratingFuncs()[fileId]; //TODO - remove
 
-            //filepaths, found := generatedFileFilepaths[fileId]
             if (!generatedFileFilepaths.has(fileId)) {
                 return [null, null, err ] //TODO - no personalize message
                     //"Needed to initialize file for file ID '%v', but no generated file filepaths were found for that file ID; this is a Kurtosis bug",
@@ -256,7 +251,6 @@ class NetworkContext {
         winston.info("Creating files artifact ID str -> mount dirpaths map...")
         const artifactIdStrToMountDirpath: Map<string, string> = new Map();
         for (let [filesArtifactId, mountDirpath] of containerCreationConfig.getFilesArtifactMountpoints().entries()) {
-            //const mountDirpath: string = containerCreationConfig.getFilesArtifactMountpoints()[filesArtifactId]; //TODO - remove
 
             artifactIdStrToMountDirpath[String(filesArtifactId)] = mountDirpath;
         }
@@ -360,7 +354,6 @@ class NetworkContext {
 
         const reqPartitionServices: Map<string, PartitionServices> = new Map();
         for (let [partitionId, serviceIdSet] of partitionServices.entries()) {
-            //const serviceIdSet: Set<ServiceID> = partitionServices[partitionId]; //TODO - remove
 
             const serviceIdStrSet: Set<string> = new Set();
             for (let serviceId in serviceIdSet) {
@@ -372,11 +365,9 @@ class NetworkContext {
 
         const reqPartitionConns: Map<string, PartitionConnections> = new Map();
         for (let [partitionAId, partitionAConnsMap] of partitionConnections.entries()) {
-            //const partitionAConnsMap: PartitionConnections = partitionConnections[partitionAId]; //TODO - remove
             
             const partitionAConnsStrMap: Map<string, PartitionConnectionInfo> = new Map();
             for (let [partitionBId, connInfo] of partitionAConnsMap.entries()) {
-                //const connInfo: PartitionConnectionInfo = partitionAConnsMap[partitionBId]; //TODO - remove
 
                 const partitionBIdStr: string = String(partitionBId);
                 partitionAConnsStrMap[partitionBIdStr] = connInfo;
