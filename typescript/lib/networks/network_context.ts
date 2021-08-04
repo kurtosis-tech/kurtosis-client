@@ -11,9 +11,9 @@ import { ApiContainerServiceClient } from "../..//kurtosis_core_rpc_api_bindings
 import { LoadLambdaArgs, GetLambdaInfoArgs, RegisterStaticFilesArgs, RegisterStaticFilesResponse, RegisterFilesArtifactsArgs, PortBinding, RegisterServiceArgs, RegisterServiceResponse, StartServiceArgs, GetServiceInfoArgs, GetServiceInfoResponse, RemoveServiceArgs, PartitionConnectionInfo, PartitionServices, PartitionConnections, RepartitionArgs, WaitForEndpointAvailabilityArgs, ExecuteBulkCommandsArgs, StartServiceResponse } from "../..//kurtosis_core_rpc_api_bindings/api_container_service_pb"; //TODO - potentially change to asterisk since many imports
 import { LambdaID, LambdaContext } from "../modules/lambda_context";
 import { ServiceID } from "../services/service";
-import { ServiceContext, GeneratedFileFilepaths } from "../services/service";
-import { StaticFileID, FilesArtifactID, ContainerCreationConfig } from '../services/container_creation_config'; 
-import { ContainerRunConfig } from '../services/container_run_config'
+import { ServiceContext, GeneratedFileFilepaths } from "../services/service_context";
+import { StaticFileID, FilesArtifactID, ContainerCreationConfig } from "../services/container_creation_config"; 
+import { ContainerRunConfig } from "../services/container_run_config";
 import { newGetLoadLambdaArgs, newGetLambdaInfoArgs, newRegisterStaticFilesArgs, newRegisterFilesArtifactsArgs, newRegisterServiceArgs, newStartServiceArgs, newGetServiceInfoArgs, newRemoveServiceArgs, newPartitionServices, newPartitionConnections, newRepartitionArgs, newWaitForEndpointAvailabilityArgs, newExecuteBulkCommandsArgs } from "../constructor_calls"; //TODO - potentially change to asterisk since many imports
 	//"github.com/palantir/stacktrace" TOOD
 import * as logger from "tslog";
@@ -194,34 +194,34 @@ class NetworkContext {
         let registerServiceResp: RegisterServiceResponse; //TODO - remove
         const serviceIpAddr = registerServiceResp.getIpAddr();
 
-        const serviceContext: ServiceContext = ServiceContext(
+        const serviceContext: ServiceContext = new ServiceContext(
             this.client,
             serviceId,
             serviceIpAddr,
             this.enclaveDataVolMountpoint,
-            containerCreationConfig.GetKurtosisVolumeMountpoint());
+            containerCreationConfig.getKurtosisVolumeMountpoint());
         log.trace("New service successfully registered with Kurtosis API");
 
         log.trace("Loading static files into new service namespace...");
-        const usedStaticFiles = containerCreationConfig.GetUsedStaticFiles();
-        var [staticFileAbsFilepathsOnService, err] = serviceContext.LoadStaticFiles(usedStaticFiles);
+        const usedStaticFiles = containerCreationConfig.getUsedStaticFiles();
+        var [staticFileAbsFilepathsOnService, err] = serviceContext.loadStaticFiles(usedStaticFiles);
         if (err != null) {
             return [ null, null, err ]; //TODO - no personalized message
         }
         log.trace("Successfully loaded static files");
 
         log.trace("Initializing generated files...");
-        const filesToGenerate: Map<string, boolean> = new Map();
-        for (let fileId in containerCreationConfig.GetFileGeneratingFuncs()) {
+        const filesToGenerate: Set<string> = new Set(); //TODO - make sure this is correct
+        for (let fileId in containerCreationConfig.getFileGeneratingFuncs()) {
             filesToGenerate[fileId] = true;
         }
-        var [generatedFileFilepaths, err] = serviceContext.GenerateFiles(filesToGenerate);
+        var [generatedFileFilepaths, err] = serviceContext.generateFiles(filesToGenerate);
         if (err != null) {
             return [null, null, err ] //TODO - no personalized message
         }
         const generatedFileAbsFilepathsOnService: Map<string, string> = new Map();
-        for (let fileId in containerCreationConfig.GetFileGeneratingFuncs()) {
-            const initializingFunc: (num: number) => Error = containerCreationConfig.GetFileGeneratingFuncs()[fileId];
+        for (let fileId in containerCreationConfig.getFileGeneratingFuncs()) {
+            const initializingFunc: (num: number) => Error = containerCreationConfig.getFileGeneratingFuncs()[fileId];
 
             //filepaths, found := generatedFileFilepaths[fileId]
             if (!generatedFileFilepaths.has(fileId)) {
@@ -239,7 +239,7 @@ class NetworkContext {
             // if err := initializingFunc(fp); err != nil {
             //     return nil, nil, stacktrace.Propagate(err, "The function to initialize file with ID '%v' returned an error", fileId)
             // }
-            generatedFileAbsFilepathsOnService[fileId] = filepaths.GetAbsoluteFilepathOnServiceContainer();
+            generatedFileAbsFilepathsOnService[fileId] = filepaths.getAbsoluteFilepathOnServiceContainer();
         }
         log.trace("Successfully initialized generated files in suite execution volume")
 
@@ -250,8 +250,8 @@ class NetworkContext {
 
         log.trace("Creating files artifact ID str -> mount dirpaths map...")
         const artifactIdStrToMountDirpath: Map<string, string> = new Map();
-        for (let filesArtifactId in containerCreationConfig.GetFilesArtifactMountpoints()) {
-            const mountDirpath: string = containerCreationConfig.GetFilesArtifactMountpoints()[filesArtifactId];
+        for (let filesArtifactId in containerCreationConfig.getFilesArtifactMountpoints()) {
+            const mountDirpath: string = containerCreationConfig.getFilesArtifactMountpoints()[filesArtifactId];
 
             artifactIdStrToMountDirpath[String(filesArtifactId)] = mountDirpath;
         }
@@ -305,7 +305,7 @@ class NetworkContext {
             ]
         }
 
-        const serviceContext: ServiceContext = ServiceContext(
+        const serviceContext: ServiceContext = new ServiceContext(
             this.client,
             serviceId,
             serviceResponse.getIpAddr(),

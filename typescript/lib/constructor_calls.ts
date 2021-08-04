@@ -21,7 +21,7 @@ export function newGetGenerateFilesArgs(serviceId: ServiceID, fileGenerationOpts
     for (let fileID in fileGenerationOpts) {
         result.getFilesToGenerateMap().set(fileID, fileGenerationOpts[fileID]);
     }
-
+    
     return result;
 }
 

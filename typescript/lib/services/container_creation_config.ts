@@ -1,110 +1,119 @@
-// package services
-
-// import "os"
-
-// const (
-// 	defaultTestVolumeMountpoint = "/kurtosis-test-volume"
-// )
+const defaultKurtosisVolumeMountpoint = "/kurtosis-enclave-data";
 
 export type StaticFileID = string;
 
-// // The ID of an artifact containing files that should be mounted into a service container
+// The ID of an artifact containing files that should be mounted into a service container
 export type FilesArtifactID = string;
 
-// // ====================================================================================================
-// //                                    Config Object
-// // ====================================================================================================
-// // TODO defensive copy when we're giving back complex objects?????
-// // Docs available at https://docs.kurtosistech.com/kurtosis-libs/lib-documentation
-// type ContainerCreationConfig struct {
-// 	image                    string
-// 	testVolumeMountpoint     string
-// 	usedPortsSet             map[string]bool
-// 	fileGeneratingFuncs      map[string]func(*os.File) error
-// 	usedStaticFilesSet       map[StaticFileID]bool
-// 	filesArtifactMountpoints map[FilesArtifactID]string
-// }
+// ====================================================================================================
+//                                    Config Object
+// ====================================================================================================
+// TODO defensive copy when we're giving back complex objects?????
+// Docs available at https://docs.kurtosistech.com/kurtosis-libs/lib-documentation
+export class ContainerCreationConfig {
+	
+    private readonly image: string;
+	private readonly kurtosisVolumeMountpoint: string;   // Technically the enclave data volume, but we call it this for simplicity for the user
+	private readonly usedPortsSet: Map<string, boolean>
+	private readonly fileGeneratingFuncs: Map<string, (fp: number) => Error>; // File descriptors are just integers
+	private readonly usedStaticFilesSet: Map<StaticFileID, boolean>;
+	private readonly filesArtifactMountpoints: Map<FilesArtifactID, string>;
 
-// func (config *ContainerCreationConfig) GetImage() string {
-// 	return config.image
-// }
+    constructor(
+        image: string,
+        kurtosisVolumeMountpoint: string,
+        usedPortsSet: Map<string, boolean>,
+        fileGeneratingFuncs: Map<string, (fp: number) => Error>,
+        usedStaticFilesSet: Map<StaticFileID, boolean>,
+        filesArtifactMountpoints: Map<FilesArtifactID, string>
+    ){
+        this.image = image;
+        this.kurtosisVolumeMountpoint = kurtosisVolumeMountpoint;
+        this.usedPortsSet = usedPortsSet;
+        this.fileGeneratingFuncs = fileGeneratingFuncs;
+        this.usedStaticFilesSet = usedStaticFilesSet;
+        this.filesArtifactMountpoints = filesArtifactMountpoints;
+    }
 
-// func (config *ContainerCreationConfig) GetTestVolumeMountpoint() string {
-// 	return config.testVolumeMountpoint
-// }
+    public getImage(): string {
+        return this.image;
+    }
 
-// func (config *ContainerCreationConfig) GetUsedPortsSet() map[string]bool {
-// 	return config.usedPortsSet
-// }
+    public getKurtosisVolumeMountpoint(): string {
+        return this.kurtosisVolumeMountpoint;
+    }
 
-// func (config *ContainerCreationConfig) GetFileGeneratingFuncs() map[string]func(*os.File) error {
-// 	return config.fileGeneratingFuncs
-// }
+    public getUsedPortsSet(): Map<string, boolean> {
+        return this.usedPortsSet;
+    }
 
-// func (config *ContainerCreationConfig) GetFilesArtifactMountpoints() map[FilesArtifactID]string {
-// 	return config.filesArtifactMountpoints
-// }
+    public getFileGeneratingFuncs(): Map<string, (fp: number) => Error> {
+        return this.fileGeneratingFuncs;
+    }
 
-// func (config *ContainerCreationConfig) GetUsedStaticFiles() map[StaticFileID]bool {
-// 	return config.usedStaticFilesSet
-// }
+    public getFilesArtifactMountpoints(): Map<FilesArtifactID, string> {
+        return this.filesArtifactMountpoints;
+    }
 
-// // ====================================================================================================
-// //                                        Builder
-// // ====================================================================================================
-// // TODO Defensive copies on all these With... functions???
-// // Docs available at https://docs.kurtosistech.com/kurtosis-libs/lib-documentation
-// type ContainerCreationConfigBuilder struct {
-// 	image                    string
-// 	testVolumeMountpoint     string
-// 	usedPortsSet             map[string]bool
-// 	usedStaticFilesSet       map[StaticFileID]bool
-// 	fileGeneratingFuncs      map[string]func(*os.File) error
-// 	filesArtifactMountpoints map[FilesArtifactID]string
-// }
+    public getUsedStaticFiles(): Map<StaticFileID, boolean> {
+        return this.usedStaticFilesSet;
+    }
+}
 
-// func NewContainerCreationConfigBuilder(image string) *ContainerCreationConfigBuilder {
-// 	return &ContainerCreationConfigBuilder{
-// 		image:                    image,
-// 		testVolumeMountpoint:     defaultTestVolumeMountpoint,
-// 		usedPortsSet:             map[string]bool{},
-// 		fileGeneratingFuncs:      map[string]func(file *os.File) error{},
-// 		filesArtifactMountpoints: map[FilesArtifactID]string{},
-// 	}
-// }
+// ====================================================================================================
+//                                        Builder
+// ====================================================================================================
+// TODO Defensive copies on all these With... functions???
+// Docs available at https://docs.kurtosistech.com/kurtosis-libs/lib-documentation
+class ContainerCreationConfigBuilder {
+	private image: string;
+	private kurtosisVolumeMountpoint: string;
+	private usedPortsSet: Map<string, boolean>;
+	private usedStaticFilesSet: Map<StaticFileID, boolean>;
+	private fileGeneratingFuncs: Map<string, (fp: number) => Error>;
+	private filesArtifactMountpoints: Map<FilesArtifactID, string>;
 
-// func (builder *ContainerCreationConfigBuilder) WithTestVolumeMountpoint(testVolumeMountpoint string) *ContainerCreationConfigBuilder {
-// 	builder.testVolumeMountpoint = testVolumeMountpoint
-// 	return builder
-// }
+    constructor (image: string) {
+            this.image = image;
+            this.kurtosisVolumeMountpoint = defaultKurtosisVolumeMountpoint;
+            this.usedPortsSet = new Map();
+            this.fileGeneratingFuncs = new Map();
+            this.filesArtifactMountpoints = new Map();
+    }
 
-// func (builder *ContainerCreationConfigBuilder) WithUsedPorts(usedPortsSet map[string]bool) *ContainerCreationConfigBuilder {
-// 	builder.usedPortsSet = usedPortsSet
-// 	return builder
-// }
+    public withKurtosisVolumeMountpoint(kurtosisVolumeMountpoint: string): ContainerCreationConfigBuilder {
+        this.kurtosisVolumeMountpoint = kurtosisVolumeMountpoint;
+        return this;
+    }
 
-// func (builder *ContainerCreationConfigBuilder) WithGeneratedFiles(fileGeneratingFuncs map[string]func(*os.File) error) *ContainerCreationConfigBuilder {
-// 	builder.fileGeneratingFuncs = fileGeneratingFuncs
-// 	return builder
-// }
+    public withUsedPorts(usedPortsSet: Map<string, boolean>): ContainerCreationConfigBuilder {
+        this.usedPortsSet = usedPortsSet;
+        return this;
+    }
 
-// func (builder *ContainerCreationConfigBuilder) WithStaticFiles(usedStaticFilesSet map[StaticFileID]bool) *ContainerCreationConfigBuilder {
-// 	builder.usedStaticFilesSet = usedStaticFilesSet
-// 	return builder
-// }
+    public withGeneratedFiles(fileGeneratingFuncs: Map<string, (fp: number) => Error>): ContainerCreationConfigBuilder {
+        this.fileGeneratingFuncs = fileGeneratingFuncs;
+        return this;
+    }
 
-// func (builder *ContainerCreationConfigBuilder) WithFilesArtifacts(filesArtifactMountpoints map[FilesArtifactID]string) *ContainerCreationConfigBuilder {
-// 	builder.filesArtifactMountpoints = filesArtifactMountpoints
-// 	return builder
-// }
+    public withStaticFiles(usedStaticFilesSet: Map<StaticFileID, boolean>): ContainerCreationConfigBuilder {
+        this.usedStaticFilesSet = usedStaticFilesSet;
+        return this;
+    }
 
-// func (builder *ContainerCreationConfigBuilder) Build() *ContainerCreationConfig {
-// 	return &ContainerCreationConfig{
-// 		image:                    builder.image,
-// 		testVolumeMountpoint:     builder.testVolumeMountpoint,
-// 		usedPortsSet:             builder.usedPortsSet,
-// 		fileGeneratingFuncs:      builder.fileGeneratingFuncs,
-// 		usedStaticFilesSet:       builder.usedStaticFilesSet,
-// 		filesArtifactMountpoints: builder.filesArtifactMountpoints,
-// 	}
-// }
+    public withFilesArtifacts(filesArtifactMountpoints: Map<FilesArtifactID, string>): ContainerCreationConfigBuilder {
+        this.filesArtifactMountpoints = filesArtifactMountpoints;
+        return this;
+    }
+
+    public build(): ContainerCreationConfig {
+        return new ContainerCreationConfig(
+            this.image,
+            this.kurtosisVolumeMountpoint,
+            this.usedPortsSet,
+            this.fileGeneratingFuncs,
+            this.usedStaticFilesSet,
+            this.filesArtifactMountpoints,
+        )
+    }
+}
