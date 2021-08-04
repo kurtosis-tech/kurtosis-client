@@ -5,6 +5,7 @@ import { StaticFileID } from './container_creation_config';
 import { newGetExecCommandArgs, newGetGenerateFilesArgs, newGetFileGenerationOptions, newGetLoadStaticFilesArgs } from "../constructor_calls";
 import * as grpc from "grpc";
 import * as path from "path";
+import * as util from "util";
 
 
 // Docs available at https://docs.kurtosistech.com/kurtosis-libs/lib-documentation
@@ -70,20 +71,36 @@ class ServiceContext {
         const args: ExecCommandArgs = newGetExecCommandArgs(serviceId, command);
 
         var resp: ExecCommandResponse;
-        var error: grpc.ServiceError;
-        this.client.execCommand(args, function(error, feature){ //TODO (comment) - don't use return value, but use callback parameters
-            error = error; 
+        //var error: grpc.ServiceError;
+
+
+        const execCommand: (args: ExecCommandArgs) => Promise<unknown> = util.promisify(this.client.execCommand); //TODO - unknown?
+        const promise: (args: ExecCommandArgs) => Promise<void> = async (args: ExecCommandArgs) => { //TODO - void
+            const feature: ExecCommandResponse = await execCommand(args); //TODO - Shouldn't this not be unknown, and be ExecCommandResponse 
+            // TODO (above) - fs.readdir is in the same format and it returns the second argument of the callback - files
+            // TODO (above) - exeCommand (args, callback) where args is ExecCommandArgs and callback gets two arguments, grpc.ServiceError and ExecCommandResponse
             resp = feature;
-        });
-        
-        //TODO (comment) - Will this error checking propogate as needed (Kevin mentioned that returning error as-is is good enough)
-        if (error !== null) {
-            return [0, null, error]; 
-            //TODO - passing in actual error, but no personalized message
-            //I was thinking of `new Error("An error occurred executing command " + command +  " on service " + serviceId + 
-            //". Here is the error message: " + error)` but don't think this propogates the error as needed, just instantiates an error
         }
+        
+        promise(args).catch(err => { //TODO - catch might not be safe, neverthrow would be awesome to use (I just need to understand the await command inside of promise)
+            return [0, null, err]; 
+        })
         return [resp.getExitCode(), resp.getLogOutput(), null];
+
+
+        // this.client.execCommand(args, function(error, feature){ //TODO (comment) - don't use return value, but use callback parameters
+        //     error = error; 
+        //     resp = feature;
+        // });
+        //
+        // //TODO (comment) - Will this error checking propogate as needed (Kevin mentioned that returning error as-is is good enough)
+        // if (error !== null) {
+        //     return [0, null, error]; 
+        //     //TODO - passing in actual error, but no personalized message
+        //     //I was thinking of `new Error("An error occurred executing command " + command +  " on service " + serviceId + 
+        //     //". Here is the error message: " + error)` but don't think this propogates the error as needed, just instantiates an error
+        // }
+        // return [resp.getExitCode(), resp.getLogOutput(), null];
     }
 
     // Docs available at https://docs.kurtosistech.com/kurtosis-libs/lib-documentation
