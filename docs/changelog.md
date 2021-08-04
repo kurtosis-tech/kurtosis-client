@@ -5,6 +5,7 @@
 
 ### Changes
 * Made `GeneratedFileFilepaths` fields private and immutable with a constructor, and added getters to access the field values
+* Ported over config factory files inside of `services` to typescript
 * Added grpc and google-protobuf to package.json inside of `typescript` folder
 
 ### Breaking Changes
