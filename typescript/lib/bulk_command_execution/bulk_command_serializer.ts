@@ -14,7 +14,7 @@ class VersionedBulkCommandsDocument {
 }
 
 class SerializableBulkCommandsDocument {
-	VersionedBulkCommandsDocument
+	VersionedBulkCommandsDocument //TODO - inheritance in golang
 	Body	interface{}			`json:"body"` //TODO - Don't understand what `json:"body"` is?
 }
 
