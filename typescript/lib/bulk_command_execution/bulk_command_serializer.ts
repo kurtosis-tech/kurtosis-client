@@ -13,7 +13,7 @@ class VersionedBulkCommandsDocument {
 	schemaVersion: SchemaVersion = `json:"schemaVersion"` //TODO - Don't understand what `json:"schemaVersion"` is?
 }
 
-class serializableBulkCommandsDocument {
+class SerializableBulkCommandsDocument {
 	VersionedBulkCommandsDocument
 	Body	interface{}			`json:"body"` //TODO - Don't understand what `json:"body"` is?
 }
@@ -23,8 +23,8 @@ class BulkCommandSerializer {
 
     constructor (){}
 
-    public Serialize(bulkCommands: V0BulkCommands): [Uint8Array | string, Error] {
-        const toSerialize: serializableBulkCommandsDocument = new serializableBulkCommandsDocument (new VersionedBulkCommandsDocument(latestSchemaVersion), bulkCommands);
+    public serialize(bulkCommands: V0BulkCommands): [Uint8Array | string, Error] {
+        const toSerialize: SerializableBulkCommandsDocument = new SerializableBulkCommandsDocument (new VersionedBulkCommandsDocument(latestSchemaVersion), bulkCommands);
         const [bytes, err] = JSON.parse(toSerialize);
         if (err != null) {
             return [null, err]; //TODO - no personalized message => ("An error occurred serializing bulk commands to bytes")

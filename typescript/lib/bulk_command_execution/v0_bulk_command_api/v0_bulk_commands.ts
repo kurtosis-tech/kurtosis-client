@@ -4,8 +4,10 @@
 	//"encoding/json" //TODO
 import { LoadLambdaArgs } from "../../../kurtosis_core_rpc_api_binding/api_container_service_pb"
 import {} from "../../../kurtosis_core_rpc_api_binding/api_container_service_grpc_pb";
+import { newGetEmptyExecCommandArgs, newGetEmptyExecuteBulkCommandsArgs, newGetEmptyExecuteLambdaArgs, newGetEmptyGenerateFileArgs, newGetEmptyLoadLambdaArgs, newGetEmptyLoadStaticFilesArgs, newGetEmptyRegisterServiceArgs, newGetEmptyRemoveServiceArgs, newGetEmptyRepartitionArgs, newGetEmptyStartServiceArgs, newGetEmptyWaitForEndpointAvailabilityArgs } from "../../../lib/constructor_calls";
 	//"github.com/palantir/stacktrace"
 import * as proto from "proto";	//"google.golang.org/protobuf/proto" //TODO
+import { ExecCommandArgs, ExecuteBulkCommandsArgs, ExecuteLambdaArgs, GenerateFilesArgs, LoadStaticFilesArgs, RegisterServiceArgs, RemoveServiceArgs, RepartitionArgs, StartServiceArgs, WaitForEndpointAvailabilityArgs } from "../../../kurtosis_core_rpc_api_bindings/api_container_service_pb";
 //)
 
 // ====================================================================================================
@@ -15,155 +17,167 @@ import * as proto from "proto";	//"google.golang.org/protobuf/proto" //TODO
 // Visitor that will be used to deserialize command args into
 class cmdArgDeserializingVisitor {
 	private readonly bytesToDeserialize: string; //TODO - string okay to represent []byte here?
-	private readonly deserializedCommandArgsPtr: proto.Message; //TODO - how to import
+	private deserializedCommandArgsPtr: proto.Message; //TODO - import this correctly
 
     constructor (bytesToDeserialize: string) {
         this.bytesToDeserialize = bytesToDeserialize;
     }
 
-    public VisitLoadLambda(): Error {
-        const args: LoadLambdaArgs = &kurtosis_core_rpc_api_bindings.LoadLambdaArgs{}
-        if err := json.Unmarshal(visitor.bytesToDeserialize, args); err != nil {
-            return stacktrace.Propagate(err, "An error occurred deserializing the Lambda-loading args")
-        }
-        visitor.deserializedCommandArgsPtr = args
+    public visitLoadLambda(): Error {
+        const args: LoadLambdaArgs = newGetEmptyLoadLambdaArgs();
+        JSON.parse(this.bytesToDeserialize, args); //TODO - error checking (try and catch??)
+        // if err := JSON.parse(this.bytesToDeserialize, args); err != nil { //TODO - remove
+        //     return stacktrace.Propagate(err, "An error occurred deserializing the Lambda-loading args")
+        // }
+        this.deserializedCommandArgsPtr = args;
         return null;
     }
 
-// func (visitor *cmdArgDeserializingVisitor) VisitExecuteLambda() error {
-// 	args := &kurtosis_core_rpc_api_bindings.ExecuteLambdaArgs{}
-// 	if err := json.Unmarshal(visitor.bytesToDeserialize, args); err != nil {
-// 		return stacktrace.Propagate(err, "An error occurred deserializing the Lambda-executing args")
-// 	}
-// 	visitor.deserializedCommandArgsPtr = args
-// 	return nil
-// }
+    public visitExecuteLambda(): Error {
+    	const args: ExecuteLambdaArgs = newGetEmptyExecuteLambdaArgs();
+        JSON.parse(this.bytesToDeserialize, args); //TODO - error checking (try and catch??)
+    	// if err := json.Unmarshal(visitor.bytesToDeserialize, args); err != nil {
+    	// 	return stacktrace.Propagate(err, "An error occurred deserializing the Lambda-executing args")
+    	// }
+    	this.deserializedCommandArgsPtr = args;
+    	return null;
+    }
 
-// func (visitor *cmdArgDeserializingVisitor) VisitRegisterService() error {
-// 	args := &kurtosis_core_rpc_api_bindings.RegisterServiceArgs{}
-// 	if err := json.Unmarshal(visitor.bytesToDeserialize, args); err != nil {
-// 		return stacktrace.Propagate(err, "An error occurred deserializing the register service args")
-// 	}
-// 	visitor.deserializedCommandArgsPtr = args
-// 	return nil
-// }
+    public visitRegisterService(): Error {
+        const args: RegisterServiceArgs = newGetEmptyRegisterServiceArgs();
+        JSON.parse(this.bytesToDeserialize, args); //TODO - error checking (try and catch??)
+        // if err := json.Unmarshal(visitor.bytesToDeserialize, args); err != nil {
+        //     return stacktrace.Propagate(err, "An error occurred deserializing the register service args")
+        // }
+        this.deserializedCommandArgsPtr = args;
+        return null;
+    }
 
-// func (visitor *cmdArgDeserializingVisitor) VisitGenerateFiles() error {
-// 	args := &kurtosis_core_rpc_api_bindings.GenerateFilesArgs{}
-// 	if err := json.Unmarshal(visitor.bytesToDeserialize, args); err != nil {
-// 		return stacktrace.Propagate(err, "An error occurred deserializing the generate files args")
-// 	}
-// 	visitor.deserializedCommandArgsPtr = args
-// 	return nil
-// }
+    public visitGenerateFiles(): Error {
+        const args: GenerateFilesArgs = newGetEmptyGenerateFileArgs();
+        JSON.parse(this.bytesToDeserialize, args); //TODO - error checking (try and catch??)
+        // if err := json.Unmarshal(visitor.bytesToDeserialize, args); err != nil {
+        //     return stacktrace.Propagate(err, "An error occurred deserializing the generate files args")
+        // }
+        this.deserializedCommandArgsPtr = args;
+        return null;
+    }
 
-// func (visitor *cmdArgDeserializingVisitor) VisitLoadStaticFiles() error {
-// 	args := &kurtosis_core_rpc_api_bindings.LoadStaticFilesArgs{}
-// 	if err := json.Unmarshal(visitor.bytesToDeserialize, args); err != nil {
-// 		return stacktrace.Propagate(err, "An error occurred deserializing the load static files args")
-// 	}
-// 	visitor.deserializedCommandArgsPtr = args
-// 	return nil
-// }
+    public visitLoadStaticFiles(): Error {
+    	const args: LoadStaticFilesArgs = newGetEmptyLoadStaticFilesArgs();
+    	// if err := json.Unmarshal(visitor.bytesToDeserialize, args); err != nil {
+    	// 	return stacktrace.Propagate(err, "An error occurred deserializing the load static files args")
+    	// }
+        JSON.parse(this.bytesToDeserialize, args); //TODO - error checking (try and catch??)
+        this.deserializedCommandArgsPtr = args;
+        return null;
+    }
 
-// func (visitor *cmdArgDeserializingVisitor) VisitStartService() error {
-// 	args := &kurtosis_core_rpc_api_bindings.StartServiceArgs{}
-// 	if err := json.Unmarshal(visitor.bytesToDeserialize, args); err != nil {
-// 		return stacktrace.Propagate(err, "An error occurred deserializing the start service args")
-// 	}
-// 	visitor.deserializedCommandArgsPtr = args
-// 	return nil
-// }
+    public visitStartService(): Error {
+        const args: StartServiceArgs = newGetEmptyStartServiceArgs();
+        // if err := json.Unmarshal(visitor.bytesToDeserialize, args); err != nil {
+        //     return stacktrace.Propagate(err, "An error occurred deserializing the start service args")
+        // }
+        JSON.parse(this.bytesToDeserialize, args); //TODO - error checking (try and catch??)
+        this.deserializedCommandArgsPtr = args;
+        return null;
+    }
 
-// func (visitor *cmdArgDeserializingVisitor) VisitRemoveService() error {
-// 	args := &kurtosis_core_rpc_api_bindings.RemoveServiceArgs{}
-// 	if err := json.Unmarshal(visitor.bytesToDeserialize, args); err != nil {
-// 		return stacktrace.Propagate(err, "An error occurred deserializing the remove service args")
-// 	}
-// 	visitor.deserializedCommandArgsPtr = args
-// 	return nil
-// }
+    public visitRemoveService(): Error {
+    	const args: RemoveServiceArgs = newGetEmptyRemoveServiceArgs();
+    	// if err := json.Unmarshal(visitor.bytesToDeserialize, args); err != nil {
+    	// 	return stacktrace.Propagate(err, "An error occurred deserializing the remove service args")
+    	// }
+        JSON.parse(this.bytesToDeserialize, args); //TODO - error checking (try and catch??)
+        this.deserializedCommandArgsPtr = args;
+        return null;
+    }
 
-// func (visitor *cmdArgDeserializingVisitor) VisitRepartition() error {
-// 	args := &kurtosis_core_rpc_api_bindings.RepartitionArgs{}
-// 	if err := json.Unmarshal(visitor.bytesToDeserialize, args); err != nil {
-// 		return stacktrace.Propagate(err, "An error occurred deserializing the repartition service args")
-// 	}
-// 	visitor.deserializedCommandArgsPtr = args
-// 	return nil
-// }
+    public visitRepartition(): Error {
+    	const args: RepartitionArgs = newGetEmptyRepartitionArgs();
+    	// if err := json.Unmarshal(visitor.bytesToDeserialize, args); err != nil {
+    	// 	return stacktrace.Propagate(err, "An error occurred deserializing the repartition service args")
+    	// }
+        JSON.parse(this.bytesToDeserialize, args); //TODO - error checking (try and catch??)
+        this.deserializedCommandArgsPtr = args;
+        return null;
+    }
 
-// func (visitor *cmdArgDeserializingVisitor) VisitExecCommand() error {
-// 	args := &kurtosis_core_rpc_api_bindings.ExecCommandArgs{}
-// 	if err := json.Unmarshal(visitor.bytesToDeserialize, args); err != nil {
-// 		return stacktrace.Propagate(err, "An error occurred deserializing the exec command args")
-// 	}
-// 	visitor.deserializedCommandArgsPtr = args
-// 	return nil
-// }
+    public visitExecCommand(): Error {
+        const args: ExecCommandArgs = newGetEmptyExecCommandArgs();
+        // if err := json.Unmarshal(visitor.bytesToDeserialize, args); err != nil {
+        //     return stacktrace.Propagate(err, "An error occurred deserializing the exec command args")
+        // }
+        JSON.parse(this.bytesToDeserialize, args); //TODO - error checking (try and catch??)
+        this.deserializedCommandArgsPtr = args;
+        return null;
+    }
 
-// func (visitor *cmdArgDeserializingVisitor) VisitWaitForEndpointAvailability() error {
-// 	args := &kurtosis_core_rpc_api_bindings.WaitForEndpointAvailabilityArgs{}
-// 	if err := json.Unmarshal(visitor.bytesToDeserialize, args); err != nil {
-// 		return stacktrace.Propagate(err, "An error occurred deserializing the endpoint availability-waiting args")
-// 	}
-// 	visitor.deserializedCommandArgsPtr = args
-// 	return nil
-// }
+    public visitWaitForEndpointAvailability(): Error {
+    	const args: WaitForEndpointAvailabilityArgs = newGetEmptyWaitForEndpointAvailabilityArgs();
+    	// if err := json.Unmarshal(visitor.bytesToDeserialize, args); err != nil {
+    	// 	return stacktrace.Propagate(err, "An error occurred deserializing the endpoint availability-waiting args")
+    	// }
+        JSON.parse(this.bytesToDeserialize, args); //TODO - error checking (try and catch??)
+        this.deserializedCommandArgsPtr = args;
+        return null;
+    }
 
-// func (visitor *cmdArgDeserializingVisitor) VisitExecuteBulkCommands() error {
-// 	args := &kurtosis_core_rpc_api_bindings.ExecuteBulkCommandsArgs{}
-// 	if err := json.Unmarshal(visitor.bytesToDeserialize, args); err != nil {
-// 		return stacktrace.Propagate(err, "An error occurred deserializing the bulk command execution args")
-// 	}
-// 	visitor.deserializedCommandArgsPtr = args
-// 	return nil
-// }
+    public visitExecuteBulkCommands(): Error {
+        const args: ExecuteBulkCommandsArgs = newGetEmptyExecuteBulkCommandsArgs();
+        // if err := json.Unmarshal(visitor.bytesToDeserialize, args); err != nil {
+        //     return stacktrace.Propagate(err, "An error occurred deserializing the bulk command execution args")
+        // }
+        JSON.parse(this.bytesToDeserialize, args); //TODO - error checking (try and catch??)
+        this.deserializedCommandArgsPtr = args;
+        return null;
+    }
 
-// func (visitor *cmdArgDeserializingVisitor) GetDeserializedCommandArgs() proto.Message {
-// 	return visitor.deserializedCommandArgsPtr
-// }
+    public getDeserializedCommandArgs(): proto.Message { //TODO - fix this import
+        return this.deserializedCommandArgsPtr;
+    }
 }
 
-// // ====================================================================================================
-// //                                        Serializable Command
-// // ====================================================================================================
+// ====================================================================================================
+//                                        Serializable Command
+// ====================================================================================================
 
-// // Used for serializing
-// type V0SerializableCommand struct {
-// 	Type V0CommandType `json:"type"`
+// Used for serializing
+class V0SerializableCommand {
+	private readonly Type V0CommandType `json:"type"` //TODO
 
-// 	// The only allowed objects here are from the bindings generated from the .proto file
-// 	ArgsPtr proto.Message `json:"args"`
-// }
+	// The only allowed objects here are from the bindings generated from the .proto file
+	private readonly ArgsPtr proto.Message `json:"args"` //TODO
 
-// // A V0SerializableCommand knows how to deserialize itself, thanks to the "type" tag
-// func (cmd *V0SerializableCommand) UnmarshalJSON(bytes []byte) error {
-// 	interstitialStruct := struct {
-// 		Type      V0CommandType   `json:"type"`
-// 		ArgsBytes json.RawMessage `json:"args"`
-// 	}{}
-// 	if err := json.Unmarshal(bytes, &interstitialStruct); err != nil {
-// 		return stacktrace.Propagate(err, "An error occurred deserializing the bytes into a command")
-// 	}
+    // A V0SerializableCommand knows how to deserialize itself, thanks to the "type" tag
+    public unmarshalJSON(bytes: byte[]): Error {
+        interstitialStruct := struct { //TODO
+            Type      V0CommandType   `json:"type"`
+            ArgsBytes json.RawMessage `json:"args"`
+        }{}
+        // if err := json.Unmarshal(bytes, &interstitialStruct); err != nil {
+        //     return stacktrace.Propagate(err, "An error occurred deserializing the bytes into a command")
+        // }s
+        JSON.parse(bytes, ) //TODO
 
-// 	visitor := newCmdArgDeserializingVisitor(interstitialStruct.ArgsBytes)
-// 	if err := interstitialStruct.Type.AcceptVisitor(visitor); err != nil {
-// 		return stacktrace.Propagate(err, "An error occurred deserializing command with the following JSON:\n%v", string(bytes))
-// 	}
+        // visitor := newCmdArgDeserializingVisitor(interstitialStruct.ArgsBytes)
+        // if err := interstitialStruct.Type.AcceptVisitor(visitor); err != nil {
+        //     return stacktrace.Propagate(err, "An error occurred deserializing command with the following JSON:\n%v", string(bytes))
+        // }
 
-// 	cmd.Type = interstitialStruct.Type
-// 	cmd.ArgsPtr = visitor.GetDeserializedCommandArgs()
+        this.Type = interstitialStruct.Type
+        this.ArgsPtr = visitor.GetDeserializedCommandArgs()
 
-// 	return nil
-// }
+        return null;
+    }
+
+}
 
 
 // // ====================================================================================================
 // //                                   Bulk Commands Package
 // // ====================================================================================================
 
-// type V0BulkCommands struct {
-// 	Commands []V0SerializableCommand `json:"commands"`
-// }
+class V0BulkCommands {
+	Commands []V0SerializableCommand `json:"commands"` //TODO
 }

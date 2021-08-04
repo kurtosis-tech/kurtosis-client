@@ -1,4 +1,5 @@
-import { ExecCommandArgs, GenerateFilesArgs, FileGenerationOptions, LoadStaticFilesArgs } from '../kurtosis_core_rpc_api_bindings/api_container_service_pb';
+import { ExecCommandArgs, GenerateFilesArgs, FileGenerationOptions, LoadStaticFilesArgs, LoadLambdaArgs, ExecuteLambdaArgs, RegisterServiceArgs, StartServiceArgs, RemoveServiceArgs, RepartitionArgs, WaitForEndpointAvailabilityArgs } from '../kurtosis_core_rpc_api_bindings/api_container_service_pb';
+import { LambdaID } from './modules/lambda_context';
 import { ServiceID } from './services/service';
 
 
@@ -37,6 +38,70 @@ export function newGetLoadStaticFilesArgs(serviceId: ServiceID, staticFilesToCop
     for (let staticFildID in staticFilesToCopyStringSet) {
         staticFilesMap.set(staticFildID, staticFilesToCopyStringSet[staticFildID]);
     }
+
+    return result;
+}
+
+// // ====================================================================================================
+// //                                    Bulk Commands
+// // ====================================================================================================
+
+export function newGetEmptyLoadLambdaArgs(): LoadLambdaArgs {
+    const result: LoadLambdaArgs = new LoadLambdaArgs();
+
+    return result;
+}
+
+export function newGetEmptyExecuteLambdaArgs(): ExecuteLambdaArgs {
+    const result: ExecuteLambdaArgs = new ExecuteLambdaArgs();
+
+    return result;
+} 
+
+export function newGetEmptyRegisterServiceArgs(): RegisterServiceArgs {
+    const result: RegisterServiceArgs = new RegisterServiceArgs();
+
+    return result;
+} 
+
+export function newGetEmptyGenerateFileArgs(): GenerateFilesArgs {
+    const result: GenerateFilesArgs = new GenerateFilesArgs();
+
+    return result;
+} 
+
+export function newGetEmptyLoadStaticFilesArgs(): LoadStaticFilesArgs {
+    const result: LoadStaticFilesArgs = new LoadStaticFilesArgs();
+
+    return result;
+}
+
+export function newGetEmptyStartServiceArgs(): StartServiceArgs {
+    const result: StartServiceArgs = new StartServiceArgs();
+
+    return result;
+}
+
+export function newGetEmptyRemoveServiceArgs(): RemoveServiceArgs {
+    const result: RemoveServiceArgs = new RemoveServiceArgs();
+
+    return result;
+}
+
+export function newGetEmptyRepartitionArgs(): RepartitionArgs {
+    const result: RepartitionArgs = new RepartitionArgs();
+
+    return result;
+}
+
+export function newGetEmptyExecCommandArgs(): ExecCommandArgs {
+    const result: ExecCommandArgs = new ExecCommandArgs();
+
+    return result;
+}
+
+export function newGetEmptyWaitForEndpointAvailabilityArgs(): WaitForEndpointAvailabilityArgs {
+    const result: WaitForEndpointAvailabilityArgs = new WaitForEndpointAvailabilityArgs();
 
     return result;
 }
