@@ -78,8 +78,8 @@ class NetworkContext {
     // Docs available at https://docs.kurtosistech.com/kurtosis-libs/lib-documentation
     public registerStaticFiles(staticFileFilepaths: Map<StaticFileID, string>): Error {
         const strSet: Map<string, boolean> = new Map();
-        for (let staticFileId in staticFileFilepaths) {
-            const srcAbsFilepath: string = staticFileFilepaths[staticFileId];
+        for (let [staticFileId, srcAbsFilepath] of staticFileFilepaths.entries()) {
+            //const srcAbsFilepath: string = staticFileFilepaths[staticFileId]; //TODO - remove
             
             // Sanity-check that the source filepath exists
             fs.stat(srcAbsFilepath, (exists) => {
@@ -98,8 +98,8 @@ class NetworkContext {
         // }
         let resp: RegisterStaticFilesResponse; //TODO - remove
         const staticFileDestRelativeFilepathsMap: Map<string, string> = resp.getStaticFileDestRelativeFilepathsMap();
-        for (let staticFileIdStr in staticFileDestRelativeFilepathsMap) {
-            const destFilepathRelativeToEnclaveVolRoot: string = staticFileDestRelativeFilepathsMap[staticFileIdStr];
+        for (let [staticFileIdStr, destFilepathRelativeToEnclaveVolRoot] of staticFileDestRelativeFilepathsMap.entries()) {
+            //const destFilepathRelativeToEnclaveVolRoot: string = staticFileDestRelativeFilepathsMap[staticFileIdStr]; //TODO - remove
 
             const staticFileId: StaticFileID = <StaticFileID>(staticFileIdStr);
 
@@ -138,8 +138,8 @@ class NetworkContext {
     // Docs available at https://docs.kurtosistech.com/kurtosis-libs/lib-documentation
     public registerFilesArtifacts(filesArtifactUrls: Map<FilesArtifactID, string>): Error {
         const filesArtifactIdStrsToUrls: Map<string, string> = new Map();
-        for (let artifactId in filesArtifactUrls) {
-            const url: string = filesArtifactUrls[artifactId];
+        for (let [artifactId, url] of filesArtifactUrls.entries()) {
+            //const url: string = filesArtifactUrls[artifactId]; //TODO - remove
             filesArtifactIdStrsToUrls[String(artifactId)] = url;
         }
         const args: RegisterFilesArtifactsArgs = newRegisterFilesArtifactsArgs(filesArtifactIdStrsToUrls);
@@ -217,15 +217,16 @@ class NetworkContext {
         winston.info("Initializing generated files...");
         const filesToGenerate: Set<string> = new Set(); //TODO - make sure this is correct
         for (let fileId in containerCreationConfig.getFileGeneratingFuncs()) {
-            filesToGenerate[fileId] = true;
+            //filesToGenerate[fileId] = true; //TODO - remove
+            filesToGenerate.add(fileId);
         }
         var [generatedFileFilepaths, err] = serviceContext.generateFiles(filesToGenerate);
         if (err !== null) {
             return [null, null, err ] //TODO - no personalized message
         }
         const generatedFileAbsFilepathsOnService: Map<string, string> = new Map();
-        for (let fileId in containerCreationConfig.getFileGeneratingFuncs()) {
-            const initializingFunc: (fileDescriptorNum: number) => Error = containerCreationConfig.getFileGeneratingFuncs()[fileId];
+        for (let [fileId, initializingFunc] of containerCreationConfig.getFileGeneratingFuncs().entries()) {
+            //const initializingFunc: (fileDescriptorNum: number) => Error = containerCreationConfig.getFileGeneratingFuncs()[fileId]; //TODO - remove
 
             //filepaths, found := generatedFileFilepaths[fileId]
             if (!generatedFileFilepaths.has(fileId)) {
@@ -254,8 +255,8 @@ class NetworkContext {
 
         winston.info("Creating files artifact ID str -> mount dirpaths map...")
         const artifactIdStrToMountDirpath: Map<string, string> = new Map();
-        for (let filesArtifactId in containerCreationConfig.getFilesArtifactMountpoints()) {
-            const mountDirpath: string = containerCreationConfig.getFilesArtifactMountpoints()[filesArtifactId];
+        for (let [filesArtifactId, mountDirpath] of containerCreationConfig.getFilesArtifactMountpoints().entries()) {
+            //const mountDirpath: string = containerCreationConfig.getFilesArtifactMountpoints()[filesArtifactId]; //TODO - remove
 
             artifactIdStrToMountDirpath[String(filesArtifactId)] = mountDirpath;
         }
@@ -358,8 +359,8 @@ class NetworkContext {
         }
 
         const reqPartitionServices: Map<string, PartitionServices> = new Map();
-        for (let partitionId in partitionServices) {
-            const serviceIdSet: Set<ServiceID> = partitionServices[partitionId];
+        for (let [partitionId, serviceIdSet] of partitionServices.entries()) {
+            //const serviceIdSet: Set<ServiceID> = partitionServices[partitionId]; //TODO - remove
 
             const serviceIdStrSet: Set<string> = new Set();
             for (let serviceId in serviceIdSet) {
@@ -370,12 +371,12 @@ class NetworkContext {
         }
 
         const reqPartitionConns: Map<string, PartitionConnections> = new Map();
-        for (let partitionAId in partitionConnections) {
-            const partitionAConnsMap: PartitionConnections = partitionConnections[partitionAId];
+        for (let [partitionAId, partitionAConnsMap] of partitionConnections.entries()) {
+            //const partitionAConnsMap: PartitionConnections = partitionConnections[partitionAId]; //TODO - remove
             
             const partitionAConnsStrMap: Map<string, PartitionConnectionInfo> = new Map();
-            for (let partitionBId in partitionAConnsMap) {
-                const connInfo: PartitionConnectionInfo = partitionAConnsMap[partitionBId];
+            for (let [partitionBId, connInfo] of partitionAConnsMap.entries()) {
+                //const connInfo: PartitionConnectionInfo = partitionAConnsMap[partitionBId]; //TODO - remove
 
                 const partitionBIdStr: string = String(partitionBId);
                 partitionAConnsStrMap[partitionBIdStr] = connInfo;
