@@ -8,6 +8,12 @@
 * Ported over config factory files inside of `services` to typescript
 * Added grpc and google-protobuf to package.json inside of `typescript` folder
 
+### Fixes
+* Updated the build script so that it correctly compiles the typescript files found inside the lib/ directory into one single javascript file 
+
+### Removed
+* `MockService`, which is no longer needed or used now that we've removed the `Service` interface
+
 ### Breaking Changes
 * Made the fields of the `GeneratedFileFilepaths` object private
     * Users should use the new getters - `getAbsoluteFilepathHere` and `getAbsoluteFilepathOnService`
