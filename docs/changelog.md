@@ -1,4 +1,6 @@
 # TBD
+### Features
+* Added our own constructors for each of the Protobuf messages, so that when you add a new field it's harder to forget to add it
 
 # 0.11.0
 ### Changes

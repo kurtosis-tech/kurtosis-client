@@ -8,6 +8,7 @@ package networks
 import (
 	"context"
 	"github.com/kurtosis-tech/kurtosis-client/golang/kurtosis_core_rpc_api_bindings"
+	"github.com/kurtosis-tech/kurtosis-client/golang/lib/binding_constructors"
 	"github.com/kurtosis-tech/kurtosis-client/golang/lib/modules"
 	"github.com/kurtosis-tech/kurtosis-client/golang/lib/services"
 	"github.com/palantir/stacktrace"
@@ -50,11 +51,8 @@ func (networkCtx *NetworkContext) LoadLambda(
 		lambdaId modules.LambdaID,
 		image string,
 		serializedParams string) (*modules.LambdaContext, error) {
-	args := &kurtosis_core_rpc_api_bindings.LoadLambdaArgs{
-		LambdaId:       string(lambdaId),
-		ContainerImage: image,
-		SerializedParams:     serializedParams,
-	}
+	args := binding_constructors.NewLoadLambdaArgs(string(lambdaId), image, serializedParams)
+
 	// We proxy calls to Lambda modules via the API container, so actually no need to use the response here
 	_, err := networkCtx.client.LoadLambda(context.Background(), args)
 	if err != nil {
@@ -66,9 +64,8 @@ func (networkCtx *NetworkContext) LoadLambda(
 
 // Docs available at https://docs.kurtosistech.com/kurtosis-libs/lib-documentation
 func (networkCtx *NetworkContext) GetLambdaContext(lambdaId modules.LambdaID) (*modules.LambdaContext, error) {
-	args := &kurtosis_core_rpc_api_bindings.GetLambdaInfoArgs{
-		LambdaId: string(lambdaId),
-	}
+	args := binding_constructors.NewGetLambdaInfoArgs(string(lambdaId))
+
 	// NOTE: As of 2021-07-18, we actually don't use any of the info that comes back because the LambdaContext doesn't require it!
 	_, err := networkCtx.client.GetLambdaInfo(context.Background(), args)
 	if err != nil {
@@ -89,7 +86,7 @@ func (networkCtx *NetworkContext) RegisterStaticFiles(staticFileFilepaths map[se
 		strSet[string(staticFileId)] = true
 	}
 
-	args := &kurtosis_core_rpc_api_bindings.RegisterStaticFilesArgs{StaticFilesSet: strSet}
+	args := binding_constructors.NewRegisterStaticFilesArgs(strSet)
 	resp, err := networkCtx.client.RegisterStaticFiles(context.Background(), args)
 	if err != nil {
 		return stacktrace.Propagate(err, "An error occurred registering static files: %+v", staticFileFilepaths)
@@ -139,7 +136,7 @@ func (networkCtx *NetworkContext) RegisterFilesArtifacts(filesArtifactUrls map[s
 	for artifactId, url := range filesArtifactUrls {
 		filesArtifactIdStrsToUrls[string(artifactId)] = url
 	}
-	args := &kurtosis_core_rpc_api_bindings.RegisterFilesArtifactsArgs{FilesArtifactUrls: filesArtifactIdStrsToUrls}
+	args := binding_constructors.NewRegisterFilesArtifactArgs(filesArtifactIdStrsToUrls)
 	if _, err := networkCtx.client.RegisterFilesArtifacts(context.Background(), args); err != nil {
 		return stacktrace.Propagate(err, "An error occurred registering files artifacts: %+v", filesArtifactUrls)
 	}
@@ -177,10 +174,7 @@ func (networkCtx *NetworkContext) AddServiceToPartition(
 	ctx := context.Background()
 
 	logrus.Tracef("Registering new service ID with Kurtosis API...")
-	registerServiceArgs := &kurtosis_core_rpc_api_bindings.RegisterServiceArgs{
-		ServiceId:   string(serviceId),
-		PartitionId: string(partitionId),
-	}
+	registerServiceArgs := binding_constructors.NewRegisterServiceArgs(string(serviceId), string(partitionId))
 	registerServiceResp, err := networkCtx.client.RegisterService(ctx, registerServiceArgs)
 	if err != nil {
 		return nil, nil, stacktrace.Propagate(
@@ -269,9 +263,7 @@ func (networkCtx *NetworkContext) AddServiceToPartition(
 
 // Docs available at https://docs.kurtosistech.com/kurtosis-libs/lib-documentation
 func (networkCtx *NetworkContext) GetServiceContext(serviceId services.ServiceID) (*services.ServiceContext, error) {
-	getServiceInfoArgs := &kurtosis_core_rpc_api_bindings.GetServiceInfoArgs{
-		ServiceId: string(serviceId),
-	}
+	getServiceInfoArgs := binding_constructors.NewGetServiceInfoArgs(string(serviceId))
 	serviceResponse, err := networkCtx.client.GetServiceInfo(context.Background(), getServiceInfoArgs)
 	if err != nil {
 		return nil, stacktrace.Propagate(
@@ -307,13 +299,10 @@ func (networkCtx *NetworkContext) GetServiceContext(serviceId services.ServiceID
 func (networkCtx *NetworkContext) RemoveService(serviceId services.ServiceID, containerStopTimeoutSeconds uint64) error {
 
 	logrus.Debugf("Removing service '%v'...", serviceId)
-	args := &kurtosis_core_rpc_api_bindings.RemoveServiceArgs{
-		ServiceId: string(serviceId),
-		// NOTE: This is kinda weird - when we remove a service we can never get it back so having a container
-		//  stop timeout doesn't make much sense. It will make more sense when we can stop/start containers
-		// Independent of adding/removing them from the network
-		ContainerStopTimeoutSeconds: containerStopTimeoutSeconds,
-	}
+	// NOTE: This is kinda weird - when we remove a service we can never get it back so having a container
+	//  stop timeout doesn't make much sense. It will make more sense when we can stop/start containers
+	// Independent of adding/removing them from the network
+	args := binding_constructors.NewRemoveServiceArgs(string(serviceId), containerStopTimeoutSeconds)
 	if _, err := networkCtx.client.RemoveService(context.Background(), args); err != nil {
 		return stacktrace.Propagate(err, "An error occurred removing service '%v' from the network", serviceId)
 	}
@@ -349,9 +338,7 @@ func (networkCtx *NetworkContext) RepartitionNetwork(
 			serviceIdStrPseudoSet[serviceIdStr] = true
 		}
 		partitionIdStr := string(partitionId)
-		reqPartitionServices[partitionIdStr] = &kurtosis_core_rpc_api_bindings.PartitionServices{
-			ServiceIdSet: serviceIdStrPseudoSet,
-		}
+		reqPartitionServices[partitionIdStr] = binding_constructors.NewPartitionServices(serviceIdStrPseudoSet)
 	}
 
 	reqPartitionConns := map[string]*kurtosis_core_rpc_api_bindings.PartitionConnections{}
@@ -361,18 +348,12 @@ func (networkCtx *NetworkContext) RepartitionNetwork(
 			partitionBIdStr := string(partitionBId)
 			partitionAConnsStrMap[partitionBIdStr] = connInfo
 		}
-		partitionAConns := &kurtosis_core_rpc_api_bindings.PartitionConnections{
-			ConnectionInfo: partitionAConnsStrMap,
-		}
+		partitionAConns := binding_constructors.NewPartitionConnections(partitionAConnsStrMap)
 		partitionAIdStr := string(partitionAId)
 		reqPartitionConns[partitionAIdStr] = partitionAConns
 	}
 
-	repartitionArgs := &kurtosis_core_rpc_api_bindings.RepartitionArgs{
-		PartitionServices:    reqPartitionServices,
-		PartitionConnections: reqPartitionConns,
-		DefaultConnection:    defaultConnection,
-	}
+	repartitionArgs := binding_constructors.NewRepartitionArgs(reqPartitionServices, reqPartitionConns, defaultConnection)
 	if _, err := networkCtx.client.Repartition(context.Background(), repartitionArgs); err != nil {
 		return stacktrace.Propagate(err, "An error occurred repartitioning the test network")
 	}
@@ -381,15 +362,15 @@ func (networkCtx *NetworkContext) RepartitionNetwork(
 
 // Docs available at https://docs.kurtosistech.com/kurtosis-libs/lib-documentation
 func (networkCtx *NetworkContext) WaitForEndpointAvailability(serviceId services.ServiceID, port uint32, path string, initialDelaySeconds uint32, retries uint32, retriesDelayMilliseconds uint32, bodyText string) error {
-	availabilityArgs := &kurtosis_core_rpc_api_bindings.WaitForEndpointAvailabilityArgs{
-		ServiceId:                string(serviceId),
-		Port:                     port,
-		Path:                     path,
-		InitialDelaySeconds:      initialDelaySeconds,
-		Retries:                  retries,
-		RetriesDelayMilliseconds: retriesDelayMilliseconds,
-		BodyText:                 bodyText,
-	}
+	availabilityArgs := binding_constructors.NewWaitForEndpointAvailabilityArgs(
+		string(serviceId),
+		port,
+		path,
+		initialDelaySeconds,
+		retries,
+		retriesDelayMilliseconds,
+		bodyText,
+	)
 	if _, err := networkCtx.client.WaitForEndpointAvailability(context.Background(), availabilityArgs); err != nil {
 		return stacktrace.Propagate(
 			err,
@@ -407,10 +388,7 @@ func (networkCtx *NetworkContext) WaitForEndpointAvailability(serviceId services
 
 // Docs available at https://docs.kurtosistech.com/kurtosis-libs/lib-documentation
 func (networkCtx *NetworkContext) ExecuteBulkCommands(bulkCommandsJson string) error {
-
-	args := &kurtosis_core_rpc_api_bindings.ExecuteBulkCommandsArgs{
-		SerializedCommands: bulkCommandsJson,
-	}
+	args := binding_constructors.NewExecuteBulkCommandsArgs(bulkCommandsJson)
 	if _, err := networkCtx.client.ExecuteBulkCommands(context.Background(), args); err != nil {
 		return stacktrace.Propagate(err, "An error occurred executing the following bulk commands: %v", bulkCommandsJson)
 	}
