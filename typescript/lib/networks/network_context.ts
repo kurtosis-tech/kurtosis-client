@@ -82,7 +82,7 @@ class NetworkContext {
         for (let [staticFileId, srcAbsFilepath] of staticFileFilepaths.entries()) {
             
             // Sanity-check that the source filepath exists
-            const filepathExsits: (path: string) => Promise<fs.Stats> = async (path: string) => {
+            const filepathExsits: (path: string) => Promise<fs.Stats> = async (path: string) => { //TODO - attempt at promises, but need to fix this as being done with service_context
                 const stats: fs.Stats = await fsPromises.stat(path);
                 return stats;
             }
@@ -119,7 +119,7 @@ class NetworkContext {
             const srcAbsFilepath: string = staticFileFilepaths[staticFileId];
 
             const destAbsFilepath: string = path.join(this.enclaveDataVolMountpoint, destFilepathRelativeToEnclaveVolRoot);
-            fs.stat(destAbsFilepath, (exists) => {
+            fs.stat(destAbsFilepath, (exists) => { //TODO - Implement necesssary implementation to deal with the callbacks 
                 if (exists !== null) {
                     return new Error("The Kurtosis API asked us to copy static file " + staticFileId + " to path " + destFilepathRelativeToEnclaveVolRoot + 
                     " in the enclave volume which means that an empty file should exist there, " + "but no file exists at that path - this is a bug in Kurtosis!");
