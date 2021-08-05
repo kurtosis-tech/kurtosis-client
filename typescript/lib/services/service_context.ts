@@ -5,7 +5,6 @@ import { StaticFileID } from './container_creation_config';
 import { newGetExecCommandArgs, newGetGenerateFilesArgs, newGetFileGenerationOptions, newGetLoadStaticFilesArgs } from "../constructor_calls";
 import * as grpc from "grpc";
 import * as path from "path";
-import * as util from "util";
 
 
 // Docs available at https://docs.kurtosistech.com/kurtosis-libs/lib-documentation
@@ -66,44 +65,34 @@ class ServiceContext {
     }
 
     // Docs available at https://docs.kurtosistech.com/kurtosis-libs/lib-documentation
-    public execCommand(command: string[]): [number, Uint8Array | string, Error] {
+    public async execCommand(command: string[]): Promise<[number, Uint8Array | string, Error]> { //TODO - need to bubble up async, how would users know to make functions that depend on this async?
         const serviceId: ServiceID = this.serviceId;
         const args: ExecCommandArgs = newGetExecCommandArgs(serviceId, command);
 
-        const execCommand: (args: ExecCommandArgs) => Promise<unknown> = util.promisify(this.client.execCommand); //TODO - unknown?
-        const promise: (args: ExecCommandArgs) => Promise<ExecCommandResponse> = async (args: ExecCommandArgs) => { //TODO (comment) - async funcs bubbling up problem
-            const feature: ExecCommandResponse = await execCommand(args); //TODO - Shouldn't this be ExecCommandResponse, and not be unknown
-            // TODO (above) - fs.readdir example has same format and it returns the second argument of the callback - files ()
-            // TODO (above) - execCommand (args, callback (Error, ExecCommandResponse)) and should return ExecCommandResponse following this logic
-            return feature;
+        const promiseGeneratingFunc: (args: ExecCommandArgs) => Promise<ExecCommandResponse> = async (args: ExecCommandArgs) => {
+            
+            return new Promise((resolve, reject) => {
+                this.client.execCommand(args, (err, response) => {
+                    if (err) {
+                        reject(err);
+                    } else {
+                        resolve(response);
+                    }
+                })
+            });
+
         }
         
         var result: [number, Uint8Array | string, Error];
-        promise(args).then(resp => {
+        promiseGeneratingFunc(args).then(resp => {
             result = [resp.getExitCode(), resp.getLogOutput(), null];
         })
-        promise(args).catch(err => {
-            result = [0, null, err]; //TODO - no personalized error message
+        promiseGeneratingFunc(args).catch(err => {
+            result = [0, null, new Error("An error occurred executing command " + command +  " on service " + serviceId + 
+            "Here is the error message: " + err)]; //TODO - is this error message too complicated?
         })
-        return result; //TODO (comment) - should return promise, but wanted to see if this implementation worked to stay consistent with golang
+        return result;
 
-
-        //TODO TODO TODO - Remove old implementation if current one works
-        //var resp: ExecCommandResponse;
-        //var error: grpc.ServiceError;
-        //
-        // this.client.execCommand(args, function(error, feature){ //
-        //     error = error; 
-        //     resp = feature;
-        // });
-        //
-        // if (error !== null) {
-        //     return [0, null, error]; 
-        //     //(Comment) - no personalized message
-        //     //I was thinking of `new Error("An error occurred executing command " + command +  " on service " + serviceId + 
-        //     //". Here is the error message: " + error)` but don't think this propogates the error as needed, just instantiates an error
-        // }
-        // return [resp.getExitCode(), resp.getLogOutput(), null];
     }
 
     // Docs available at https://docs.kurtosistech.com/kurtosis-libs/lib-documentation

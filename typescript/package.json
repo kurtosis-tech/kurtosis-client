@@ -1,7 +1,6 @@
 {
   "dependencies": {
     "google-protobuf": "^3.17.3",
-    "grpc": "^1.24.11",
-    "util": "^0.12.4"
+    "grpc": "^1.24.11"
   }
 }
