@@ -3,25 +3,22 @@
  * All Rights Reserved.
  */
 
-//package networks
-
-//import (
-	//"context"
+//TODO - potentially change to asterisk since many imports for grpc bindings & constructor calls
 import { ApiContainerServiceClient } from "../..//kurtosis_core_rpc_api_bindings/api_container_service_grpc_pb";
-import { LoadLambdaArgs, GetLambdaInfoArgs, RegisterStaticFilesArgs, RegisterStaticFilesResponse, RegisterFilesArtifactsArgs, PortBinding, RegisterServiceArgs, RegisterServiceResponse, StartServiceArgs, GetServiceInfoArgs, GetServiceInfoResponse, RemoveServiceArgs, PartitionConnectionInfo, PartitionServices, PartitionConnections, RepartitionArgs, WaitForEndpointAvailabilityArgs, ExecuteBulkCommandsArgs, StartServiceResponse } from "../..//kurtosis_core_rpc_api_bindings/api_container_service_pb"; //TODO - potentially change to asterisk since many imports
+import { LoadLambdaArgs, GetLambdaInfoArgs, RegisterStaticFilesArgs, RegisterStaticFilesResponse, RegisterFilesArtifactsArgs, PortBinding, RegisterServiceArgs, RegisterServiceResponse, StartServiceArgs, GetServiceInfoArgs, GetServiceInfoResponse, RemoveServiceArgs, PartitionConnectionInfo, PartitionServices, PartitionConnections, RepartitionArgs, WaitForEndpointAvailabilityArgs, ExecuteBulkCommandsArgs, StartServiceResponse, GetLambdaInfoResponse } from "../..//kurtosis_core_rpc_api_bindings/api_container_service_pb";
 import { LambdaID, LambdaContext } from "../modules/lambda_context";
 import { ServiceID } from "../services/service";
 import { ServiceContext, GeneratedFileFilepaths } from "../services/service_context";
 import { StaticFileID, FilesArtifactID, ContainerCreationConfig } from "../services/container_creation_config"; 
 import { ContainerRunConfig } from "../services/container_run_config";
-import { newGetLoadLambdaArgs, newGetLambdaInfoArgs, newGetRegisterStaticFilesArgs, newGetRegisterFilesArtifactsArgs, newGetRegisterServiceArgs, newGetStartServiceArgs, newGetGetServiceInfoArgs, newGetRemoveServiceArgs, newGetPartitionServices, newGetPartitionConnections, newGetRepartitionArgs, newGetWaitForEndpointAvailabilityArgs, newGetExecuteBulkCommandsArgs } from "../constructor_calls"; //TODO - potentially change to asterisk since many imports
-	//"github.com/palantir/stacktrace" TOOD
+import { newGetLoadLambdaArgs, newGetLambdaInfoArgs, newGetRegisterStaticFilesArgs, newGetRegisterFilesArtifactsArgs, newGetRegisterServiceArgs, newGetStartServiceArgs, newGetGetServiceInfoArgs, newGetRemoveServiceArgs, newGetPartitionServices, newGetPartitionConnections, newGetRepartitionArgs, newGetWaitForEndpointAvailabilityArgs, newGetExecuteBulkCommandsArgs } from "../constructor_calls";
+import { okAsync, errAsync, ResultAsync, Result } from "neverthrow";
 import * as winston from "winston";
 	//"io" //TODO - remove
 import * as path from "path";
 import * as fs from 'fs';
 import * as fsPromises from "fs/promises";
-//)
+import * as grpc from "grpc";
 
 export type PartitionID = string;
 
@@ -48,51 +45,76 @@ class NetworkContext {
     }
 
     // Docs available at https://docs.kurtosistech.com/kurtosis-libs/lib-documentation
-    public loadLambda(
+    public async loadLambda(
             lambdaId: LambdaID,
             image: string,
-            serializedParams: string): [LambdaContext, Error] {
+            serializedParams: string): Promise<[LambdaContext, Error]> {
         const args: LoadLambdaArgs = newGetLoadLambdaArgs(lambdaId, image, serializedParams);
-        // TODO TODO TODO - CALLBACK & ERROR-HANDLING
+        
+        // TODO TODO TODO - CALLBACK & ERROR-HANDLING (REMOVE)
         // // We proxy calls to Lambda modules via the API container, so actually no need to use the response here
         // _, err := networkCtx.client.LoadLambda(context.Background(), args)
         // if err !== nil {
         //     return nil, stacktrace.Propagate(err, "An error occurred loading new module '%v' with image '%v' and serialized params '%v'", lambdaId, image, serializedParams)
         // }
-        const moduleCtx: LambdaContext = new LambdaContext(this.client, lambdaId); //TODO - move to constructor calls?
+
+        const promiseAsync: Promise<ResultAsync<any, Error>> = new Promise((resolve, _unusedReject) => { //TODO - Repeating this promise format a lot, make a function for it?
+            this.client.executeLambda(args, (_unusedError: grpc.ServiceError, response: any) => {
+                resolve(okAsync(response));
+            })
+        });
+        const promise: Result<any, Error> = await promiseAsync;
+        if (!promise.isOk()) {
+            return [null, promise.error];
+        }
+
+        const moduleCtx: LambdaContext = new LambdaContext(this.client, lambdaId);
         return [moduleCtx, null];
     }
 
     // Docs available at https://docs.kurtosistech.com/kurtosis-libs/lib-documentation
-    public getLambdaContext(lambdaId: LambdaID): [LambdaContext, Error] {
+    public async getLambdaContext(lambdaId: LambdaID): Promise<[LambdaContext, Error]> {
         const args: GetLambdaInfoArgs = newGetLambdaInfoArgs(lambdaId);
-        // TODO TODO TODO - CALLBACK & ERROR-HANDLING
+        
+        // TODO TODO TODO - CALLBACK & ERROR-HANDLING (REMOVE)
         // // NOTE: As of 2021-07-18, we actually don't use any of the info that comes back because the LambdaContext doesn't require it!
         // _, err := networkCtx.client.GetLambdaInfo(context.Background(), args)
         // if err !== nil {
         //     return nil, stacktrace.Propagate(err, "An error occurred getting info for Lambda '%v'", lambdaId)
         // }
-        const lambdaCtx: LambdaContext = new LambdaContext(this.client, lambdaId); //TODO - move to constructor calls?
+
+        const promiseAsyncGetLambdaInfo: Promise<ResultAsync<GetLambdaInfoResponse, Error>> = new Promise((resolve, _unusedReject) => {
+            this.client.getLambdaInfo(args, (_unusedError: grpc.ServiceError, response: GetLambdaInfoResponse) => {
+                resolve(okAsync(response));
+            })
+        });
+        const promiseGetLambdaInfo: Result<GetLambdaInfoResponse, Error> = await promiseAsyncGetLambdaInfo;
+        if (!promiseGetLambdaInfo.isOk()) {
+            return [null, promiseGetLambdaInfo.error];
+        }
+
+        const lambdaCtx: LambdaContext = new LambdaContext(this.client, lambdaId);
         return [lambdaCtx, null];
     }
 
     // Docs available at https://docs.kurtosistech.com/kurtosis-libs/lib-documentation
-    public registerStaticFiles(staticFileFilepaths: Map<StaticFileID, string>): Error {
+    public async registerStaticFiles(staticFileFilepaths: Map<StaticFileID, string>): Promise<Error> {
         const strSet: Map<string, boolean> = new Map();
         for (let [staticFileId, srcAbsFilepath] of staticFileFilepaths.entries()) {
             
             // Sanity-check that the source filepath exists
-            const filepathExsits: (path: string) => Promise<fs.Stats> = async (path: string) => { //TODO - attempt at promises, but need to fix this as being done with service_context
-                const stats: fs.Stats = await fsPromises.stat(path);
-                return stats;
-            }
-
-            filepathExsits(srcAbsFilepath).catch( err => {
-                return new Error("Source filepath " + srcAbsFilepath + " associated with static file " + staticFileId + " doesn't exist");
+            const promiseAsyncSrcAbsFilepath: Promise<ResultAsync<fs.Stats, Error>> = new Promise((resolve, _unusedReject) => {
+                fs.stat(srcAbsFilepath, (_unusedError: Error, response: fs.Stats) => { //TODO - should I be using fsPromises.stat() instead, I personally want to remain consistent with manually constructing promises
+                    resolve(okAsync(response));
+                })
             });
+            const promiseSrcAbsFilepath: Result<fs.Stats, Error> = await promiseAsyncSrcAbsFilepath;
+            if (!promiseSrcAbsFilepath.isOk()) {
+                return new Error("Source filepath " + srcAbsFilepath + " associated with static file " + staticFileId + " doesn't exist");;
+            }
             strSet[String(staticFileId)] = true;
 
-            //TODO TODO TODO - Remove
+            //TODO TODO TODO - REMOVE
             // fs.stat(srcAbsFilepath, (exists) => { //TODO - error returned inside function, not inside `registerStaticFiles`
             //     if (exists !== null) {
             //         return new Error("Source filepath " + srcAbsFilepath + " associated with static file " + staticFileId + " doesn't exist");
@@ -102,12 +124,24 @@ class NetworkContext {
         }
 
         const args: RegisterStaticFilesArgs = newGetRegisterStaticFilesArgs(strSet);
-        // TODO TODO TODO - CALLBACK & ERROR-HANDLING
+        
+        // TODO TODO TODO - CALLBACK & ERROR-HANDLING (REMOVE)
         // resp, err := networkCtx.client.RegisterStaticFiles(context.Background(), args)
         // if err !== nil {
         //     return stacktrace.Propagate(err, "An error occurred registering static files: %+v", staticFileFilepaths)
         // }
-        let resp: RegisterStaticFilesResponse; //TODO - remove
+
+        const promiseAsyncRegisterStaticFiles: Promise<ResultAsync<RegisterStaticFilesResponse, Error>> = new Promise((resolve, _unusedReject) => {
+            this.client.registerStaticFiles(args, (_unusedError: grpc.ServiceError, response: RegisterStaticFilesResponse) => {
+                resolve(okAsync(response));
+            })
+        });
+        const promiseRegisterStaticFiles: Result<RegisterStaticFilesResponse, Error> = await promiseAsyncRegisterStaticFiles;
+        if (!promiseRegisterStaticFiles.isOk()) {
+            return promiseRegisterStaticFiles.error;
+        }
+        const resp: RegisterStaticFilesResponse = promiseRegisterStaticFiles.value;
+
         const staticFileDestRelativeFilepathsMap: Map<string, string> = resp.getStaticFileDestRelativeFilepathsMap();
         for (let [staticFileIdStr, destFilepathRelativeToEnclaveVolRoot] of staticFileDestRelativeFilepathsMap.entries()) {
 
@@ -119,15 +153,20 @@ class NetworkContext {
             const srcAbsFilepath: string = staticFileFilepaths[staticFileId];
 
             const destAbsFilepath: string = path.join(this.enclaveDataVolMountpoint, destFilepathRelativeToEnclaveVolRoot);
-            fs.stat(destAbsFilepath, (exists) => { //TODO - Implement necesssary implementation to deal with the callbacks 
-                if (exists !== null) {
-                    return new Error("The Kurtosis API asked us to copy static file " + staticFileId + " to path " + destFilepathRelativeToEnclaveVolRoot + 
-                    " in the enclave volume which means that an empty file should exist there, " + "but no file exists at that path - this is a bug in Kurtosis!");
-                }
-            })
-            //TODO TODO TODO
+            
+            const promiseAsyncDestAbsFilepath: Promise<ResultAsync<fs.Stats, Error>> = new Promise((resolve, _unusedReject) => {
+                fs.stat(destAbsFilepath, (_unusedError: Error, response: fs.Stats) => { //TODO
+                    resolve(okAsync(response));
+                })
+            });
+            const promiseDestAbsFilepath: Result<fs.Stats, Error> = await promiseAsyncDestAbsFilepath;
+            if (!promiseDestAbsFilepath.isOk()) {
+                return new Error("The Kurtosis API asked us to copy static file " + staticFileId + " to path " + destFilepathRelativeToEnclaveVolRoot + 
+                " in the enclave volume which means that an empty file should exist there, " + "but no file exists at that path - this is a bug in Kurtosis!");
+            }
+            
+            //TODO TODO TODO - REMOVE
             // srcFp, err := os.Open(srcAbsFilepath) TODO => fs.open(srcAbsFilepath, 'r', ) (fs.open)
-            // srcFp, err := os.Open(srcAbsFilepath)
             // if err !== nil {
             //     return stacktrace.Propagate(err, "An error occurred opening static file '%v' source file '%v' for reading", staticFileId, srcAbsFilepath)
             // }
@@ -143,55 +182,109 @@ class NetworkContext {
             //     return stacktrace.Propagate(err, "An error occurred copying all the bytes from static file '%v' source filepath '%v' to destination filepath '%v'", staticFileId, srcAbsFilepath, destAbsFilepath)
             // }
 
+            var srcFp: number;
+            var destFp: number;
+            try { //TODO (comment) - finally block meant to duplicate defer functionality
+                
+                const promiseAsyncSrcFp: Promise<ResultAsync<number, Error>> = new Promise((resolve, _unusedReject) => {
+                    fs.open(srcAbsFilepath, 'r', (_unusedError: Error, response: number) => { //TODO + change response to "fd" for example?
+                        resolve(okAsync(response));
+                    })
+                });
+                const promiseSrcFp: Result<number, Error> = await promiseAsyncSrcFp;
+                if (!promiseSrcFp.isOk()) {
+                    return promiseSrcFp.error;
+                }
+                srcFp = promiseSrcFp.value;
+
+                const promiseAsyncDestFp: Promise<ResultAsync<number, Error>> = new Promise((resolve, _unusedReject) => {
+                    fs.open(destAbsFilepath, 'w', (_unusedError: Error, response: number) => {
+                        resolve(okAsync(response));
+                    })
+                });
+                const promiseDestFp: Result<number, Error> = await promiseAsyncDestFp;
+                if (!promiseDestFp.isOk()) {
+                    return promiseDestFp.error;
+                }
+                destFp = promiseDestFp.value;
+    
+                const promiseAsyncCopyFile: Promise<ResultAsync<number, Error>> = new Promise((_unUsedresolve, reject) => {
+                    fs.copyFile(srcAbsFilepath, destAbsFilepath, (error: Error) => {
+                        reject(errAsync(error)); //TOOD - doubts with what is done here
+                    })
+                });
+                const promiseCopyFile: Result<number, Error> = await promiseAsyncCopyFile;
+                if (promiseCopyFile.isErr()) {
+                    return promiseCopyFile.error;
+                }
+            }   
+            finally {
+                fs.close(srcFp);
+                fs.close(destFp)
+            }
+
         }
         return null;
     }
 
     // Docs available at https://docs.kurtosistech.com/kurtosis-libs/lib-documentation
-    public registerFilesArtifacts(filesArtifactUrls: Map<FilesArtifactID, string>): Error {
+    public async registerFilesArtifacts(filesArtifactUrls: Map<FilesArtifactID, string>): Promise<Error> {
         const filesArtifactIdStrsToUrls: Map<string, string> = new Map();
         for (let [artifactId, url] of filesArtifactUrls.entries()) {
             filesArtifactIdStrsToUrls[String(artifactId)] = url;
         }
         const args: RegisterFilesArtifactsArgs = newGetRegisterFilesArtifactsArgs(filesArtifactIdStrsToUrls);
-        // TODO TODO TODO - CALLBACK & ERROR-HANDLING
+        
+        // TODO TODO TODO - CALLBACK & ERROR-HANDLING (REMOVE)
         // if _, err := networkCtx.client.RegisterFilesArtifacts(context.Background(), args); err !== nil {
         //     return stacktrace.Propagate(err, "An error occurred registering files artifacts: %+v", filesArtifactUrls)
         // }
+
+        const promiseAsyncRegisterFilesArtifacts: Promise<ResultAsync<any, Error>> = new Promise((resolve, _unusedReject) => { //TODO
+            this.client.registerFilesArtifacts(args, (_unusedError: grpc.ServiceError, response: any) => {
+                resolve(okAsync(response));
+            })
+        });
+        const promiseRegisterFilesArtifacts: Result<any, Error> = await promiseAsyncRegisterFilesArtifacts;
+        if (!promiseRegisterFilesArtifacts.isOk()) {
+            return promiseRegisterFilesArtifacts.error;
+        }
+
         return null;
     }
 
     // Docs available at https://docs.kurtosistech.com/kurtosis-libs/lib-documentation
-    public addService(
+    public async addService(
         serviceId: ServiceID,
         containerCreationConfig: ContainerCreationConfig,
         generateRunConfigFunc: (ipAddr: string, generatedFileFilepaths: Map<string, string>, staticFileFilepaths: Map<StaticFileID, string>) => [ContainerRunConfig, Error]
-    ): [ServiceContext, Map<string, PortBinding>, Error] {
+    ): Promise<[ServiceContext, Map<string, PortBinding>, Error]> {
 
-        const [serviceContext, hostPortBindings, err] = this.addServiceToPartition(
+        const [serviceContext, hostPortBindings, err] = await this.addServiceToPartition(
             serviceId,
             defaultPartitionId,
             containerCreationConfig,
             generateRunConfigFunc,
             )
         if (err !== null) {
-            return [null, null, err] //TODO no personalized error message
+            return [null, null, err]
         }
 
         return [serviceContext, hostPortBindings, null]
     }
 
     // Docs available at https://docs.kurtosistech.com/kurtosis-libs/lib-documentation
-    public addServiceToPartition(
+    public async addServiceToPartition(
         serviceId: ServiceID,
         partitionId: PartitionID,
         containerCreationConfig: ContainerCreationConfig,
         generateRunConfigFunc: (ipAddr: string, generatedFileFilepaths: Map<string, string>, staticFileFilepaths: Map<StaticFileID, string>) => [ContainerRunConfig, Error],
-    ): [ServiceContext, Map<string, PortBinding>, Error] {
+    ): Promise<[ServiceContext, Map<string, PortBinding>, Error]> {
 
         winston.info("Registering new service ID with Kurtosis API..."); //TODO logrus.Trace is meant for something for low level, but I could find winston.info to be closest to this
         const registerServiceArgs: RegisterServiceArgs = newGetRegisterServiceArgs(serviceId, partitionId);
-        // TODO TODO TODO - CALLBACK & ERROR-HANDLING
+        
+        // TODO TODO TODO - CALLBACK & ERROR-HANDLING (Remove)
         // registerServiceResp, err := networkCtx.client.RegisterService(ctx, registerServiceArgs)
         // if err !== nil {
         //     return nil, nil, stacktrace.Propagate(
@@ -199,7 +292,18 @@ class NetworkContext {
         //         "An error occurred registering service with ID '%v' with the Kurtosis API",
         //         serviceId)
         // }
-        let registerServiceResp: RegisterServiceResponse; //TODO - remove
+
+        const promiseAsyncRegisterService: Promise<ResultAsync<RegisterServiceResponse, Error>> = new Promise((resolve, _unusedReject) => { //TODO
+            this.client.registerService(registerServiceArgs, (_unusedError: grpc.ServiceError, response: RegisterServiceResponse) => {
+                resolve(okAsync(response));
+            })
+        });
+        const promiseRegisterService: Result<RegisterServiceResponse, Error> = await promiseAsyncRegisterService;
+        if (!promiseRegisterService.isOk()) {
+            return [null, null, promiseRegisterService.error];
+        }
+        const registerServiceResp: RegisterServiceResponse = promiseRegisterService.value;
+
         const serviceIpAddr = registerServiceResp.getIpAddr();
 
         const serviceContext: ServiceContext = new ServiceContext(
@@ -219,7 +323,7 @@ class NetworkContext {
         }
         var [staticFileAbsFilepathsOnService, err] = serviceContext.loadStaticFiles(usedStaticFiles);
         if (err !== null) {
-            return [ null, null, err ]; //TODO - no personalized message
+            return [ null, null, err];
         }
         winston.info("Successfully loaded static files");
 
@@ -231,19 +335,17 @@ class NetworkContext {
         }
         var [generatedFileFilepaths, err] = serviceContext.generateFiles(filesToGenerate);
         if (err !== null) {
-            return [null, null, err ] //TODO - no personalized message
+            return [null, null, err];
         }
         const generatedFileAbsFilepathsOnService: Map<string, string> = new Map();
         for (let [fileId, initializingFunc] of containerCreationConfig.getFileGeneratingFuncs().entries()) {
 
             if (!generatedFileFilepaths.has(fileId)) {
-                return [null, null, err ] //TODO - no personalize message
-                    //"Needed to initialize file for file ID '%v', but no generated file filepaths were found for that file ID; this is a Kurtosis bug",
-                    //fileId)]
+                return [null, null, err];
             }
-            //TODO - make sure to add a case after the ! (check other files for this)
             const filepaths: GeneratedFileFilepaths = generatedFileFilepaths[fileId];
-            // TODO TODO TODO 
+
+            // TODO TODO TODO - Remove
             // fp, err := os.Create(filepaths.GetAbsoluteFilepathHere())
             // if err !== nil {
             //     return nil, nil, stacktrace.Propagate(err, "An error occurred opening file pointer for file '%v'", fileId)
@@ -251,13 +353,29 @@ class NetworkContext {
             // if err := initializingFunc(fp); err !== nil {
             //     return nil, nil, stacktrace.Propagate(err, "The function to initialize file with ID '%v' returned an error", fileId)
             // }
+
+            const promiseAsyncFp: Promise<ResultAsync<number, Error>> = new Promise((resolve, _unusedReject) => {
+                fs.open(filepaths.getAbsoluteFilepathHere(), 'r', (_unusedError: Error, response: number) => { //TODO - is 'r' the correct mode?; shouldn't I be closing the file (like `defer fp.close()`)
+                    resolve(okAsync(response));
+                })
+            });
+            const promiseFp: Result<number, Error> = await promiseAsyncFp;
+            if (!promiseFp.isOk()) {
+                return [null, null, promiseFp.error];
+            }
+            const fp: number = promiseFp.value;
+            var err = initializingFunc(promiseFp.value);
+            if (err != null){
+                return [null, null, err];
+            }
+
             generatedFileAbsFilepathsOnService[fileId] = filepaths.getAbsoluteFilepathOnServiceContainer();
         }
         winston.info("Successfully initialized generated files in suite execution volume")
 
         var [containerRunConfig, err] = generateRunConfigFunc(serviceIpAddr, generatedFileAbsFilepathsOnService, staticFileAbsFilepathsOnService);
         if (err !== null) {
-            return [null, null, err] //TODO - no personalized message
+            return [null, null, err];
         }
 
         winston.info("Creating files artifact ID str -> mount dirpaths map...")
@@ -278,21 +396,34 @@ class NetworkContext {
             containerRunConfig.getEnvironmentVariableOverrides(),
             containerCreationConfig.getKurtosisVolumeMountpoint(),
             artifactIdStrToMountDirpath);
-        //TODO TODO TODO - CALLBACK & ERROR-HANDLING
+
+        //TODO TODO TODO - CALLBACK & ERROR-HANDLING (REMOVE)
         // resp, err := this.client.StartService(ctx, startServiceArgs)
         // if err !== nil {
         //     return nil, nil, stacktrace.Propagate(err, "An error occurred starting the service with the Kurtosis API")
         // }
+
+        const promiseAsyncStartService: Promise<ResultAsync<StartServiceResponse, Error>> = new Promise((resolve, _unusedReject) => {
+            this.client.startService(startServiceArgs, (_unusedError: Error, response: StartServiceResponse) => {
+                resolve(okAsync(response));
+            })
+        });
+        const promiseStartService: Result<StartServiceResponse, Error> = await promiseAsyncStartService;
+        if (!promiseStartService.isOk()) {
+            return [null, null, promiseStartService.error];
+        }
+
         winston.info("Successfully started service with Kurtosis API");
 
-        let resp: StartServiceResponse; //TODO - remove
+        const resp: StartServiceResponse = promiseStartService.value;
         return [serviceContext, resp.getUsedPortsHostPortBindingsMap(), null]
     }
 
     // Docs available at https://docs.kurtosistech.com/kurtosis-libs/lib-documentation
-    public getServiceContext(serviceId: ServiceID): [ServiceContext, Error] {
+    public async getServiceContext(serviceId: ServiceID): Promise<[ServiceContext, Error]> {
         const getServiceInfoArgs: GetServiceInfoArgs = newGetGetServiceInfoArgs(serviceId);
-        //TODO TODO TODO - CALLBACK & ERROR-HANDLING
+        
+        //TODO TODO TODO - CALLBACK & ERROR-HANDLING (REMOVE)
         // serviceResponse, err := networkCtx.client.GetServiceInfo(context.Background(), getServiceInfoArgs)
         // if err !== nil {
         //     return nil, stacktrace.Propagate(
@@ -300,7 +431,18 @@ class NetworkContext {
         //         "An error occurred when trying to get info for service '%v'",
         //         serviceId)
         // }
-        let serviceResponse: GetServiceInfoResponse; //TODO - Remove
+
+        const promiseAsyncGetServiceInfo: Promise<ResultAsync<GetServiceInfoResponse, Error>> = new Promise((resolve, _unusedReject) => {
+            this.client.getServiceInfo(getServiceInfoArgs, (_unusedError: Error, response: GetServiceInfoResponse) => {
+                resolve(okAsync(response));
+            })
+        });
+        const promiseGetServiceInfo: Result<GetServiceInfoResponse, Error> = await promiseAsyncGetServiceInfo;
+        if (!promiseGetServiceInfo.isOk()) {
+            return [null, promiseGetServiceInfo.error];
+        }
+
+        const serviceResponse: GetServiceInfoResponse = promiseGetServiceInfo.value;
         if (serviceResponse.getIpAddr() === "") {
             return [null, new Error(
                 "Kurtosis API reported an empty IP address for service " + serviceId +  " - this should never happen, and is a bug with Kurtosis!",
@@ -328,7 +470,7 @@ class NetworkContext {
     }
 
     // Docs available at https://docs.kurtosistech.com/kurtosis-libs/lib-documentation
-    public removeService(serviceId: ServiceID, containerStopTimeoutSeconds: number): Error {
+    public async removeService(serviceId: ServiceID, containerStopTimeoutSeconds: number): Promise<Error> {
 
         winston.debug("Removing service '%v'...", serviceId)
         // NOTE: This is kinda weird - when we remove a service we can never get it back so having a container
@@ -336,10 +478,20 @@ class NetworkContext {
         // Independent of adding/removing them from the network
         const args: RemoveServiceArgs = newGetRemoveServiceArgs(serviceId, containerStopTimeoutSeconds);
         
-        // TODO TODO TODO - CALLBACK & ERROR-HANDLING
+        // TODO TODO TODO - CALLBACK & ERROR-HANDLING (REMOVE)
         // if _, err := networkCtx.client.RemoveService(context.Background(), args); err !== nil {
         //     return stacktrace.Propagate(err, "An error occurred removing service '%v' from the network", serviceId)
         // }
+
+        const promiseAsyncRemoveService: Promise<ResultAsync<any, Error>> = new Promise((resolve, _unusedReject) => {
+            this.client.removeService(args, (_unusedError: Error, response: any) => {
+                resolve(okAsync(response));
+            })
+        });
+        const promiseRemoveService: Result<any, Error> = await promiseAsyncRemoveService;
+        if (!promiseRemoveService.isOk()) {
+            return promiseRemoveService.error;
+        }
 
         winston.debug("Successfully removed service ID %v", serviceId)
 
@@ -347,10 +499,10 @@ class NetworkContext {
     }
 
     // Docs available at https://docs.kurtosistech.com/kurtosis-libs/lib-documentation
-    public repartitionNetwork(
+    public async repartitionNetwork(
         partitionServices: Map<PartitionID, Set<ServiceID>>,
         partitionConnections: Map<PartitionID, Map<PartitionID, PartitionConnectionInfo>>,
-        defaultConnection: PartitionConnectionInfo): Error {
+        defaultConnection: PartitionConnectionInfo): Promise<Error> {
 
         if (partitionServices === null) {
             return new Error("Partition services map cannot be nil");
@@ -391,22 +543,33 @@ class NetworkContext {
 
         const repartitionArgs: RepartitionArgs = newGetRepartitionArgs(reqPartitionServices, reqPartitionConns, defaultConnection);
 
-        // TODO TODO TODO - CALLBACK & ERROR-HANDLING
+        // TODO TODO TODO - CALLBACK & ERROR-HANDLING (REMOVE)
         // if _, err := networkCtx.client.Repartition(context.Background(), repartitionArgs); err !== nil {
         //     return stacktrace.Propagate(err, "An error occurred repartitioning the test network")
         // }
+
+        const promiseAsyncRepartition: Promise<ResultAsync<any, Error>> = new Promise((resolve, _unusedReject) => {
+            this.client.repartition(repartitionArgs, (_unusedError: Error, response: any) => {
+                resolve(okAsync(response));
+            })
+        });
+        const promiseRepartition: Result<any, Error> = await promiseAsyncRepartition;
+        if (!promiseRepartition.isOk()) {
+            return promiseRepartition.error;
+        }
+
         return null;
     }
 
     // Docs available at https://docs.kurtosistech.com/kurtosis-libs/lib-documentation
-    public waitForEndpointAvailability(
+    public async waitForEndpointAvailability(
         serviceId: ServiceID,
         port: number, 
         path: string, 
         initialDelaySeconds: number, 
         retries: number, 
         retriesDelayMilliseconds: number, 
-        bodyText: string): Error {
+        bodyText: string): Promise<Error> {
         const availabilityArgs: WaitForEndpointAvailabilityArgs = newGetWaitForEndpointAvailabilityArgs(
             serviceId,
             port,
@@ -416,7 +579,7 @@ class NetworkContext {
             retriesDelayMilliseconds,
             bodyText);
 
-        //TODO TODO TODO - CALLBACK & ERROR-HANDLING
+        //TODO TODO TODO - CALLBACK & ERROR-HANDLING (REMOVE)
         // if _, err := networkCtx.client.WaitForEndpointAvailability(context.Background(), availabilityArgs); err !== nil {
         //     return stacktrace.Propagate(
         //         err,
@@ -429,18 +592,39 @@ class NetworkContext {
         //     )
         // }
 
+        const promiseAsyncWaitForEndpointAvailability: Promise<ResultAsync<any, Error>> = new Promise((resolve, _unusedReject) => {
+            this.client.waitForEndpointAvailability(availabilityArgs, (_unusedError: Error, response: any) => {
+                resolve(okAsync(response));
+            })
+        });
+        const promiseWaitForEndpointAvailability: Result<any, Error> = await promiseAsyncWaitForEndpointAvailability;
+        if (!promiseWaitForEndpointAvailability.isOk()) {
+            return promiseWaitForEndpointAvailability.error;
+        }
+
         return null;
     }
 
     // Docs available at https://docs.kurtosistech.com/kurtosis-libs/lib-documentation
-    public executeBulkCommands(bulkCommandsJson: string): Error {
+    public async executeBulkCommands(bulkCommandsJson: string): Promise<Error> {
 
         const args: ExecuteBulkCommandsArgs = newGetExecuteBulkCommandsArgs(bulkCommandsJson);
         
-        //
+        // TODO TODO TODO - CALLBACK & ERROR-HANDLING (REMOVE)
         // if _, err := networkCtx.client.ExecuteBulkCommands(context.Background(), args); err !== nil {
         //     return stacktrace.Propagate(err, "An error occurred executing the following bulk commands: %v", bulkCommandsJson)
         // }
+
+        const promiseAsyncExecuteBulkCommands: Promise<ResultAsync<any, Error>> = new Promise((resolve, _unusedReject) => {
+            this.client.executeBulkCommands(args, (_unusedError: Error, response: any) => {
+                resolve(okAsync(response));
+            })
+        });
+        const promiseExecuteBulkCommands: Result<any, Error> = await promiseAsyncExecuteBulkCommands;
+        if (!promiseExecuteBulkCommands.isOk()) {
+            return promiseExecuteBulkCommands.error;
+        }
+
         return null
     }
 }
