@@ -1,12 +1,8 @@
-//package modules
-
-// import (
-// 	"context"
 import { ApiContainerServiceClient } from "../..//kurtosis_core_rpc_api_bindings/api_container_service_grpc_pb";
 import { ExecuteLambdaArgs, ExecuteLambdaResponse } from "../../kurtosis_core_rpc_api_bindings/api_container_service_pb";
-import { newExecuteLambdaArgs } from "../constructor_calls";
-// 	"github.com/palantir/stacktrace"
-// )
+import { newGetExecuteLambdaArgs } from "../constructor_calls";
+import { okAsync, ResultAsync, Result } from "neverthrow";
+import * as grpc from "grpc";
 
 export type LambdaID = string;
 
@@ -21,14 +17,22 @@ export class LambdaContext {
     }
 
     // Docs available at https://docs.kurtosistech.com/kurtosis-libs/lib-documentation
-    public execute(serializedParams: string): [string, Error] {
-        const args: ExecuteLambdaArgs = newExecuteLambdaArgs(this.lambdaId, serializedParams);
-        // TODO TODO TODO - CALLBACK & ERROR-HANDLING
-        // resp, err := moduleCtx.client.ExecuteLambda(context.Background(), args)
-        // if err != nil {
-        //     return "", stacktrace.Propagate(err, "An error occurred executing Lambda '%v'", moduleCtx.lambdaId)
-        // }
-        let resp: ExecuteLambdaResponse; //TODO - remove
-        return [resp.getSerializedResult(), null];
+    public async execute(serializedParams: string): Promise<[string, Error]> {
+        const args: ExecuteLambdaArgs = newGetExecuteLambdaArgs(this.lambdaId, serializedParams);
+
+        const promiseAsync: Promise<ResultAsync<ExecuteLambdaResponse, Error>> = new Promise((resolve, _unusedReject) => {
+            this.client.executeLambda(args, (_unusedError: grpc.ServiceError, response: ExecuteLambdaResponse) => {
+                resolve(okAsync(response));
+            })
+        });
+
+        const promise: Result<ExecuteLambdaResponse, Error> = await promiseAsync;
+
+        if (!promise.isOk()) {
+            return [null, promise.error];
+        } else {
+            const resp: ExecuteLambdaResponse = promise.value;
+            return [resp.getSerializedResult(), null];
+        }
     }
 }
