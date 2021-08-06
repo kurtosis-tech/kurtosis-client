@@ -138,7 +138,7 @@ class ServiceContext {
     }
 
     // Docs available at https://docs.kurtosistech.com/kurtosis-libs/lib-documentation
-    public async loadStaticFiles(usedStaticFilesSet: Set<StaticFileID>): Promise<[Map<StaticFileID, string>, Error]> { 
+    public async loadStaticFiles(usedStaticFilesSet: Set<StaticFileID>): Promise<Result<Map<StaticFileID, string>, Error>> { 
         const serviceId: ServiceID = this.serviceId;
         const staticFilesToCopyStringSet: Map<string, boolean> = new Map(); 
         for (let staticFileId in usedStaticFilesSet) {
@@ -147,18 +147,22 @@ class ServiceContext {
 
         const loadStaticFilesArgs: LoadStaticFilesArgs = newGetLoadStaticFilesArgs(serviceId, staticFilesToCopyStringSet);
         
-        const promiseAsync: Promise<ResultAsync<LoadStaticFilesResponse, Error>> = new Promise((resolve, _unusedReject) => {
-            this.client.loadStaticFiles(loadStaticFilesArgs, (_unusedError: grpc.ServiceError, response: LoadStaticFilesResponse) => {
-                resolve(okAsync(response));
+        const promiseLoadStaticFiles: Promise<ResultAsync<LoadStaticFilesResponse, Error>> = new Promise((resolve, _unusedReject) => {
+            this.client.loadStaticFiles(loadStaticFilesArgs, (error: grpc.ServiceError, response: LoadStaticFilesResponse) => {
+                if (error) {
+                    resolve(errAsync(error));
+                } else {
+                    resolve(okAsync(response));
+                }
             })
         });
 
-        const promise: Result<LoadStaticFilesResponse, Error> = await promiseAsync;
+        const resultLoadStaticFiles: Result<LoadStaticFilesResponse, Error> = await promiseLoadStaticFiles;
 
-        if (!promise.isOk()) {
-            return [null, promise.error];
+        if (!resultLoadStaticFiles.isOk()) {
+            return err(resultLoadStaticFiles.error);
         }
-        const loadStaticFilesResp: LoadStaticFilesResponse = promise.value;
+        const loadStaticFilesResp: LoadStaticFilesResponse = resultLoadStaticFiles.value;
 
         const staticFileAbsFilepathsOnService: Map<StaticFileID, string> = new Map();
         for (let staticFileId in loadStaticFilesResp.getCopiedStaticFileRelativeFilepathsMap()) {
@@ -166,7 +170,7 @@ class ServiceContext {
             const absFilepathOnContainer: string = path.join(this.enclaveDataVolMountpointOnServiceContainer, filepathRelativeToExVolRoot)
             staticFileAbsFilepathsOnService[<StaticFileID>(staticFileId)] = absFilepathOnContainer;
         }
-        return [staticFileAbsFilepathsOnService, null] 
+        return ok(staticFileAbsFilepathsOnService);
 
     }
 }
