@@ -14,7 +14,6 @@ import { ContainerRunConfig } from "../services/container_run_config";
 import { newGetLoadLambdaArgs, newGetLambdaInfoArgs, newGetRegisterStaticFilesArgs, newGetRegisterFilesArtifactsArgs, newGetRegisterServiceArgs, newGetStartServiceArgs, newGetGetServiceInfoArgs, newGetRemoveServiceArgs, newGetPartitionServices, newGetPartitionConnections, newGetRepartitionArgs, newGetWaitForEndpointAvailabilityArgs, newGetExecuteBulkCommandsArgs } from "../constructor_calls";
 import { okAsync, errAsync, ResultAsync, Result } from "neverthrow";
 import * as winston from "winston";
-	//"io" //TODO - remove
 import * as path from "path";
 import * as fs from 'fs';
 import * as fsPromises from "fs/promises";
@@ -115,7 +114,7 @@ class NetworkContext {
             strSet[String(staticFileId)] = true;
 
             //TODO TODO TODO - REMOVE
-            // fs.stat(srcAbsFilepath, (exists) => { //TODO - error returned inside function, not inside `registerStaticFiles`
+            // fs.stat(srcAbsFilepath, (exists) => {
             //     if (exists !== null) {
             //         return new Error("Source filepath " + srcAbsFilepath + " associated with static file " + staticFileId + " doesn't exist");
             //     } 
@@ -166,19 +165,19 @@ class NetworkContext {
             }
             
             //TODO TODO TODO - REMOVE
-            // srcFp, err := os.Open(srcAbsFilepath) TODO => fs.open(srcAbsFilepath, 'r', ) (fs.open)
+            // srcFp, err := os.Open(srcAbsFilepath)
             // if err !== nil {
             //     return stacktrace.Propagate(err, "An error occurred opening static file '%v' source file '%v' for reading", staticFileId, srcAbsFilepath)
             // }
-            // defer srcFp.Close() TODO => (fs.Close)
+            // defer srcFp.Close()
 
-            // destFp, err := os.Create(destAbsFilepath) TODO => (fs.createReadStream maybe)
+            // destFp, err := os.Create(destAbsFilepath)
             // if err !== nil {
             //     return stacktrace.Propagate(err, "An error occurred opening static file '%v' destination file '%v' for writing", staticFileId, destAbsFilepath)
             // }
-            // defer destFp.Close() TODO => (fs.Close)
+            // defer destFp.Close()
 
-            // if _, err := io.Copy(destFp, srcFp); err !== nil { TODO => (fs.copyFile)
+            // if _, err := io.Copy(destFp, srcFp); err !== nil {
             //     return stacktrace.Propagate(err, "An error occurred copying all the bytes from static file '%v' source filepath '%v' to destination filepath '%v'", staticFileId, srcAbsFilepath, destAbsFilepath)
             // }
 
@@ -265,12 +264,12 @@ class NetworkContext {
             defaultPartitionId,
             containerCreationConfig,
             generateRunConfigFunc,
-            )
+        );
         if (err !== null) {
-            return [null, null, err]
+            return [null, null, err];
         }
 
-        return [serviceContext, hostPortBindings, null]
+        return [serviceContext, hostPortBindings, null];
     }
 
     // Docs available at https://docs.kurtosistech.com/kurtosis-libs/lib-documentation
@@ -323,14 +322,13 @@ class NetworkContext {
         }
         var [staticFileAbsFilepathsOnService, err] = serviceContext.loadStaticFiles(usedStaticFiles);
         if (err !== null) {
-            return [ null, null, err];
+            return [null, null, err];
         }
         winston.info("Successfully loaded static files");
 
         winston.info("Initializing generated files...");
         const filesToGenerate: Set<string> = new Set(); //TODO - make sure this is correct
         for (let fileId in containerCreationConfig.getFileGeneratingFuncs()) {
-            //filesToGenerate[fileId] = true; //TODO - remove
             filesToGenerate.add(fileId);
         }
         var [generatedFileFilepaths, err] = serviceContext.generateFiles(filesToGenerate);
@@ -371,22 +369,22 @@ class NetworkContext {
 
             generatedFileAbsFilepathsOnService[fileId] = filepaths.getAbsoluteFilepathOnServiceContainer();
         }
-        winston.info("Successfully initialized generated files in suite execution volume")
+        winston.info("Successfully initialized generated files in suite execution volume");
 
         var [containerRunConfig, err] = generateRunConfigFunc(serviceIpAddr, generatedFileAbsFilepathsOnService, staticFileAbsFilepathsOnService);
         if (err !== null) {
             return [null, null, err];
         }
 
-        winston.info("Creating files artifact ID str -> mount dirpaths map...")
+        winston.info("Creating files artifact ID str -> mount dirpaths map...");
         const artifactIdStrToMountDirpath: Map<string, string> = new Map();
         for (let [filesArtifactId, mountDirpath] of containerCreationConfig.getFilesArtifactMountpoints().entries()) {
 
             artifactIdStrToMountDirpath[String(filesArtifactId)] = mountDirpath;
         }
-        winston.info("Successfully created files artifact ID str -> mount dirpaths map")
+        winston.info("Successfully created files artifact ID str -> mount dirpaths map");
 
-        winston.info("Starting new service with Kurtosis API...")
+        winston.info("Starting new service with Kurtosis API...");
         const startServiceArgs: StartServiceArgs = newGetStartServiceArgs(
             serviceId, 
             containerCreationConfig.getImage(), 
@@ -416,7 +414,7 @@ class NetworkContext {
         winston.info("Successfully started service with Kurtosis API");
 
         const resp: StartServiceResponse = promiseStartService.value;
-        return [serviceContext, resp.getUsedPortsHostPortBindingsMap(), null]
+        return [serviceContext, resp.getUsedPortsHostPortBindingsMap(), null];
     }
 
     // Docs available at https://docs.kurtosistech.com/kurtosis-libs/lib-documentation
@@ -447,7 +445,7 @@ class NetworkContext {
             return [null, new Error(
                 "Kurtosis API reported an empty IP address for service " + serviceId +  " - this should never happen, and is a bug with Kurtosis!",
                 )
-            ]
+            ];
         }
 
         const enclaveDataVolMountDirpathOnSvcContainer: string = serviceResponse.getEnclaveDataVolumeMountDirpath();
@@ -455,7 +453,7 @@ class NetworkContext {
             return [null, new Error(
                 "Kurtosis API reported an empty enclave data volume directory path for service " + serviceId + " - this should never happen, and is a bug with Kurtosis!",
                 )
-            ]
+            ];
         }
 
         const serviceContext: ServiceContext = new ServiceContext(
@@ -466,13 +464,13 @@ class NetworkContext {
             enclaveDataVolMountDirpathOnSvcContainer,
         )
 
-        return [serviceContext, null]
+        return [serviceContext, null];
     }
 
     // Docs available at https://docs.kurtosistech.com/kurtosis-libs/lib-documentation
     public async removeService(serviceId: ServiceID, containerStopTimeoutSeconds: number): Promise<Error> {
 
-        winston.debug("Removing service '%v'...", serviceId)
+        winston.debug("Removing service '%v'...", serviceId);
         // NOTE: This is kinda weird - when we remove a service we can never get it back so having a container
         //  stop timeout doesn't make much sense. It will make more sense when we can stop/start containers
         // Independent of adding/removing them from the network
@@ -493,7 +491,7 @@ class NetworkContext {
             return promiseRemoveService.error;
         }
 
-        winston.debug("Successfully removed service ID %v", serviceId)
+        winston.debug("Successfully removed service ID %v", serviceId);
 
         return null;
     }
@@ -625,6 +623,6 @@ class NetworkContext {
             return promiseExecuteBulkCommands.error;
         }
 
-        return null
+        return null;
     }
 }
