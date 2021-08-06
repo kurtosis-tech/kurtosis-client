@@ -8,7 +8,7 @@ import * as proto from "protobufjs";
 // ====================================================================================================
 
 // Visitor that will be used to deserialize command args into
-class cmdArgDeserializingVisitor {
+class cmdArgDeserializingVisitor implements V0CommandTypeVisitor {
 	private readonly bytesToDeserialize: string; //TODO (comment) - string because no byte type in typescript
 	private deserializedCommandArgsPtr: proto.Message; //TODO - did I import the right protobuf
 
@@ -174,31 +174,36 @@ class cmdArgDeserializingVisitor {
 //                                        Serializable Command
 // ====================================================================================================
 
+class interstitialStruct {
+    type: V0CommandType;
+    argsBytes: string //TODO - original type was json.RawMessage ;
+
+    constructor(){}
+
+    //Definitely add getter and setter methods for the variables, instead of giving direct access
+}
+
 // Used for serializing
 export class V0SerializableCommand {
-	private readonly Type V0CommandType `json:"type"` //TODO
+	private type: V0CommandType 
 
 	// The only allowed objects here are from the bindings generated from the .proto file
-	private readonly ArgsPtr proto.Message `json:"args"` //TODO
+	private argsPtr: proto.Message;
 
     // A V0SerializableCommand knows how to deserialize itself, thanks to the "type" tag
-    public unmarshalJSON(bytes: byte[]): Error {
-        interstitialStruct := struct { //TODO
-            Type      V0CommandType   `json:"type"`
-            ArgsBytes json.RawMessage `json:"args"`
-        }{}
-        // if err := json.Unmarshal(bytes, &interstitialStruct); err != nil {
-        //     return stacktrace.Propagate(err, "An error occurred deserializing the bytes into a command")
-        // }s
-        JSON.parse(bytes, ) //TODO
+    public unmarshalJSON(bytes: string): Error { //TODO - changed from byte[] to string
 
-        // visitor := newCmdArgDeserializingVisitor(interstitialStruct.ArgsBytes)
-        // if err := interstitialStruct.Type.AcceptVisitor(visitor); err != nil {
-        //     return stacktrace.Propagate(err, "An error occurred deserializing command with the following JSON:\n%v", string(bytes))
-        // }
+        const obj: interstitialStruct = new interstitialStruct();
+        obj.argsBytes = JSON.parse(bytes) //TODO (try and catch for error checking) & don't give direct access
 
-        this.Type = interstitialStruct.Type
-        this.ArgsPtr = visitor.GetDeserializedCommandArgs()
+        const visitor: cmdArgDeserializingVisitor = new cmdArgDeserializingVisitor(obj.argsBytes);
+        const err = AcceptVisitor(obj.type, visitor);
+        if (err != null) {
+            return err;
+        }
+
+        this.type = obj.type;
+        this.argsPtr = visitor.getDeserializedCommandArgs()
 
         return null;
     }
@@ -211,5 +216,5 @@ export class V0SerializableCommand {
 // // ====================================================================================================
 
 export class V0BulkCommands {
-	Commands []V0SerializableCommand `json:"commands"` //TODO
+	private readonly commands: V0SerializableCommand[];
 }

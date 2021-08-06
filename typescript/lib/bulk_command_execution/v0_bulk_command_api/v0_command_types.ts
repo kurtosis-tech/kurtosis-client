@@ -2,60 +2,60 @@
 //  1) all enum cases can be exhaustively handled
 //  2) any changes in the enum will result in a compile break
 interface V0CommandTypeVisitor {
-	VisitLoadLambda: () => Error;
-	VisitExecuteLambda: () => Error;
-	VisitRegisterService: () => Error;
-	VisitGenerateFiles: () => Error;
-	VisitLoadStaticFiles: () => Error;
-	VisitStartService: () => Error;
-	VisitRemoveService: () => Error;
-	VisitRepartition: () => Error;
-	VisitExecCommand: () => Error;
-	VisitWaitForEndpointAvailability: () => Error;
-	VisitExecuteBulkCommands: () => Error;
+	visitLoadLambda: () => Error;
+	visitExecuteLambda: () => Error;
+	visitRegisterService: () => Error;
+	visitGenerateFiles: () => Error;
+	visitLoadStaticFiles: () => Error;
+	visitStartService: () => Error;
+	visitRemoveService: () => Error;
+	visitRepartition: () => Error;
+	visitExecCommand: () => Error;
+	visitWaitForEndpointAvailability: () => Error;
+	visitExecuteBulkCommands: () => Error;
 }
 
 type V0CommandType = string;
 
 // vvvvvvvvvvvvvvvvvvvv Update the visitor whenever you add an enum value!!! vvvvvvvvvvvvvvvvvvvvvvvvvvv
-const LoadLambdaCommandType: V0CommandType = "LOAD_LAMBDA";
-const ExecuteLambdaCommandType: V0CommandType = "EXECUTE_LAMBDA";
-const RegisterServiceCommandType: V0CommandType = "REGISTER_SERVICE";
-const GenerateFilesCommandType: V0CommandType = "GENERATE_FILES";
-const LoadStaticFilesCommandType: V0CommandType = "LOAD_STATIC_FILES";
-const StartServiceCommandType: V0CommandType = "START_SERVICE";
-const RemoveServiceCommandType: V0CommandType = "REMOVE_SERVICE";
-const RepartitionCommandType: V0CommandType = "REPARTITION";
-const ExecCommandCommandType: V0CommandType = "EXEC_COMMAND";
-const WaitForEndpointAvailabilityCommandType: V0CommandType = "WAIT_FOR_ENDPOINT_AVAILABILITY";
-const ExecuteBulkCommandsCommandType: V0CommandType = "EXECUTE_BULK_COMMANDS";
+const loadLambdaCommandType: V0CommandType = "LOAD_LAMBDA";
+const executeLambdaCommandType: V0CommandType = "EXECUTE_LAMBDA";
+const registerServiceCommandType: V0CommandType = "REGISTER_SERVICE";
+const generateFilesCommandType: V0CommandType = "GENERATE_FILES";
+const loadStaticFilesCommandType: V0CommandType = "LOAD_STATIC_FILES";
+const startServiceCommandType: V0CommandType = "START_SERVICE";
+const removeServiceCommandType: V0CommandType = "REMOVE_SERVICE";
+const repartitionCommandType: V0CommandType = "REPARTITION";
+const execCommandCommandType: V0CommandType = "EXEC_COMMAND";
+const waitForEndpointAvailabilityCommandType: V0CommandType = "WAIT_FOR_ENDPOINT_AVAILABILITY";
+const executeBulkCommandsCommandType: V0CommandType = "EXECUTE_BULK_COMMANDS";
 // ^^^^^^^^^^^^^^^^^^^^ Update the visitor whenever you add an enum value!!! ^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 function AcceptVisitor(commandType: V0CommandType, visitor: V0CommandTypeVisitor): Error { //TODO - should commandType be a parameter or should this be defined as a method
 	var err: Error;
 	switch (commandType) {
-	case LoadLambdaCommandType:
-		err = visitor.VisitLoadLambda();
-	case ExecuteLambdaCommandType:
-		err = visitor.VisitExecuteLambda();
-	case RegisterServiceCommandType:
-		err = visitor.VisitRegisterService();
-	case GenerateFilesCommandType:
-		err = visitor.VisitGenerateFiles();
-	case LoadStaticFilesCommandType:
-		err = visitor.VisitLoadStaticFiles();
-	case StartServiceCommandType:
-		err = visitor.VisitStartService();
-	case RemoveServiceCommandType:
-		err = visitor.VisitRemoveService();
-	case RepartitionCommandType:
-		err = visitor.VisitRepartition();
-	case ExecCommandCommandType:
-		err = visitor.VisitExecCommand();
-	case WaitForEndpointAvailabilityCommandType:
-		err = visitor.VisitWaitForEndpointAvailability();
-	case ExecuteBulkCommandsCommandType:
-		err = visitor.VisitExecuteBulkCommands();
+	case loadLambdaCommandType:
+		err = visitor.visitLoadLambda();
+	case executeLambdaCommandType:
+		err = visitor.visitExecuteLambda();
+	case registerServiceCommandType:
+		err = visitor.visitRegisterService();
+	case generateFilesCommandType:
+		err = visitor.visitGenerateFiles();
+	case loadStaticFilesCommandType:
+		err = visitor.visitLoadStaticFiles();
+	case startServiceCommandType:
+		err = visitor.visitStartService();
+	case removeServiceCommandType:
+		err = visitor.visitRemoveService();
+	case repartitionCommandType:
+		err = visitor.visitRepartition();
+	case execCommandCommandType:
+		err = visitor.visitExecCommand();
+	case waitForEndpointAvailabilityCommandType:
+		err = visitor.visitWaitForEndpointAvailability();
+	case executeBulkCommandsCommandType:
+		err = visitor.visitExecuteBulkCommands();
 	default:
 		return new Error("Unrecognized command type " + commandType)
 	}
