@@ -3,6 +3,7 @@ import { ExecCommandArgs, ExecCommandResponse, FileGenerationOptions, GenerateFi
 import { ServiceID } from './service';
 import { StaticFileID } from './container_creation_config'; 
 import { newGetExecCommandArgs, newGetGenerateFilesArgs, newGetFileGenerationOptions, newGetLoadStaticFilesArgs } from "../constructor_calls";
+import { ok, err, Result } from 'neverthrow'
 import * as grpc from "grpc";
 import * as path from "path";
 
@@ -65,33 +66,49 @@ class ServiceContext {
     }
 
     // Docs available at https://docs.kurtosistech.com/kurtosis-libs/lib-documentation
-    public async execCommand(command: string[]): Promise<[number, Uint8Array | string, Error]> { //TODO - need to bubble up async, how would users know to make functions that depend on this async?
+    public async execCommand(command: string[]): Promise<[number, Uint8Array | string, Error]> {
         const serviceId: ServiceID = this.serviceId;
         const args: ExecCommandArgs = newGetExecCommandArgs(serviceId, command);
 
-        const promiseGeneratingFunc: (args: ExecCommandArgs) => Promise<ExecCommandResponse> = async (args: ExecCommandArgs) => {
-            
-            return new Promise((resolve, reject) => {
-                this.client.execCommand(args, (err, response) => {
-                    if (err) {
-                        reject(err);
-                    } else {
-                        resolve(response);
-                    }
-                })
-            });
+        const promise: Promise<Result<ExecCommandResponse, Error>> = new Promise((resolve, reject) => { //TOOD - reject
+            this.client.execCommand(args, (error, response) => {
+                if (error) {
+                    reject(err(error));
+                } else {
+                    resolve(ok(response));
+                }
+            })
+        });
 
-        }
-        
-        var result: [number, Uint8Array | string, Error];
-        promiseGeneratingFunc(args).then(resp => {
-            result = [resp.getExitCode(), resp.getLogOutput(), null];
-        })
-        promiseGeneratingFunc(args).catch(err => {
-            result = [0, null, new Error("An error occurred executing command " + command +  " on service " + serviceId + 
-            "Here is the error message: " + err)]; //TODO - is this error message too complicated?
-        })
-        return result;
+        return promise.then(respPromise => {
+            var result;
+            if (!respPromise.isOk) {
+
+                function givePromiseError(error: Error): [number, Uint8Array | string, Error] {
+                    return [0, null, error];
+                }
+                respPromise.mapErr(error => result = givePromiseError(error));
+            }
+
+            function givePromiseResponse(resp: ExecCommandResponse): [number, Uint8Array | string, Error] {
+                return [resp.getExitCode(), resp.getLogOutput(), null];
+            }
+            respPromise.map(resp => result = givePromiseResponse(resp));
+
+            return result;
+        });
+
+
+
+        // var result: [number, Uint8Array | string, Error];
+        // promiseGeneratingFunc(args).then(resp => { 
+        //     result = [resp.getExitCode(), resp.getLogOutput(), null];
+        // })
+        // promiseGeneratingFunc(args).catch(err => {
+        //     result = [0, null, new Error("An error occurred executing command " + command +  " on service " + serviceId + 
+        //     "Here is the error message: " + err)]; //TODO - is this error message too complicated?
+        // })
+        // return result;
 
     }
 
