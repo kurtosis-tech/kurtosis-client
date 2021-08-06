@@ -1,5 +1,5 @@
 import { LoadLambdaArgs } from "../../../kurtosis_core_rpc_api_bindings/api_container_service_pb"
-import { newGetEmptyExecCommandArgs, newGetEmptyExecuteBulkCommandsArgs, newGetEmptyExecuteLambdaArgs, newGetEmptyGenerateFileArgs, newGetEmptyLoadLambdaArgs, newGetEmptyLoadStaticFilesArgs, newGetEmptyRegisterServiceArgs, newGetEmptyRemoveServiceArgs, newGetEmptyRepartitionArgs, newGetEmptyStartServiceArgs, newGetEmptyWaitForEndpointAvailabilityArgs } from "../../../lib/constructor_calls";
+import { newEmptyExecCommandArgs, newEmptyExecuteBulkCommandsArgs, newEmptyExecuteLambdaArgs, newEmptyGenerateFileArgs, newEmptyLoadLambdaArgs, newEmptyLoadStaticFilesArgs, newEmptyRegisterServiceArgs, newEmptyRemoveServiceArgs, newEmptyRepartitionArgs, newEmptyStartServiceArgs, newEmptyWaitForEndpointAvailabilityArgs } from "../../../lib/constructor_calls";
 import { ExecCommandArgs, ExecuteBulkCommandsArgs, ExecuteLambdaArgs, GenerateFilesArgs, LoadStaticFilesArgs, RegisterServiceArgs, RemoveServiceArgs, RepartitionArgs, StartServiceArgs, WaitForEndpointAvailabilityArgs } from "../../../kurtosis_core_rpc_api_bindings/api_container_service_pb";
 import * as proto from "protobufjs";
 
@@ -17,7 +17,7 @@ class cmdArgDeserializingVisitor implements V0CommandTypeVisitor {
     }
 
     public visitLoadLambda(): Error {
-        let args: LoadLambdaArgs = newGetEmptyLoadLambdaArgs();
+        let args: LoadLambdaArgs = newEmptyLoadLambdaArgs();
        
         try { //TODO - No callback, so not using promises for error checking. Is try and catch a good alternative?
             args = JSON.parse(this.bytesToDeserialize);
@@ -36,7 +36,7 @@ class cmdArgDeserializingVisitor implements V0CommandTypeVisitor {
     }
 
     public visitExecuteLambda(): Error {
-    	let args: ExecuteLambdaArgs = newGetEmptyExecuteLambdaArgs();
+    	let args: ExecuteLambdaArgs = newEmptyExecuteLambdaArgs();
         args = JSON.parse(this.bytesToDeserialize); 
         
         //TODO - error checking (try and catch??)
@@ -49,7 +49,7 @@ class cmdArgDeserializingVisitor implements V0CommandTypeVisitor {
     }
 
     public visitRegisterService(): Error {
-        let args: RegisterServiceArgs = newGetEmptyRegisterServiceArgs();
+        let args: RegisterServiceArgs = newEmptyRegisterServiceArgs();
         args = JSON.parse(this.bytesToDeserialize); 
         
         //TODO - error checking (try and catch??)
@@ -62,7 +62,7 @@ class cmdArgDeserializingVisitor implements V0CommandTypeVisitor {
     }
 
     public visitGenerateFiles(): Error {
-        let args: GenerateFilesArgs = newGetEmptyGenerateFileArgs();
+        let args: GenerateFilesArgs = newEmptyGenerateFileArgs();
         args = JSON.parse(this.bytesToDeserialize); 
         
         //TODO - error checking (try and catch??)
@@ -75,7 +75,7 @@ class cmdArgDeserializingVisitor implements V0CommandTypeVisitor {
     }
 
     public visitLoadStaticFiles(): Error {
-    	let args: LoadStaticFilesArgs = newGetEmptyLoadStaticFilesArgs();
+    	let args: LoadStaticFilesArgs = newEmptyLoadStaticFilesArgs();
     	 
         //TODO - error checking (try and catch??)
         // if err := json.Unmarshal(visitor.bytesToDeserialize, args); err != nil {
@@ -88,7 +88,7 @@ class cmdArgDeserializingVisitor implements V0CommandTypeVisitor {
     }
 
     public visitStartService(): Error {
-        let args: StartServiceArgs = newGetEmptyStartServiceArgs();
+        let args: StartServiceArgs = newEmptyStartServiceArgs();
 
          //TODO - error checking (try and catch??)
         // if err := json.Unmarshal(visitor.bytesToDeserialize, args); err != nil {
@@ -101,7 +101,7 @@ class cmdArgDeserializingVisitor implements V0CommandTypeVisitor {
     }
 
     public visitRemoveService(): Error {
-    	let args: RemoveServiceArgs = newGetEmptyRemoveServiceArgs();
+    	let args: RemoveServiceArgs = newEmptyRemoveServiceArgs();
     	
         //TODO - error checking (try and catch??)
         // if err := json.Unmarshal(visitor.bytesToDeserialize, args); err != nil {
@@ -114,7 +114,7 @@ class cmdArgDeserializingVisitor implements V0CommandTypeVisitor {
     }
 
     public visitRepartition(): Error {
-    	let args: RepartitionArgs = newGetEmptyRepartitionArgs();
+    	let args: RepartitionArgs = newEmptyRepartitionArgs();
     	
         //TODO - error checking (try and catch??)
         // if err := json.Unmarshal(visitor.bytesToDeserialize, args); err != nil {
@@ -127,7 +127,7 @@ class cmdArgDeserializingVisitor implements V0CommandTypeVisitor {
     }
 
     public visitExecCommand(): Error {
-        let args: ExecCommandArgs = newGetEmptyExecCommandArgs();
+        let args: ExecCommandArgs = newEmptyExecCommandArgs();
      
         //TODO - error checking (try and catch??)
         // if err := json.Unmarshal(visitor.bytesToDeserialize, args); err != nil {
@@ -140,7 +140,7 @@ class cmdArgDeserializingVisitor implements V0CommandTypeVisitor {
     }
 
     public visitWaitForEndpointAvailability(): Error {
-    	let args: WaitForEndpointAvailabilityArgs = newGetEmptyWaitForEndpointAvailabilityArgs();
+    	let args: WaitForEndpointAvailabilityArgs = newEmptyWaitForEndpointAvailabilityArgs();
     	
          //TODO - error checking (try and catch??)
         // if err := json.Unmarshal(visitor.bytesToDeserialize, args); err != nil {
@@ -153,7 +153,7 @@ class cmdArgDeserializingVisitor implements V0CommandTypeVisitor {
     }
 
     public visitExecuteBulkCommands(): Error {
-        let args: ExecuteBulkCommandsArgs = newGetEmptyExecuteBulkCommandsArgs();
+        let args: ExecuteBulkCommandsArgs = newEmptyExecuteBulkCommandsArgs();
 
          //TODO - error checking (try and catch??)
         // if err := json.Unmarshal(visitor.bytesToDeserialize, args); err != nil {
