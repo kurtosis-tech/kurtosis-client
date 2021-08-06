@@ -143,7 +143,7 @@ class cmdArgDeserializingVisitor {
 // ====================================================================================================
 
 // Used for serializing
-class V0SerializableCommand {
+export class V0SerializableCommand {
 	private readonly Type V0CommandType `json:"type"` //TODO
 
 	// The only allowed objects here are from the bindings generated from the .proto file
@@ -178,6 +178,6 @@ class V0SerializableCommand {
 // //                                   Bulk Commands Package
 // // ====================================================================================================
 
-class V0BulkCommands {
+export class V0BulkCommands {
 	Commands []V0SerializableCommand `json:"commands"` //TODO
 }
