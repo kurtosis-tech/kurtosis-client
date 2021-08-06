@@ -1,4 +1,6 @@
 # TBD
+### Changes
+* Add explicit Apache-2 licensing
 
 # 0.11.0
 ### Changes
