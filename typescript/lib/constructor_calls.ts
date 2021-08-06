@@ -1,7 +1,7 @@
 import { ExecCommandArgs, GenerateFilesArgs, FileGenerationOptions, LoadStaticFilesArgs, LoadLambdaArgs, GetLambdaInfoArgs, RegisterStaticFilesArgs, RegisterFilesArtifactsArgs, RegisterServiceArgs, StartServiceArgs, GetServiceInfoArgs, RemoveServiceArgs, PartitionServices, PartitionConnections, PartitionConnectionInfo, RepartitionArgs, WaitForEndpointAvailabilityArgs, ExecuteBulkCommandsArgs, ExecuteLambdaArgs } from '../kurtosis_core_rpc_api_bindings/api_container_service_pb'; //TODO - potentially change to asterisk since many imports
 import { ServiceID } from './services/service';
 import { PartitionID } from './networks/network_context';
-import { LambdaID, LambdaContext } from "./modules/lambda_context";
+import { LambdaID } from "./modules/lambda_context";
 
 // // ====================================================================================================
 // //                                    Service Context
@@ -209,10 +209,6 @@ export function newExecuteBulkCommandsArgs(serializedCommands: string): ExecuteB
 
     return result;
 }
-
-// // ====================================================================================================
-// //                                    Network Context
-// // ====================================================================================================
 
 export function newExecuteLambdaArgs(lamdaId: LambdaID, serializedParams: string): ExecuteLambdaArgs {
     const result: ExecuteLambdaArgs = new ExecuteLambdaArgs();
