@@ -11,7 +11,7 @@ import { ServiceID } from "../services/service";
 import { ServiceContext, GeneratedFileFilepaths } from "../services/service_context";
 import { StaticFileID, FilesArtifactID, ContainerCreationConfig } from "../services/container_creation_config"; 
 import { ContainerRunConfig } from "../services/container_run_config";
-import { newGetLoadLambdaArgs, newGetLambdaInfoArgs, newGetRegisterStaticFilesArgs, newGetRegisterFilesArtifactsArgs, newGetRegisterServiceArgs, newGetStartServiceArgs, newGetGetServiceInfoArgs, newGetRemoveServiceArgs, newGetPartitionServices, newGetPartitionConnections, newGetRepartitionArgs, newGetWaitForEndpointAvailabilityArgs, newGetExecuteBulkCommandsArgs } from "../constructor_calls";
+import { newLoadLambdaArgs, newLambdaInfoArgs, newRegisterStaticFilesArgs, newRegisterFilesArtifactsArgs, newRegisterServiceArgs, newStartServiceArgs, newGetServiceInfoArgs, newRemoveServiceArgs, newPartitionServices, newPartitionConnections, newRepartitionArgs, newWaitForEndpointAvailabilityArgs, newExecuteBulkCommandsArgs } from "../constructor_calls";
 import { okAsync, errAsync, ResultAsync, Result } from "neverthrow";
 import * as winston from "winston";
 import * as path from "path";
@@ -48,7 +48,7 @@ class NetworkContext {
             lambdaId: LambdaID,
             image: string,
             serializedParams: string): Promise<[LambdaContext, Error]> {
-        const args: LoadLambdaArgs = newGetLoadLambdaArgs(lambdaId, image, serializedParams);
+        const args: LoadLambdaArgs = newLoadLambdaArgs(lambdaId, image, serializedParams);
         
         // TODO TODO TODO - CALLBACK & ERROR-HANDLING (REMOVE)
         // // We proxy calls to Lambda modules via the API container, so actually no need to use the response here
@@ -73,7 +73,7 @@ class NetworkContext {
 
     // Docs available at https://docs.kurtosistech.com/kurtosis-libs/lib-documentation
     public async getLambdaContext(lambdaId: LambdaID): Promise<[LambdaContext, Error]> {
-        const args: GetLambdaInfoArgs = newGetLambdaInfoArgs(lambdaId);
+        const args: GetLambdaInfoArgs = newLambdaInfoArgs(lambdaId);
         
         // TODO TODO TODO - CALLBACK & ERROR-HANDLING (REMOVE)
         // // NOTE: As of 2021-07-18, we actually don't use any of the info that comes back because the LambdaContext doesn't require it!
@@ -122,7 +122,7 @@ class NetworkContext {
             // strSet[String(staticFileId)] = true;
         }
 
-        const args: RegisterStaticFilesArgs = newGetRegisterStaticFilesArgs(strSet);
+        const args: RegisterStaticFilesArgs = newRegisterStaticFilesArgs(strSet);
         
         // TODO TODO TODO - CALLBACK & ERROR-HANDLING (REMOVE)
         // resp, err := networkCtx.client.RegisterStaticFiles(context.Background(), args)
@@ -232,7 +232,7 @@ class NetworkContext {
         for (let [artifactId, url] of filesArtifactUrls.entries()) {
             filesArtifactIdStrsToUrls[String(artifactId)] = url;
         }
-        const args: RegisterFilesArtifactsArgs = newGetRegisterFilesArtifactsArgs(filesArtifactIdStrsToUrls);
+        const args: RegisterFilesArtifactsArgs = newRegisterFilesArtifactsArgs(filesArtifactIdStrsToUrls);
         
         // TODO TODO TODO - CALLBACK & ERROR-HANDLING (REMOVE)
         // if _, err := networkCtx.client.RegisterFilesArtifacts(context.Background(), args); err !== nil {
@@ -281,7 +281,7 @@ class NetworkContext {
     ): Promise<[ServiceContext, Map<string, PortBinding>, Error]> {
 
         winston.info("Registering new service ID with Kurtosis API..."); //TODO logrus.Trace is meant for something for low level, but I could find winston.info to be closest to this
-        const registerServiceArgs: RegisterServiceArgs = newGetRegisterServiceArgs(serviceId, partitionId);
+        const registerServiceArgs: RegisterServiceArgs = newRegisterServiceArgs(serviceId, partitionId);
         
         // TODO TODO TODO - CALLBACK & ERROR-HANDLING (Remove)
         // registerServiceResp, err := networkCtx.client.RegisterService(ctx, registerServiceArgs)
@@ -320,10 +320,11 @@ class NetworkContext {
         for (let usedStaticFilesId in usedStaticFilesMap) {
             usedStaticFiles.add(usedStaticFilesId);
         }
-        var [staticFileAbsFilepathsOnService, err] = serviceContext.loadStaticFiles(usedStaticFiles);
-        if (err !== null) {
+        const resultLoadStaticFiles = await serviceContext.loadStaticFiles(usedStaticFiles); 
+        if (!resultLoadStaticFiles.isOk()) {
             return [null, null, err];
         }
+        const staticFileAbsFilepathsOnService: Map<string, string> = resultLoadStaticFiles.value;
         winston.info("Successfully loaded static files");
 
         winston.info("Initializing generated files...");
@@ -331,10 +332,11 @@ class NetworkContext {
         for (let fileId in containerCreationConfig.getFileGeneratingFuncs()) {
             filesToGenerate.add(fileId);
         }
-        var [generatedFileFilepaths, err] = serviceContext.generateFiles(filesToGenerate);
-        if (err !== null) {
+        const resultGenerateFiles = await serviceContext.generateFiles(filesToGenerate);
+        if (!resultGenerateFiles.isOk()) {
             return [null, null, err];
         }
+        const generatedFileFilepaths: Map<string, GeneratedFileFilepaths> = resultGenerateFiles.value;
         const generatedFileAbsFilepathsOnService: Map<string, string> = new Map();
         for (let [fileId, initializingFunc] of containerCreationConfig.getFileGeneratingFuncs().entries()) {
 
@@ -385,7 +387,7 @@ class NetworkContext {
         winston.info("Successfully created files artifact ID str -> mount dirpaths map");
 
         winston.info("Starting new service with Kurtosis API...");
-        const startServiceArgs: StartServiceArgs = newGetStartServiceArgs(
+        const startServiceArgs: StartServiceArgs = newStartServiceArgs(
             serviceId, 
             containerCreationConfig.getImage(), 
             containerCreationConfig.getUsedPortsSet(),
@@ -419,7 +421,7 @@ class NetworkContext {
 
     // Docs available at https://docs.kurtosistech.com/kurtosis-libs/lib-documentation
     public async getServiceContext(serviceId: ServiceID): Promise<[ServiceContext, Error]> {
-        const getServiceInfoArgs: GetServiceInfoArgs = newGetGetServiceInfoArgs(serviceId);
+        const getServiceInfoArgs: GetServiceInfoArgs = newGetServiceInfoArgs(serviceId);
         
         //TODO TODO TODO - CALLBACK & ERROR-HANDLING (REMOVE)
         // serviceResponse, err := networkCtx.client.GetServiceInfo(context.Background(), getServiceInfoArgs)
@@ -474,7 +476,7 @@ class NetworkContext {
         // NOTE: This is kinda weird - when we remove a service we can never get it back so having a container
         //  stop timeout doesn't make much sense. It will make more sense when we can stop/start containers
         // Independent of adding/removing them from the network
-        const args: RemoveServiceArgs = newGetRemoveServiceArgs(serviceId, containerStopTimeoutSeconds);
+        const args: RemoveServiceArgs = newRemoveServiceArgs(serviceId, containerStopTimeoutSeconds);
         
         // TODO TODO TODO - CALLBACK & ERROR-HANDLING (REMOVE)
         // if _, err := networkCtx.client.RemoveService(context.Background(), args); err !== nil {
@@ -522,7 +524,7 @@ class NetworkContext {
                 serviceIdStrSet.add(serviceId);
             }
             const partitionIdStr: string = String(partitionId);
-            reqPartitionServices[partitionIdStr] = newGetPartitionServices(serviceIdStrSet);
+            reqPartitionServices[partitionIdStr] = newPartitionServices(serviceIdStrSet);
         }
 
         const reqPartitionConns: Map<string, PartitionConnections> = new Map();
@@ -534,12 +536,12 @@ class NetworkContext {
                 const partitionBIdStr: string = String(partitionBId);
                 partitionAConnsStrMap[partitionBIdStr] = connInfo;
             }
-            const partitionAConns: PartitionConnections = newGetPartitionConnections(partitionAConnsStrMap);
+            const partitionAConns: PartitionConnections = newPartitionConnections(partitionAConnsStrMap);
             const partitionAIdStr: string = String(partitionAId);
             reqPartitionConns[partitionAIdStr] = partitionAConns;
         }
 
-        const repartitionArgs: RepartitionArgs = newGetRepartitionArgs(reqPartitionServices, reqPartitionConns, defaultConnection);
+        const repartitionArgs: RepartitionArgs = newRepartitionArgs(reqPartitionServices, reqPartitionConns, defaultConnection);
 
         // TODO TODO TODO - CALLBACK & ERROR-HANDLING (REMOVE)
         // if _, err := networkCtx.client.Repartition(context.Background(), repartitionArgs); err !== nil {
@@ -568,7 +570,7 @@ class NetworkContext {
         retries: number, 
         retriesDelayMilliseconds: number, 
         bodyText: string): Promise<Error> {
-        const availabilityArgs: WaitForEndpointAvailabilityArgs = newGetWaitForEndpointAvailabilityArgs(
+        const availabilityArgs: WaitForEndpointAvailabilityArgs = newWaitForEndpointAvailabilityArgs(
             serviceId,
             port,
             path,
@@ -606,7 +608,7 @@ class NetworkContext {
     // Docs available at https://docs.kurtosistech.com/kurtosis-libs/lib-documentation
     public async executeBulkCommands(bulkCommandsJson: string): Promise<Error> {
 
-        const args: ExecuteBulkCommandsArgs = newGetExecuteBulkCommandsArgs(bulkCommandsJson);
+        const args: ExecuteBulkCommandsArgs = newExecuteBulkCommandsArgs(bulkCommandsJson);
         
         // TODO TODO TODO - CALLBACK & ERROR-HANDLING (REMOVE)
         // if _, err := networkCtx.client.ExecuteBulkCommands(context.Background(), args); err !== nil {

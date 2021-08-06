@@ -7,7 +7,7 @@ import { LambdaID } from "./modules/lambda_context";
 // //                                    Service Context
 // // ====================================================================================================
 
-export function newGetExecCommandArgs(serviceId: ServiceID, command: string[]): ExecCommandArgs {
+export function newExecCommandArgs(serviceId: ServiceID, command: string[]): ExecCommandArgs {
     const result: ExecCommandArgs = new ExecCommandArgs();
     result.setServiceId(serviceId);
     result.setCommandArgsList(command);
@@ -15,7 +15,7 @@ export function newGetExecCommandArgs(serviceId: ServiceID, command: string[]): 
     return result;
 }
 
-export function newGetGenerateFilesArgs(serviceId: ServiceID, fileGenerationOpts: Map<string, FileGenerationOptions>): GenerateFilesArgs {
+export function newGenerateFilesArgs(serviceId: ServiceID, fileGenerationOpts: Map<string, FileGenerationOptions>): GenerateFilesArgs {
     const result: GenerateFilesArgs = new GenerateFilesArgs();
     result.setServiceId(String(serviceId)); 
     for (let fileID in fileGenerationOpts) {
@@ -25,7 +25,7 @@ export function newGetGenerateFilesArgs(serviceId: ServiceID, fileGenerationOpts
     return result;
 }
 
-export function newGetFileGenerationOptions(filesToGenerateSet: Set<string>): Map<string, FileGenerationOptions> {
+export function newFileGenerationOptions(filesToGenerateSet: Set<string>): Map<string, FileGenerationOptions> {
     const result: Map<string, FileGenerationOptions> = new Map();
     for (let fileId in filesToGenerateSet) {
         result[fileId] = new FileGenerationOptions();
@@ -35,7 +35,7 @@ export function newGetFileGenerationOptions(filesToGenerateSet: Set<string>): Ma
     return result;
 }
 
-export function newGetLoadStaticFilesArgs(serviceId: ServiceID, staticFilesToCopyStringSet: Map<String, boolean>): LoadStaticFilesArgs {
+export function newLoadStaticFilesArgs(serviceId: ServiceID, staticFilesToCopyStringSet: Map<String, boolean>): LoadStaticFilesArgs {
     const result: LoadStaticFilesArgs = new LoadStaticFilesArgs();
     result.setServiceId(String(serviceId));
     const staticFilesMap = result.getStaticFilesMap();
@@ -50,7 +50,7 @@ export function newGetLoadStaticFilesArgs(serviceId: ServiceID, staticFilesToCop
 // //                                    Network Context
 // // ====================================================================================================
 
-export function newGetLoadLambdaArgs(lambdaId: LambdaID, image: string, serializedParams: string): LoadLambdaArgs {
+export function newLoadLambdaArgs(lambdaId: LambdaID, image: string, serializedParams: string): LoadLambdaArgs {
     const result: LoadLambdaArgs = new LoadLambdaArgs();
     result.setLambdaId(String(lambdaId));
     result.setContainerImage(image);
@@ -59,14 +59,14 @@ export function newGetLoadLambdaArgs(lambdaId: LambdaID, image: string, serializ
     return result;
 }
 
-export function newGetLambdaInfoArgs(lambdaId: LambdaID): GetLambdaInfoArgs {
+export function newLambdaInfoArgs(lambdaId: LambdaID): GetLambdaInfoArgs {
     const result: GetLambdaInfoArgs = new GetLambdaInfoArgs();
     result.setLambdaId(String(lambdaId)); //TODO - String(lambdaId) VS <string>lambdaId for type assertions (also seen "as")
 
     return result;
 }
 
-export function newGetRegisterStaticFilesArgs(strSet: Map<string, boolean>): RegisterStaticFilesArgs {
+export function newRegisterStaticFilesArgs(strSet: Map<string, boolean>): RegisterStaticFilesArgs {
     const result: RegisterStaticFilesArgs = new RegisterStaticFilesArgs();
     const staticFilesSetMap: Map<string, boolean> = result.getStaticFilesSetMap();
     for (let staticFileID in strSet) {
@@ -76,16 +76,16 @@ export function newGetRegisterStaticFilesArgs(strSet: Map<string, boolean>): Reg
     return result;
 }
 
-export function newGetRegisterFilesArtifactsArgs(filesArtifactIdStrsToUrls: Map<string, string>): RegisterFilesArtifactsArgs {
+export function newRegisterFilesArtifactsArgs(filesArtifactIdStrsToUrls: Map<string, string>): RegisterFilesArtifactsArgs {
     const result: RegisterFilesArtifactsArgs = new RegisterFilesArtifactsArgs();
     const filesArtifactUrlsMap: Map<string, string> = result.getFilesArtifactUrlsMap();
-    for (let fileArtificactID in filesArtifactUrlsMap) {
-        filesArtifactUrlsMap.set(fileArtificactID, filesArtifactUrlsMap[fileArtificactID]);
+    for (let fileArtificactID in filesArtifactIdStrsToUrls) {
+        filesArtifactUrlsMap.set(fileArtificactID, filesArtifactIdStrsToUrls[fileArtificactID]);
     }
     return result;
 }
 
-export function newGetRegisterServiceArgs(serviceId: ServiceID, partitionId: PartitionID): RegisterServiceArgs {
+export function newRegisterServiceArgs(serviceId: ServiceID, partitionId: PartitionID): RegisterServiceArgs {
     const result: RegisterServiceArgs = new RegisterServiceArgs();
     result.setServiceId(<string>serviceId);
     result.setPartitionId(<string>partitionId);
@@ -93,7 +93,7 @@ export function newGetRegisterServiceArgs(serviceId: ServiceID, partitionId: Par
     return result;
 }
 
-export function newGetStartServiceArgs(
+export function newStartServiceArgs(
     serviceId: ServiceID, 
     dockerImage: string,
     usedPorts: Map<string, boolean>,
@@ -111,11 +111,11 @@ export function newGetStartServiceArgs(
         }
         const entrypointArgsArray: string[] = result.getEntrypointArgsList();
         for (let entryPoint in entrypointArgs) {
-            entrypointArgsArray.push(entryPoint); //TODO - is this safe, considering arrays are fixed sized
+            entrypointArgsArray.push(entryPoint);
         }
         const cmdArgsArray: string[] = result.getCmdArgsList();
         for (let cmdArg in cmdArgs) {
-            cmdArgsArray.push(cmdArg); //TODO - is this safe, considering arrays are fixed sized
+            cmdArgsArray.push(cmdArg);
         }
         const dockerEnvVarArray: string[] = result.getDockerEnvVarsMap();
         for (let dockerEnvId in dockerEnvVars) {
@@ -130,14 +130,14 @@ export function newGetStartServiceArgs(
         return result;
 }
 
-export function newGetGetServiceInfoArgs(serviceId: ServiceID): GetServiceInfoArgs{
+export function newGetServiceInfoArgs(serviceId: ServiceID): GetServiceInfoArgs{
     const result: GetServiceInfoArgs = new GetServiceInfoArgs();
     result.setServiceId(String(serviceId));
 
     return result;
 }
 
-export function newGetRemoveServiceArgs(serviceId: ServiceID, containerStopTimeoutSeconds: number): RemoveServiceArgs {
+export function newRemoveServiceArgs(serviceId: ServiceID, containerStopTimeoutSeconds: number): RemoveServiceArgs {
     const result: RemoveServiceArgs = new RemoveServiceArgs();
     result.setServiceId(serviceId);
     result.setContainerStopTimeoutSeconds(containerStopTimeoutSeconds);
@@ -145,7 +145,7 @@ export function newGetRemoveServiceArgs(serviceId: ServiceID, containerStopTimeo
     return result;
 }
 
-export function newGetPartitionServices(serviceIdStrSet: Set<string>): PartitionServices{
+export function newPartitionServices(serviceIdStrSet: Set<string>): PartitionServices{
     const result: PartitionServices = new PartitionServices();
     const partitionServicesMap: Map<string, boolean> = result.getServiceIdSetMap();
     for (let serviceIdStr in serviceIdStrSet) {
@@ -155,7 +155,7 @@ export function newGetPartitionServices(serviceIdStrSet: Set<string>): Partition
     return result;
 }
 
-export function newGetPartitionConnections(partitionAConnsStrMap: Map<string, PartitionConnectionInfo>): PartitionConnections {
+export function newPartitionConnections(partitionAConnsStrMap: Map<string, PartitionConnectionInfo>): PartitionConnections {
     const result: PartitionConnections = new PartitionConnections();
     const partitionsMap: Map<string, PartitionConnectionInfo> = result.getConnectionInfoMap();
     for (let partitionId in partitionAConnsStrMap) {
@@ -165,7 +165,7 @@ export function newGetPartitionConnections(partitionAConnsStrMap: Map<string, Pa
     return result;
 }
 
-export function newGetRepartitionArgs(
+export function newRepartitionArgs(
     partitionServices: Map<string, PartitionServices>, 
     partitionConns: Map<string, PartitionConnections>,
     defaultConnection: PartitionConnectionInfo): RepartitionArgs {
@@ -183,7 +183,7 @@ export function newGetRepartitionArgs(
     return result;
 }
 
-export function newGetWaitForEndpointAvailabilityArgs(
+export function newWaitForEndpointAvailabilityArgs(
     serviceId: ServiceID,
     port: number, 
     path: string, 
@@ -203,14 +203,14 @@ export function newGetWaitForEndpointAvailabilityArgs(
         return result;
 }
 
-export function newGetExecuteBulkCommandsArgs(serializedCommands: string): ExecuteBulkCommandsArgs {
+export function newExecuteBulkCommandsArgs(serializedCommands: string): ExecuteBulkCommandsArgs {
     const result: ExecuteBulkCommandsArgs = new ExecuteBulkCommandsArgs();
     result.setSerializedCommands(serializedCommands);
 
     return result;
 }
 
-export function newGetExecuteLambdaArgs(lamdaId: LambdaID, serializedParams: string): ExecuteLambdaArgs {
+export function newExecuteLambdaArgs(lamdaId: LambdaID, serializedParams: string): ExecuteLambdaArgs {
     const result: ExecuteLambdaArgs = new ExecuteLambdaArgs();
     result.setLambdaId(String(lamdaId));
     result.setSerializedParams(serializedParams);
