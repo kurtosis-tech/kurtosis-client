@@ -14,7 +14,7 @@ import { ServiceID } from "../services/service";
 import { ServiceContext, GeneratedFileFilepaths } from "../services/service_context";
 import { StaticFileID, FilesArtifactID, ContainerCreationConfig } from "../services/container_creation_config"; 
 import { ContainerRunConfig } from "../services/container_run_config";
-import { newGetLoadLambdaArgs, newGetLambdaInfoArgs, newRegisterStaticFilesArgs, newRegisterFilesArtifactsArgs, newRegisterServiceArgs, newStartServiceArgs, newGetServiceInfoArgs, newRemoveServiceArgs, newPartitionServices, newPartitionConnections, newRepartitionArgs, newWaitForEndpointAvailabilityArgs, newExecuteBulkCommandsArgs } from "../constructor_calls"; //TODO - potentially change to asterisk since many imports
+import { newGetLoadLambdaArgs, newGetLambdaInfoArgs, newGetRegisterStaticFilesArgs, newGetRegisterFilesArtifactsArgs, newGetRegisterServiceArgs, newGetStartServiceArgs, newGetGetServiceInfoArgs, newGetRemoveServiceArgs, newGetPartitionServices, newGetPartitionConnections, newGetRepartitionArgs, newGetWaitForEndpointAvailabilityArgs, newGetExecuteBulkCommandsArgs } from "../constructor_calls"; //TODO - potentially change to asterisk since many imports
 	//"github.com/palantir/stacktrace" TOOD
 import * as winston from "winston";
 	//"io" //TODO - remove
@@ -101,7 +101,7 @@ class NetworkContext {
             // strSet[String(staticFileId)] = true;
         }
 
-        const args: RegisterStaticFilesArgs = newRegisterStaticFilesArgs(strSet);
+        const args: RegisterStaticFilesArgs = newGetRegisterStaticFilesArgs(strSet);
         // TODO TODO TODO - CALLBACK & ERROR-HANDLING
         // resp, err := networkCtx.client.RegisterStaticFiles(context.Background(), args)
         // if err !== nil {
@@ -153,7 +153,7 @@ class NetworkContext {
         for (let [artifactId, url] of filesArtifactUrls.entries()) {
             filesArtifactIdStrsToUrls[String(artifactId)] = url;
         }
-        const args: RegisterFilesArtifactsArgs = newRegisterFilesArtifactsArgs(filesArtifactIdStrsToUrls);
+        const args: RegisterFilesArtifactsArgs = newGetRegisterFilesArtifactsArgs(filesArtifactIdStrsToUrls);
         // TODO TODO TODO - CALLBACK & ERROR-HANDLING
         // if _, err := networkCtx.client.RegisterFilesArtifacts(context.Background(), args); err !== nil {
         //     return stacktrace.Propagate(err, "An error occurred registering files artifacts: %+v", filesArtifactUrls)
@@ -190,7 +190,7 @@ class NetworkContext {
     ): [ServiceContext, Map<string, PortBinding>, Error] {
 
         winston.info("Registering new service ID with Kurtosis API..."); //TODO logrus.Trace is meant for something for low level, but I could find winston.info to be closest to this
-        const registerServiceArgs: RegisterServiceArgs = newRegisterServiceArgs(serviceId, partitionId);
+        const registerServiceArgs: RegisterServiceArgs = newGetRegisterServiceArgs(serviceId, partitionId);
         // TODO TODO TODO - CALLBACK & ERROR-HANDLING
         // registerServiceResp, err := networkCtx.client.RegisterService(ctx, registerServiceArgs)
         // if err !== nil {
@@ -269,7 +269,7 @@ class NetworkContext {
         winston.info("Successfully created files artifact ID str -> mount dirpaths map")
 
         winston.info("Starting new service with Kurtosis API...")
-        const startServiceArgs: StartServiceArgs = newStartServiceArgs(
+        const startServiceArgs: StartServiceArgs = newGetStartServiceArgs(
             serviceId, 
             containerCreationConfig.getImage(), 
             containerCreationConfig.getUsedPortsSet(),
@@ -291,7 +291,7 @@ class NetworkContext {
 
     // Docs available at https://docs.kurtosistech.com/kurtosis-libs/lib-documentation
     public getServiceContext(serviceId: ServiceID): [ServiceContext, Error] {
-        const getServiceInfoArgs: GetServiceInfoArgs = newGetServiceInfoArgs(serviceId);
+        const getServiceInfoArgs: GetServiceInfoArgs = newGetGetServiceInfoArgs(serviceId);
         //TODO TODO TODO - CALLBACK & ERROR-HANDLING
         // serviceResponse, err := networkCtx.client.GetServiceInfo(context.Background(), getServiceInfoArgs)
         // if err !== nil {
@@ -334,7 +334,7 @@ class NetworkContext {
         // NOTE: This is kinda weird - when we remove a service we can never get it back so having a container
         //  stop timeout doesn't make much sense. It will make more sense when we can stop/start containers
         // Independent of adding/removing them from the network
-        const args: RemoveServiceArgs = newRemoveServiceArgs(serviceId, containerStopTimeoutSeconds);
+        const args: RemoveServiceArgs = newGetRemoveServiceArgs(serviceId, containerStopTimeoutSeconds);
         
         // TODO TODO TODO - CALLBACK & ERROR-HANDLING
         // if _, err := networkCtx.client.RemoveService(context.Background(), args); err !== nil {
@@ -372,7 +372,7 @@ class NetworkContext {
                 serviceIdStrSet.add(serviceId);
             }
             const partitionIdStr: string = String(partitionId);
-            reqPartitionServices[partitionIdStr] = newPartitionServices(serviceIdStrSet);
+            reqPartitionServices[partitionIdStr] = newGetPartitionServices(serviceIdStrSet);
         }
 
         const reqPartitionConns: Map<string, PartitionConnections> = new Map();
@@ -384,12 +384,12 @@ class NetworkContext {
                 const partitionBIdStr: string = String(partitionBId);
                 partitionAConnsStrMap[partitionBIdStr] = connInfo;
             }
-            const partitionAConns: PartitionConnections = newPartitionConnections(partitionAConnsStrMap);
+            const partitionAConns: PartitionConnections = newGetPartitionConnections(partitionAConnsStrMap);
             const partitionAIdStr: string = String(partitionAId);
             reqPartitionConns[partitionAIdStr] = partitionAConns;
         }
 
-        const repartitionArgs: RepartitionArgs = newRepartitionArgs(reqPartitionServices, reqPartitionConns, defaultConnection);
+        const repartitionArgs: RepartitionArgs = newGetRepartitionArgs(reqPartitionServices, reqPartitionConns, defaultConnection);
 
         // TODO TODO TODO - CALLBACK & ERROR-HANDLING
         // if _, err := networkCtx.client.Repartition(context.Background(), repartitionArgs); err !== nil {
@@ -407,7 +407,7 @@ class NetworkContext {
         retries: number, 
         retriesDelayMilliseconds: number, 
         bodyText: string): Error {
-        const availabilityArgs: WaitForEndpointAvailabilityArgs = newWaitForEndpointAvailabilityArgs(
+        const availabilityArgs: WaitForEndpointAvailabilityArgs = newGetWaitForEndpointAvailabilityArgs(
             serviceId,
             port,
             path,
@@ -435,7 +435,7 @@ class NetworkContext {
     // Docs available at https://docs.kurtosistech.com/kurtosis-libs/lib-documentation
     public executeBulkCommands(bulkCommandsJson: string): Error {
 
-        const args: ExecuteBulkCommandsArgs = newExecuteBulkCommandsArgs(bulkCommandsJson);
+        const args: ExecuteBulkCommandsArgs = newGetExecuteBulkCommandsArgs(bulkCommandsJson);
         
         //
         // if _, err := networkCtx.client.ExecuteBulkCommands(context.Background(), args); err !== nil {

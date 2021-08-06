@@ -66,7 +66,7 @@ export function newGetLambdaInfoArgs(lambdaId: LambdaID): GetLambdaInfoArgs {
     return result;
 }
 
-export function newRegisterStaticFilesArgs(strSet: Map<string, boolean>): RegisterStaticFilesArgs {
+export function newGetRegisterStaticFilesArgs(strSet: Map<string, boolean>): RegisterStaticFilesArgs {
     const result: RegisterStaticFilesArgs = new RegisterStaticFilesArgs();
     const staticFilesSetMap: Map<string, boolean> = result.getStaticFilesSetMap();
     for (let staticFileID in strSet) {
@@ -76,16 +76,16 @@ export function newRegisterStaticFilesArgs(strSet: Map<string, boolean>): Regist
     return result;
 }
 
-export function newRegisterFilesArtifactsArgs(filesArtifactIdStrsToUrls: Map<string, string>): RegisterFilesArtifactsArgs {
+export function newGetRegisterFilesArtifactsArgs(filesArtifactIdStrsToUrls: Map<string, string>): RegisterFilesArtifactsArgs {
     const result: RegisterFilesArtifactsArgs = new RegisterFilesArtifactsArgs();
-    const filesArtifactUrlsMap = result.getFilesArtifactUrlsMap();
+    const filesArtifactUrlsMap: Map<string, string> = result.getFilesArtifactUrlsMap();
     for (let fileArtificactID in filesArtifactUrlsMap) {
         filesArtifactUrlsMap.set(fileArtificactID, filesArtifactUrlsMap[fileArtificactID]);
     }
     return result;
 }
 
-export function newRegisterServiceArgs(serviceId: ServiceID, partitionId: PartitionID): RegisterServiceArgs {
+export function newGetRegisterServiceArgs(serviceId: ServiceID, partitionId: PartitionID): RegisterServiceArgs {
     const result: RegisterServiceArgs = new RegisterServiceArgs();
     result.setServiceId(<string>serviceId);
     result.setPartitionId(<string>partitionId);
@@ -93,7 +93,7 @@ export function newRegisterServiceArgs(serviceId: ServiceID, partitionId: Partit
     return result;
 }
 
-export function newStartServiceArgs(
+export function newGetStartServiceArgs(
     serviceId: ServiceID, 
     dockerImage: string,
     usedPorts: Map<string, boolean>,
@@ -130,14 +130,14 @@ export function newStartServiceArgs(
         return result;
 }
 
-export function newGetServiceInfoArgs(serviceId: ServiceID): GetServiceInfoArgs{
+export function newGetGetServiceInfoArgs(serviceId: ServiceID): GetServiceInfoArgs{
     const result: GetServiceInfoArgs = new GetServiceInfoArgs();
     result.setServiceId(String(serviceId));
 
     return result;
 }
 
-export function newRemoveServiceArgs(serviceId: ServiceID, containerStopTimeoutSeconds: number): RemoveServiceArgs {
+export function newGetRemoveServiceArgs(serviceId: ServiceID, containerStopTimeoutSeconds: number): RemoveServiceArgs {
     const result: RemoveServiceArgs = new RemoveServiceArgs();
     result.setServiceId(serviceId);
     result.setContainerStopTimeoutSeconds(containerStopTimeoutSeconds);
@@ -145,7 +145,7 @@ export function newRemoveServiceArgs(serviceId: ServiceID, containerStopTimeoutS
     return result;
 }
 
-export function newPartitionServices(serviceIdStrSet: Set<string>): PartitionServices{
+export function newGetPartitionServices(serviceIdStrSet: Set<string>): PartitionServices{
     const result: PartitionServices = new PartitionServices();
     const partitionServicesMap: Map<string, boolean> = result.getServiceIdSetMap();
     for (let serviceIdStr in serviceIdStrSet) {
@@ -155,7 +155,7 @@ export function newPartitionServices(serviceIdStrSet: Set<string>): PartitionSer
     return result;
 }
 
-export function newPartitionConnections(partitionAConnsStrMap: Map<string, PartitionConnectionInfo>): PartitionConnections {
+export function newGetPartitionConnections(partitionAConnsStrMap: Map<string, PartitionConnectionInfo>): PartitionConnections {
     const result: PartitionConnections = new PartitionConnections();
     const partitionsMap: Map<string, PartitionConnectionInfo> = result.getConnectionInfoMap();
     for (let partitionId in partitionAConnsStrMap) {
@@ -165,7 +165,7 @@ export function newPartitionConnections(partitionAConnsStrMap: Map<string, Parti
     return result;
 }
 
-export function newRepartitionArgs(
+export function newGetRepartitionArgs(
     partitionServices: Map<string, PartitionServices>, 
     partitionConns: Map<string, PartitionConnections>,
     defaultConnection: PartitionConnectionInfo): RepartitionArgs {
@@ -183,7 +183,7 @@ export function newRepartitionArgs(
     return result;
 }
 
-export function newWaitForEndpointAvailabilityArgs(
+export function newGetWaitForEndpointAvailabilityArgs(
     serviceId: ServiceID,
     port: number, 
     path: string, 
@@ -203,14 +203,14 @@ export function newWaitForEndpointAvailabilityArgs(
         return result;
 }
 
-export function newExecuteBulkCommandsArgs(serializedCommands: string): ExecuteBulkCommandsArgs {
+export function newGetExecuteBulkCommandsArgs(serializedCommands: string): ExecuteBulkCommandsArgs {
     const result: ExecuteBulkCommandsArgs = new ExecuteBulkCommandsArgs();
     result.setSerializedCommands(serializedCommands);
 
     return result;
 }
 
-export function newExecuteLambdaArgs(lamdaId: LambdaID, serializedParams: string): ExecuteLambdaArgs {
+export function newGetExecuteLambdaArgs(lamdaId: LambdaID, serializedParams: string): ExecuteLambdaArgs {
     const result: ExecuteLambdaArgs = new ExecuteLambdaArgs();
     result.setLambdaId(String(lamdaId));
     result.setSerializedParams(serializedParams);
