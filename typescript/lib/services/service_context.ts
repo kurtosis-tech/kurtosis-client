@@ -3,7 +3,7 @@ import { ExecCommandArgs, ExecCommandResponse, FileGenerationOptions, GenerateFi
 import { ServiceID } from './service';
 import { StaticFileID } from './container_creation_config'; 
 import { newGetExecCommandArgs, newGetGenerateFilesArgs, newGetFileGenerationOptions, newGetLoadStaticFilesArgs } from "../constructor_calls";
-import { okAsync, ResultAsync, Result } from 'neverthrow'
+import { okAsync, errAsync, ResultAsync, ok, err, Result } from 'neverthrow';
 import * as grpc from "grpc";
 import * as path from "path";
 
@@ -66,46 +66,54 @@ class ServiceContext {
     }
 
     // Docs available at https://docs.kurtosistech.com/kurtosis-libs/lib-documentation
-    public async execCommand(command: string[]): Promise<[number, Uint8Array | string, Error]> {
+    public async execCommand(command: string[]): Promise<Result<[number, Uint8Array | string], Error>> {
         const serviceId: ServiceID = this.serviceId;
         const args: ExecCommandArgs = newGetExecCommandArgs(serviceId, command);
 
-        const promiseAsync: Promise<ResultAsync<ExecCommandResponse, Error>> = new Promise((resolve, _unusedReject) => {
-            this.client.execCommand(args, (_unusedError: grpc.ServiceError, response: ExecCommandResponse) => {
-                resolve(okAsync(response));
+        const promiseExecCommand: Promise<ResultAsync<ExecCommandResponse, Error>> = new Promise((resolve, _unusedReject) => {
+            this.client.execCommand(args, (error: grpc.ServiceError, response: ExecCommandResponse) => {
+                if (error) {
+                    resolve(errAsync(error));
+                } else {
+                    resolve(okAsync(response));
+                }
             })
         });
 
-        const promise: Result<ExecCommandResponse, Error> = await promiseAsync;
+        const resultExecCommand: Result<ExecCommandResponse, Error> = await promiseExecCommand;
 
-        if (!promise.isOk()) {
-            return [0, null, promise.error];
-        } else {
-            const resp: ExecCommandResponse = promise.value;
-            return [resp.getExitCode(), resp.getLogOutput(), null];
+        if (!resultExecCommand.isOk()) {
+            return err(resultExecCommand.error);
         }
+        const resp: ExecCommandResponse = resultExecCommand.value;
+        return ok([resp.getExitCode(), resp.getLogOutput()]);
+        
 
     }
 
     // Docs available at https://docs.kurtosistech.com/kurtosis-libs/lib-documentation
-    public async generateFiles(filesToGenerateSet: Set<string>): Promise<[Map<string, GeneratedFileFilepaths>, Error]> {
+    public async generateFiles(filesToGenerateSet: Set<string>): Promise<Result<Map<string, GeneratedFileFilepaths>, Error>> {
         const serviceId: ServiceID = this.serviceId;
         const fileGenerationOpts: Map<string, FileGenerationOptions> = newGetFileGenerationOptions(filesToGenerateSet);
 
         const args: GenerateFilesArgs = newGetGenerateFilesArgs(serviceId, fileGenerationOpts);
 
-        const promiseAsync: Promise<ResultAsync<GenerateFilesResponse, Error>> = new Promise((resolve, _unusedReject) => {
-            this.client.generateFiles(args, (_unusedError: grpc.ServiceError, response: GenerateFilesResponse) => {
-                resolve(okAsync(response));
+        const promiseGenerateFiles: Promise<ResultAsync<GenerateFilesResponse, Error>> = new Promise((resolve, _unusedReject) => {
+            this.client.generateFiles(args, (error: grpc.ServiceError, response: GenerateFilesResponse) => {
+                if (error) {
+                    resolve(errAsync(error));
+                } else {
+                    resolve(okAsync(response));
+                }
             })
         });
 
-        const promise: Result<GenerateFilesResponse, Error> = await promiseAsync;
+        const resultGenerateFiles: Result<GenerateFilesResponse, Error> = await promiseGenerateFiles;
 
-        if (!promise.isOk()) {
-            return [null, promise.error];
+        if (!resultGenerateFiles.isOk()) {
+            return err(resultGenerateFiles.error);
         } 
-        const resp: GenerateFilesResponse = promise.value;
+        const resp: GenerateFilesResponse = resultGenerateFiles.value;
 
         const generatedFileRelativeFilepaths: Map<string, string> = resp.getGeneratedFileRelativeFilepathsMap();
 
@@ -114,10 +122,10 @@ class ServiceContext {
             
             var relativeFilepath: string;
             if (!generatedFileRelativeFilepaths.has(fileId)) {
-                return [null, new Error(
+                return err(new Error(
                     "No filepath (relative to test volume root) was returned for file " + fileId +  ", even though we requested it; this is a Kurtosis bug"
                     )
-                ];
+                );
             }
             relativeFilepath = generatedFileRelativeFilepaths[fileId];
 
@@ -126,7 +134,7 @@ class ServiceContext {
             const genFilePath: GeneratedFileFilepaths = new GeneratedFileFilepaths(absFilepathHere, absFilepathOnService);
             result.set(fileId, genFilePath); 
         }
-        return [result, null];
+        return ok(result);
     }
 
     // Docs available at https://docs.kurtosistech.com/kurtosis-libs/lib-documentation
