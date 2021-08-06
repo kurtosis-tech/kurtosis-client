@@ -1,7 +1,3 @@
-//package v0_bulk_command_api
-
-//import "github.com/palantir/stacktrace"
-
 // We provide a visitor interface here so that:
 //  1) all enum cases can be exhaustively handled
 //  2) any changes in the enum will result in a compile break
@@ -64,7 +60,6 @@ function AcceptVisitor(commandType: V0CommandType, visitor: V0CommandTypeVisitor
 		return new Error("Unrecognized command type " + commandType)
 	}
 	if (err != null) { //TODO - why is this unreachable?
-		//return stacktrace.Propagate(err, "The visitor returned an error for command type '%v'", commandType)
         return err;
 	}
 	return null;
