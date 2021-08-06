@@ -58,14 +58,14 @@ class NetworkContext {
         //     return nil, stacktrace.Propagate(err, "An error occurred loading new module '%v' with image '%v' and serialized params '%v'", lambdaId, image, serializedParams)
         // }
 
-        const promiseAsync: Promise<ResultAsync<any, Error>> = new Promise((resolve, _unusedReject) => { //TODO - Repeating this promise format a lot, make a function for it?
+        const promiseAsyncLoadLambda: Promise<ResultAsync<any, Error>> = new Promise((resolve, _unusedReject) => { //TODO - Repeating this promise format a lot, make a function for it?
             this.client.executeLambda(args, (_unusedError: grpc.ServiceError, response: any) => {
                 resolve(okAsync(response));
             })
         });
-        const promise: Result<any, Error> = await promiseAsync;
-        if (!promise.isOk()) {
-            return [null, promise.error];
+        const promiseLoadLambda: Result<any, Error> = await promiseAsyncLoadLambda;
+        if (!promiseLoadLambda.isOk()) {
+            return [null, promiseLoadLambda.error];
         }
 
         const moduleCtx: LambdaContext = new LambdaContext(this.client, lambdaId);
