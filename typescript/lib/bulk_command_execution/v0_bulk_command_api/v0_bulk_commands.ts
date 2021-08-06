@@ -31,7 +31,7 @@ class cmdArgDeserializingVisitor implements V0CommandTypeVisitor {
         //     return stacktrace.Propagate(err, "An error occurred deserializing the Lambda-loading args")
         // }
 
-        this.deserializedCommandArgsPtr = args; //TODO...
+        this.deserializedCommandArgsPtr = args; //TODO - compiling error, need to solve this
         return null;
     }
 
@@ -175,35 +175,46 @@ class cmdArgDeserializingVisitor implements V0CommandTypeVisitor {
 // ====================================================================================================
 
 class interstitialStruct {
-    type: V0CommandType;
-    argsBytes: string //TODO - original type was json.RawMessage ;
+    private readonly type: V0CommandType;
+    private argsBytes: string; //TODO - original type was json.RawMessage ;
 
     constructor(){}
 
-    //Definitely add getter and setter methods for the variables, instead of giving direct access
+    //TODO - getter and setter methods for the variables, instead of giving direct access ; is that an alright change from golang
+    public getType(): V0CommandType {
+        return this.type;
+    }
+    
+    public getArgsBytes(): string {
+        return this.argsBytes;
+    }
+
+    public setArgsBytes(newArgsBytes: string): void {
+        this.argsBytes = newArgsBytes;
+    }
 }
 
 // Used for serializing
 export class V0SerializableCommand {
-	private type: V0CommandType 
+	private type: V0CommandType; 
 
 	// The only allowed objects here are from the bindings generated from the .proto file
 	private argsPtr: proto.Message;
 
     // A V0SerializableCommand knows how to deserialize itself, thanks to the "type" tag
-    public unmarshalJSON(bytes: string): Error { //TODO - changed from byte[] to string
+    public unmarshalJSON(bytes: string): Error { //TODO - changed type from byte[] to string
 
-        const obj: interstitialStruct = new interstitialStruct();
-        obj.argsBytes = JSON.parse(bytes) //TODO (try and catch for error checking) & don't give direct access
+        const interstitialObj: interstitialStruct = new interstitialStruct();
+        interstitialObj.setArgsBytes(JSON.parse(bytes)); //TODO (try and catch for error checking)
 
-        const visitor: cmdArgDeserializingVisitor = new cmdArgDeserializingVisitor(obj.argsBytes);
-        const err = AcceptVisitor(obj.type, visitor);
+        const visitor: cmdArgDeserializingVisitor = new cmdArgDeserializingVisitor(interstitialObj.getArgsBytes());
+        const err = AcceptVisitor(interstitialObj.getType(), visitor);
         if (err != null) {
             return err;
         }
 
-        this.type = obj.type;
-        this.argsPtr = visitor.getDeserializedCommandArgs()
+        this.type = interstitialObj.getType();
+        this.argsPtr = visitor.getDeserializedCommandArgs();
 
         return null;
     }

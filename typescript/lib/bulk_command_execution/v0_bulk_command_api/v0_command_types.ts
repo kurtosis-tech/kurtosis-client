@@ -31,7 +31,7 @@ const waitForEndpointAvailabilityCommandType: V0CommandType = "WAIT_FOR_ENDPOINT
 const executeBulkCommandsCommandType: V0CommandType = "EXECUTE_BULK_COMMANDS";
 // ^^^^^^^^^^^^^^^^^^^^ Update the visitor whenever you add an enum value!!! ^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-function AcceptVisitor(commandType: V0CommandType, visitor: V0CommandTypeVisitor): Error { //TODO - should commandType be a parameter or should this be defined as a method
+function AcceptVisitor(commandType: V0CommandType, visitor: V0CommandTypeVisitor): Error { //TODO - could commandType be a parameter or should this be defined as a method
 	var err: Error;
 	switch (commandType) {
 	case loadLambdaCommandType:
@@ -59,8 +59,9 @@ function AcceptVisitor(commandType: V0CommandType, visitor: V0CommandTypeVisitor
 	default:
 		return new Error("Unrecognized command type " + commandType)
 	}
-	if (err != null) { //TODO - why is this unreachable?
-        return err;
-	}
-	return null;
+	//TODO - unreachable code from golang - REMOVE
+    // if (err != null) { //TODO - this is probably not needed
+    //     return err;
+	// }
+	// return null; //TODO - But this should still be required
 }

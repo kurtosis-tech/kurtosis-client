@@ -1,13 +1,9 @@
-//package v0_bulk_command_api
-
-//import (
-	//"encoding/json" TODO - Pretty sure that I don't need this
-	//"fmt" - TOOD replace with console.log and ${myVar}
+//"fmt" - TOOD replace with console.log and ${myVar}
 import { RegisterServiceArgs } from "../../../kurtosis_core_rpc_api_bindings/api_container_service_pb"
 import { V0SerializableCommand } from "./v0_bulk_commands"
 import * as assert from "assert";	//"github.com/stretchr/testify/assert" //install assert from node.js
-	"testing" //TODO - Find automated testing for typescript packages
-//)
+"testing" //TODO - Find automated testing for typescript packages
+
 
 function testDeserializeRegisterServiceJSON(t testing.T) {
 	const deserialized: V0SerializableCommand = new V0SerializableCommand();

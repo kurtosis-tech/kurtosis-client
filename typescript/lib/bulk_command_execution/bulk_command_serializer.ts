@@ -12,11 +12,11 @@ class VersionedBulkCommandsDocument {
 }
 
 class SerializableBulkCommandsDocument extends VersionedBulkCommandsDocument {
-	private readonly body: V0BulkCommands //TODO - I should generalize this to any inteface?
+	private readonly body: V0BulkCommands; //TODO - I should generalize this to any inteface? Need to look how to do this
 
     constructor(schemaVersion: SchemaVersion, body: V0BulkCommands) {
         super(schemaVersion);
-        this.body = body; //TODO - same commetn about removing stuct tag since its go-specific
+        this.body = body; //TODO - same comment about removing stuct tag since its go-specific
     }
 }
 
@@ -29,14 +29,14 @@ class BulkCommandSerializer {
         const toSerialize: SerializableBulkCommandsDocument = new SerializableBulkCommandsDocument(latestSchemaVersion, bulkCommands);
         
         var bytes;
-        try {
+        try { //TODO - is try and catch okay error handling technique (since there are no callbacks, I didn't use promises)
             bytes = JSON.stringify(toSerialize);
         }
         catch (err) {
             return [null, err];
         }
 
-        //TODO (try and catch error checking) _ REMOVE
+        //TODO - REMOVE
         // if (err != null) { //TODO - How to deal with exception - JSON throws a SyntaxError exception if the string to parse is not valid JSON.
         //     return [null, err];
         // }
