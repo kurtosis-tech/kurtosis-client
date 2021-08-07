@@ -13,7 +13,6 @@ import { StaticFileID, FilesArtifactID, ContainerCreationConfig } from "../servi
 import { ContainerRunConfig } from "../services/container_run_config";
 import { newLoadLambdaArgs, newLambdaInfoArgs, newRegisterStaticFilesArgs, newRegisterFilesArtifactsArgs, newRegisterServiceArgs, newStartServiceArgs, newGetServiceInfoArgs, newRemoveServiceArgs, newPartitionServices, newPartitionConnections, newRepartitionArgs, newWaitForEndpointAvailabilityArgs, newExecuteBulkCommandsArgs } from "../constructor_calls";
 import { okAsync, errAsync, ResultAsync, ok, err, Result } from "neverthrow";
-//import * as winston from "winston";
 import * as log from "loglevel";
 import * as path from "path";
 import * as fs from 'fs';
@@ -181,11 +180,6 @@ class NetworkContext {
         }
         const args: RegisterFilesArtifactsArgs = newRegisterFilesArtifactsArgs(filesArtifactIdStrsToUrls);
         
-        // TODO TODO TODO - CALLBACK & ERROR-HANDLING (REMOVE)
-        // if _, err := networkCtx.client.RegisterFilesArtifacts(context.Background(), args); err !== nil {
-        //     return stacktrace.Propagate(err, "An error occurred registering files artifacts: %+v", filesArtifactUrls)
-        // }
-
         const promiseRegisterFilesArtifacts: Promise<ResultAsync<any, Error>> = new Promise((resolve, _unusedReject) => {
             this.client.registerFilesArtifacts(args, (error: grpc.ServiceError, response: any) => {
                 if (error) {
@@ -262,11 +256,12 @@ class NetworkContext {
 
         log.trace("Loading static files into new service namespace...");
         const usedStaticFilesMap = containerCreationConfig.getUsedStaticFiles();
-        //TODO new section to stick with a map, but this doens't feel productive though (4 lines below)
+
         const usedStaticFiles: Set<string> = new Set();
         for (let usedStaticFilesId in usedStaticFilesMap) {
             usedStaticFiles.add(usedStaticFilesId);
         }
+
         const resultLoadStaticFiles = await serviceContext.loadStaticFiles(usedStaticFiles); 
         if (!resultLoadStaticFiles.isOk()) {
             return err(resultLoadStaticFiles.error);
@@ -333,12 +328,6 @@ class NetworkContext {
             containerCreationConfig.getKurtosisVolumeMountpoint(),
             artifactIdStrToMountDirpath);
 
-        //TODO TODO TODO - CALLBACK & ERROR-HANDLING (REMOVE)
-        // resp, err := this.client.StartService(ctx, startServiceArgs)
-        // if err !== nil {
-        //     return nil, nil, stacktrace.Propagate(err, "An error occurred starting the service with the Kurtosis API")
-        // }
-
         const promiseStartService: Promise<ResultAsync<StartServiceResponse, Error>> = new Promise((resolve, _unusedReject) => {
             this.client.startService(startServiceArgs, (error: Error, response: StartServiceResponse) => {
                 if (error) {
@@ -363,15 +352,6 @@ class NetworkContext {
     public async getServiceContext(serviceId: ServiceID): Promise<Result<ServiceContext, Error>> {
         const getServiceInfoArgs: GetServiceInfoArgs = newGetServiceInfoArgs(serviceId);
         
-        //TODO TODO TODO - CALLBACK & ERROR-HANDLING (REMOVE)
-        // serviceResponse, err := networkCtx.client.GetServiceInfo(context.Background(), getServiceInfoArgs)
-        // if err !== nil {
-        //     return nil, stacktrace.Propagate(
-        //         err,
-        //         "An error occurred when trying to get info for service '%v'",
-        //         serviceId)
-        // }
-
         const promiseGetServiceInfo: Promise<ResultAsync<GetServiceInfoResponse, Error>> = new Promise((resolve, _unusedReject) => {
             this.client.getServiceInfo(getServiceInfoArgs, (error: Error, response: GetServiceInfoResponse) => {
                 if (error) {
@@ -464,7 +444,7 @@ class NetworkContext {
 
             const serviceIdStrSet: Set<string> = new Set();
             for (let serviceId in serviceIdSet) {
-                serviceIdStrSet.add(serviceId);
+                serviceIdStrSet.add(String(serviceId));
             }
             const partitionIdStr: string = String(partitionId);
             reqPartitionServices[partitionIdStr] = newPartitionServices(serviceIdStrSet);
