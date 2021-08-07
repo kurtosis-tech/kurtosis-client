@@ -1,6 +1,6 @@
 import { ApiContainerServiceClient } from "../..//kurtosis_core_rpc_api_bindings/api_container_service_grpc_pb";
 import { ExecuteLambdaArgs, ExecuteLambdaResponse } from "../../kurtosis_core_rpc_api_bindings/api_container_service_pb";
-import { newGetExecuteLambdaArgs } from "../constructor_calls";
+import { newExecuteLambdaArgs } from "../constructor_calls";
 import { okAsync, ResultAsync, Result } from "neverthrow";
 import * as grpc from "grpc";
 
@@ -18,7 +18,7 @@ export class LambdaContext {
 
     // Docs available at https://docs.kurtosistech.com/kurtosis-libs/lib-documentation
     public async execute(serializedParams: string): Promise<[string, Error]> {
-        const args: ExecuteLambdaArgs = newGetExecuteLambdaArgs(this.lambdaId, serializedParams);
+        const args: ExecuteLambdaArgs = newExecuteLambdaArgs(this.lambdaId, serializedParams);
 
         const promiseAsync: Promise<ResultAsync<ExecuteLambdaResponse, Error>> = new Promise((resolve, _unusedReject) => {
             this.client.executeLambda(args, (_unusedError: grpc.ServiceError, response: ExecuteLambdaResponse) => {
