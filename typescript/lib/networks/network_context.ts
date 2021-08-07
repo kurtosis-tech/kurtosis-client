@@ -13,7 +13,8 @@ import { StaticFileID, FilesArtifactID, ContainerCreationConfig } from "../servi
 import { ContainerRunConfig } from "../services/container_run_config";
 import { newLoadLambdaArgs, newLambdaInfoArgs, newRegisterStaticFilesArgs, newRegisterFilesArtifactsArgs, newRegisterServiceArgs, newStartServiceArgs, newGetServiceInfoArgs, newRemoveServiceArgs, newPartitionServices, newPartitionConnections, newRepartitionArgs, newWaitForEndpointAvailabilityArgs, newExecuteBulkCommandsArgs } from "../constructor_calls";
 import { okAsync, errAsync, ResultAsync, ok, err, Result } from "neverthrow";
-import * as winston from "winston";
+//import * as winston from "winston";
+import * as log from "loglevel";
 import * as path from "path";
 import * as fs from 'fs';
 import * as fsPromises from "fs/promises";
@@ -231,7 +232,7 @@ class NetworkContext {
         generateRunConfigFunc: (ipAddr: string, generatedFileFilepaths: Map<string, string>, staticFileFilepaths: Map<StaticFileID, string>) => [ContainerRunConfig, Error],
     ): Promise<Result<[ServiceContext, Map<string, PortBinding>], Error>> {
 
-        winston.info("Registering new service ID with Kurtosis API..."); //TODO logrus.Trace is meant for something for low level, but I could find winston.info to be closest to this
+        log.trace("Registering new service ID with Kurtosis API...");
         const registerServiceArgs: RegisterServiceArgs = newRegisterServiceArgs(serviceId, partitionId);
 
         const promiseRegisterService: Promise<ResultAsync<RegisterServiceResponse, Error>> = new Promise((resolve, _unusedReject) => {
@@ -257,9 +258,9 @@ class NetworkContext {
             serviceIpAddr,
             this.enclaveDataVolMountpoint,
             containerCreationConfig.getKurtosisVolumeMountpoint());
-        winston.info("New service successfully registered with Kurtosis API");
+        log.trace("New service successfully registered with Kurtosis API");
 
-        winston.info("Loading static files into new service namespace...");
+        log.trace("Loading static files into new service namespace...");
         const usedStaticFilesMap = containerCreationConfig.getUsedStaticFiles();
         //TODO new section to stick with a map, but this doens't feel productive though (4 lines below)
         const usedStaticFiles: Set<string> = new Set();
@@ -271,9 +272,9 @@ class NetworkContext {
             return err(resultLoadStaticFiles.error);
         }
         const staticFileAbsFilepathsOnService: Map<string, string> = resultLoadStaticFiles.value;
-        winston.info("Successfully loaded static files");
+        log.trace("Successfully loaded static files");
 
-        winston.info("Initializing generated files...");
+        log.trace("Initializing generated files...");
         const filesToGenerate: Set<string> = new Set(); //TODO - make sure this is correct
         for (let fileId in containerCreationConfig.getFileGeneratingFuncs()) {
             filesToGenerate.add(fileId);
@@ -306,22 +307,22 @@ class NetworkContext {
 
             generatedFileAbsFilepathsOnService[fileId] = filepaths.getAbsoluteFilepathOnServiceContainer();
         }
-        winston.info("Successfully initialized generated files in suite execution volume");
+        log.trace("Successfully initialized generated files in suite execution volume");
 
         var [containerRunConfig, generateRunConfigFuncErr] = generateRunConfigFunc(serviceIpAddr, generatedFileAbsFilepathsOnService, staticFileAbsFilepathsOnService);
         if (generateRunConfigFuncErr !== null) {
             return err(generateRunConfigFuncErr);
         }
 
-        winston.info("Creating files artifact ID str -> mount dirpaths map...");
+        log.trace("Creating files artifact ID str -> mount dirpaths map...");
         const artifactIdStrToMountDirpath: Map<string, string> = new Map();
         for (let [filesArtifactId, mountDirpath] of containerCreationConfig.getFilesArtifactMountpoints().entries()) {
 
             artifactIdStrToMountDirpath[String(filesArtifactId)] = mountDirpath;
         }
-        winston.info("Successfully created files artifact ID str -> mount dirpaths map");
+        log.trace("Successfully created files artifact ID str -> mount dirpaths map");
 
-        winston.info("Starting new service with Kurtosis API...");
+        log.trace("Starting new service with Kurtosis API...");
         const startServiceArgs: StartServiceArgs = newStartServiceArgs(
             serviceId, 
             containerCreationConfig.getImage(), 
@@ -352,7 +353,7 @@ class NetworkContext {
             return err(resultStartService.error);
         }
 
-        winston.info("Successfully started service with Kurtosis API");
+        log.trace("Successfully started service with Kurtosis API");
 
         const resp: StartServiceResponse = resultStartService.value;
         return ok([serviceContext, resp.getUsedPortsHostPortBindingsMap()]);
@@ -415,7 +416,7 @@ class NetworkContext {
     // Docs available at https://docs.kurtosistech.com/kurtosis-libs/lib-documentation
     public async removeService(serviceId: ServiceID, containerStopTimeoutSeconds: number): Promise<Result<null, Error>> {
 
-        winston.debug("Removing service '%v'...", serviceId);
+        log.debug("Removing service '%v'...", serviceId);
         // NOTE: This is kinda weird - when we remove a service we can never get it back so having a container
         //  stop timeout doesn't make much sense. It will make more sense when we can stop/start containers
         // Independent of adding/removing them from the network
@@ -435,7 +436,7 @@ class NetworkContext {
             return err(resultRemoveService.error);
         }
 
-        winston.debug("Successfully removed service ID %v", serviceId);
+        log.debug("Successfully removed service ID %v", serviceId);
 
         return ok(null);
     }

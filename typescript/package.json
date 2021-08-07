@@ -2,11 +2,7 @@
   "dependencies": {
     "google-protobuf": "^3.17.3",
     "grpc": "^1.24.11",
-<<<<<<< HEAD
-    "neverthrow": "^4.2.2",
-    "winston": "^3.3.3"
-=======
+    "loglevel": "^1.7.1",
     "neverthrow": "^4.2.2"
->>>>>>> GoodMorningA1i/porting-kurtosis-client-to-typescript
   }
 }
