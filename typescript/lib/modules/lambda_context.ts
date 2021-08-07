@@ -1,7 +1,7 @@
 import { ApiContainerServiceClient } from "../..//kurtosis_core_rpc_api_bindings/api_container_service_grpc_pb";
 import { ExecuteLambdaArgs, ExecuteLambdaResponse } from "../../kurtosis_core_rpc_api_bindings/api_container_service_pb";
 import { newExecuteLambdaArgs } from "../constructor_calls";
-import { okAsync, ResultAsync, Result } from "neverthrow";
+import { okAsync, errAsync, ResultAsync, ok, err, Result } from "neverthrow";
 import * as grpc from "grpc";
 
 export type LambdaID = string;
@@ -17,22 +17,26 @@ export class LambdaContext {
     }
 
     // Docs available at https://docs.kurtosistech.com/kurtosis-libs/lib-documentation
-    public async execute(serializedParams: string): Promise<[string, Error]> {
+    public async execute(serializedParams: string): Promise<Result<string, Error>> {
         const args: ExecuteLambdaArgs = newExecuteLambdaArgs(this.lambdaId, serializedParams);
 
-        const promiseAsync: Promise<ResultAsync<ExecuteLambdaResponse, Error>> = new Promise((resolve, _unusedReject) => {
-            this.client.executeLambda(args, (_unusedError: grpc.ServiceError, response: ExecuteLambdaResponse) => {
-                resolve(okAsync(response));
+        const promiseExecuteLambda: Promise<ResultAsync<ExecuteLambdaResponse, Error>> = new Promise((resolve, _unusedReject) => {
+            this.client.executeLambda(args, (error: grpc.ServiceError, response: ExecuteLambdaResponse) => {
+                if (error) {
+                    resolve(errAsync(error));
+                } else {
+                    resolve(okAsync(response));
+                }
             })
         });
 
-        const promise: Result<ExecuteLambdaResponse, Error> = await promiseAsync;
+        const resultExecuteLambda: Result<ExecuteLambdaResponse, Error> = await promiseExecuteLambda;
 
-        if (!promise.isOk()) {
-            return [null, promise.error];
+        if (!resultExecuteLambda.isOk()) {
+            return err(resultExecuteLambda.error);
         } else {
-            const resp: ExecuteLambdaResponse = promise.value;
-            return [resp.getSerializedResult(), null];
+            const resp: ExecuteLambdaResponse = resultExecuteLambda.value;
+            return ok(resp.getSerializedResult());
         }
     }
 }
