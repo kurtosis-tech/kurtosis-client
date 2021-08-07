@@ -1,4 +1,4 @@
-import { ExecCommandArgs, GenerateFilesArgs, FileGenerationOptions, LoadStaticFilesArgs, LoadLambdaArgs, GetLambdaInfoArgs, RegisterStaticFilesArgs, RegisterFilesArtifactsArgs, RegisterServiceArgs, StartServiceArgs, GetServiceInfoArgs, RemoveServiceArgs, PartitionServices, PartitionConnections, PartitionConnectionInfo, RepartitionArgs, WaitForEndpointAvailabilityArgs, ExecuteBulkCommandsArgs, ExecuteLambdaArgs } from '../kurtosis_core_rpc_api_bindings/api_container_service_pb'; //TODO - potentially change to asterisk since many imports
+import { ExecCommandArgs, GenerateFilesArgs, FileGenerationOptions, LoadStaticFilesArgs, LoadLambdaArgs, GetLambdaInfoArgs, RegisterStaticFilesArgs, RegisterFilesArtifactsArgs, RegisterServiceArgs, StartServiceArgs, GetServiceInfoArgs, RemoveServiceArgs, PartitionServices, PartitionConnections, PartitionConnectionInfo, RepartitionArgs, WaitForEndpointAvailabilityArgs, ExecuteBulkCommandsArgs, ExecuteLambdaArgs } from '../kurtosis_core_rpc_api_bindings/api_container_service_pb';
 import { ServiceID } from './services/service';
 import { PartitionID } from './networks/network_context';
 import { LambdaID } from "./modules/lambda_context";
@@ -61,7 +61,7 @@ export function newLoadLambdaArgs(lambdaId: LambdaID, image: string, serializedP
 
 export function newLambdaInfoArgs(lambdaId: LambdaID): GetLambdaInfoArgs {
     const result: GetLambdaInfoArgs = new GetLambdaInfoArgs();
-    result.setLambdaId(String(lambdaId)); //TODO - String(lambdaId) VS <string>lambdaId for type assertions (also seen "as")
+    result.setLambdaId(String(lambdaId));
 
     return result;
 }
@@ -87,8 +87,8 @@ export function newRegisterFilesArtifactsArgs(filesArtifactIdStrsToUrls: Map<str
 
 export function newRegisterServiceArgs(serviceId: ServiceID, partitionId: PartitionID): RegisterServiceArgs {
     const result: RegisterServiceArgs = new RegisterServiceArgs();
-    result.setServiceId(<string>serviceId);
-    result.setPartitionId(<string>partitionId);
+    result.setServiceId(String(serviceId));
+    result.setPartitionId(String(partitionId));
 
     return result;
 }
@@ -149,7 +149,7 @@ export function newPartitionServices(serviceIdStrSet: Set<string>): PartitionSer
     const result: PartitionServices = new PartitionServices();
     const partitionServicesMap: Map<string, boolean> = result.getServiceIdSetMap();
     for (let serviceIdStr in serviceIdStrSet) {
-        partitionServicesMap.set(serviceIdStr, true); //TODO - make sure this is correct
+        partitionServicesMap.set(serviceIdStr, true);
     }
 
     return result;

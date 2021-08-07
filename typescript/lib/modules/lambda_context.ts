@@ -34,9 +34,8 @@ export class LambdaContext {
 
         if (!resultExecuteLambda.isOk()) {
             return err(resultExecuteLambda.error);
-        } else {
-            const resp: ExecuteLambdaResponse = resultExecuteLambda.value;
-            return ok(resp.getSerializedResult());
         }
+        const resp: ExecuteLambdaResponse = resultExecuteLambda.value;
+        return ok(resp.getSerializedResult());
     }
 }

@@ -3,7 +3,6 @@
  * All Rights Reserved.
  */
 
-//TODO - potentially change to asterisk since many imports for grpc bindings & constructor calls
 import { ApiContainerServiceClient } from "../..//kurtosis_core_rpc_api_bindings/api_container_service_grpc_pb";
 import { LoadLambdaArgs, GetLambdaInfoArgs, RegisterStaticFilesArgs, RegisterStaticFilesResponse, RegisterFilesArtifactsArgs, PortBinding, RegisterServiceArgs, RegisterServiceResponse, StartServiceArgs, GetServiceInfoArgs, GetServiceInfoResponse, RemoveServiceArgs, PartitionConnectionInfo, PartitionServices, PartitionConnections, RepartitionArgs, WaitForEndpointAvailabilityArgs, ExecuteBulkCommandsArgs, StartServiceResponse, GetLambdaInfoResponse } from "../..//kurtosis_core_rpc_api_bindings/api_container_service_pb";
 import { LambdaID, LambdaContext } from "../modules/lambda_context";
@@ -270,7 +269,7 @@ class NetworkContext {
         log.trace("Successfully loaded static files");
 
         log.trace("Initializing generated files...");
-        const filesToGenerate: Set<string> = new Set(); //TODO - make sure this is correct
+        const filesToGenerate: Set<string> = new Set();s
         for (let fileId in containerCreationConfig.getFileGeneratingFuncs()) {
             filesToGenerate.add(fileId);
         }
