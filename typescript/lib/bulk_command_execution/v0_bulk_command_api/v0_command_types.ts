@@ -1,21 +1,23 @@
+import { ok, err, Result } from "neverthrow";
+
 // We provide a visitor interface here so that:
 //  1) all enum cases can be exhaustively handled
 //  2) any changes in the enum will result in a compile break
-interface V0CommandTypeVisitor {
-	visitLoadLambda: () => Error;
-	visitExecuteLambda: () => Error;
-	visitRegisterService: () => Error;
-	visitGenerateFiles: () => Error;
-	visitLoadStaticFiles: () => Error;
-	visitStartService: () => Error;
-	visitRemoveService: () => Error;
-	visitRepartition: () => Error;
-	visitExecCommand: () => Error;
-	visitWaitForEndpointAvailability: () => Error;
-	visitExecuteBulkCommands: () => Error;
+export interface V0CommandTypeVisitor {
+	visitLoadLambda: () => Result<null, Error>;
+	visitExecuteLambda: () => Result<null, Error>;
+	visitRegisterService: () => Result<null, Error>;
+	visitGenerateFiles: () => Result<null, Error>;
+	visitLoadStaticFiles: () => Result<null, Error>;
+	visitStartService: () => Result<null, Error>;
+	visitRemoveService: () => Result<null, Error>;
+	visitRepartition: () => Result<null, Error>;
+	visitExecCommand: () => Result<null, Error>;
+	visitWaitForEndpointAvailability: () => Result<null, Error>;
+	visitExecuteBulkCommands: () => Result<null, Error>;
 }
 
-type V0CommandType = string;
+export type V0CommandType = string;
 
 // vvvvvvvvvvvvvvvvvvvv Update the visitor whenever you add an enum value!!! vvvvvvvvvvvvvvvvvvvvvvvvvvv
 const loadLambdaCommandType: V0CommandType = "LOAD_LAMBDA";
@@ -31,37 +33,40 @@ const waitForEndpointAvailabilityCommandType: V0CommandType = "WAIT_FOR_ENDPOINT
 const executeBulkCommandsCommandType: V0CommandType = "EXECUTE_BULK_COMMANDS";
 // ^^^^^^^^^^^^^^^^^^^^ Update the visitor whenever you add an enum value!!! ^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-function AcceptVisitor(commandType: V0CommandType, visitor: V0CommandTypeVisitor): Error { //TODO - could commandType be a parameter or should this be defined as a method
-	var err: Error;
+export function acceptVisitor(commandType: V0CommandType, visitor: V0CommandTypeVisitor): Result<null, Error> { //TODO - could V0CommandType be a parameter or should this be defined as a method inside V0CommandType class (I peronally believe former is good)
+	var result: Result<null, Error>;
+    var defaultErr: Error = null;
 	switch (commandType) {
 	case loadLambdaCommandType:
-		err = visitor.visitLoadLambda();
+		result = visitor.visitLoadLambda();
 	case executeLambdaCommandType:
-		err = visitor.visitExecuteLambda();
+		result = visitor.visitExecuteLambda();
 	case registerServiceCommandType:
-		err = visitor.visitRegisterService();
+		result = visitor.visitRegisterService();
 	case generateFilesCommandType:
-		err = visitor.visitGenerateFiles();
+		result = visitor.visitGenerateFiles();
 	case loadStaticFilesCommandType:
-		err = visitor.visitLoadStaticFiles();
+		result = visitor.visitLoadStaticFiles();
 	case startServiceCommandType:
-		err = visitor.visitStartService();
+		result = visitor.visitStartService();
 	case removeServiceCommandType:
-		err = visitor.visitRemoveService();
+		result = visitor.visitRemoveService();
 	case repartitionCommandType:
-		err = visitor.visitRepartition();
+		result = visitor.visitRepartition();
 	case execCommandCommandType:
-		err = visitor.visitExecCommand();
+		result = visitor.visitExecCommand();
 	case waitForEndpointAvailabilityCommandType:
-		err = visitor.visitWaitForEndpointAvailability();
+		result = visitor.visitWaitForEndpointAvailability();
 	case executeBulkCommandsCommandType:
-		err = visitor.visitExecuteBulkCommands();
+		result = visitor.visitExecuteBulkCommands();
 	default:
-		return new Error("Unrecognized command type " + commandType)
+		defaultErr = new Error("Unrecognized command type " + commandType)
 	}
-	//TODO - unreachable code from golang - REMOVE
-    // if (err != null) { //TODO - this is probably not needed
-    //     return err;
-	// }
-	// return null; //TODO - But this should still be required
+	if (defaultErr != null) {
+        return err(defaultErr);
+    }
+    if (!result.isOk()) {
+        return err(result.error);
+	}
+	return ok(null);
 }

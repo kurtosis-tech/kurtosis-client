@@ -1,6 +1,8 @@
 import { LoadLambdaArgs } from "../../../kurtosis_core_rpc_api_bindings/api_container_service_pb"
 import { newEmptyExecCommandArgs, newEmptyExecuteBulkCommandsArgs, newEmptyExecuteLambdaArgs, newEmptyGenerateFileArgs, newEmptyLoadLambdaArgs, newEmptyLoadStaticFilesArgs, newEmptyRegisterServiceArgs, newEmptyRemoveServiceArgs, newEmptyRepartitionArgs, newEmptyStartServiceArgs, newEmptyWaitForEndpointAvailabilityArgs } from "../../../lib/constructor_calls";
 import { ExecCommandArgs, ExecuteBulkCommandsArgs, ExecuteLambdaArgs, GenerateFilesArgs, LoadStaticFilesArgs, RegisterServiceArgs, RemoveServiceArgs, RepartitionArgs, StartServiceArgs, WaitForEndpointAvailabilityArgs } from "../../../kurtosis_core_rpc_api_bindings/api_container_service_pb";
+import { V0CommandTypeVisitor, V0CommandType, acceptVisitor } from "./v0_command_types"
+import { ok, err, Result } from "neverthrow";
 import * as proto from "protobufjs";
 
 // ====================================================================================================
@@ -10,157 +12,167 @@ import * as proto from "protobufjs";
 // Visitor that will be used to deserialize command args into
 class cmdArgDeserializingVisitor implements V0CommandTypeVisitor {
 	private readonly bytesToDeserialize: string; //TODO (comment) - string because no byte type in typescript
-	private deserializedCommandArgsPtr: proto.Message; //TODO - did I import the right protobuf
+	private deserializedCommandArgsPtr: proto.Message; //TODO - did I import the right protobuf, this package is heavily go specifc
 
     constructor (bytesToDeserialize: string) {
         this.bytesToDeserialize = bytesToDeserialize;
     }
 
-    public visitLoadLambda(): Error {
+    public visitLoadLambda(): Result<null, Error> {
         let args: LoadLambdaArgs = newEmptyLoadLambdaArgs();
        
-        try { //TODO - No callback, so not using promises for error checking. Is try and catch a good alternative?
+        try {
             args = JSON.parse(this.bytesToDeserialize);
         } 
-        catch(err) {
-            return err;
+        catch(jsonErr) {
+            return err(jsonErr);
         }
-        
-        // TODO TODO TODO - REMVOE
-        // if err := JSON.parse(this.bytesToDeserialize, args); err != nil { //TODO - remove
-        //     return stacktrace.Propagate(err, "An error occurred deserializing the Lambda-loading args")
-        // }
 
         this.deserializedCommandArgsPtr = args; //TODO - compiling error, need to solve this
-        return null;
+        //TODO (above) - tried using protobufjs documentation to create a message like `this.deserializedCommandArgsPtr.create(args);`, but doesn't work
+        return ok(null);
     }
 
-    public visitExecuteLambda(): Error {
+    public visitExecuteLambda(): Result<null, Error> {
     	let args: ExecuteLambdaArgs = newEmptyExecuteLambdaArgs();
         args = JSON.parse(this.bytesToDeserialize); 
         
-        //TODO - error checking (try and catch??)
-    	// if err := json.Unmarshal(visitor.bytesToDeserialize, args); err != nil {
-    	// 	return stacktrace.Propagate(err, "An error occurred deserializing the Lambda-executing args")
-    	// }
+        try {
+            args = JSON.parse(this.bytesToDeserialize);
+        } 
+        catch(jsonErr) {
+            return err(jsonErr);
+        }
 
     	this.deserializedCommandArgsPtr = args;
-    	return null;
+    	return ok(null);
     }
 
-    public visitRegisterService(): Error {
+    public visitRegisterService(): Result<null, Error> {
         let args: RegisterServiceArgs = newEmptyRegisterServiceArgs();
         args = JSON.parse(this.bytesToDeserialize); 
         
-        //TODO - error checking (try and catch??)
-        // if err := json.Unmarshal(visitor.bytesToDeserialize, args); err != nil {
-        //     return stacktrace.Propagate(err, "An error occurred deserializing the register service args")
-        // }
+        try {
+            args = JSON.parse(this.bytesToDeserialize);
+        } 
+        catch(jsonErr) {
+            return err(jsonErr);
+        }
 
         this.deserializedCommandArgsPtr = args;
-        return null;
+        return ok(null);
     }
 
-    public visitGenerateFiles(): Error {
+    public visitGenerateFiles(): Result<null, Error> {
         let args: GenerateFilesArgs = newEmptyGenerateFileArgs();
         args = JSON.parse(this.bytesToDeserialize); 
         
-        //TODO - error checking (try and catch??)
-        // if err := json.Unmarshal(visitor.bytesToDeserialize, args); err != nil {
-        //     return stacktrace.Propagate(err, "An error occurred deserializing the generate files args")
-        // }
+        try {
+            args = JSON.parse(this.bytesToDeserialize);
+        } 
+        catch(jsonErr) {
+            return err(jsonErr);
+        }
 
         this.deserializedCommandArgsPtr = args;
-        return null;
+        return ok(null);
     }
 
-    public visitLoadStaticFiles(): Error {
+    public visitLoadStaticFiles(): Result<null, Error> {
     	let args: LoadStaticFilesArgs = newEmptyLoadStaticFilesArgs();
     	 
-        //TODO - error checking (try and catch??)
-        // if err := json.Unmarshal(visitor.bytesToDeserialize, args); err != nil {
-    	// 	return stacktrace.Propagate(err, "An error occurred deserializing the load static files args")
-    	// }
+        try {
+            args = JSON.parse(this.bytesToDeserialize);
+        } 
+        catch(jsonErr) {
+            return err(jsonErr);
+        }
 
-        args = JSON.parse(this.bytesToDeserialize);
         this.deserializedCommandArgsPtr = args;
         return null;
     }
 
-    public visitStartService(): Error {
+    public visitStartService(): Result<null, Error> {
         let args: StartServiceArgs = newEmptyStartServiceArgs();
 
-         //TODO - error checking (try and catch??)
-        // if err := json.Unmarshal(visitor.bytesToDeserialize, args); err != nil {
-        //     return stacktrace.Propagate(err, "An error occurred deserializing the start service args")
-        // }
+        try {
+            args = JSON.parse(this.bytesToDeserialize);
+        } 
+        catch(jsonErr) {
+            return err(jsonErr);
+        }
 
-        args = JSON.parse(this.bytesToDeserialize);
         this.deserializedCommandArgsPtr = args;
         return null;
     }
 
-    public visitRemoveService(): Error {
+    public visitRemoveService(): Result<null, Error> {
     	let args: RemoveServiceArgs = newEmptyRemoveServiceArgs();
     	
-        //TODO - error checking (try and catch??)
-        // if err := json.Unmarshal(visitor.bytesToDeserialize, args); err != nil {
-    	// 	return stacktrace.Propagate(err, "An error occurred deserializing the remove service args")
-    	// }
+        try {
+            args = JSON.parse(this.bytesToDeserialize);
+        } 
+        catch(jsonErr) {
+            return err(jsonErr);
+        }
 
-        args = JSON.parse(this.bytesToDeserialize);
         this.deserializedCommandArgsPtr = args;
         return null;
     }
 
-    public visitRepartition(): Error {
+    public visitRepartition(): Result<null, Error> {
     	let args: RepartitionArgs = newEmptyRepartitionArgs();
     	
-        //TODO - error checking (try and catch??)
-        // if err := json.Unmarshal(visitor.bytesToDeserialize, args); err != nil {
-    	// 	return stacktrace.Propagate(err, "An error occurred deserializing the repartition service args")
-    	// }
+        try {
+            args = JSON.parse(this.bytesToDeserialize);
+        } 
+        catch(jsonErr) {
+            return err(jsonErr);
+        }
 
-        args = JSON.parse(this.bytesToDeserialize);
         this.deserializedCommandArgsPtr = args;
         return null;
     }
 
-    public visitExecCommand(): Error {
+    public visitExecCommand(): Result<null, Error> {
         let args: ExecCommandArgs = newEmptyExecCommandArgs();
      
-        //TODO - error checking (try and catch??)
-        // if err := json.Unmarshal(visitor.bytesToDeserialize, args); err != nil {
-        //     return stacktrace.Propagate(err, "An error occurred deserializing the exec command args")
-        // }
-        
-        args = JSON.parse(this.bytesToDeserialize);
+        try {
+            args = JSON.parse(this.bytesToDeserialize);
+        } 
+        catch(jsonErr) {
+            return err(jsonErr);
+        }
+
         this.deserializedCommandArgsPtr = args;
         return null;
     }
 
-    public visitWaitForEndpointAvailability(): Error {
+    public visitWaitForEndpointAvailability(): Result<null, Error> {
     	let args: WaitForEndpointAvailabilityArgs = newEmptyWaitForEndpointAvailabilityArgs();
     	
-         //TODO - error checking (try and catch??)
-        // if err := json.Unmarshal(visitor.bytesToDeserialize, args); err != nil {
-    	// 	return stacktrace.Propagate(err, "An error occurred deserializing the endpoint availability-waiting args")
-    	// }
+        try {
+            args = JSON.parse(this.bytesToDeserialize);
+        } 
+        catch(jsonErr) {
+            return err(jsonErr);
+        }
 
         args = JSON.parse(this.bytesToDeserialize);
         this.deserializedCommandArgsPtr = args;
         return null;
     }
 
-    public visitExecuteBulkCommands(): Error {
+    public visitExecuteBulkCommands(): Result<null, Error> {
         let args: ExecuteBulkCommandsArgs = newEmptyExecuteBulkCommandsArgs();
 
-         //TODO - error checking (try and catch??)
-        // if err := json.Unmarshal(visitor.bytesToDeserialize, args); err != nil {
-        //     return stacktrace.Propagate(err, "An error occurred deserializing the bulk command execution args")
-        // }
+        try {
+            args = JSON.parse(this.bytesToDeserialize);
+        } 
+        catch(jsonErr) {
+            return err(jsonErr);
+        }
 
-        args = JSON.parse(this.bytesToDeserialize);
         this.deserializedCommandArgsPtr = args;
         return null;
     }
@@ -176,12 +188,11 @@ class cmdArgDeserializingVisitor implements V0CommandTypeVisitor {
 
 class interstitialStruct {
     private readonly type: V0CommandType;
-    private argsBytes: string; //TODO - original type was json.RawMessage ;
+    private argsBytes: string; //TODO - original type was json.RawMessage ; this type might not exist in typescript
 
     constructor(){}
 
-    //TODO - getter and setter methods for the variables, instead of giving direct access ; is that an alright change from golang
-    public getType(): V0CommandType {
+    public getType(): V0CommandType { //TODO - getter and setter instead of giving direct access is alright change from golang?
         return this.type;
     }
     
@@ -202,21 +213,26 @@ export class V0SerializableCommand {
 	private argsPtr: proto.Message;
 
     // A V0SerializableCommand knows how to deserialize itself, thanks to the "type" tag
-    public unmarshalJSON(bytes: string): Error { //TODO - changed type from byte[] to string
+    public unmarshalJSON(bytes: string): Result<null, Error> { //TODO (comment) - changed type from byte[] to string
 
         const interstitialObj: interstitialStruct = new interstitialStruct();
-        interstitialObj.setArgsBytes(JSON.parse(bytes)); //TODO (try and catch for error checking)
+        try {
+            interstitialObj.setArgsBytes(JSON.parse(bytes));
+        }
+        catch(jsonErr) {
+            return err(jsonErr);
+        }
 
         const visitor: cmdArgDeserializingVisitor = new cmdArgDeserializingVisitor(interstitialObj.getArgsBytes());
-        const err = AcceptVisitor(interstitialObj.getType(), visitor);
-        if (err != null) {
-            return err;
+        const resultAcceptVisitor = acceptVisitor(interstitialObj.getType(), visitor);
+        if (!resultAcceptVisitor.isOk()) {
+            return err(resultAcceptVisitor.error);
         }
 
         this.type = interstitialObj.getType();
         this.argsPtr = visitor.getDeserializedCommandArgs();
 
-        return null;
+        return ok(null);
     }
 
 }

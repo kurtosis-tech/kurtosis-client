@@ -1,5 +1,6 @@
 import { V0BulkCommands } from "./v0_bulk_command_api/v0_bulk_commands";
 import { SchemaVersion, V0 } from "./bulk_command_schema_version";
+import { ok, err, Result } from "neverthrow";
 
 const latestSchemaVersion = V0;
 
@@ -12,7 +13,7 @@ class VersionedBulkCommandsDocument {
 }
 
 class SerializableBulkCommandsDocument extends VersionedBulkCommandsDocument {
-	private readonly body: V0BulkCommands; //TODO - I should generalize this to any inteface? Need to look how to do this
+	private readonly body: V0BulkCommands; //TODO - I should generalize this to any inteface? Need to look how to do this, or would need some kind of parent interface
 
     constructor(schemaVersion: SchemaVersion, body: V0BulkCommands) {
         super(schemaVersion);
@@ -25,22 +26,17 @@ class BulkCommandSerializer {
 
     constructor (){}
 
-    public serialize(bulkCommands: V0BulkCommands): [Uint8Array | string, Error] {
+    public serialize(bulkCommands: V0BulkCommands): Result<Uint8Array | string, Error> {
         const toSerialize: SerializableBulkCommandsDocument = new SerializableBulkCommandsDocument(latestSchemaVersion, bulkCommands);
         
-        var bytes;
-        try { //TODO - is try and catch okay error handling technique (since there are no callbacks, I didn't use promises)
+        var bytes: string;
+        try {
             bytes = JSON.stringify(toSerialize);
         }
-        catch (err) {
-            return [null, err];
+        catch (jsonErr) {
+            return err(jsonErr);
         }
 
-        //TODO - REMOVE
-        // if (err != null) { //TODO - How to deal with exception - JSON throws a SyntaxError exception if the string to parse is not valid JSON.
-        //     return [null, err];
-        // }
-
-        return [bytes, null];
+        return ok(bytes);
     }
 }
