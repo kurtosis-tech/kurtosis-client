@@ -3,6 +3,7 @@ import { ExecCommandArgs, ExecCommandResponse, FileGenerationOptions, GenerateFi
 import { ServiceID } from './service';
 import { StaticFileID } from './container_creation_config'; 
 import { newGetExecCommandArgs, newGetGenerateFilesArgs, newGetFileGenerationOptions, newGetLoadStaticFilesArgs } from "../constructor_calls";
+import { okAsync, errAsync, ResultAsync, ok, err, Result } from 'neverthrow';
 import * as grpc from "grpc";
 import * as path from "path";
 
@@ -65,52 +66,66 @@ class ServiceContext {
     }
 
     // Docs available at https://docs.kurtosistech.com/kurtosis-libs/lib-documentation
-    public execCommand(command: string[]): [number, Uint8Array | string, Error] {
+    public async execCommand(command: string[]): Promise<Result<[number, Uint8Array | string], Error>> {
         const serviceId: ServiceID = this.serviceId;
         const args: ExecCommandArgs = newGetExecCommandArgs(serviceId, command);
 
-        var resp: ExecCommandResponse;
-        var error: grpc.ServiceError;
-        this.client.execCommand(args, function(error, feature){ //TODO (comment) - don't use return value, but use callback parameters
-            error = error; 
-            resp = feature;
+        const promiseExecCommand: Promise<ResultAsync<ExecCommandResponse, Error>> = new Promise((resolve, _unusedReject) => {
+            this.client.execCommand(args, (error: grpc.ServiceError, response: ExecCommandResponse) => {
+                if (error) {
+                    resolve(errAsync(error));
+                } else {
+                    resolve(okAsync(response));
+                }
+            })
         });
-        
-        //TODO (comment) - Will this error checking propogate as needed (Kevin mentioned that returning error as-is is good enough)
-        if (error !== null) {
-            return [0, null, error]; 
-            //TODO - passing in actual error, but no personalized message
-            //I was thinking of `new Error("An error occurred executing command " + command +  " on service " + serviceId + 
-            //". Here is the error message: " + error)` but don't think this propogates the error as needed, just instantiates an error
+
+        const resultExecCommand: Result<ExecCommandResponse, Error> = await promiseExecCommand;
+
+        if (!resultExecCommand.isOk()) {
+            return err(resultExecCommand.error);
         }
-        return [resp.getExitCode(), resp.getLogOutput(), null];
+        const resp: ExecCommandResponse = resultExecCommand.value;
+        return ok([resp.getExitCode(), resp.getLogOutput()]);
+        
+
     }
 
     // Docs available at https://docs.kurtosistech.com/kurtosis-libs/lib-documentation
-    public generateFiles(filesToGenerateSet: Set<string>): [Map<string, GeneratedFileFilepaths>, Error] {
+    public async generateFiles(filesToGenerateSet: Set<string>): Promise<Result<Map<string, GeneratedFileFilepaths>, Error>> {
         const serviceId: ServiceID = this.serviceId;
         const fileGenerationOpts: Map<string, FileGenerationOptions> = newGetFileGenerationOptions(filesToGenerateSet);
 
         const args: GenerateFilesArgs = newGetGenerateFilesArgs(serviceId, fileGenerationOpts);
-        
-        //TODO - pending implementation of callback and error handling like execCommand
-        let request: grpc.requestCallback<GenerateFilesResponse>; 
-        let resp, err = this.client.generateFiles(args, request); 
-        if (err !== null){
-            return [null, new Error("An error occurred generating files using args: %+v")];
-        }
-        
-        const generatedFileRelativeFilepaths: Map<string, string> = resp.GeneratedFileRelativeFilepaths;
+
+        const promiseGenerateFiles: Promise<ResultAsync<GenerateFilesResponse, Error>> = new Promise((resolve, _unusedReject) => {
+            this.client.generateFiles(args, (error: grpc.ServiceError, response: GenerateFilesResponse) => {
+                if (error) {
+                    resolve(errAsync(error));
+                } else {
+                    resolve(okAsync(response));
+                }
+            })
+        });
+
+        const resultGenerateFiles: Result<GenerateFilesResponse, Error> = await promiseGenerateFiles;
+
+        if (!resultGenerateFiles.isOk()) {
+            return err(resultGenerateFiles.error);
+        } 
+        const resp: GenerateFilesResponse = resultGenerateFiles.value;
+
+        const generatedFileRelativeFilepaths: Map<string, string> = resp.getGeneratedFileRelativeFilepathsMap();
 
         const result: Map<string, GeneratedFileFilepaths> = new Map();
         for (let fileId in filesToGenerateSet) {
             
             var relativeFilepath: string;
             if (!generatedFileRelativeFilepaths.has(fileId)) {
-                return [null, new Error(
+                return err(new Error(
                     "No filepath (relative to test volume root) was returned for file " + fileId +  ", even though we requested it; this is a Kurtosis bug"
                     )
-                ];
+                );
             }
             relativeFilepath = generatedFileRelativeFilepaths[fileId];
 
@@ -119,11 +134,11 @@ class ServiceContext {
             const genFilePath: GeneratedFileFilepaths = new GeneratedFileFilepaths(absFilepathHere, absFilepathOnService);
             result.set(fileId, genFilePath); 
         }
-        return [result, null];
+        return ok(result);
     }
 
     // Docs available at https://docs.kurtosistech.com/kurtosis-libs/lib-documentation
-    public loadStaticFiles(usedStaticFilesSet: Set<StaticFileID>): [Map<StaticFileID, string>, Error] { 
+    public async loadStaticFiles(usedStaticFilesSet: Set<StaticFileID>): Promise<Result<Map<StaticFileID, string>, Error>> { 
         const serviceId: ServiceID = this.serviceId;
         const staticFilesToCopyStringSet: Map<string, boolean> = new Map(); 
         for (let staticFileId in usedStaticFilesSet) {
@@ -132,20 +147,30 @@ class ServiceContext {
 
         const loadStaticFilesArgs: LoadStaticFilesArgs = newGetLoadStaticFilesArgs(serviceId, staticFilesToCopyStringSet);
         
-        //TODO - pending implementation of callback and error handling like execCommand
-        let request: grpc.requestCallback<LoadStaticFilesResponse>;
-        let loadStaticFilesResp, err = this.client.loadStaticFiles(loadStaticFilesArgs, request);
-        if (err !== null) {
-            return [null, new Error ("An error occurred loading the requested static files into the namespace of service '%v'")];
+        const promiseLoadStaticFiles: Promise<ResultAsync<LoadStaticFilesResponse, Error>> = new Promise((resolve, _unusedReject) => {
+            this.client.loadStaticFiles(loadStaticFilesArgs, (error: grpc.ServiceError, response: LoadStaticFilesResponse) => {
+                if (error) {
+                    resolve(errAsync(error));
+                } else {
+                    resolve(okAsync(response));
+                }
+            })
+        });
+
+        const resultLoadStaticFiles: Result<LoadStaticFilesResponse, Error> = await promiseLoadStaticFiles;
+
+        if (!resultLoadStaticFiles.isOk()) {
+            return err(resultLoadStaticFiles.error);
         }
+        const loadStaticFilesResp: LoadStaticFilesResponse = resultLoadStaticFiles.value;
 
         const staticFileAbsFilepathsOnService: Map<StaticFileID, string> = new Map();
-        for (let staticFileId in loadStaticFilesResp.CopiedStaticFileRelativeFilepaths) {
-            const filepathRelativeToExVolRoot: string = loadStaticFilesResp.CopiedStaticFileRelativeFilepaths[staticFileId];
+        for (let staticFileId in loadStaticFilesResp.getCopiedStaticFileRelativeFilepathsMap()) {
+            const filepathRelativeToExVolRoot: string = loadStaticFilesResp.getCopiedStaticFileRelativeFilepathsMap()[staticFileId];
             const absFilepathOnContainer: string = path.join(this.enclaveDataVolMountpointOnServiceContainer, filepathRelativeToExVolRoot)
             staticFileAbsFilepathsOnService[<StaticFileID>(staticFileId)] = absFilepathOnContainer;
         }
-        return [staticFileAbsFilepathsOnService, null] 
+        return ok(staticFileAbsFilepathsOnService);
 
     }
 }
