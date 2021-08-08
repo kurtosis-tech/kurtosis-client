@@ -1,6 +1,7 @@
 # TBD
 ### Features
 * Ported `service.go` and `service_context.go` to typescript inside `lib/services/` directory
+* Ported `bulk_commands` to typescript inside `lib/bulk_command_execution/` directory
 * Added a file inside of `typescript/lib` directory that holds a template of constructor calls
 
 ### Changes
