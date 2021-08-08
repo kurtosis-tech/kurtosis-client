@@ -207,7 +207,7 @@ class interstitialStruct {
 
 // Used for serializing
 export class V0SerializableCommand {
-	private type: V0CommandType; 
+	type: V0CommandType; //TODO - manipulating in test file; if this is required, then use setter 
 
 	// The only allowed objects here are from the bindings generated from the .proto file
 	private argsPtr: proto.Message;
