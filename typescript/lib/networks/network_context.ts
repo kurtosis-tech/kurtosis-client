@@ -442,12 +442,8 @@ class NetworkContext {
         const reqPartitionServices: Map<string, PartitionServices> = new Map();
         for (let [partitionId, serviceIdSet] of partitionServices.entries()) {
 
-            const serviceIdStrSet: Set<string> = new Set();
-            for (let serviceId in serviceIdSet) {
-                serviceIdStrSet.add(String(serviceId));
-            }
             const partitionIdStr: string = String(partitionId);
-            reqPartitionServices[partitionIdStr] = newPartitionServices(serviceIdStrSet);
+            reqPartitionServices[partitionIdStr] = newPartitionServices(serviceIdSet);
         }
 
         const reqPartitionConns: Map<string, PartitionConnections> = new Map();
