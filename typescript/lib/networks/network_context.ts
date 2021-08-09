@@ -96,10 +96,19 @@ class NetworkContext {
         for (let [staticFileId, srcAbsFilepath] of staticFileFilepaths.entries()) {
             
             // Sanity-check that the source filepath exists
-            const promiseSrcAbsFilepath: Promise<fs.Stats> = fsPromises.stat(srcAbsFilepath);
-            promiseSrcAbsFilepath.catch(() => { 
-                return err(new Error("Source filepath " + srcAbsFilepath + " associated with static file " + staticFileId + " doesn't exist")); 
-            })
+            const promiseStatSrcAbsFilepath: Promise<ResultAsync<fs.Stats, Error>> = new Promise((resolve, _unusedReject) => {
+                fs.stat(srcAbsFilepath, (error: Error, response: fs.Stats) => {
+                    if (error === null) {
+                        resolve(okAsync(response));
+                    } else {
+                        resolve(errAsync(error));
+                    }
+                })
+            });
+            const resultStatSrcAbsFilepath: Result<fs.Stats, Error> = await promiseStatSrcAbsFilepath;
+            if (!resultStatSrcAbsFilepath.isOk()) {
+                return err(new Error("Source filepath " + srcAbsFilepath + " associated with static file " + staticFileId + " doesn't exist"));
+            }
             
             strSet[String(staticFileId)] = true;
         }
@@ -133,39 +142,87 @@ class NetworkContext {
 
             const destAbsFilepath: string = path.join(this.enclaveDataVolMountpoint, destFilepathRelativeToEnclaveVolRoot);
             
-            const promiseDestAbsFilepath: Promise<fs.Stats> = fsPromises.stat(destAbsFilepath);
-            promiseDestAbsFilepath.catch(() => { 
+            const promiseStatDestAbsFilepath: Promise<ResultAsync<fs.Stats, Error>> = new Promise((resolve, _unusedReject) => {
+                fs.stat(destAbsFilepath, (error: Error, response: fs.Stats) => {
+                    if (error === null) {
+                        resolve(okAsync(response));
+                    } else {
+                        resolve(errAsync(error));
+                    }
+                })
+            });
+            const resultStatDestAbsFilepath: Result<fs.Stats, Error> = await promiseStatDestAbsFilepath;
+            if (!resultStatDestAbsFilepath.isOk()) {
                 return err(new Error("The Kurtosis API asked us to copy static file " + staticFileId + " to path " + destFilepathRelativeToEnclaveVolRoot + 
                 " in the enclave volume which means that an empty file should exist there, " + "but no file exists at that path - this is a bug in Kurtosis!"));
-            })
+            }
 
             
             var srcFp: number;
             var destFp: number;
-            try { //TODO (comment) - finally block meant to duplicate defer functionality
+            try {
                 
-                const promiseSrcFp: Promise<fsPromises.FileHandle> = fsPromises.open(srcAbsFilepath, 'r');
-                promiseSrcFp.catch(error => { 
-                    return err(error); 
-                })
-                const resultSrcFp: fsPromises.FileHandle = await promiseSrcFp;
-                srcFp = resultSrcFp.fd;
-                
-                const promiseDestFp: Promise<fsPromises.FileHandle> = fsPromises.open(destAbsFilepath, 'w');
-                promiseDestFp.catch(error => { 
-                    return err(error); 
-                })
-                const resultDestFp: fsPromises.FileHandle = await promiseSrcFp;
-                destFp = resultDestFp.fd;
-    
-                const promiseCopyFile: Promise<void> = fsPromises.copyFile(srcAbsFilepath, destAbsFilepath);
-                promiseCopyFile.catch(error => { 
-                    return err(error); 
-                })
+                const promiseOpenSrcFp: Promise<ResultAsync<number, Error>> = new Promise((resolve, _unusedReject) => {
+                    fs.open(srcAbsFilepath, 'r', (error: Error, response: number) => {
+                        if (error === null) {
+                            resolve(okAsync(response));
+                        } else {
+                            resolve(errAsync(error));
+                        }
+                    })
+                });
+                const resultOpenSrcFp: Result<number, Error> = await promiseOpenSrcFp;
+                if (!resultOpenSrcFp.isOk()) {
+                    return err(resultOpenSrcFp.error);
+                }
+                srcFp = resultOpenSrcFp.value;
+
+                try {
+                    const promiseOpenDestFp: Promise<ResultAsync<number, Error>> = new Promise((resolve, _unusedReject) => {
+                        fs.open(destAbsFilepath, 'w', (error: Error, response: number) => {
+                            if (error === null) {
+                                resolve(okAsync(response));
+                            } else {
+                                resolve(errAsync(error));
+                            }
+                        })
+                    });
+                    const resultOpenDestFp: Result<number, Error> = await promiseOpenDestFp;
+                    if (!resultOpenDestFp.isOk()) {
+                        return err(resultOpenDestFp.error);
+                    }
+                    destFp = resultOpenDestFp.value;
+
+                    try {
+                        const promiseCopyFile: Promise<void> = fsPromises.copyFile(srcAbsFilepath, destAbsFilepath);
+
+                        //TODO - REMOVE the following commented code
+                        // const promiseCopyFile: Promise<ResultAsync<number, Error>> = new Promise((resolve, _unusedReject) => {
+                        //     fs.copyFile(srcAbsFilepath, destAbsFilepath, (callbackFunction: (error: Error) => void) => {
+                        //         //Can't do the following lines
+                        //         // if (error === null) {
+                        //         //     resolve(okAsync(response));
+                        //         // } else {
+                        //         //     resolve(errAsync(error));
+                        //         // }
+                        //     })
+                        // });
+                        // // const resultDestFp: Result<number, Error> = await promiseCopyFile;
+                        // // if (!resultDestFp.isOk()) {
+                        // //     return err(resultDestFp.error);
+                        // // }
+                        // // destFp = resultDestFp.value;
+                    }
+                    catch (error) {
+                        return err(error); //TODO - there isn't a better to check for error other than using try and catch
+                    }
+                }
+                finally {
+                    fs.close(destFp)
+                }
             }   
             finally {
                 fs.close(srcFp);
-                fs.close(destFp)
             }
 
         }
@@ -288,12 +345,20 @@ class NetworkContext {
             }
             const filepaths: GeneratedFileFilepaths = generatedFileFilepaths[fileId];
 
-            const promiseFp: Promise<fsPromises.FileHandle> = fsPromises.open(filepaths.getAbsoluteFilepathHere(), 'r'); //TODO - is 'r' the correct mode?; shouldn't I be closing the file (like `defer fp.close()`)
-            promiseFp.catch(error => { 
-                return err(error); 
-            })
-            const resultFp: fsPromises.FileHandle = await promiseFp;
-            const fp: number = resultFp.fd;
+            const promiseOpenFp: Promise<ResultAsync<number, Error>> = new Promise((resolve, _unusedReject) => {
+                fs.open(filepaths.getAbsoluteFilepathHere(), 'r', (error: Error, response: number) => {
+                    if (error === null) {
+                        resolve(okAsync(response));
+                    } else {
+                        resolve(errAsync(error));
+                    }
+                })
+            });
+            const resultOpenFp: Result<number, Error> = await promiseOpenFp;
+            if (!resultOpenFp.isOk()) {
+                return err(resultOpenFp.error);
+            }
+            const fp: number = resultOpenFp.value;
 
             var initalizingFuncResult: Result<null, Error> = initializingFunc(fp);
             if (!initalizingFuncResult.isOk()){
