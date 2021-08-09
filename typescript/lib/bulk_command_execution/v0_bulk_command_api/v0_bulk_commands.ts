@@ -154,7 +154,6 @@ class cmdArgDeserializingVisitor implements V0CommandTypeVisitor {
             return err(jsonErr);
         }
 
-        args = JSON.parse(this.bytesToDeserialize);
         this.deserializedCommandArgsPtr = args;
         return ok(null);
     }
