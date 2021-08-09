@@ -22,10 +22,10 @@ export class LambdaContext {
 
         const promiseExecuteLambda: Promise<ResultAsync<ExecuteLambdaResponse, Error>> = new Promise((resolve, _unusedReject) => {
             this.client.executeLambda(args, (error: grpc.ServiceError, response: ExecuteLambdaResponse) => {
-                if (error) {
-                    resolve(errAsync(error));
-                } else {
+                if (error === null) {
                     resolve(okAsync(response));
+                } else {
+                    resolve(errAsync(error));
                 }
             })
         });
