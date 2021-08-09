@@ -1,7 +1,7 @@
-import { LoadLambdaArgs } from "../../../kurtosis_core_rpc_api_bindings/api_container_service_pb"
+import { LoadLambdaArgs } from "../../../kurtosis_core_rpc_api_bindings/api_container_service_pb";
 import { newEmptyExecCommandArgs, newEmptyExecuteBulkCommandsArgs, newEmptyExecuteLambdaArgs, newEmptyGenerateFileArgs, newEmptyLoadLambdaArgs, newEmptyLoadStaticFilesArgs, newEmptyRegisterServiceArgs, newEmptyRemoveServiceArgs, newEmptyRepartitionArgs, newEmptyStartServiceArgs, newEmptyWaitForEndpointAvailabilityArgs } from "../../../lib/constructor_calls";
 import { ExecCommandArgs, ExecuteBulkCommandsArgs, ExecuteLambdaArgs, GenerateFilesArgs, LoadStaticFilesArgs, RegisterServiceArgs, RemoveServiceArgs, RepartitionArgs, StartServiceArgs, WaitForEndpointAvailabilityArgs } from "../../../kurtosis_core_rpc_api_bindings/api_container_service_pb";
-import { V0CommandTypeVisitor, V0CommandType, acceptVisitor } from "./v0_command_types"
+import { V0CommandTypeVisitor, V0CommandType, acceptVisitor } from "./v0_command_types";
 import { ok, err, Result } from "neverthrow";
 import * as proto from "protobufjs";
 
