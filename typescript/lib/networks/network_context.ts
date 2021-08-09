@@ -201,7 +201,7 @@ class NetworkContext {
     public async addService(
         serviceId: ServiceID,
         containerCreationConfig: ContainerCreationConfig,
-        generateRunConfigFunc: (ipAddr: string, generatedFileFilepaths: Map<string, string>, staticFileFilepaths: Map<StaticFileID, string>) => [ContainerRunConfig, Error]
+        generateRunConfigFunc: (ipAddr: string, generatedFileFilepaths: Map<string, string>, staticFileFilepaths: Map<StaticFileID, string>) => Result<ContainerRunConfig, Error>
     ): Promise<Result<[ServiceContext, Map<string, PortBinding>], Error>> {
 
         const resultAddServiceToPartition: Result<[ServiceContext, Map<string, PortBinding>], Error> = await this.addServiceToPartition(
@@ -223,7 +223,7 @@ class NetworkContext {
         serviceId: ServiceID,
         partitionId: PartitionID,
         containerCreationConfig: ContainerCreationConfig,
-        generateRunConfigFunc: (ipAddr: string, generatedFileFilepaths: Map<string, string>, staticFileFilepaths: Map<StaticFileID, string>) => [ContainerRunConfig, Error],
+        generateRunConfigFunc: (ipAddr: string, generatedFileFilepaths: Map<string, string>, staticFileFilepaths: Map<StaticFileID, string>) => Result<ContainerRunConfig, Error>,
     ): Promise<Result<[ServiceContext, Map<string, PortBinding>], Error>> {
 
         log.trace("Registering new service ID with Kurtosis API...");
@@ -295,7 +295,7 @@ class NetworkContext {
             const resultFp: fsPromises.FileHandle = await promiseFp;
             const fp: number = resultFp.fd;
 
-            var initalizingFuncResult = initializingFunc(fp);
+            var initalizingFuncResult: Result<null, Error> = initializingFunc(fp);
             if (!initalizingFuncResult.isOk()){
                 return err(initalizingFuncResult.error);
             }
@@ -304,10 +304,11 @@ class NetworkContext {
         }
         log.trace("Successfully initialized generated files in suite execution volume");
 
-        var [containerRunConfig, generateRunConfigFuncErr] = generateRunConfigFunc(serviceIpAddr, generatedFileAbsFilepathsOnService, staticFileAbsFilepathsOnService);
-        if (generateRunConfigFuncErr !== null) {
-            return err(generateRunConfigFuncErr);
+        const generateRunConfigFuncResult: Result<ContainerRunConfig, Error> = generateRunConfigFunc(serviceIpAddr, generatedFileAbsFilepathsOnService, staticFileAbsFilepathsOnService);
+        if (!generateRunConfigFuncResult.isOk()) {
+            return err(generateRunConfigFuncResult.error);
         }
+        const containerRunConfig: ContainerRunConfig = generateRunConfigFuncResult.value;
 
         log.trace("Creating files artifact ID str -> mount dirpaths map...");
         const artifactIdStrToMountDirpath: Map<string, string> = new Map();
