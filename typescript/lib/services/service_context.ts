@@ -72,10 +72,10 @@ export class ServiceContext {
 
         const promiseExecCommand: Promise<ResultAsync<ExecCommandResponse, Error>> = new Promise((resolve, _unusedReject) => {
             this.client.execCommand(args, (error: grpc.ServiceError, response: ExecCommandResponse) => {
-                if (error) {
-                    resolve(errAsync(error));
-                } else {
+                if (error === null) {
                     resolve(okAsync(response));
+                } else {
+                    resolve(errAsync(error));
                 }
             })
         });
@@ -100,10 +100,10 @@ export class ServiceContext {
 
         const promiseGenerateFiles: Promise<ResultAsync<GenerateFilesResponse, Error>> = new Promise((resolve, _unusedReject) => {
             this.client.generateFiles(args, (error: grpc.ServiceError, response: GenerateFilesResponse) => {
-                if (error) {
-                    resolve(errAsync(error));
-                } else {
+                if (error === null) {
                     resolve(okAsync(response));
+                } else {
+                    resolve(errAsync(error));
                 }
             })
         });
@@ -149,10 +149,10 @@ export class ServiceContext {
         
         const promiseLoadStaticFiles: Promise<ResultAsync<LoadStaticFilesResponse, Error>> = new Promise((resolve, _unusedReject) => {
             this.client.loadStaticFiles(loadStaticFilesArgs, (error: grpc.ServiceError, response: LoadStaticFilesResponse) => {
-                if (error) {
-                    resolve(errAsync(error));
-                } else {
+                if (error === null) {
                     resolve(okAsync(response));
+                } else {
+                    resolve(errAsync(error));
                 }
             })
         });
