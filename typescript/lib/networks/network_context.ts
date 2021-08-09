@@ -17,6 +17,7 @@ import * as path from "path";
 import * as fs from 'fs';
 import * as fsPromises from "fs/promises";
 import * as grpc from "grpc";
+import * as google_protobuf_empty_pb from "google-protobuf/google/protobuf/empty_pb";
 
 export type PartitionID = string;
 
@@ -49,8 +50,8 @@ class NetworkContext {
             serializedParams: string): Promise<Result<LambdaContext, Error>> {
         const args: LoadLambdaArgs = newLoadLambdaArgs(lambdaId, image, serializedParams);
         
-        const promiseLoadLambda: Promise<ResultAsync<any, Error>> = new Promise((resolve, _unusedReject) => {
-            this.client.loadLambda(args, (error: grpc.ServiceError, response: any) => {
+        const promiseLoadLambda: Promise<ResultAsync<google_protobuf_empty_pb, Error>> = new Promise((resolve, _unusedReject) => {
+            this.client.loadLambda(args, (error: grpc.ServiceError, response: google_protobuf_empty_pb) => {
                 if (error) {
                     resolve(errAsync(error))
                 } else {
@@ -58,7 +59,7 @@ class NetworkContext {
                 }
             })
         });
-        const resultLoadLambda: Result<any, Error> = await promiseLoadLambda;
+        const resultLoadLambda: Result<google_protobuf_empty_pb, Error> = await promiseLoadLambda;
         if (!resultLoadLambda.isOk()) {
             return err(resultLoadLambda.error);
         }
@@ -179,8 +180,8 @@ class NetworkContext {
         }
         const args: RegisterFilesArtifactsArgs = newRegisterFilesArtifactsArgs(filesArtifactIdStrsToUrls);
         
-        const promiseRegisterFilesArtifacts: Promise<ResultAsync<any, Error>> = new Promise((resolve, _unusedReject) => {
-            this.client.registerFilesArtifacts(args, (error: grpc.ServiceError, response: any) => {
+        const promiseRegisterFilesArtifacts: Promise<ResultAsync<google_protobuf_empty_pb, Error>> = new Promise((resolve, _unusedReject) => {
+            this.client.registerFilesArtifacts(args, (error: grpc.ServiceError, response: google_protobuf_empty_pb) => {
                 if (error) {
                     resolve(errAsync(error));
                 } else {
@@ -188,7 +189,7 @@ class NetworkContext {
                 }
             })
         });
-        const resultRegisterFilesArtifacts: Result<any, Error> = await promiseRegisterFilesArtifacts;
+        const resultRegisterFilesArtifacts: Result<google_protobuf_empty_pb, Error> = await promiseRegisterFilesArtifacts;
         if (!resultRegisterFilesArtifacts.isOk()) {
             return err(resultRegisterFilesArtifacts.error);
         }
@@ -269,7 +270,7 @@ class NetworkContext {
         log.trace("Successfully loaded static files");
 
         log.trace("Initializing generated files...");
-        const filesToGenerate: Set<string> = new Set();s
+        const filesToGenerate: Set<string> = new Set();
         for (let fileId in containerCreationConfig.getFileGeneratingFuncs()) {
             filesToGenerate.add(fileId);
         }
@@ -401,8 +402,8 @@ class NetworkContext {
         // Independent of adding/removing them from the network
         const args: RemoveServiceArgs = newRemoveServiceArgs(serviceId, containerStopTimeoutSeconds);
         
-        const promiseRemoveService: Promise<ResultAsync<any, Error>> = new Promise((resolve, _unusedReject) => {
-            this.client.removeService(args, (error: Error, response: any) => {
+        const promiseRemoveService: Promise<ResultAsync<google_protobuf_empty_pb, Error>> = new Promise((resolve, _unusedReject) => {
+            this.client.removeService(args, (error: Error, response: google_protobuf_empty_pb) => {
                 if (error) {
                     resolve(errAsync(error));
                 } else {
@@ -410,7 +411,7 @@ class NetworkContext {
                 }
             })
         });
-        const resultRemoveService: Result<any, Error> = await promiseRemoveService;
+        const resultRemoveService: Result<google_protobuf_empty_pb, Error> = await promiseRemoveService;
         if (!resultRemoveService.isOk()) {
             return err(resultRemoveService.error);
         }
@@ -465,8 +466,8 @@ class NetworkContext {
 
         const repartitionArgs: RepartitionArgs = newRepartitionArgs(reqPartitionServices, reqPartitionConns, defaultConnection);
 
-        const promiseRepartition: Promise<ResultAsync<any, Error>> = new Promise((resolve, _unusedReject) => {
-            this.client.repartition(repartitionArgs, (error: Error, response: any) => {
+        const promiseRepartition: Promise<ResultAsync<google_protobuf_empty_pb, Error>> = new Promise((resolve, _unusedReject) => {
+            this.client.repartition(repartitionArgs, (error: Error, response: google_protobuf_empty_pb) => {
                 if (error) {
                     resolve(errAsync(error));
                 } else {
@@ -474,7 +475,7 @@ class NetworkContext {
                 }
             })
         });
-        const resultRepartition: Result<any, Error> = await promiseRepartition;
+        const resultRepartition: Result<google_protobuf_empty_pb, Error> = await promiseRepartition;
         if (!resultRepartition.isOk()) {
             return err(resultRepartition.error);
         }
@@ -500,8 +501,8 @@ class NetworkContext {
             retriesDelayMilliseconds,
             bodyText);
 
-        const promiseWaitForEndpointAvailability: Promise<ResultAsync<any, Error>> = new Promise((resolve, _unusedReject) => {
-            this.client.waitForEndpointAvailability(availabilityArgs, (error: Error, response: any) => {
+        const promiseWaitForEndpointAvailability: Promise<ResultAsync<google_protobuf_empty_pb, Error>> = new Promise((resolve, _unusedReject) => {
+            this.client.waitForEndpointAvailability(availabilityArgs, (error: Error, response: google_protobuf_empty_pb) => {
                 if (error) {
                     resolve(errAsync(error));
                 } else {
@@ -509,7 +510,7 @@ class NetworkContext {
                 }
             })
         });
-        const resultWaitForEndpointAvailability: Result<any, Error> = await promiseWaitForEndpointAvailability;
+        const resultWaitForEndpointAvailability: Result<google_protobuf_empty_pb, Error> = await promiseWaitForEndpointAvailability;
         if (!resultWaitForEndpointAvailability.isOk()) {
             return err(resultWaitForEndpointAvailability.error);
         }
@@ -522,8 +523,8 @@ class NetworkContext {
 
         const args: ExecuteBulkCommandsArgs = newExecuteBulkCommandsArgs(bulkCommandsJson);
         
-        const promiseExecuteBulkCommands: Promise<ResultAsync<any, Error>> = new Promise((resolve, _unusedReject) => {
-            this.client.executeBulkCommands(args, (error: Error, response: any) => {
+        const promiseExecuteBulkCommands: Promise<ResultAsync<google_protobuf_empty_pb, Error>> = new Promise((resolve, _unusedReject) => {
+            this.client.executeBulkCommands(args, (error: Error, response: google_protobuf_empty_pb) => {
                 if (error) {
                     resolve(errAsync(error));
                 } else {
@@ -531,7 +532,7 @@ class NetworkContext {
                 }
             })
         });
-        const resultExecuteBulkCommands: Result<any, Error> = await promiseExecuteBulkCommands;
+        const resultExecuteBulkCommands: Result<google_protobuf_empty_pb, Error> = await promiseExecuteBulkCommands;
         if (!resultExecuteBulkCommands.isOk()) {
             return err(resultExecuteBulkCommands.error);
         }
