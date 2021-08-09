@@ -52,10 +52,10 @@ class NetworkContext {
         
         const promiseLoadLambda: Promise<ResultAsync<google_protobuf_empty_pb, Error>> = new Promise((resolve, _unusedReject) => {
             this.client.loadLambda(args, (error: grpc.ServiceError, response: google_protobuf_empty_pb) => {
-                if (error) {
-                    resolve(errAsync(error))
-                } else {
+                if (error === null) {
                     resolve(okAsync(response));
+                } else {
+                    resolve(errAsync(error));
                 }
             })
         });
@@ -74,10 +74,10 @@ class NetworkContext {
         
         const promiseGetLambdaInfo: Promise<ResultAsync<GetLambdaInfoResponse, Error>> = new Promise((resolve, _unusedReject) => {
             this.client.getLambdaInfo(args, (error: grpc.ServiceError, response: GetLambdaInfoResponse) => {
-                if (error) {
-                    resolve(errAsync(error));
-                } else {
+                if (error === null) {
                     resolve(okAsync(response));
+                } else {
+                    resolve(errAsync(error));
                 }
             })
         });
@@ -108,10 +108,10 @@ class NetworkContext {
         
         const promiseRegisterStaticFiles: Promise<ResultAsync<RegisterStaticFilesResponse, Error>> = new Promise((resolve, _unusedReject) => {
             this.client.registerStaticFiles(args, (error: grpc.ServiceError, response: RegisterStaticFilesResponse) => {
-                if (error) {
-                    resolve(errAsync(error));
-                } else {
+                if (error === null) {
                     resolve(okAsync(response));
+                } else {
+                    resolve(errAsync(error));
                 }
             })
         });
@@ -182,10 +182,10 @@ class NetworkContext {
         
         const promiseRegisterFilesArtifacts: Promise<ResultAsync<google_protobuf_empty_pb, Error>> = new Promise((resolve, _unusedReject) => {
             this.client.registerFilesArtifacts(args, (error: grpc.ServiceError, response: google_protobuf_empty_pb) => {
-                if (error) {
-                    resolve(errAsync(error));
-                } else {
+                if (error === null) {
                     resolve(okAsync(response));
+                } else {
+                    resolve(errAsync(error));
                 }
             })
         });
@@ -231,10 +231,10 @@ class NetworkContext {
 
         const promiseRegisterService: Promise<ResultAsync<RegisterServiceResponse, Error>> = new Promise((resolve, _unusedReject) => {
             this.client.registerService(registerServiceArgs, (error: grpc.ServiceError, response: RegisterServiceResponse) => {
-                if (error) {
-                    resolve(errAsync(error));
-                } else {
+                if (error === null) {
                     resolve(okAsync(response));
+                } else {
+                    resolve(errAsync(error));
                 }
             })
         });
@@ -330,10 +330,10 @@ class NetworkContext {
 
         const promiseStartService: Promise<ResultAsync<StartServiceResponse, Error>> = new Promise((resolve, _unusedReject) => {
             this.client.startService(startServiceArgs, (error: Error, response: StartServiceResponse) => {
-                if (error) {
-                    resolve(errAsync(error));
-                } else {
+                if (error === null) {
                     resolve(okAsync(response));
+                } else {
+                    resolve(errAsync(error));
                 }
             })
         });
@@ -354,10 +354,10 @@ class NetworkContext {
         
         const promiseGetServiceInfo: Promise<ResultAsync<GetServiceInfoResponse, Error>> = new Promise((resolve, _unusedReject) => {
             this.client.getServiceInfo(getServiceInfoArgs, (error: Error, response: GetServiceInfoResponse) => {
-                if (error) {
-                    resolve(errAsync(error));
-                } else {
+                if (error === null) {
                     resolve(okAsync(response));
+                } else {
+                    resolve(errAsync(error));
                 }
             })
         });
@@ -404,10 +404,10 @@ class NetworkContext {
         
         const promiseRemoveService: Promise<ResultAsync<google_protobuf_empty_pb, Error>> = new Promise((resolve, _unusedReject) => {
             this.client.removeService(args, (error: Error, response: google_protobuf_empty_pb) => {
-                if (error) {
-                    resolve(errAsync(error));
-                } else {
+                if (error === null) {
                     resolve(okAsync(response));
+                } else {
+                    resolve(errAsync(error));
                 }
             })
         });
@@ -464,10 +464,10 @@ class NetworkContext {
 
         const promiseRepartition: Promise<ResultAsync<google_protobuf_empty_pb, Error>> = new Promise((resolve, _unusedReject) => {
             this.client.repartition(repartitionArgs, (error: Error, response: google_protobuf_empty_pb) => {
-                if (error) {
-                    resolve(errAsync(error));
-                } else {
+                if (error === null) {
                     resolve(okAsync(response));
+                } else {
+                    resolve(errAsync(error));
                 }
             })
         });
@@ -499,10 +499,10 @@ class NetworkContext {
 
         const promiseWaitForEndpointAvailability: Promise<ResultAsync<google_protobuf_empty_pb, Error>> = new Promise((resolve, _unusedReject) => {
             this.client.waitForEndpointAvailability(availabilityArgs, (error: Error, response: google_protobuf_empty_pb) => {
-                if (error) {
-                    resolve(errAsync(error));
-                } else {
+                if (error === null) {
                     resolve(okAsync(response));
+                } else {
+                    resolve(errAsync(error));
                 }
             })
         });
@@ -521,10 +521,10 @@ class NetworkContext {
         
         const promiseExecuteBulkCommands: Promise<ResultAsync<google_protobuf_empty_pb, Error>> = new Promise((resolve, _unusedReject) => {
             this.client.executeBulkCommands(args, (error: Error, response: google_protobuf_empty_pb) => {
-                if (error) {
-                    resolve(errAsync(error));
-                } else {
+                if (error === null) {
                     resolve(okAsync(response));
+                } else {
+                    resolve(errAsync(error));
                 }
             })
         });
