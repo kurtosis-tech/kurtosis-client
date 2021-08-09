@@ -1,8 +1,7 @@
-//"fmt" - TOOD replace with console.log and ${myVar}
 import { RegisterServiceArgs } from "../../../kurtosis_core_rpc_api_bindings/api_container_service_pb"
 import { V0SerializableCommand } from "./v0_bulk_commands"
-import { describe } from "mocha"; //"testing" //TODO - Find automated testing for typescript packages
-import { expect } from "chai"; //import * as assert from "assert";	//"github.com/stretchr/testify/assert" //install assert from node.js
+import { describe } from "mocha";
+import { expect } from "chai";
 
 
 describe ('test deserializeRegisterServiceJSON()', () => { //TODO - what exactly are we testing, I believe we are testing if V0SerializableCommand is set up appropriately?
@@ -19,15 +18,11 @@ describe ('test deserializeRegisterServiceJSON()', () => { //TODO - what exactly
             parseErr = jsonErr;
         }
 
-        expect(parseErr) //assert.NoError check for function error returning null
+        expect(parseErr) //TODO (comment) - assert.NoError check for function error returning null
         .to
         .equal(null); //assert.NoError(t, err, "An unexpected error occurred deserializing the register service command JSON")
 
-        const casted: RegisterServiceArgs = new RegisterServiceArgs();
-        // casted, ok := deserialized.ArgsPtr.(*kurtosis_core_rpc_api_bindings.RegisterServiceArgs) 
-        //TODO (above) comment for weird syntax - casted: RegisterServiceArgs, ok: true if underlying value of casted is RegisterServiceArgs I'm pretty sure & otherwise false
-        //TODO (above) - not sure how proto.Message has a property named RegisterServiceArgs, can't find this property in the documentation
-        //TODO (above) - creating a fresh RegisterServiceArgs is definitely what is wanted though
+        const casted: RegisterServiceArgs = <RegisterServiceArgs>deserialized.argsPtr;
 
         // if !ok { // TODO (comment) - I think type assertion on casted deals with this
         // 	t.Fatal("Couldn't downcast generic args ptr to the register service args object")

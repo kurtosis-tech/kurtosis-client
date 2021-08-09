@@ -209,7 +209,7 @@ export class V0SerializableCommand {
 	type: V0CommandType; //TODO - manipulating in test file; if this is required, then use setter 
 
 	// The only allowed objects here are from the bindings generated from the .proto file
-	private argsPtr: jspb.Message;
+	argsPtr: jspb.Message;
 
     // A V0SerializableCommand knows how to deserialize itself, thanks to the "type" tag
     public unmarshalJSON(bytes: string): Result<null, Error> { //TODO (comment) - changed type from byte[] to string
