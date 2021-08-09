@@ -1,4 +1,6 @@
 # TBD
+### Fixes
+* Fixed a bug where `stacktrace.Propagate` was incorrectly used instead of `stacktrace.NewError`
 
 # 0.11.0
 ### Changes
@@ -7,7 +9,7 @@
 ### Fixes
 * Updated the build script so that it correctly compiles the typescript files found inside the lib/ directory into one single javascript file 
 
-### Removed
+### Removals
 * `MockService`, which is no longer needed or used now that we've removed the `Service` interface
 
 ### Breaking Changes
