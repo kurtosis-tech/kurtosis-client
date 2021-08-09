@@ -8,7 +8,7 @@ class VersionedBulkCommandsDocument {
 	private readonly schemaVersion: SchemaVersion;
 
     constructor(schemaVersion: SchemaVersion) {
-        this.schemaVersion = schemaVersion; //TODO - do I need `json:"schemaVersion"` in typescript? This is a struct tag in golang, and I think I can get rid of it
+        this.schemaVersion = schemaVersion;
     }
 }
 
@@ -17,7 +17,7 @@ class SerializableBulkCommandsDocument extends VersionedBulkCommandsDocument {
 
     constructor(schemaVersion: SchemaVersion, body: V0BulkCommands) {
         super(schemaVersion);
-        this.body = body; //TODO - same comment about removing struct tag since its go-specific
+        this.body = body;
     }
 }
 

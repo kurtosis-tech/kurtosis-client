@@ -34,7 +34,6 @@ class cmdArgDeserializingVisitor implements V0CommandTypeVisitor {
 
     public visitExecuteLambda(): Result<null, Error> {
     	let args: ExecuteLambdaArgs = newEmptyExecuteLambdaArgs();
-        args = JSON.parse(this.bytesToDeserialize); 
         
         try {
             args = JSON.parse(this.bytesToDeserialize);
@@ -49,7 +48,6 @@ class cmdArgDeserializingVisitor implements V0CommandTypeVisitor {
 
     public visitRegisterService(): Result<null, Error> {
         let args: RegisterServiceArgs = newEmptyRegisterServiceArgs();
-        args = JSON.parse(this.bytesToDeserialize); 
         
         try {
             args = JSON.parse(this.bytesToDeserialize);
@@ -64,7 +62,6 @@ class cmdArgDeserializingVisitor implements V0CommandTypeVisitor {
 
     public visitGenerateFiles(): Result<null, Error> {
         let args: GenerateFilesArgs = newEmptyGenerateFileArgs();
-        args = JSON.parse(this.bytesToDeserialize); 
         
         try {
             args = JSON.parse(this.bytesToDeserialize);
@@ -88,7 +85,7 @@ class cmdArgDeserializingVisitor implements V0CommandTypeVisitor {
         }
 
         this.deserializedCommandArgsPtr = args;
-        return null;
+        return ok(null);
     }
 
     public visitStartService(): Result<null, Error> {
@@ -102,7 +99,7 @@ class cmdArgDeserializingVisitor implements V0CommandTypeVisitor {
         }
 
         this.deserializedCommandArgsPtr = args;
-        return null;
+        return ok(null);
     }
 
     public visitRemoveService(): Result<null, Error> {
@@ -116,7 +113,7 @@ class cmdArgDeserializingVisitor implements V0CommandTypeVisitor {
         }
 
         this.deserializedCommandArgsPtr = args;
-        return null;
+        return ok(null);
     }
 
     public visitRepartition(): Result<null, Error> {
@@ -130,7 +127,7 @@ class cmdArgDeserializingVisitor implements V0CommandTypeVisitor {
         }
 
         this.deserializedCommandArgsPtr = args;
-        return null;
+        return ok(null);
     }
 
     public visitExecCommand(): Result<null, Error> {
@@ -144,7 +141,7 @@ class cmdArgDeserializingVisitor implements V0CommandTypeVisitor {
         }
 
         this.deserializedCommandArgsPtr = args;
-        return null;
+        return ok(null);
     }
 
     public visitWaitForEndpointAvailability(): Result<null, Error> {
@@ -159,7 +156,7 @@ class cmdArgDeserializingVisitor implements V0CommandTypeVisitor {
 
         args = JSON.parse(this.bytesToDeserialize);
         this.deserializedCommandArgsPtr = args;
-        return null;
+        return ok(null);
     }
 
     public visitExecuteBulkCommands(): Result<null, Error> {
@@ -173,10 +170,10 @@ class cmdArgDeserializingVisitor implements V0CommandTypeVisitor {
         }
 
         this.deserializedCommandArgsPtr = args;
-        return null;
+        return ok(null);
     }
 
-    public getDeserializedCommandArgs(): jspb.Message { //TODO - fix this import
+    public getDeserializedCommandArgs(): jspb.Message {
         return this.deserializedCommandArgsPtr;
     }
 }
@@ -187,11 +184,12 @@ class cmdArgDeserializingVisitor implements V0CommandTypeVisitor {
 
 class interstitialStruct {
     private readonly type: V0CommandType;
-    private argsBytes: string; //TODO - original type was json.RawMessage ; this type might not exist in typescript
+    private argsBytes: string; //TODO (comment) - original type was json.RawMessage ; couldn't find equivalent in typescript
 
     constructor(){}
 
-    public getType(): V0CommandType { //TODO - getter and setter instead of giving direct access is alright change from golang?
+    //TODO (comment)- getter and setter instead of giving direct access is alright change from golang, is this okay?
+    public getType(): V0CommandType {
         return this.type;
     }
     
@@ -206,11 +204,28 @@ class interstitialStruct {
 
 // Used for serializing
 export class V0SerializableCommand {
-	type: V0CommandType; //TODO - manipulating in test file; if this is required, then use setter 
+	private type: V0CommandType;
 
 	// The only allowed objects here are from the bindings generated from the .proto file
-	argsPtr: jspb.Message;
+	private argsPtr: jspb.Message;
 
+    //TODO (comment) - added getter and setters instead of giving direct access, is this okay?
+    public getType(): V0CommandType {
+        return this.type;
+    }
+
+    public getArgsPtr(): jspb.Message {
+        return this.argsPtr;
+    }
+    
+    public setType(newType: V0CommandType): void {
+        this.type = newType;
+    }
+    
+    public setArgsPtr(newArgsPtr: jspb.Message): void {
+        this.argsPtr = newArgsPtr;
+    }
+   
     // A V0SerializableCommand knows how to deserialize itself, thanks to the "type" tag
     public unmarshalJSON(bytes: string): Result<null, Error> { //TODO (comment) - changed type from byte[] to string
 
@@ -228,8 +243,8 @@ export class V0SerializableCommand {
             return err(resultAcceptVisitor.error);
         }
 
-        this.type = interstitialObj.getType();
-        this.argsPtr = visitor.getDeserializedCommandArgs();
+        this.setType(interstitialObj.getType());
+        this.setArgsPtr(visitor.getDeserializedCommandArgs());
 
         return ok(null);
     }

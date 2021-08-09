@@ -1,4 +1,4 @@
-import { RegisterServiceArgs } from "../../../kurtosis_core_rpc_api_bindings/api_container_service_pb"
+import { RegisterServiceArgs } from "../../../kurtosis_core_rpc_api_bindings/api_container_service_pb";
 import { V0SerializableCommand } from "./v0_bulk_commands"
 import { describe } from "mocha";
 import { expect } from "chai";
@@ -8,23 +8,27 @@ describe ('test deserializeRegisterServiceJSON()', () => { //TODO - what exactly
 	it ('should check appropriate instantiation of V0SerializableCommand', () => {
     
         const deserialized: V0SerializableCommand = new V0SerializableCommand();
-        const serviceId = "my-service-id";
-        const jsonStr = '`"{"type":"REGISTER_SERVICE", "args":{"service_id":'+ serviceId + '}}`)';
+        const serviceId: string = "my-service-id";
+        //const jsonStr: string = '`"{"type":"REGISTER_SERVICE", "args":{"service_id":'+ serviceId + '}}`)';
+        const jsonStrType: string = "REGISTER_SERVICE";
+        const jsonStrArgs: string = "{ service_id: "+ serviceId + " }";
         var parseErr: Error = null;
         try {
-            deserialized.type = JSON.parse(jsonStr); //TODO - where exactly in deserialized am I'm trying to save this parsed value
+            deserialized.setType(JSON.parse(jsonStrType));
+            deserialized.setArgsPtr(JSON.parse(jsonStrArgs));
         }
         catch (jsonErr) {
             parseErr = jsonErr;
         }
-
+        
+        //assert.NoError(t, err, "An unexpected error occurred deserializing the register service command JSON")
         expect(parseErr) //TODO (comment) - assert.NoError check for function error returning null
         .to
-        .equal(null); //assert.NoError(t, err, "An unexpected error occurred deserializing the register service command JSON")
+        .equal(null);
 
-        const casted: RegisterServiceArgs = <RegisterServiceArgs>deserialized.argsPtr;
+        const casted: RegisterServiceArgs = <RegisterServiceArgs>deserialized.getArgsPtr();
 
-        // if !ok { // TODO (comment) - I think type assertion on casted deals with this
+        // if !ok { // TODO (comment) - I think type assertion on casted deals with this, so I can remove this
         // 	t.Fatal("Couldn't downcast generic args ptr to the register service args object")
         // }
 
