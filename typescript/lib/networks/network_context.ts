@@ -295,9 +295,9 @@ class NetworkContext {
             const resultFp: fsPromises.FileHandle = await promiseFp;
             const fp: number = resultFp.fd;
 
-            var initalizingFuncErr = initializingFunc(fp);
-            if (initalizingFuncErr != null){
-                return err(initalizingFuncErr);
+            var initalizingFuncResult = initializingFunc(fp);
+            if (!initalizingFuncResult.isOk()){
+                return err(initalizingFuncResult.error);
             }
 
             generatedFileAbsFilepathsOnService[fileId] = filepaths.getAbsoluteFilepathOnServiceContainer();
