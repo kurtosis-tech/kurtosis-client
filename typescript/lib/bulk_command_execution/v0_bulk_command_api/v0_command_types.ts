@@ -17,56 +17,60 @@ export interface V0CommandTypeVisitor {
 	visitExecuteBulkCommands: () => Result<null, Error>;
 }
 
-export type V0CommandType = string;
+//export type V0CommandType = string;
 
 // vvvvvvvvvvvvvvvvvvvv Update the visitor whenever you add an enum value!!! vvvvvvvvvvvvvvvvvvvvvvvvvvv
-const loadLambdaCommandType: V0CommandType = "LOAD_LAMBDA";
-const executeLambdaCommandType: V0CommandType = "EXECUTE_LAMBDA";
-const registerServiceCommandType: V0CommandType = "REGISTER_SERVICE";
-const generateFilesCommandType: V0CommandType = "GENERATE_FILES";
-const loadStaticFilesCommandType: V0CommandType = "LOAD_STATIC_FILES";
-const startServiceCommandType: V0CommandType = "START_SERVICE";
-const removeServiceCommandType: V0CommandType = "REMOVE_SERVICE";
-const repartitionCommandType: V0CommandType = "REPARTITION";
-const execCommandCommandType: V0CommandType = "EXEC_COMMAND";
-const waitForEndpointAvailabilityCommandType: V0CommandType = "WAIT_FOR_ENDPOINT_AVAILABILITY";
-const executeBulkCommandsCommandType: V0CommandType = "EXECUTE_BULK_COMMANDS";
+export enum V0CommandType {
+	loadLambdaCommandType = "LOAD_LAMBDA",
+	executeLambdaCommandType = "EXECUTE_LAMBDA",
+	registerServiceCommandType = "REGISTER_SERVICE",
+	generateFilesCommandType = "GENERATE_FILES",
+	loadStaticFilesCommandType = "LOAD_STATIC_FILES",
+	startServiceCommandType = "START_SERVICE",
+	removeServiceCommandType = "REMOVE_SERVICE",
+	repartitionCommandType = "REPARTITION",
+	execCommandCommandType = "EXEC_COMMAND",
+	waitForEndpointAvailabilityCommandType = "WAIT_FOR_ENDPOINT_AVAILABILITY",
+	executeBulkCommandsCommandType = "EXECUTE_BULK_COMMANDS"
+}
 // ^^^^^^^^^^^^^^^^^^^^ Update the visitor whenever you add an enum value!!! ^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-export function acceptVisitor(commandType: V0CommandType, visitor: V0CommandTypeVisitor): Result<null, Error> { //TODO - could V0CommandType be a parameter or should this be defined as a method inside V0CommandType class (I peronally believe former is good)
-	var result: Result<null, Error>;
-    var defaultErr: Error = null;
-	switch (commandType) {
-	case loadLambdaCommandType:
-		result = visitor.visitLoadLambda();
-	case executeLambdaCommandType:
-		result = visitor.visitExecuteLambda();
-	case registerServiceCommandType:
-		result = visitor.visitRegisterService();
-	case generateFilesCommandType:
-		result = visitor.visitGenerateFiles();
-	case loadStaticFilesCommandType:
-		result = visitor.visitLoadStaticFiles();
-	case startServiceCommandType:
-		result = visitor.visitStartService();
-	case removeServiceCommandType:
-		result = visitor.visitRemoveService();
-	case repartitionCommandType:
-		result = visitor.visitRepartition();
-	case execCommandCommandType:
-		result = visitor.visitExecCommand();
-	case waitForEndpointAvailabilityCommandType:
-		result = visitor.visitWaitForEndpointAvailability();
-	case executeBulkCommandsCommandType:
-		result = visitor.visitExecuteBulkCommands();
-	default:
-		defaultErr = new Error("Unrecognized command type " + commandType)
+export namespace V0CommandType {
+	export function acceptVisitor(commandType: V0CommandType, visitor: V0CommandTypeVisitor): Result<null, Error> { //TODO - could V0CommandType be a parameter or should this be defined as a method inside V0CommandType class (I peronally believe former is good)
+		var result: Result<null, Error>;
+		var defaultErr: Error = null;
+		switch (commandType) {
+		case V0CommandType.loadLambdaCommandType:
+			result = visitor.visitLoadLambda();
+		case V0CommandType.executeLambdaCommandType:
+			result = visitor.visitExecuteLambda();
+		case V0CommandType.registerServiceCommandType:
+			result = visitor.visitRegisterService();
+		case V0CommandType.generateFilesCommandType:
+			result = visitor.visitGenerateFiles();
+		case V0CommandType.loadStaticFilesCommandType:
+			result = visitor.visitLoadStaticFiles();
+		case V0CommandType.startServiceCommandType:
+			result = visitor.visitStartService();
+		case V0CommandType.removeServiceCommandType:
+			result = visitor.visitRemoveService();
+		case V0CommandType.repartitionCommandType:
+			result = visitor.visitRepartition();
+		case V0CommandType.execCommandCommandType:
+			result = visitor.visitExecCommand();
+		case V0CommandType.waitForEndpointAvailabilityCommandType:
+			result = visitor.visitWaitForEndpointAvailability();
+		case V0CommandType.executeBulkCommandsCommandType:
+			result = visitor.visitExecuteBulkCommands();
+		default:
+			defaultErr = new Error("Unrecognized command type " + commandType)
+		}
+		if (defaultErr !== null) {
+			return err(defaultErr);
+		}
+		if (!result.isOk()) {
+			return err(result.error);
+		}
+		return ok(null);
 	}
-	if (defaultErr !== null) {
-		return err(defaultErr);
-    }
-    if (!result.isOk()) {
-        return err(result.error);
-	}
-	return ok(null);
 }
