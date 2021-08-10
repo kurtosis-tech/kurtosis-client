@@ -2,14 +2,14 @@ import { ApiContainerServiceClient } from '../../kurtosis_core_rpc_api_bindings/
 import { ExecCommandArgs, ExecCommandResponse, FileGenerationOptions, GenerateFilesArgs, GenerateFilesResponse, LoadStaticFilesArgs, LoadStaticFilesResponse } from '../../kurtosis_core_rpc_api_bindings/api_container_service_pb';
 import { ServiceID } from './service';
 import { StaticFileID } from './container_creation_config'; 
-import { newGetExecCommandArgs, newGetGenerateFilesArgs, newGetFileGenerationOptions, newGetLoadStaticFilesArgs } from "../constructor_calls";
+import { newExecCommandArgs, newGenerateFilesArgs, newFileGenerationOptions, newLoadStaticFilesArgs } from "../constructor_calls";
 import { okAsync, errAsync, ResultAsync, ok, err, Result } from 'neverthrow';
 import * as grpc from "grpc";
 import * as path from "path";
 
 
 // Docs available at https://docs.kurtosistech.com/kurtosis-libs/lib-documentation
-class GeneratedFileFilepaths {
+export class GeneratedFileFilepaths {
     
     private readonly absoluteFilepathHere: string;
     private readonly absoluteFilepathOnServiceContainer: string;
@@ -34,7 +34,7 @@ class GeneratedFileFilepaths {
 
 
 
-class ServiceContext {
+export class ServiceContext {
     
     private readonly client: ApiContainerServiceClient;
     private readonly serviceId: ServiceID;
@@ -68,14 +68,14 @@ class ServiceContext {
     // Docs available at https://docs.kurtosistech.com/kurtosis-libs/lib-documentation
     public async execCommand(command: string[]): Promise<Result<[number, Uint8Array | string], Error>> {
         const serviceId: ServiceID = this.serviceId;
-        const args: ExecCommandArgs = newGetExecCommandArgs(serviceId, command);
+        const args: ExecCommandArgs = newExecCommandArgs(serviceId, command);
 
         const promiseExecCommand: Promise<ResultAsync<ExecCommandResponse, Error>> = new Promise((resolve, _unusedReject) => {
             this.client.execCommand(args, (error: grpc.ServiceError, response: ExecCommandResponse) => {
-                if (error) {
-                    resolve(errAsync(error));
-                } else {
+                if (error === null) {
                     resolve(okAsync(response));
+                } else {
+                    resolve(errAsync(error));
                 }
             })
         });
@@ -94,16 +94,16 @@ class ServiceContext {
     // Docs available at https://docs.kurtosistech.com/kurtosis-libs/lib-documentation
     public async generateFiles(filesToGenerateSet: Set<string>): Promise<Result<Map<string, GeneratedFileFilepaths>, Error>> {
         const serviceId: ServiceID = this.serviceId;
-        const fileGenerationOpts: Map<string, FileGenerationOptions> = newGetFileGenerationOptions(filesToGenerateSet);
+        const fileGenerationOpts: Map<string, FileGenerationOptions> = newFileGenerationOptions(filesToGenerateSet);
 
-        const args: GenerateFilesArgs = newGetGenerateFilesArgs(serviceId, fileGenerationOpts);
+        const args: GenerateFilesArgs = newGenerateFilesArgs(serviceId, fileGenerationOpts);
 
         const promiseGenerateFiles: Promise<ResultAsync<GenerateFilesResponse, Error>> = new Promise((resolve, _unusedReject) => {
             this.client.generateFiles(args, (error: grpc.ServiceError, response: GenerateFilesResponse) => {
-                if (error) {
-                    resolve(errAsync(error));
-                } else {
+                if (error === null) {
                     resolve(okAsync(response));
+                } else {
+                    resolve(errAsync(error));
                 }
             })
         });
@@ -145,14 +145,14 @@ class ServiceContext {
             staticFilesToCopyStringSet[String(staticFileId)] = true;
         }
 
-        const loadStaticFilesArgs: LoadStaticFilesArgs = newGetLoadStaticFilesArgs(serviceId, staticFilesToCopyStringSet);
+        const loadStaticFilesArgs: LoadStaticFilesArgs = newLoadStaticFilesArgs(serviceId, staticFilesToCopyStringSet);
         
         const promiseLoadStaticFiles: Promise<ResultAsync<LoadStaticFilesResponse, Error>> = new Promise((resolve, _unusedReject) => {
             this.client.loadStaticFiles(loadStaticFilesArgs, (error: grpc.ServiceError, response: LoadStaticFilesResponse) => {
-                if (error) {
-                    resolve(errAsync(error));
-                } else {
+                if (error === null) {
                     resolve(okAsync(response));
+                } else {
+                    resolve(errAsync(error));
                 }
             })
         });
