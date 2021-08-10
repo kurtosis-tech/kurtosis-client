@@ -5,8 +5,8 @@ import { ok, err, Result } from "neverthrow";
 const LATEST_SCHEMA_VERSION = V0;
 
 class VersionedBulkCommandsDocument {
-	private readonly schemaVersion: SchemaVersion;
-
+    private readonly schemaVersion: SchemaVersion;
+    
     constructor(schemaVersion: SchemaVersion) {
         this.schemaVersion = schemaVersion;
     }

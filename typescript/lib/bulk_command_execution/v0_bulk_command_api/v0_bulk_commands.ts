@@ -10,8 +10,8 @@ import * as protobuf from "google-protobuf";
 
 // Visitor that will be used to deserialize command args into
 class CmdArgDeserializingVisitor implements V0CommandTypeVisitor {
-	private readonly bytesToDeserialize: string; //TODO (comment) - string because no byte type in typescript
-	private deserializedCommandArgsPtr: protobuf.Message;
+    private readonly bytesToDeserialize: string; //TODO (comment) - string because no byte type in typescript
+    private deserializedCommandArgsPtr: protobuf.Message;
 
     constructor (bytesToDeserialize: string) {
         this.bytesToDeserialize = bytesToDeserialize;
@@ -192,11 +192,11 @@ class CmdArgDeserializingVisitor implements V0CommandTypeVisitor {
 
 // Used for serializing
 export class V0SerializableCommand {
-	private type: V0CommandType;
-
-	// The only allowed objects here are from the bindings generated from the .proto file
-	private argsPtr: protobuf.Message;
-
+    private type: V0CommandType;
+    
+    // The only allowed objects here are from the bindings generated from the .proto file
+    private argsPtr: protobuf.Message;
+    
     //TODO (comment) - added getter and setters instead of giving direct access, is this okay?
     public getType(): V0CommandType {
         return this.type;
@@ -245,5 +245,5 @@ export class V0SerializableCommand {
 // // ====================================================================================================
 
 export class V0BulkCommands {
-	private readonly commands: V0SerializableCommand[];
+    private readonly commands: V0SerializableCommand[];
 }

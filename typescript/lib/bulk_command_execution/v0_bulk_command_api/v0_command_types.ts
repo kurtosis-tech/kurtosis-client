@@ -17,8 +17,6 @@ export interface V0CommandTypeVisitor {
 	visitExecuteBulkCommands: () => Result<null, Error>;
 }
 
-//export type V0CommandType = string;
-
 // vvvvvvvvvvvvvvvvvvvv Update the visitor whenever you add an enum value!!! vvvvvvvvvvvvvvvvvvvvvvvvvvv
 export enum V0CommandType {
 	loadLambdaCommandType = "LOAD_LAMBDA",
