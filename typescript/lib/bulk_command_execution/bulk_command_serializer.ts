@@ -13,8 +13,8 @@ class VersionedBulkCommandsDocument {
 }
 
 class SerializableBulkCommandsDocument extends VersionedBulkCommandsDocument {
-	private readonly body: any;
-
+    private readonly body: any;
+    
     constructor(schemaVersion: SchemaVersion, body: V0BulkCommands) {
         super(schemaVersion);
         this.body = body;
