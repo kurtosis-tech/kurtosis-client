@@ -2,7 +2,7 @@
 //                                    Config Object
 // ====================================================================================================
 // Docs available at https://docs.kurtosistech.com/kurtosis-libs/lib-documentation
-class ContainerRunConfig {
+export class ContainerRunConfig {
 	private readonly entrypointOverrideArgs: string[];
 	private readonly cmdOverrideArgs: string[];
 	private readonly environmentVariableOverrides: Map<string,string>;

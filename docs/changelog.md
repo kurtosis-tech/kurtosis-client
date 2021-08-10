@@ -1,12 +1,12 @@
 # TBD
 ### Features
-* Ported `service.go` and `service_context.go` to typescript inside `lib/services/` directory
+* Ported `services` .go files, including both services and config-factory, to typescript inside `typescript/lib/services` directory
+* Ported `networks` .go files to typescript inside `typescript/lib/networks` directory 
 * Ported `bulk_commands` to typescript inside `lib/bulk_command_execution/` directory
 * Added a file inside of `typescript/lib` directory that holds a template of constructor calls
 
 ### Changes
 * Made `GeneratedFileFilepaths` fields private and immutable with a constructor, and added getters to access the field values
-* Ported over config factory files inside of `services` to typescript
 * Added grpc and google-protobuf to package.json inside of `typescript` folder
 
 ### Fixes
