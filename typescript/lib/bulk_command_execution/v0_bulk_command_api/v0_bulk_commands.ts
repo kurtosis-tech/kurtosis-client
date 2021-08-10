@@ -1,30 +1,28 @@
 import { LoadLambdaArgs } from "../../../kurtosis_core_rpc_api_bindings/api_container_service_pb";
-import { newEmptyExecCommandArgs, newEmptyExecuteBulkCommandsArgs, newEmptyExecuteLambdaArgs, newEmptyGenerateFileArgs, newEmptyLoadLambdaArgs, newEmptyLoadStaticFilesArgs, newEmptyRegisterServiceArgs, newEmptyRemoveServiceArgs, newEmptyRepartitionArgs, newEmptyStartServiceArgs, newEmptyWaitForEndpointAvailabilityArgs } from "../../../lib/constructor_calls";
 import { ExecCommandArgs, ExecuteBulkCommandsArgs, ExecuteLambdaArgs, GenerateFilesArgs, LoadStaticFilesArgs, RegisterServiceArgs, RemoveServiceArgs, RepartitionArgs, StartServiceArgs, WaitForEndpointAvailabilityArgs } from "../../../kurtosis_core_rpc_api_bindings/api_container_service_pb";
 import { V0CommandTypeVisitor, V0CommandType, acceptVisitor } from "./v0_command_types";
 import { ok, err, Result } from "neverthrow";
-import * as jspb from "google-protobuf";
+import * as protobuf from "google-protobuf";
 
 // ====================================================================================================
 //                                   Command Arg Deserialization Visitor
 // ====================================================================================================
 
 // Visitor that will be used to deserialize command args into
-class cmdArgDeserializingVisitor implements V0CommandTypeVisitor {
+class CmdArgDeserializingVisitor implements V0CommandTypeVisitor {
 	private readonly bytesToDeserialize: string; //TODO (comment) - string because no byte type in typescript
-	private deserializedCommandArgsPtr: jspb.Message;
+	private deserializedCommandArgsPtr: protobuf.Message;
 
     constructor (bytesToDeserialize: string) {
         this.bytesToDeserialize = bytesToDeserialize;
     }
 
     public visitLoadLambda(): Result<null, Error> {
-        let args: LoadLambdaArgs = newEmptyLoadLambdaArgs();
+        let args: LoadLambdaArgs;
        
         try {
             args = JSON.parse(this.bytesToDeserialize);
-        } 
-        catch(jsonErr) {
+        } catch(jsonErr) {
             return err(jsonErr);
         }
 
@@ -33,12 +31,11 @@ class cmdArgDeserializingVisitor implements V0CommandTypeVisitor {
     }
 
     public visitExecuteLambda(): Result<null, Error> {
-    	let args: ExecuteLambdaArgs = newEmptyExecuteLambdaArgs();
+    	let args: ExecuteLambdaArgs;
         
         try {
             args = JSON.parse(this.bytesToDeserialize);
-        } 
-        catch(jsonErr) {
+        } catch(jsonErr) {
             return err(jsonErr);
         }
 
@@ -47,12 +44,11 @@ class cmdArgDeserializingVisitor implements V0CommandTypeVisitor {
     }
 
     public visitRegisterService(): Result<null, Error> {
-        let args: RegisterServiceArgs = newEmptyRegisterServiceArgs();
+        let args: RegisterServiceArgs;
         
         try {
             args = JSON.parse(this.bytesToDeserialize);
-        } 
-        catch(jsonErr) {
+        } catch(jsonErr) {
             return err(jsonErr);
         }
 
@@ -61,12 +57,11 @@ class cmdArgDeserializingVisitor implements V0CommandTypeVisitor {
     }
 
     public visitGenerateFiles(): Result<null, Error> {
-        let args: GenerateFilesArgs = newEmptyGenerateFileArgs();
+        let args: GenerateFilesArgs;
         
         try {
             args = JSON.parse(this.bytesToDeserialize);
-        } 
-        catch(jsonErr) {
+        } catch(jsonErr) {
             return err(jsonErr);
         }
 
@@ -75,12 +70,11 @@ class cmdArgDeserializingVisitor implements V0CommandTypeVisitor {
     }
 
     public visitLoadStaticFiles(): Result<null, Error> {
-    	let args: LoadStaticFilesArgs = newEmptyLoadStaticFilesArgs();
+    	let args: LoadStaticFilesArgs;
     	 
         try {
             args = JSON.parse(this.bytesToDeserialize);
-        } 
-        catch(jsonErr) {
+        } catch(jsonErr) {
             return err(jsonErr);
         }
 
@@ -89,12 +83,11 @@ class cmdArgDeserializingVisitor implements V0CommandTypeVisitor {
     }
 
     public visitStartService(): Result<null, Error> {
-        let args: StartServiceArgs = newEmptyStartServiceArgs();
+        let args: StartServiceArgs;
 
         try {
             args = JSON.parse(this.bytesToDeserialize);
-        } 
-        catch(jsonErr) {
+        } catch(jsonErr) {
             return err(jsonErr);
         }
 
@@ -103,12 +96,11 @@ class cmdArgDeserializingVisitor implements V0CommandTypeVisitor {
     }
 
     public visitRemoveService(): Result<null, Error> {
-    	let args: RemoveServiceArgs = newEmptyRemoveServiceArgs();
+    	let args: RemoveServiceArgs;
     	
         try {
             args = JSON.parse(this.bytesToDeserialize);
-        } 
-        catch(jsonErr) {
+        } catch(jsonErr) {
             return err(jsonErr);
         }
 
@@ -117,12 +109,11 @@ class cmdArgDeserializingVisitor implements V0CommandTypeVisitor {
     }
 
     public visitRepartition(): Result<null, Error> {
-    	let args: RepartitionArgs = newEmptyRepartitionArgs();
+    	let args: RepartitionArgs;
     	
         try {
             args = JSON.parse(this.bytesToDeserialize);
-        } 
-        catch(jsonErr) {
+        } catch(jsonErr) {
             return err(jsonErr);
         }
 
@@ -131,12 +122,11 @@ class cmdArgDeserializingVisitor implements V0CommandTypeVisitor {
     }
 
     public visitExecCommand(): Result<null, Error> {
-        let args: ExecCommandArgs = newEmptyExecCommandArgs();
+        let args: ExecCommandArgs;
      
         try {
             args = JSON.parse(this.bytesToDeserialize);
-        } 
-        catch(jsonErr) {
+        } catch(jsonErr) {
             return err(jsonErr);
         }
 
@@ -145,12 +135,11 @@ class cmdArgDeserializingVisitor implements V0CommandTypeVisitor {
     }
 
     public visitWaitForEndpointAvailability(): Result<null, Error> {
-    	let args: WaitForEndpointAvailabilityArgs = newEmptyWaitForEndpointAvailabilityArgs();
+    	let args: WaitForEndpointAvailabilityArgs;
     	
         try {
             args = JSON.parse(this.bytesToDeserialize);
-        } 
-        catch(jsonErr) {
+        } catch(jsonErr) {
             return err(jsonErr);
         }
 
@@ -159,12 +148,11 @@ class cmdArgDeserializingVisitor implements V0CommandTypeVisitor {
     }
 
     public visitExecuteBulkCommands(): Result<null, Error> {
-        let args: ExecuteBulkCommandsArgs = newEmptyExecuteBulkCommandsArgs();
+        let args: ExecuteBulkCommandsArgs;
 
         try {
             args = JSON.parse(this.bytesToDeserialize);
-        } 
-        catch(jsonErr) {
+        } catch(jsonErr) {
             return err(jsonErr);
         }
 
@@ -172,7 +160,7 @@ class cmdArgDeserializingVisitor implements V0CommandTypeVisitor {
         return ok(null);
     }
 
-    public getDeserializedCommandArgs(): jspb.Message {
+    public getDeserializedCommandArgs(): protobuf.Message {
         return this.deserializedCommandArgsPtr;
     }
 }
@@ -181,7 +169,7 @@ class cmdArgDeserializingVisitor implements V0CommandTypeVisitor {
 //                                        Serializable Command
 // ====================================================================================================
 
-class interstitialStruct {
+class InterstitialStruct {
     private readonly type: V0CommandType;
     private argsBytes: string; //TODO (comment) - original type was json.RawMessage ; couldn't find equivalent in typescript
 
@@ -206,14 +194,14 @@ export class V0SerializableCommand {
 	private type: V0CommandType;
 
 	// The only allowed objects here are from the bindings generated from the .proto file
-	private argsPtr: jspb.Message;
+	private argsPtr: protobuf.Message;
 
     //TODO (comment) - added getter and setters instead of giving direct access, is this okay?
     public getType(): V0CommandType {
         return this.type;
     }
 
-    public getArgsPtr(): jspb.Message {
+    public getArgsPtr(): protobuf.Message {
         return this.argsPtr;
     }
     
@@ -221,22 +209,21 @@ export class V0SerializableCommand {
         this.type = newType;
     }
     
-    public setArgsPtr(newArgsPtr: jspb.Message): void {
+    public setArgsPtr(newArgsPtr: protobuf.Message): void {
         this.argsPtr = newArgsPtr;
     }
    
     // A V0SerializableCommand knows how to deserialize itself, thanks to the "type" tag
     public unmarshalJSON(bytes: string): Result<null, Error> { //TODO (comment) - changed type from byte[] to string
 
-        const interstitialObj: interstitialStruct = new interstitialStruct();
+        const interstitialObj: InterstitialStruct = new InterstitialStruct();
         try {
             interstitialObj.setArgsBytes(JSON.parse(bytes));
-        }
-        catch(jsonErr) {
+        } catch(jsonErr) {
             return err(jsonErr);
         }
 
-        const visitor: cmdArgDeserializingVisitor = new cmdArgDeserializingVisitor(interstitialObj.getArgsBytes());
+        const visitor: CmdArgDeserializingVisitor = new CmdArgDeserializingVisitor(interstitialObj.getArgsBytes());
         const resultAcceptVisitor = acceptVisitor(interstitialObj.getType(), visitor);
         if (!resultAcceptVisitor.isOk()) {
             return err(resultAcceptVisitor.error);

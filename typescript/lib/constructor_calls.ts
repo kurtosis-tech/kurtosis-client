@@ -211,79 +211,9 @@ export function newExecuteLambdaArgs(lamdaId: LambdaID, serializedParams: string
     return result;
 }
 
-// // ====================================================================================================
-// //                                    Bulk Commands
-// // ====================================================================================================
-
-export function newEmptyLoadLambdaArgs(): LoadLambdaArgs {
-    const result: LoadLambdaArgs = new LoadLambdaArgs();
-
-    return result;
-} 
-
-export function newEmptyExecuteLambdaArgs(): ExecuteLambdaArgs {
-    const result: ExecuteLambdaArgs = new ExecuteLambdaArgs();
-
-    return result;
-} 
-
-export function newEmptyRegisterServiceArgs(): RegisterServiceArgs {
-    const result: RegisterServiceArgs = new RegisterServiceArgs();
-
-    return result;
-} 
-
-export function newEmptyGenerateFileArgs(): GenerateFilesArgs {
-    const result: GenerateFilesArgs = new GenerateFilesArgs();
-
-    return result;
-} 
-
-export function newEmptyLoadStaticFilesArgs(): LoadStaticFilesArgs {
-    const result: LoadStaticFilesArgs = new LoadStaticFilesArgs();
-    
-    return result;
-}
-
 export function newLambdaInfoArgs(lambdaId: LambdaID): GetLambdaInfoArgs {
     const result: GetLambdaInfoArgs = new GetLambdaInfoArgs();
     result.setLambdaId(String(lambdaId));
-
-    return result;
-}
-
-export function newEmptyStartServiceArgs(): StartServiceArgs {
-    const result: StartServiceArgs = new StartServiceArgs();
-
-    return result;
-}
-
-export function newEmptyRemoveServiceArgs(): RemoveServiceArgs {
-    const result: RemoveServiceArgs = new RemoveServiceArgs();
-
-    return result;
-}
-
-export function newEmptyRepartitionArgs(): RepartitionArgs {
-    const result: RepartitionArgs = new RepartitionArgs();
-
-    return result;
-}
-
-export function newEmptyExecCommandArgs(): ExecCommandArgs {
-    const result: ExecCommandArgs = new ExecCommandArgs();
-    
-    return result;
-}
-
-export function newEmptyWaitForEndpointAvailabilityArgs(): WaitForEndpointAvailabilityArgs {
-    const result: WaitForEndpointAvailabilityArgs = new WaitForEndpointAvailabilityArgs();
-    
-    return result;
-}
-
-export function newEmptyExecuteBulkCommandsArgs(): ExecuteBulkCommandsArgs {
-    const result: ExecuteBulkCommandsArgs = new ExecuteBulkCommandsArgs();
 
     return result;
 }

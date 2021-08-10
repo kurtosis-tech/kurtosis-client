@@ -62,8 +62,8 @@ export function acceptVisitor(commandType: V0CommandType, visitor: V0CommandType
 	default:
 		defaultErr = new Error("Unrecognized command type " + commandType)
 	}
-	if (defaultErr != null) {
-        return err(defaultErr);
+	if (defaultErr !== null) {
+		return err(defaultErr);
     }
     if (!result.isOk()) {
         return err(result.error);
