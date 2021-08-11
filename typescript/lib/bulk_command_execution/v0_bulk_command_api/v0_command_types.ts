@@ -19,17 +19,17 @@ export interface V0CommandTypeVisitor {
 
 // vvvvvvvvvvvvvvvvvvvv Update the visitor whenever you add an enum value!!! vvvvvvvvvvvvvvvvvvvvvvvvvvv
 export enum V0CommandType {
-	loadLambdaCommandType = "LOAD_LAMBDA",
-	executeLambdaCommandType = "EXECUTE_LAMBDA",
-	registerServiceCommandType = "REGISTER_SERVICE",
-	generateFilesCommandType = "GENERATE_FILES",
-	loadStaticFilesCommandType = "LOAD_STATIC_FILES",
-	startServiceCommandType = "START_SERVICE",
-	removeServiceCommandType = "REMOVE_SERVICE",
-	repartitionCommandType = "REPARTITION",
-	execCommandCommandType = "EXEC_COMMAND",
-	waitForEndpointAvailabilityCommandType = "WAIT_FOR_ENDPOINT_AVAILABILITY",
-	executeBulkCommandsCommandType = "EXECUTE_BULK_COMMANDS"
+	LoadLambda = "LOAD_LAMBDA",
+	ExecuteLambda = "EXECUTE_LAMBDA",
+	RegisterService = "REGISTER_SERVICE",
+	GenerateFiles = "GENERATE_FILES",
+	LoadStaticFiles = "LOAD_STATIC_FILES",
+	StartService = "START_SERVICE",
+	RemoveService = "REMOVE_SERVICE",
+	Repartition = "REPARTITION",
+	ExecCommand = "EXEC_COMMAND",
+	WaitForEndpointAvailability = "WAIT_FOR_ENDPOINT_AVAILABILITY",
+	ExecuteBulkCommands = "EXECUTE_BULK_COMMANDS"
 }
 // ^^^^^^^^^^^^^^^^^^^^ Update the visitor whenever you add an enum value!!! ^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
@@ -38,27 +38,27 @@ export namespace V0CommandType {
 		var result: Result<null, Error>;
 		var defaultErr: Error = null;
 		switch (commandType) {
-		case V0CommandType.loadLambdaCommandType:
+		case V0CommandType.LoadLambda:
 			result = visitor.visitLoadLambda();
-		case V0CommandType.executeLambdaCommandType:
+		case V0CommandType.ExecuteLambda:
 			result = visitor.visitExecuteLambda();
-		case V0CommandType.registerServiceCommandType:
+		case V0CommandType.RegisterService:
 			result = visitor.visitRegisterService();
-		case V0CommandType.generateFilesCommandType:
+		case V0CommandType.GenerateFiles:
 			result = visitor.visitGenerateFiles();
-		case V0CommandType.loadStaticFilesCommandType:
+		case V0CommandType.LoadStaticFiles:
 			result = visitor.visitLoadStaticFiles();
-		case V0CommandType.startServiceCommandType:
+		case V0CommandType.StartService:
 			result = visitor.visitStartService();
-		case V0CommandType.removeServiceCommandType:
+		case V0CommandType.RemoveService:
 			result = visitor.visitRemoveService();
-		case V0CommandType.repartitionCommandType:
+		case V0CommandType.Repartition:
 			result = visitor.visitRepartition();
-		case V0CommandType.execCommandCommandType:
+		case V0CommandType.ExecCommand:
 			result = visitor.visitExecCommand();
-		case V0CommandType.waitForEndpointAvailabilityCommandType:
+		case V0CommandType.WaitForEndpointAvailability:
 			result = visitor.visitWaitForEndpointAvailability();
-		case V0CommandType.executeBulkCommandsCommandType:
+		case V0CommandType.ExecuteBulkCommands:
 			result = visitor.visitExecuteBulkCommands();
 		default:
 			defaultErr = new Error("Unrecognized command type " + commandType)
