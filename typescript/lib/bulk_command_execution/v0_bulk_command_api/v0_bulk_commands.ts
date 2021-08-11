@@ -9,7 +9,7 @@ import * as protobuf from "google-protobuf";
 
 // Visitor that will be used to deserialize command args into
 class CmdArgDeserializingVisitor implements V0CommandTypeVisitor {
-    private readonly bytesToDeserialize: string; //TODO (comment) - string because no byte type in typescript
+    private readonly bytesToDeserialize: string;
     private deserializedCommandArgsPtr: protobuf.Message;
 
     constructor (bytesToDeserialize: string) {
@@ -189,7 +189,6 @@ export class V0SerializableCommand {
     }
 
 }
-
 
 // // ====================================================================================================
 // //                                   Bulk Commands Package
