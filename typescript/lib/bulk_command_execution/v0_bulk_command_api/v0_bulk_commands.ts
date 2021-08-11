@@ -192,12 +192,16 @@ class CmdArgDeserializingVisitor implements V0CommandTypeVisitor {
 
 // Used for serializing
 export class V0SerializableCommand {
-    private type: V0CommandType;
+    private readonly type: V0CommandType;
     
     // The only allowed objects here are from the bindings generated from the .proto file
-    private argsPtr: protobuf.Message;
-    
-    //TODO (comment) - added getter and setters instead of giving direct access, is this okay?
+    private readonly argsPtr: protobuf.Message;
+
+    constructor (type: V0CommandType, argsPtr: protobuf.Message) {
+        this.type = type;
+        this.argsPtr = argsPtr;
+    } 
+       
     public getType(): V0CommandType {
         return this.type;
     }
@@ -205,15 +209,7 @@ export class V0SerializableCommand {
     public getArgsPtr(): protobuf.Message {
         return this.argsPtr;
     }
-    
-    public setType(newType: V0CommandType): void {
-        this.type = newType;
-    }
-    
-    public setArgsPtr(newArgsPtr: protobuf.Message): void {
-        this.argsPtr = newArgsPtr;
-    }
-   
+
     //TODO - Potentially REMOVE
     // // A V0SerializableCommand knows how to deserialize itself, thanks to the "type" tag
     // public unmarshalJSON(bytes: string): Result<null, Error> { //TODO (comment) - changed type from byte[] to string
@@ -246,4 +242,8 @@ export class V0SerializableCommand {
 
 export class V0BulkCommands {
     private readonly commands: V0SerializableCommand[];
+
+    constructor (commands: V0SerializableCommand[]) {
+        this.commands = commands;
+    }
 }
