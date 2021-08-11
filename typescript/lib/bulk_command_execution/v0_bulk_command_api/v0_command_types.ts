@@ -34,39 +34,39 @@ export enum V0CommandType {
 // ^^^^^^^^^^^^^^^^^^^^ Update the visitor whenever you add an enum value!!! ^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 export namespace V0CommandType {
-	export function acceptVisitor(commandType: V0CommandType, visitor: V0CommandTypeVisitor): Result<null, Error> { //TODO - could V0CommandType be a parameter or should this be defined as a method inside V0CommandType class (I peronally believe former is good)
-		var result: Result<null, Error>;
-		var defaultErr: Error = null;
+	export function acceptVisitor(commandType: V0CommandType, visitor: V0CommandTypeVisitor): Result<null, Error> {
+		let result: Result<null, Error>;
+		let defaultErr: Error = null;
 		switch (commandType) {
-		case V0CommandType.LoadLambda:
-			result = visitor.visitLoadLambda();
-		case V0CommandType.ExecuteLambda:
-			result = visitor.visitExecuteLambda();
-		case V0CommandType.RegisterService:
-			result = visitor.visitRegisterService();
-		case V0CommandType.GenerateFiles:
-			result = visitor.visitGenerateFiles();
-		case V0CommandType.LoadStaticFiles:
-			result = visitor.visitLoadStaticFiles();
-		case V0CommandType.StartService:
-			result = visitor.visitStartService();
-		case V0CommandType.RemoveService:
-			result = visitor.visitRemoveService();
-		case V0CommandType.Repartition:
-			result = visitor.visitRepartition();
-		case V0CommandType.ExecCommand:
-			result = visitor.visitExecCommand();
-		case V0CommandType.WaitForEndpointAvailability:
-			result = visitor.visitWaitForEndpointAvailability();
-		case V0CommandType.ExecuteBulkCommands:
-			result = visitor.visitExecuteBulkCommands();
-		default:
-			defaultErr = new Error("Unrecognized command type " + commandType)
+			case V0CommandType.LoadLambda:
+				result = visitor.visitLoadLambda();
+			case V0CommandType.ExecuteLambda:
+				result = visitor.visitExecuteLambda();
+			case V0CommandType.RegisterService:
+				result = visitor.visitRegisterService();
+			case V0CommandType.GenerateFiles:
+				result = visitor.visitGenerateFiles();
+			case V0CommandType.LoadStaticFiles:
+				result = visitor.visitLoadStaticFiles();
+			case V0CommandType.StartService:
+				result = visitor.visitStartService();
+			case V0CommandType.RemoveService:
+				result = visitor.visitRemoveService();
+			case V0CommandType.Repartition:
+				result = visitor.visitRepartition();
+			case V0CommandType.ExecCommand:
+				result = visitor.visitExecCommand();
+			case V0CommandType.WaitForEndpointAvailability:
+				result = visitor.visitWaitForEndpointAvailability();
+			case V0CommandType.ExecuteBulkCommands:
+				result = visitor.visitExecuteBulkCommands();
+			default:
+				defaultErr = new Error("Unrecognized command type " + commandType); //TODO (comment) - if I return here, it makes the code underneath unreachalbe (can't follow eject early, eject often principle)
 		}
 		if (defaultErr !== null) {
 			return err(defaultErr);
 		}
-		if (!result.isOk()) {
+		if (!result.isOk()) { //TODO (comment) - don't need to cuddle braces since both if statements?
 			return err(result.error);
 		}
 		return ok(null);
