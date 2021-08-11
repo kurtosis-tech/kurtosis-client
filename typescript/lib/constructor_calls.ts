@@ -1,4 +1,4 @@
-import { ExecCommandArgs, GenerateFilesArgs, FileGenerationOptions, LoadStaticFilesArgs, LoadLambdaArgs, GetLambdaInfoArgs, RegisterStaticFilesArgs, RegisterFilesArtifactsArgs, RegisterServiceArgs, StartServiceArgs, GetServiceInfoArgs, RemoveServiceArgs, PartitionServices, PartitionConnections, PartitionConnectionInfo, RepartitionArgs, WaitForEndpointAvailabilityArgs, ExecuteBulkCommandsArgs, ExecuteLambdaArgs } from '../kurtosis_core_rpc_api_bindings/api_container_service_pb';
+import { ExecCommandArgs, GenerateFilesArgs, FileGenerationOptions, LoadStaticFilesArgs, LoadLambdaArgs, GetLambdaInfoArgs, RegisterStaticFilesArgs, RegisterFilesArtifactsArgs, GetServiceInfoArgs, PartitionServices, PartitionConnections, PartitionConnectionInfo, RegisterServiceArgs, StartServiceArgs, RemoveServiceArgs, RepartitionArgs, WaitForEndpointAvailabilityArgs, ExecuteBulkCommandsArgs, ExecuteLambdaArgs } from '../kurtosis_core_rpc_api_bindings/api_container_service_pb';
 import { ServiceID } from './services/service';
 import { PartitionID } from './networks/network_context';
 import { LambdaID } from "./modules/lambda_context";
@@ -44,7 +44,7 @@ export function newLoadStaticFilesArgs(serviceId: ServiceID, staticFilesToCopySt
     }
 
     return result;
-} 
+}
 
 // // ====================================================================================================
 // //                                    Network Context
@@ -55,13 +55,6 @@ export function newLoadLambdaArgs(lambdaId: LambdaID, image: string, serializedP
     result.setLambdaId(String(lambdaId));
     result.setContainerImage(image);
     result.setSerializedParams(serializedParams);
-
-    return result;
-}
-
-export function newLambdaInfoArgs(lambdaId: LambdaID): GetLambdaInfoArgs {
-    const result: GetLambdaInfoArgs = new GetLambdaInfoArgs();
-    result.setLambdaId(String(lambdaId));
 
     return result;
 }
@@ -155,16 +148,6 @@ export function newPartitionServices(serviceIdStrSet: Set<string>): PartitionSer
     return result;
 }
 
-export function newPartitionConnections(partitionAConnsStrMap: Map<string, PartitionConnectionInfo>): PartitionConnections {
-    const result: PartitionConnections = new PartitionConnections();
-    const partitionsMap: Map<string, PartitionConnectionInfo> = result.getConnectionInfoMap();
-    for (let partitionId in partitionAConnsStrMap) {
-        partitionsMap.set(partitionId, partitionAConnsStrMap[partitionId]);
-    }
-
-    return result;
-}
-
 export function newRepartitionArgs(
     partitionServices: Map<string, PartitionServices>, 
     partitionConns: Map<string, PartitionConnections>,
@@ -179,6 +162,16 @@ export function newRepartitionArgs(
         partitionConnsMap.set(partitionConnId, partitionConns[partitionConnId]);
     };
     result.setDefaultConnection(defaultConnection);
+
+    return result;
+}
+
+export function newPartitionConnections(partitionAConnsStrMap: Map<string, PartitionConnectionInfo>): PartitionConnections {
+    const result: PartitionConnections = new PartitionConnections();
+    const partitionsMap: Map<string, PartitionConnectionInfo> = result.getConnectionInfoMap();
+    for (let partitionId in partitionAConnsStrMap) {
+        partitionsMap.set(partitionId, partitionAConnsStrMap[partitionId]);
+    }
 
     return result;
 }
@@ -214,6 +207,13 @@ export function newExecuteLambdaArgs(lamdaId: LambdaID, serializedParams: string
     const result: ExecuteLambdaArgs = new ExecuteLambdaArgs();
     result.setLambdaId(String(lamdaId));
     result.setSerializedParams(serializedParams);
+
+    return result;
+}
+
+export function newLambdaInfoArgs(lambdaId: LambdaID): GetLambdaInfoArgs {
+    const result: GetLambdaInfoArgs = new GetLambdaInfoArgs();
+    result.setLambdaId(String(lambdaId));
 
     return result;
 }

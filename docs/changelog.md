@@ -2,6 +2,7 @@
 ### Features
 * Ported `services` .go files, including both services and config-factory, to typescript inside `typescript/lib/services` directory
 * Ported `networks` .go files to typescript inside `typescript/lib/networks` directory 
+* Ported `bulk_commands` to typescript inside `lib/bulk_command_execution/` directory
 * Added a file inside of `typescript/lib` directory that holds a template of constructor calls
 
 ### Changes
