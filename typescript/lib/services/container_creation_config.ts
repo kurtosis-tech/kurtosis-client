@@ -1,6 +1,6 @@
 import { Result } from "neverthrow";
 
-const defaultKurtosisVolumeMountpoint = "/kurtosis-enclave-data";
+const DEFAULT_KURTOSIS_VOLUME_MOUNTPOINT: string = "/kurtosis-enclave-data";
 
 export type StaticFileID = string;
 
@@ -15,11 +15,11 @@ export type FilesArtifactID = string;
 export class ContainerCreationConfig {
 	
     private readonly image: string;
-	private readonly kurtosisVolumeMountpoint: string;   // Technically the enclave data volume, but we call it this for simplicity for the user
-	private readonly usedPortsSet: Map<string, boolean>
-	private readonly fileGeneratingFuncs: Map<string, (fp: number) => Result<null, Error>>; // File descriptors are just integers
-	private readonly usedStaticFilesSet: Map<StaticFileID, boolean>;
-	private readonly filesArtifactMountpoints: Map<FilesArtifactID, string>;
+    private readonly kurtosisVolumeMountpoint: string; // Technically the enclave data volume, but we call it this for simplicity for the user
+    private readonly usedPortsSet: Map<string, boolean>;
+    private readonly fileGeneratingFuncs: Map<string, (fp: number) => Result<null, Error>>; // File descriptors are just integers
+    private readonly usedStaticFilesSet: Map<StaticFileID, boolean>;
+    private readonly filesArtifactMountpoints: Map<FilesArtifactID, string>;
 
     constructor(
         image: string,
@@ -68,17 +68,18 @@ export class ContainerCreationConfig {
 // TODO Defensive copies on all these With... functions???
 // Docs available at https://docs.kurtosistech.com/kurtosis-libs/lib-documentation
 class ContainerCreationConfigBuilder {
-	private image: string;
-	private kurtosisVolumeMountpoint: string;
-	private usedPortsSet: Map<string, boolean>;
-	private usedStaticFilesSet: Map<StaticFileID, boolean>;
-	private fileGeneratingFuncs: Map<string, (fp: number) => Result<null, Error>>;
-	private filesArtifactMountpoints: Map<FilesArtifactID, string>;
+    private readonly image: string;
+    private kurtosisVolumeMountpoint: string;
+    private usedPortsSet: Map<string, boolean>;
+    private usedStaticFilesSet: Map<StaticFileID, boolean>;
+    private fileGeneratingFuncs: Map<string, (fp: number) => Result<null, Error>>;
+    private filesArtifactMountpoints: Map<FilesArtifactID, string>;
 
     constructor (image: string) {
             this.image = image;
-            this.kurtosisVolumeMountpoint = defaultKurtosisVolumeMountpoint;
+            this.kurtosisVolumeMountpoint = DEFAULT_KURTOSIS_VOLUME_MOUNTPOINT;
             this.usedPortsSet = new Map();
+			this.usedStaticFilesSet = new Map();
             this.fileGeneratingFuncs = new Map();
             this.filesArtifactMountpoints = new Map();
     }
@@ -116,6 +117,6 @@ class ContainerCreationConfigBuilder {
             this.fileGeneratingFuncs,
             this.usedStaticFilesSet,
             this.filesArtifactMountpoints,
-        )
+        );
     }
 }
