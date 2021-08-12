@@ -38,8 +38,8 @@ class NetworkContext {
     constructor(
             client: ApiContainerServiceClient,
             enclaveDataVolMountpoint: string) {
-                this.client = client;
-                this.enclaveDataVolMountpoint = enclaveDataVolMountpoint;
+        this.client = client;
+        this.enclaveDataVolMountpoint = enclaveDataVolMountpoint;
     }
 
     // Docs available at https://docs.kurtosistech.com/kurtosis-libs/lib-documentation
@@ -169,11 +169,10 @@ class NetworkContext {
             if (!resultOpenSrcFp.isOk()) {
                 return err(resultOpenSrcFp.error);
             }
-            let srcFp: number;
+            const srcFp: number = resultOpenSrcFp.value;
             
             try {
 
-                srcFp = resultOpenSrcFp.value;
                 const promiseOpenDestFp: Promise<ResultAsync<number, Error>> = new Promise((resolve, _unusedReject) => {
                     fs.open(destAbsFilepath, 'w', (error: Error, response: number) => {
                         if (error === null) {
@@ -187,21 +186,20 @@ class NetworkContext {
                 if (!resultOpenDestFp.isOk()) {
                     return err(resultOpenDestFp.error);
                 }
-                 let destFp: number;
+                const destFp: number = resultOpenDestFp.value;
 
                 try {
-                    destFp = resultOpenDestFp.value;
 
-                    const promiseCopyFile: Promise<ResultAsync<number, Error>> = new Promise((resolve, _unusedReject) => {
+                    const promiseCopyFile: Promise<ResultAsync<null, Error>> = new Promise((resolve, _unusedReject) => {
                         fs.copyFile(srcAbsFilepath, destAbsFilepath, (error: Error) => {
                             if (error === null) {
-                                resolve(okAsync(0)); //TODO (comment) - 0 is just placeholder value here
+                                resolve(okAsync(null));
                             } else {
                                 resolve(errAsync(error));
                             }
                         })
                     });
-                    const resultCopyFile: Result<number, Error> = await promiseCopyFile;
+                    const resultCopyFile: Result<null, Error> = await promiseCopyFile;
                     if (!resultCopyFile.isOk()) {
                         return err(resultCopyFile.error);
                     }
@@ -265,11 +263,11 @@ class NetworkContext {
 
     // Docs available at https://docs.kurtosistech.com/kurtosis-libs/lib-documentation
     public async addServiceToPartition(
-        serviceId: ServiceID,
-        partitionId: PartitionID,
-        containerCreationConfig: ContainerCreationConfig,
-        generateRunConfigFunc: (ipAddr: string, generatedFileFilepaths: Map<string, string>, staticFileFilepaths: Map<StaticFileID, string>) => Result<ContainerRunConfig, Error>,
-    ): Promise<Result<[ServiceContext, Map<string, PortBinding>], Error>> {
+            serviceId: ServiceID,
+            partitionId: PartitionID,
+            containerCreationConfig: ContainerCreationConfig,
+            generateRunConfigFunc: (ipAddr: string, generatedFileFilepaths: Map<string, string>, staticFileFilepaths: Map<StaticFileID, string>) => Result<ContainerRunConfig, Error>,
+            ): Promise<Result<[ServiceContext, Map<string, PortBinding>], Error>> {
 
         log.trace("Registering new service ID with Kurtosis API...");
         const registerServiceArgs: RegisterServiceArgs = newRegisterServiceArgs(serviceId, partitionId);
@@ -450,7 +448,7 @@ class NetworkContext {
     // Docs available at https://docs.kurtosistech.com/kurtosis-libs/lib-documentation
     public async removeService(serviceId: ServiceID, containerStopTimeoutSeconds: number): Promise<Result<null, Error>> {
 
-        log.debug("Removing service '%v'...", serviceId);
+        log.debug("Removing service '" + serviceId + "'...");
         // NOTE: This is kinda weird - when we remove a service we can never get it back so having a container
         //  stop timeout doesn't make much sense. It will make more sense when we can stop/start containers
         // Independent of adding/removing them from the network
@@ -470,16 +468,16 @@ class NetworkContext {
             return err(resultRemoveService.error);
         }
 
-        log.debug("Successfully removed service ID %v", serviceId);
+        log.debug("Successfully removed service ID " + serviceId);
 
         return ok(null);
     }
 
     // Docs available at https://docs.kurtosistech.com/kurtosis-libs/lib-documentation
     public async repartitionNetwork(
-        partitionServices: Map<PartitionID, Set<ServiceID>>,
-        partitionConnections: Map<PartitionID, Map<PartitionID, PartitionConnectionInfo>>,
-        defaultConnection: PartitionConnectionInfo): Promise<Result<null, Error>> {
+            partitionServices: Map<PartitionID, Set<ServiceID>>,
+            partitionConnections: Map<PartitionID, Map<PartitionID, PartitionConnectionInfo>>,
+            defaultConnection: PartitionConnectionInfo): Promise<Result<null, Error>> {
 
         if (partitionServices === null) {
             return err(new Error("Partition services map cannot be nil"));
@@ -535,13 +533,13 @@ class NetworkContext {
 
     // Docs available at https://docs.kurtosistech.com/kurtosis-libs/lib-documentation
     public async waitForEndpointAvailability(
-        serviceId: ServiceID,
-        port: number, 
-        path: string, 
-        initialDelaySeconds: number, 
-        retries: number, 
-        retriesDelayMilliseconds: number, 
-        bodyText: string): Promise<Result<null, Error>> {
+            serviceId: ServiceID,
+            port: number, 
+            path: string, 
+            initialDelaySeconds: number, 
+            retries: number, 
+            retriesDelayMilliseconds: number, 
+            bodyText: string): Promise<Result<null, Error>> {
         const availabilityArgs: WaitForEndpointAvailabilityArgs = newWaitForEndpointAvailabilityArgs(
             serviceId,
             port,

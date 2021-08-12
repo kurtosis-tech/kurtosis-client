@@ -8,9 +8,9 @@ export type LambdaID = string;
 
 // Docs available at https://docs.kurtosistech.com/kurtosis-libs/lib-documentation
 export class LambdaContext {
-	private readonly client: ApiContainerServiceClient;
-	private readonly lambdaId: LambdaID;
-
+    private readonly client: ApiContainerServiceClient;
+    private readonly lambdaId: LambdaID;
+    
     constructor (client: ApiContainerServiceClient, lambdaId: LambdaID) {
         this.client = client;
         this.lambdaId = lambdaId;
