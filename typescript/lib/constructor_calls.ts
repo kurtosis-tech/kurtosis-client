@@ -35,10 +35,10 @@ export function newFileGenerationOptions(filesToGenerateSet: Set<string>): Map<s
     return result;
 }
 
-export function newLoadStaticFilesArgs(serviceId: ServiceID, staticFilesToCopyStringSet: Map<String, boolean>): LoadStaticFilesArgs {
+export function newLoadStaticFilesArgs(serviceId: ServiceID, staticFilesToCopyStringSet: Map<string, boolean>): LoadStaticFilesArgs {
     const result: LoadStaticFilesArgs = new LoadStaticFilesArgs();
     result.setServiceId(String(serviceId));
-    const staticFilesMap = result.getStaticFilesMap();
+    const staticFilesMap: Map<string, boolean> = result.getStaticFilesMap();
     for (let staticFildID in staticFilesToCopyStringSet) {
         staticFilesMap.set(staticFildID, staticFilesToCopyStringSet[staticFildID]);
     }
@@ -110,9 +110,9 @@ export function newStartServiceArgs(
         for (let cmdArg in cmdArgs) {
             cmdArgsArray.push(cmdArg);
         }
-        const dockerEnvVarArray: string[] = result.getDockerEnvVarsMap();
+        const dockerEnvVarArray: Map<string, string> = result.getDockerEnvVarsMap();
         for (let dockerEnvId in dockerEnvVars) {
-            cmdArgsArray.push(dockerEnvId, dockerEnvVars[dockerEnvId]);
+            dockerEnvVarArray.set(dockerEnvId, dockerEnvVars[dockerEnvId]);
         }
         result.setEnclaveDataVolMntDirpath(enclaveDataVolMntDirpath);
         const filesArtificatMountDirpathsMap: Map<string, string> = result.getFilesArtifactMountDirpathsMap();
@@ -211,7 +211,7 @@ export function newExecuteLambdaArgs(lamdaId: LambdaID, serializedParams: string
     return result;
 }
 
-export function newLambdaInfoArgs(lambdaId: LambdaID): GetLambdaInfoArgs {
+export function newGetLambdaInfoArgs(lambdaId: LambdaID): GetLambdaInfoArgs {
     const result: GetLambdaInfoArgs = new GetLambdaInfoArgs();
     result.setLambdaId(String(lambdaId));
 
