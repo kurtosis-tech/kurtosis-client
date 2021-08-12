@@ -87,7 +87,7 @@ function idempotent_update_golang_constant() {
         echo "Error: Couldn't form Go constant replacement value" >&2
         return 1
     fi
-    if ! sed "s|${search_pattern}|${replace_value}|" "${to_update_filepath}"; then
+    if ! sed -i "${SED_REPLACE_SUFFIX_FOR_DELETION}" "s|${search_pattern}|${replace_value}|" "${to_update_filepath}"; then
         echo "Error: An error occurred replacing Go constant pattern '${search_pattern}' with value '${replace_value}'" >&2
         return 1
     fi
