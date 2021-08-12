@@ -1,7 +1,9 @@
 # TBD
 ### Features
 * Added our own constructors for each of the Protobuf messages, so that when you add a new field it's harder to forget to add it
-* Added a `KurtosisApiVersion` value to Go which contains the version of this library, which is updated automatically during the release process of this repo
+* Added constants which contains the version of this library, which is updated automatically during the release process of this repo
+    * Go: `KurtosisApiVersion`
+    * Typescript: `KURTOSIS_API_VERSION`
 
 ### Fixes
 * Fixed a bug where `stacktrace.Propagate` was incorrectly used instead of `stacktrace.NewError`
