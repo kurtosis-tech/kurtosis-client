@@ -14,11 +14,9 @@ export class GeneratedFileFilepaths {
     private readonly absoluteFilepathHere: string;
     private readonly absoluteFilepathOnServiceContainer: string;
 
-    constructor (
-        absoluteFilepathHere: string,
-        absoluteFilepathOnServiceContainer: string) {
-            this.absoluteFilepathHere = absoluteFilepathHere;
-            this.absoluteFilepathOnServiceContainer = absoluteFilepathOnServiceContainer;
+    constructor(absoluteFilepathHere: string, absoluteFilepathOnServiceContainer: string) {
+        this.absoluteFilepathHere = absoluteFilepathHere;
+        this.absoluteFilepathOnServiceContainer = absoluteFilepathOnServiceContainer;
     }   
 
     // Docs available at https://docs.kurtosistech.com/kurtosis-libs/lib-documentation
@@ -42,16 +40,16 @@ export class ServiceContext {
     private readonly enclaveDataVolMountpointOnServiceContainer: string;
 
     constructor(
-        client: ApiContainerServiceClient,
-        serviceId: ServiceID,
-        ipAddress: string,
-        enclaveDataVolMountpointHere: string,
-        enclaveDataVolMountpointOnServiceContainer: string) {
-            this.client = client;
-            this.serviceId = serviceId;
-            this.ipAddress = ipAddress;
-            this.enclaveDataVolMountpointHere = enclaveDataVolMountpointHere;
-            this.enclaveDataVolMountpointOnServiceContainer = enclaveDataVolMountpointOnServiceContainer;
+            client: ApiContainerServiceClient,
+            serviceId: ServiceID,
+            ipAddress: string,
+            enclaveDataVolMountpointHere: string,
+            enclaveDataVolMountpointOnServiceContainer: string) {
+        this.client = client;
+        this.serviceId = serviceId;
+        this.ipAddress = ipAddress;
+        this.enclaveDataVolMountpointHere = enclaveDataVolMountpointHere;
+        this.enclaveDataVolMountpointOnServiceContainer = enclaveDataVolMountpointOnServiceContainer;
     }
 
     // Docs available at https://docs.kurtosistech.com/kurtosis-libs/lib-documentation
