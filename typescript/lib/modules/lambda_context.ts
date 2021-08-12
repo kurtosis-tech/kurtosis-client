@@ -29,13 +29,12 @@ export class LambdaContext {
                 }
             })
         });
-
         const resultExecuteLambda: Result<ExecuteLambdaResponse, Error> = await promiseExecuteLambda;
-
         if (!resultExecuteLambda.isOk()) {
             return err(resultExecuteLambda.error);
         }
         const resp: ExecuteLambdaResponse = resultExecuteLambda.value;
+
         return ok(resp.getSerializedResult());
     }
 }
