@@ -1,4 +1,6 @@
 # TBD
+
+# 0.11.1
 ### Features
 * Ported `services` .go files, including both services and config-factory, to typescript inside `typescript/lib/services` directory
 * Ported `networks` .go files to typescript inside `typescript/lib/networks` directory 
