@@ -16,16 +16,16 @@ export class ContainerRunConfig {
         this.cmdOverrideArgs = cmdOverrideArgs;
         this.environmentVariableOverrides = environmentVariableOverrides;
     }
-
-    public getEntrypointOverrideArgs(): string[] {
+	
+	public getEntrypointOverrideArgs(): string[] {
         return this.entrypointOverrideArgs;
     }
-
-    public getCmdOverrideArgs(): string[] {
+	
+	public getCmdOverrideArgs(): string[] {
         return this.cmdOverrideArgs;
     }
-
-    public getEnvironmentVariableOverrides(): Map<string, string> {
+	
+	public getEnvironmentVariableOverrides(): Map<string, string> {
         return this.environmentVariableOverrides;
     }
 }
@@ -47,23 +47,23 @@ class ContainerRunConfigBuilder {
         this.cmdOverrideArgs = null;
         this.environmentVariableOverrides = new Map();
     }
- 
-    public wthEntrypointOverride(args: string[]): ContainerRunConfigBuilder {
+	
+	public wthEntrypointOverride(args: string[]): ContainerRunConfigBuilder {
         this.entrypointOverrideArgs = args;
         return this;
     }
-
-    public withCmdOverride(args: string[]): ContainerRunConfigBuilder {
+	
+	public withCmdOverride(args: string[]): ContainerRunConfigBuilder {
         this.cmdOverrideArgs = args;
         return this;
     }
-
-    public withEnvironmentVariableOverrides(envVars: Map<string, string>): ContainerRunConfigBuilder {
+	
+	public withEnvironmentVariableOverrides(envVars: Map<string, string>): ContainerRunConfigBuilder {
         this.environmentVariableOverrides = envVars;
         return this;
     }
-
-    public build(): ContainerRunConfig {
+	
+	public build(): ContainerRunConfig {
         return new ContainerRunConfig(
             this.entrypointOverrideArgs,
             this.cmdOverrideArgs,
