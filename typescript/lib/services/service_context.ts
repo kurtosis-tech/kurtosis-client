@@ -92,7 +92,10 @@ export class ServiceContext {
     // Docs available at https://docs.kurtosistech.com/kurtosis-libs/lib-documentation
     public async generateFiles(filesToGenerateSet: Set<string>): Promise<Result<Map<string, GeneratedFileFilepaths>, Error>> {
         const serviceId: ServiceID = this.serviceId;
-        const fileGenerationOpts: Map<string, FileGenerationOptions> = newFileGenerationOptions(filesToGenerateSet);
+        const fileGenerationOpts: Map<string, FileGenerationOptions> = new Map();
+        for (let fileId in filesToGenerateSet) {
+            fileGenerationOpts.set(fileId, newFileGenerationOptions());
+        }
 
         const args: GenerateFilesArgs = newGenerateFilesArgs(serviceId, fileGenerationOpts);
 

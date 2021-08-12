@@ -18,19 +18,16 @@ export function newExecCommandArgs(serviceId: ServiceID, command: string[]): Exe
 export function newGenerateFilesArgs(serviceId: ServiceID, fileGenerationOpts: Map<string, FileGenerationOptions>): GenerateFilesArgs {
     const result: GenerateFilesArgs = new GenerateFilesArgs();
     result.setServiceId(String(serviceId)); 
-    for (let fileID in fileGenerationOpts) {
-        result.getFilesToGenerateMap().set(fileID, fileGenerationOpts[fileID]);
+    for (let [fileID, fileGenerationsOptions] of fileGenerationOpts.entries()) {
+        result.getFilesToGenerateMap().set(fileID, fileGenerationsOptions);
     }
     
     return result;
 }
 
-export function newFileGenerationOptions(filesToGenerateSet: Set<string>): Map<string, FileGenerationOptions> {
-    const result: Map<string, FileGenerationOptions> = new Map();
-    for (let fileId in filesToGenerateSet) {
-        result[fileId] = new FileGenerationOptions();
-        result[fileId].setFileTypeToGenerate(FileGenerationOptions.FileTypeToGenerate.FILE);
-    }
+export function newFileGenerationOptions(): FileGenerationOptions {
+    const result: FileGenerationOptions = new FileGenerationOptions();
+    result.setFileTypeToGenerate(FileGenerationOptions.FileTypeToGenerate.FILE);
 
     return result;
 }
@@ -40,7 +37,7 @@ export function newLoadStaticFilesArgs(serviceId: ServiceID, staticFilesToCopySt
     result.setServiceId(String(serviceId));
     const staticFilesMap: Map<string, boolean> = result.getStaticFilesMap();
     for (let staticFildID in staticFilesToCopyStringSet) {
-        staticFilesMap.set(staticFildID, staticFilesToCopyStringSet[staticFildID]);
+        staticFilesMap.set(staticFildID, true);
     }
 
     return result;
@@ -63,7 +60,7 @@ export function newRegisterStaticFilesArgs(strSet: Map<string, boolean>): Regist
     const result: RegisterStaticFilesArgs = new RegisterStaticFilesArgs();
     const staticFilesSetMap: Map<string, boolean> = result.getStaticFilesSetMap();
     for (let staticFileID in strSet) {
-        staticFilesSetMap.set(staticFileID, strSet[staticFileID]);
+        staticFilesSetMap.set(staticFileID, true);
     }
 
     return result;
@@ -87,40 +84,40 @@ export function newRegisterServiceArgs(serviceId: ServiceID, partitionId: Partit
 }
 
 export function newStartServiceArgs(
-    serviceId: ServiceID, 
-    dockerImage: string,
-    usedPorts: Map<string, boolean>,
-    entrypointArgs: string[],
-    cmdArgs: string[],
-    dockerEnvVars: Map<string, string>,
-    enclaveDataVolMntDirpath: string,
-    filesArtifactMountDirpaths: Map<string, string>): StartServiceArgs {
-        const result: StartServiceArgs = new StartServiceArgs();
-        result.setServiceId(String(serviceId));
-        result.setDockerImage(dockerImage);
-        const usedPortsMap: Map<string, boolean> = result.getUsedPortsMap();
-        for (let portId in usedPorts) {
-            usedPortsMap.set(portId, usedPorts[portId]);
-        }
-        const entrypointArgsArray: string[] = result.getEntrypointArgsList();
-        for (let entryPoint in entrypointArgs) {
-            entrypointArgsArray.push(entryPoint);
-        }
-        const cmdArgsArray: string[] = result.getCmdArgsList();
-        for (let cmdArg in cmdArgs) {
-            cmdArgsArray.push(cmdArg);
-        }
-        const dockerEnvVarArray: Map<string, string> = result.getDockerEnvVarsMap();
-        for (let dockerEnvId in dockerEnvVars) {
-            dockerEnvVarArray.set(dockerEnvId, dockerEnvVars[dockerEnvId]);
-        }
-        result.setEnclaveDataVolMntDirpath(enclaveDataVolMntDirpath);
-        const filesArtificatMountDirpathsMap: Map<string, string> = result.getFilesArtifactMountDirpathsMap();
-        for (let filesArtifactMountDirpathId in filesArtifactMountDirpaths) {
-            filesArtificatMountDirpathsMap.set(filesArtifactMountDirpathId, filesArtifactMountDirpaths[filesArtifactMountDirpathId]);
-        }
+        serviceId: ServiceID, 
+        dockerImage: string,
+        usedPorts: Map<string, boolean>,
+        entrypointArgs: string[],
+        cmdArgs: string[],
+        dockerEnvVars: Map<string, string>,
+        enclaveDataVolMntDirpath: string,
+        filesArtifactMountDirpaths: Map<string, string>): StartServiceArgs {
+    const result: StartServiceArgs = new StartServiceArgs();
+    result.setServiceId(String(serviceId));
+    result.setDockerImage(dockerImage);
+    const usedPortsMap: Map<string, boolean> = result.getUsedPortsMap();
+    for (let portId in usedPorts) {
+        usedPortsMap.set(portId, true);
+    }
+    const entrypointArgsArray: string[] = result.getEntrypointArgsList();
+    for (let entryPoint in entrypointArgs) {
+        entrypointArgsArray.push(entryPoint);
+    }
+    const cmdArgsArray: string[] = result.getCmdArgsList();
+    for (let cmdArg in cmdArgs) {
+        cmdArgsArray.push(cmdArg);
+    }
+    const dockerEnvVarArray: Map<string, string> = result.getDockerEnvVarsMap();
+    for (let dockerEnvId in dockerEnvVars) {
+        dockerEnvVarArray.set(dockerEnvId, dockerEnvVars[dockerEnvId]);
+    }
+    result.setEnclaveDataVolMntDirpath(enclaveDataVolMntDirpath);
+    const filesArtificatMountDirpathsMap: Map<string, string> = result.getFilesArtifactMountDirpathsMap();
+    for (let filesArtifactMountDirpathId in filesArtifactMountDirpaths) {
+        filesArtificatMountDirpathsMap.set(filesArtifactMountDirpathId, filesArtifactMountDirpaths[filesArtifactMountDirpathId]);
+    }
 
-        return result;
+    return result;
 }
 
 export function newGetServiceInfoArgs(serviceId: ServiceID): GetServiceInfoArgs{
@@ -149,17 +146,17 @@ export function newPartitionServices(serviceIdStrSet: Set<string>): PartitionSer
 }
 
 export function newRepartitionArgs(
-    partitionServices: Map<string, PartitionServices>, 
-    partitionConns: Map<string, PartitionConnections>,
-    defaultConnection: PartitionConnectionInfo): RepartitionArgs {
+        partitionServices: Map<string, PartitionServices>, 
+        partitionConns: Map<string, PartitionConnections>,
+        defaultConnection: PartitionConnectionInfo): RepartitionArgs {
     const result: RepartitionArgs = new RepartitionArgs();
-    const partitionServicesMap: Map<PartitionID, Map<ServiceID, boolean>> = new Map();
-    for (let partitionServiceId in partitionServices) {
-        partitionServicesMap.set(partitionServiceId, partitionServices[partitionServiceId]);
+    const partitionServicesMap: Map<string, PartitionServices> = result.getPartitionConnectionsMap();
+    for (let [partitionServiceId, partitionId] of partitionServices.entries()) {
+        partitionServicesMap.set(partitionServiceId, partitionId);
     };
-    const partitionConnsMap: Map<PartitionID, Map<PartitionID, PartitionConnectionInfo>> = new Map();
-    for (let partitionConnId in partitionConns) {
-        partitionConnsMap.set(partitionConnId, partitionConns[partitionConnId]);
+    const partitionConnsMap: Map<string, PartitionConnections> = result.getPartitionConnectionsMap();
+    for (let [partitionConnId, partitionConn] of partitionConns.entries()) {
+        partitionConnsMap.set(partitionConnId, partitionConn);
     };
     result.setDefaultConnection(defaultConnection);
 
@@ -177,23 +174,23 @@ export function newPartitionConnections(partitionAConnsStrMap: Map<string, Parti
 }
 
 export function newWaitForEndpointAvailabilityArgs(
-    serviceId: ServiceID,
-    port: number, 
-    path: string, 
-    initialDelaySeconds: number, 
-    retries: number, 
-    retriesDelayMilliseconds: number, 
-    bodyText: string): WaitForEndpointAvailabilityArgs {
-        const result: WaitForEndpointAvailabilityArgs = new WaitForEndpointAvailabilityArgs();
-        result.setServiceId(String(serviceId));
-        result.setPort(port);
-        result.setPath(path);
-        result.setInitialDelaySeconds(initialDelaySeconds);
-        result.setRetries(retries);
-        result.setRetriesDelayMilliseconds(retriesDelayMilliseconds);
-        result.setBodyText(bodyText);
+        serviceId: ServiceID,
+        port: number, 
+        path: string, 
+        initialDelaySeconds: number, 
+        retries: number, 
+        retriesDelayMilliseconds: number, 
+        bodyText: string): WaitForEndpointAvailabilityArgs {
+    const result: WaitForEndpointAvailabilityArgs = new WaitForEndpointAvailabilityArgs();
+    result.setServiceId(String(serviceId));
+    result.setPort(port);
+    result.setPath(path);
+    result.setInitialDelaySeconds(initialDelaySeconds);
+    result.setRetries(retries);
+    result.setRetriesDelayMilliseconds(retriesDelayMilliseconds);
+    result.setBodyText(bodyText);
 
-        return result;
+    return result;
 }
 
 export function newExecuteBulkCommandsArgs(serializedCommands: string): ExecuteBulkCommandsArgs {
