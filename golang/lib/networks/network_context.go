@@ -219,8 +219,7 @@ func (networkCtx *NetworkContext) AddServiceToPartition(
 	for fileId, initializingFunc := range containerCreationConfig.GetFileGeneratingFuncs() {
 		filepaths, found := generatedFileFilepaths[fileId]
 		if !found {
-			return nil, nil, stacktrace.Propagate(
-				err,
+			return nil, nil, stacktrace.NewError(
 				"Needed to initialize file for file ID '%v', but no generated file filepaths were found for that file ID; this is a Kurtosis bug",
 				fileId)
 		}

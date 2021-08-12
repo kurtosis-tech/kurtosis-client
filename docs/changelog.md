@@ -5,6 +5,10 @@
 * Ported `bulk_commands` to typescript inside `lib/bulk_command_execution/` directory
 * Added a file inside of `typescript/lib` directory that holds a template of constructor calls
 
+### Fixes
+* Fixed a bug where `stacktrace.Propagate` was incorrectly used instead of `stacktrace.NewError`
+
+# 0.11.0
 ### Changes
 * Made `GeneratedFileFilepaths` fields private and immutable with a constructor, and added getters to access the field values
 * Added grpc and google-protobuf to package.json inside of `typescript` folder
@@ -12,7 +16,7 @@
 ### Fixes
 * Updated the build script so that it correctly compiles the typescript files found inside the lib/ directory into one single javascript file 
 
-### Removed
+### Removals
 * `MockService`, which is no longer needed or used now that we've removed the `Service` interface
 
 ### Breaking Changes
