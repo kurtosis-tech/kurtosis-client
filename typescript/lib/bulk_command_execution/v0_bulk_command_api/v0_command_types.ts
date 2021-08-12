@@ -36,37 +36,44 @@ export enum V0CommandType {
 export namespace V0CommandType {
 	export function acceptVisitor(commandType: V0CommandType, visitor: V0CommandTypeVisitor): Result<null, Error> {
 		let result: Result<null, Error>;
-		let defaultErr: Error = null;
 		switch (commandType) {
 			case V0CommandType.LoadLambda:
 				result = visitor.visitLoadLambda();
+				break;
 			case V0CommandType.ExecuteLambda:
 				result = visitor.visitExecuteLambda();
+				break;
 			case V0CommandType.RegisterService:
 				result = visitor.visitRegisterService();
+				break;
 			case V0CommandType.GenerateFiles:
 				result = visitor.visitGenerateFiles();
+				break;
 			case V0CommandType.LoadStaticFiles:
 				result = visitor.visitLoadStaticFiles();
+				break;
 			case V0CommandType.StartService:
 				result = visitor.visitStartService();
+				break;
 			case V0CommandType.RemoveService:
 				result = visitor.visitRemoveService();
+				break;
 			case V0CommandType.Repartition:
 				result = visitor.visitRepartition();
+				break;
 			case V0CommandType.ExecCommand:
 				result = visitor.visitExecCommand();
+				break;
 			case V0CommandType.WaitForEndpointAvailability:
 				result = visitor.visitWaitForEndpointAvailability();
+				break;
 			case V0CommandType.ExecuteBulkCommands:
 				result = visitor.visitExecuteBulkCommands();
+				break;
 			default:
-				defaultErr = new Error("Unrecognized command type " + commandType); //TODO (comment) - if I return here, it makes the code underneath unreachalbe (can't follow eject early, eject often principle)
+				return err(new Error("Unrecognized command type " + commandType));
 		}
-		if (defaultErr !== null) {
-			return err(defaultErr);
-		}
-		if (!result.isOk()) { //TODO (comment) - don't need to cuddle braces since both if statements?
+		if (!result.isOk()) {
 			return err(result.error);
 		}
 		return ok(null);
