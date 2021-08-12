@@ -12,13 +12,14 @@ root_dirpath="$(dirname "${script_dirpath}")"
 #                                             Constants
 # ==================================================================================================
 RELEASE_SCRIPT_FILENAME="release-repo.sh"     # NOTE: Must be on the path; comes from devtools repo
+UPDATE_OWN_VERSION_CONSTS_SCRIPT_FILENAME="update-own-version-constants.sh"
 
 
 
 # ==================================================================================================
 #                                             Main Logic
 # ==================================================================================================
-if ! bash "${RELEASE_SCRIPT_FILENAME}" "${root_dirpath}"; then
+if ! bash "${RELEASE_SCRIPT_FILENAME}" "${root_dirpath}" ; then
     echo "Error: Couldn't cut the release" >&2
     exit 1
 fi
