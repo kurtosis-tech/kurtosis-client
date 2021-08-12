@@ -4,6 +4,7 @@
 * Ported `networks` .go files to typescript inside `typescript/lib/networks` directory 
 * Ported `bulk_commands` to typescript inside `lib/bulk_command_execution/` directory
 * Added a file inside of `typescript/lib` directory that holds a template of constructor calls
+* Added our own constructors for each of the Protobuf messages, so that when you add a new field it's harder to forget to add it
 
 ### Changes
 * Added grpc and google-protobuf to package.json inside of `typescript` folder
