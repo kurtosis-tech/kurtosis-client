@@ -35,7 +35,7 @@ class NetworkContext {
     /*
     Creates a new NetworkContext object with the given parameters.
     */
-    constructor(
+    constructor (
             client: ApiContainerServiceClient,
             enclaveDataVolMountpoint: string) {
         this.client = client;
