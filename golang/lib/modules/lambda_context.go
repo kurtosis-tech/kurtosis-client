@@ -3,6 +3,7 @@ package modules
 import (
 	"context"
 	"github.com/kurtosis-tech/kurtosis-client/golang/kurtosis_core_rpc_api_bindings"
+	"github.com/kurtosis-tech/kurtosis-client/golang/lib/binding_constructors"
 	"github.com/palantir/stacktrace"
 )
 
@@ -20,10 +21,7 @@ func NewLambdaContext(client kurtosis_core_rpc_api_bindings.ApiContainerServiceC
 
 // Docs available at https://docs.kurtosistech.com/kurtosis-libs/lib-documentation
 func (moduleCtx *LambdaContext) Execute(serializedParams string) (serializedResult string, resultErr error) {
-	args := &kurtosis_core_rpc_api_bindings.ExecuteLambdaArgs{
-		LambdaId:         string(moduleCtx.lambdaId),
-		SerializedParams: serializedParams,
-	}
+	args := binding_constructors.NewExecuteLambdaArgs(string(moduleCtx.lambdaId), serializedParams)
 	resp, err := moduleCtx.client.ExecuteLambda(context.Background(), args)
 	if err != nil {
 		return "", stacktrace.Propagate(err, "An error occurred executing Lambda '%v'", moduleCtx.lambdaId)

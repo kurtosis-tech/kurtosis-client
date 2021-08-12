@@ -3,6 +3,7 @@ package services
 import (
 	"context"
 	"github.com/kurtosis-tech/kurtosis-client/golang/kurtosis_core_rpc_api_bindings"
+	"github.com/kurtosis-tech/kurtosis-client/golang/lib/binding_constructors"
 	"github.com/palantir/stacktrace"
 	"path"
 )
@@ -66,10 +67,7 @@ func (self *ServiceContext) GetIPAddress() string {
 // Docs available at https://docs.kurtosistech.com/kurtosis-libs/lib-documentation
 func (self *ServiceContext) ExecCommand(command []string) (int32, *[]byte, error) {
 	serviceId := self.serviceId
-	args := &kurtosis_core_rpc_api_bindings.ExecCommandArgs{
-		ServiceId: string(serviceId),
-		CommandArgs: command,
-	}
+	args := binding_constructors.NewExecCommandArgs(string(serviceId), command)
 	resp, err := self.client.ExecCommand(context.Background(), args)
 	if err != nil {
 		return 0, nil, stacktrace.Propagate(
@@ -86,14 +84,9 @@ func (self *ServiceContext) GenerateFiles(filesToGenerateSet map[string]bool) (m
 	serviceId := self.serviceId
 	fileGenerationOpts := map[string]*kurtosis_core_rpc_api_bindings.FileGenerationOptions{}
 	for fileId := range filesToGenerateSet {
-		fileGenerationOpts[fileId] = &kurtosis_core_rpc_api_bindings.FileGenerationOptions{
-			FileTypeToGenerate: kurtosis_core_rpc_api_bindings.FileGenerationOptions_FILE,
-		}
+		fileGenerationOpts[fileId] = binding_constructors.NewFileGenerationOptions(kurtosis_core_rpc_api_bindings.FileGenerationOptions_FILE)
 	}
-	args := &kurtosis_core_rpc_api_bindings.GenerateFilesArgs{
-		ServiceId:       string(serviceId),
-		FilesToGenerate: fileGenerationOpts,
-	}
+	args := binding_constructors.NewGenerateFilesArgs(string(serviceId), fileGenerationOpts)
 	resp, err := self.client.GenerateFiles(context.Background(), args)
 	if err != nil {
 		return nil, stacktrace.Propagate(err, "An error occurred generating files using args: %+v", args)
@@ -122,10 +115,7 @@ func (self *ServiceContext) LoadStaticFiles(usedStaticFilesSet map[StaticFileID]
 	for staticFileId := range usedStaticFilesSet {
 		staticFilesToCopyStringSet[string(staticFileId)] = true
 	}
-	loadStaticFilesArgs := &kurtosis_core_rpc_api_bindings.LoadStaticFilesArgs{
-		ServiceId:   string(serviceId),
-		StaticFiles: staticFilesToCopyStringSet,
-	}
+	loadStaticFilesArgs := binding_constructors.NewLoadStaticFilesArgs(string(serviceId), staticFilesToCopyStringSet)
 	loadStaticFilesResp, err := self.client.LoadStaticFiles(context.Background(), loadStaticFilesArgs)
 	if err != nil {
 		return nil, stacktrace.Propagate(err, "An error occurred loading the requested static files into the namespace of service '%v'", serviceId)

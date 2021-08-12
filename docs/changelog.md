@@ -1,4 +1,7 @@
 # TBD
+### Features
+* Added our own constructors for each of the Protobuf messages, so that when you add a new field it's harder to forget to add it
+
 ### Fixes
 * Fixed a bug where `stacktrace.Propagate` was incorrectly used instead of `stacktrace.NewError`
 
