@@ -1,13 +1,25 @@
 # TBD
 
-# 1.11.0
+# 0.11.1
+### Features
+* Ported `services` .go files, including both services and config-factory, to typescript inside `typescript/lib/services` directory
+* Ported `networks` .go files to typescript inside `typescript/lib/networks` directory 
+* Ported `bulk_commands` to typescript inside `lib/bulk_command_execution/` directory
+* Added a file inside of `typescript/lib` directory that holds a template of constructor calls
+* Added our own constructors for each of the Protobuf messages, so that when you add a new field it's harder to forget to add it
+
+### Changes
+* Added grpc and google-protobuf to package.json inside of `typescript` folder
+
+### Fixes
+* Fixed a bug where `stacktrace.Propagate` was incorrectly used instead of `stacktrace.NewError`
+* Updated the build script so that it correctly compiles the typescript files found inside the lib/ directory into one single javascript file
+
+# 0.11.0
 ### Changes
 * Made `GeneratedFileFilepaths` fields private and immutable with a constructor, and added getters to access the field values
 
-### Fixes
-* Updated the build script so that it correctly compiles the typescript files found inside the lib/ directory into one single javascript file 
-
-### Removed
+### Removals
 * `MockService`, which is no longer needed or used now that we've removed the `Service` interface
 
 ### Breaking Changes
