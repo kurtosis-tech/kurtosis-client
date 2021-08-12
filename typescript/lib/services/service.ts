@@ -3,8 +3,6 @@
  * All Rights Reserved.
  */
 
-//package services
-
 /*
 The identifier used for services with the network.
 */
