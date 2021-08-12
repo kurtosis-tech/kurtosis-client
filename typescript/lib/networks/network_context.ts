@@ -15,7 +15,6 @@ import { okAsync, errAsync, ResultAsync, ok, err, Result } from "neverthrow";
 import * as log from "loglevel";
 import * as path from "path";
 import * as fs from 'fs';
-import * as fsPromises from "fs/promises";
 import * as grpc from "grpc";
 import * as google_protobuf_empty_pb from "google-protobuf/google/protobuf/empty_pb";
 
@@ -23,14 +22,14 @@ export type PartitionID = string;
 
 // This will always resolve to the default partition ID (regardless of whether such a partition exists in the network,
 //  or it was repartitioned away)
-const defaultPartitionId: PartitionID = "";
+const DEFAULT_PARTITION_ID: PartitionID = "";
 
 // Docs available at https://docs.kurtosistech.com/kurtosis-libs/lib-documentation
 class NetworkContext {
-	private readonly client: ApiContainerServiceClient;
-
-	// The location on the filesystem where this code is running where the enclave data volume is mounted
-	private readonly enclaveDataVolMountpoint: string;
+    private readonly client: ApiContainerServiceClient;
+    
+    // The location on the filesystem where this code is running where the enclave data volume is mounted
+    private readonly enclaveDataVolMountpoint: string;
 
 
     /*
@@ -170,7 +169,7 @@ class NetworkContext {
             if (!resultOpenSrcFp.isOk()) {
                 return err(resultOpenSrcFp.error);
             }
-            var srcFp: number;
+            let srcFp: number;
             
             try {
 
@@ -188,7 +187,7 @@ class NetworkContext {
                 if (!resultOpenDestFp.isOk()) {
                     return err(resultOpenDestFp.error);
                 }
-                var destFp: number;
+                 let destFp: number;
 
                 try {
                     destFp = resultOpenDestFp.value;
@@ -196,7 +195,7 @@ class NetworkContext {
                     const promiseCopyFile: Promise<ResultAsync<number, Error>> = new Promise((resolve, _unusedReject) => {
                         fs.copyFile(srcAbsFilepath, destAbsFilepath, (error: Error) => {
                             if (error === null) {
-                                resolve(okAsync(0)); //TOOD - 0 is just placeholder value here
+                                resolve(okAsync(0)); //TODO (comment) - 0 is just placeholder value here
                             } else {
                                 resolve(errAsync(error));
                             }
@@ -207,7 +206,7 @@ class NetworkContext {
                         return err(resultCopyFile.error);
                     }
                 } finally {
-                    fs.close(destFp)
+                    fs.close(destFp);
                 }
 
             } finally {
@@ -252,7 +251,7 @@ class NetworkContext {
 
         const resultAddServiceToPartition: Result<[ServiceContext, Map<string, PortBinding>], Error> = await this.addServiceToPartition(
             serviceId,
-            defaultPartitionId,
+            DEFAULT_PARTITION_ID,
             containerCreationConfig,
             generateRunConfigFunc,
         );
@@ -290,7 +289,7 @@ class NetworkContext {
         }
         const registerServiceResp: RegisterServiceResponse = resultRegisterService.value;
 
-        const serviceIpAddr = registerServiceResp.getIpAddr();
+        const serviceIpAddr: string = registerServiceResp.getIpAddr();
 
         const serviceContext: ServiceContext = new ServiceContext(
             this.client,
@@ -301,14 +300,14 @@ class NetworkContext {
         log.trace("New service successfully registered with Kurtosis API");
 
         log.trace("Loading static files into new service namespace...");
-        const usedStaticFilesMap = containerCreationConfig.getUsedStaticFiles();
+        const usedStaticFilesMap: Map<string, boolean> = containerCreationConfig.getUsedStaticFiles();
 
         const usedStaticFiles: Set<string> = new Set();
         for (let usedStaticFilesId in usedStaticFilesMap) {
             usedStaticFiles.add(usedStaticFilesId);
         }
 
-        const resultLoadStaticFiles = await serviceContext.loadStaticFiles(usedStaticFiles); 
+        const resultLoadStaticFiles: Result<Map<string, string>, Error> = await serviceContext.loadStaticFiles(usedStaticFiles); 
         if (!resultLoadStaticFiles.isOk()) {
             return err(resultLoadStaticFiles.error);
         }
@@ -320,7 +319,7 @@ class NetworkContext {
         for (let fileId in containerCreationConfig.getFileGeneratingFuncs()) {
             filesToGenerate.add(fileId);
         }
-        const resultGenerateFiles = await serviceContext.generateFiles(filesToGenerate);
+        const resultGenerateFiles: Result<Map<string, GeneratedFileFilepaths>, Error> = await serviceContext.generateFiles(filesToGenerate);
         if (!resultGenerateFiles.isOk()) {
             return err(resultGenerateFiles.error);
         }
@@ -349,7 +348,7 @@ class NetworkContext {
             }
             const fp: number = resultOpenFp.value;
 
-            var initalizingFuncResult: Result<null, Error> = initializingFunc(fp);
+            const initalizingFuncResult: Result<null, Error> = initializingFunc(fp);
             if (!initalizingFuncResult.isOk()){
                 return err(initalizingFuncResult.error);
             }
@@ -443,7 +442,7 @@ class NetworkContext {
             serviceResponse.getIpAddr(),
             this.enclaveDataVolMountpoint,
             enclaveDataVolMountDirpathOnSvcContainer,
-        )
+        );
 
         return ok(serviceContext);
     }
