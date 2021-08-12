@@ -101,7 +101,7 @@ function idempotent_update_typescript_constant() {
 supported_langs_filepath="${root_dirpath}/${SUPPORTED_LANGS_FILENAME}"
 
 # Before we do any updating, sanity-check that we have update functions for all supported langs
-for lang in "$(cat "${supported_langs_filepath}")"; do
+for lang in $(cat "${supported_langs_filepath}"); do
     expected_function_name="$(get_update_constant_function_name "${lang}")"
     if [ "$(type -t "${expected_function_name}")" != "function" ]; then
         echo "Error: We support language '${lang}' but no '${expected_function_name}' function was found in this script; this must be provided!" >&2
@@ -110,7 +110,7 @@ for lang in "$(cat "${supported_langs_filepath}")"; do
 done
 
 echo "Updating the constants containing this library's version for all supported languages..."
-for lang in "$(cat "${supported_langs_filepath}")"; do
+for lang in $(cat "${supported_langs_filepath}"); do
     update_function="$(get_update_constant_function_name "${lang}")"
     if ! "${update_function}" "${new_version}"; then
         echo "Error: The function '${update_function}' for updating the ${lang} constant containing this library's version exited with an error" >&2
