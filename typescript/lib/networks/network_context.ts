@@ -295,7 +295,7 @@ class NetworkContext {
         log.trace("New service successfully registered with Kurtosis API");
 
         log.trace("Loading static files into new service namespace...");
-        const usedStaticFilesMap: Map<string, boolean> = containerCreationConfig.getUsedStaticFiles();
+        const usedStaticFilesMap: Set<string> = containerCreationConfig.getUsedStaticFiles();
 
         const usedStaticFiles: Set<string> = new Set();
         for (let usedStaticFilesId in usedStaticFilesMap) {

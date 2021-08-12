@@ -16,19 +16,18 @@ export class ContainerCreationConfig {
 	
     private readonly image: string;
     private readonly kurtosisVolumeMountpoint: string; // Technically the enclave data volume, but we call it this for simplicity for the user
-    private readonly usedPortsSet: Map<string, boolean>;
+    private readonly usedPortsSet: Set<string>;
     private readonly fileGeneratingFuncs: Map<string, (fp: number) => Result<null, Error>>; // File descriptors are just integers
-    private readonly usedStaticFilesSet: Map<StaticFileID, boolean>;
+    private readonly usedStaticFilesSet: Set<StaticFileID>;
     private readonly filesArtifactMountpoints: Map<FilesArtifactID, string>;
 
     constructor(
-        image: string,
-        kurtosisVolumeMountpoint: string,
-        usedPortsSet: Map<string, boolean>,
-        fileGeneratingFuncs: Map<string, (fp: number) => Result<null, Error>>,
-        usedStaticFilesSet: Map<StaticFileID, boolean>,
-        filesArtifactMountpoints: Map<FilesArtifactID, string>
-    ){
+            image: string,
+            kurtosisVolumeMountpoint: string,
+            usedPortsSet: Set<string>,
+            fileGeneratingFuncs: Map<string, (fp: number) => Result<null, Error>>,
+            usedStaticFilesSet: Set<StaticFileID>,
+            filesArtifactMountpoints: Map<FilesArtifactID, string>){
         this.image = image;
         this.kurtosisVolumeMountpoint = kurtosisVolumeMountpoint;
         this.usedPortsSet = usedPortsSet;
@@ -45,7 +44,7 @@ export class ContainerCreationConfig {
         return this.kurtosisVolumeMountpoint;
     }
 
-    public getUsedPortsSet(): Map<string, boolean> {
+    public getUsedPortsSet(): Set<string> {
         return this.usedPortsSet;
     }
 
@@ -57,7 +56,7 @@ export class ContainerCreationConfig {
         return this.filesArtifactMountpoints;
     }
 
-    public getUsedStaticFiles(): Map<StaticFileID, boolean> {
+    public getUsedStaticFiles(): Set<StaticFileID> {
         return this.usedStaticFilesSet;
     }
 }
@@ -70,18 +69,18 @@ export class ContainerCreationConfig {
 class ContainerCreationConfigBuilder {
     private readonly image: string;
     private kurtosisVolumeMountpoint: string;
-    private usedPortsSet: Map<string, boolean>;
-    private usedStaticFilesSet: Map<StaticFileID, boolean>;
+    private usedPortsSet: Set<string>;
+    private usedStaticFilesSet: Set<StaticFileID>;
     private fileGeneratingFuncs: Map<string, (fp: number) => Result<null, Error>>;
     private filesArtifactMountpoints: Map<FilesArtifactID, string>;
 
     constructor (image: string) {
-            this.image = image;
-            this.kurtosisVolumeMountpoint = DEFAULT_KURTOSIS_VOLUME_MOUNTPOINT;
-            this.usedPortsSet = new Map();
-			this.usedStaticFilesSet = new Map();
-            this.fileGeneratingFuncs = new Map();
-            this.filesArtifactMountpoints = new Map();
+        this.image = image;
+        this.kurtosisVolumeMountpoint = DEFAULT_KURTOSIS_VOLUME_MOUNTPOINT;
+        this.usedPortsSet = new Set();
+        this.usedStaticFilesSet = new Set();
+        this.fileGeneratingFuncs = new Map();
+        this.filesArtifactMountpoints = new Map();
     }
 
     public withKurtosisVolumeMountpoint(kurtosisVolumeMountpoint: string): ContainerCreationConfigBuilder {
@@ -89,7 +88,7 @@ class ContainerCreationConfigBuilder {
         return this;
     }
 
-    public withUsedPorts(usedPortsSet: Map<string, boolean>): ContainerCreationConfigBuilder {
+    public withUsedPorts(usedPortsSet: Set<string>): ContainerCreationConfigBuilder {
         this.usedPortsSet = usedPortsSet;
         return this;
     }
@@ -99,7 +98,7 @@ class ContainerCreationConfigBuilder {
         return this;
     }
 
-    public withStaticFiles(usedStaticFilesSet: Map<StaticFileID, boolean>): ContainerCreationConfigBuilder {
+    public withStaticFiles(usedStaticFilesSet: Set<StaticFileID>): ContainerCreationConfigBuilder {
         this.usedStaticFilesSet = usedStaticFilesSet;
         return this;
     }

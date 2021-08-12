@@ -7,10 +7,10 @@ export class ContainerRunConfig {
 	private readonly cmdOverrideArgs: string[];
 	private readonly environmentVariableOverrides: Map<string,string>;
 	
-	constructor (
-        entrypointOverrideArgs: string[],
-        cmdOverrideArgs: string[],
-        environmentVariableOverrides: Map<string, string>) {
+	constructor(
+			entrypointOverrideArgs: string[],
+			cmdOverrideArgs: string[],
+			environmentVariableOverrides: Map<string, string>) {
         this.entrypointOverrideArgs = entrypointOverrideArgs;
         this.cmdOverrideArgs = cmdOverrideArgs;
         this.environmentVariableOverrides = environmentVariableOverrides;
@@ -41,7 +41,7 @@ class ContainerRunConfigBuilder {
 	private cmdOverrideArgs: string[];
 	private environmentVariableOverrides: Map<string, string>;
 	
-	constructor () {
+	constructor() {
         this.entrypointOverrideArgs = null;
         this.cmdOverrideArgs = null;
         this.environmentVariableOverrides = new Map();

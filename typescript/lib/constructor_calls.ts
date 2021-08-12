@@ -86,7 +86,7 @@ export function newRegisterServiceArgs(serviceId: ServiceID, partitionId: Partit
 export function newStartServiceArgs(
         serviceId: ServiceID, 
         dockerImage: string,
-        usedPorts: Map<string, boolean>,
+        usedPorts: Set<string>,
         entrypointArgs: string[],
         cmdArgs: string[],
         dockerEnvVars: Map<string, string>,
@@ -95,9 +95,9 @@ export function newStartServiceArgs(
     const result: StartServiceArgs = new StartServiceArgs();
     result.setServiceId(String(serviceId));
     result.setDockerImage(dockerImage);
-    const usedPortsMap: Map<string, boolean> = result.getUsedPortsMap();
+    const usedPortsMap: Set<string> = result.getUsedPortsMap();
     for (let portId in usedPorts) {
-        usedPortsMap.set(portId, true);
+        usedPortsMap.add(portId);
     }
     const entrypointArgsArray: string[] = result.getEntrypointArgsList();
     for (let entryPoint in entrypointArgs) {
