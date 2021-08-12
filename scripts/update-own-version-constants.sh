@@ -58,7 +58,7 @@ function get_update_constant_function_name() {
 # E.g. if '1.2.3' were passed in, it would form an actual string to replace with
 function get_go_constant_pattern() {
     constant_value="${1}"
-    echo "${GO_CONST_NAME} = \"${value}\""
+    echo "${GO_CONST_NAME} = \"${constant_value}\""
 }
 
 # vvvvvvvvvvvv There MUST be one idempotent update function per supported language vvvvvvvvvvvvvvvvv
