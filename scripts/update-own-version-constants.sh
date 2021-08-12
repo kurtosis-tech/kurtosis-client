@@ -24,20 +24,20 @@ declare -a CONSTANT_FILE_RELATIVE_FILEPATHS
 declare -a CONSTANT_PATTERN_GETTER_FUNCTION_NAMES
 
 # Go
-CONSTANT_FILE_RELATIVE_FILEPATHS["golang"]="golang/lib/kurtosis_api_version_const/kurtosis_api_version_const.go"
+CONSTANT_FILE_RELATIVE_FILEPATHS[golang]="golang/lib/kurtosis_api_version_const/kurtosis_api_version_const.go"
 function get_go_constant_pattern() {
     value="${1}"
     echo "KurtosisApiVersion = \"${value}\""
 }
-CONSTANT_PATTERN_GETTER_FUNCTION_NAMES["golang"]="get_go_constant_pattern"
+CONSTANT_PATTERN_GETTER_FUNCTION_NAMES[golang]="get_go_constant_pattern"
 
 # Typescript
-CONSTANT_FILE_RELATIVE_FILEPATHS["typescript"]="typescript/lib/kurtosis_api_version_const.ts"
+CONSTANT_FILE_RELATIVE_FILEPATHS[typescript]="typescript/lib/kurtosis_api_version_const.ts"
 function get_typescript_constant_pattern() {
     value="${1}"
     echo "KURTOSIS_API_VERSION: string = \"${value}\""
 }
-CONSTANT_PATTERN_GETTER_FUNCTION_NAMES["typescript"]="get_typescript_constant_pattern"
+CONSTANT_PATTERN_GETTER_FUNCTION_NAMES[typescript]="get_typescript_constant_pattern"
 
 
 # ==================================================================================================
