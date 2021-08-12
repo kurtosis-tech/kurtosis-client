@@ -33,7 +33,6 @@ export class GeneratedFileFilepaths {
 }
 
 
-
 export class ServiceContext {
     
     private readonly client: ApiContainerServiceClient;
@@ -79,13 +78,12 @@ export class ServiceContext {
                 }
             })
         });
-
         const resultExecCommand: Result<ExecCommandResponse, Error> = await promiseExecCommand;
-
         if (!resultExecCommand.isOk()) {
             return err(resultExecCommand.error);
         }
         const resp: ExecCommandResponse = resultExecCommand.value;
+
         return ok([resp.getExitCode(), resp.getLogOutput()]);
         
 
@@ -107,9 +105,7 @@ export class ServiceContext {
                 }
             })
         });
-
         const resultGenerateFiles: Result<GenerateFilesResponse, Error> = await promiseGenerateFiles;
-
         if (!resultGenerateFiles.isOk()) {
             return err(resultGenerateFiles.error);
         } 
@@ -120,14 +116,13 @@ export class ServiceContext {
         const result: Map<string, GeneratedFileFilepaths> = new Map();
         for (let fileId in filesToGenerateSet) {
             
-            var relativeFilepath: string;
             if (!generatedFileRelativeFilepaths.has(fileId)) {
                 return err(new Error(
                     "No filepath (relative to test volume root) was returned for file " + fileId +  ", even though we requested it; this is a Kurtosis bug"
                     )
                 );
             }
-            relativeFilepath = generatedFileRelativeFilepaths[fileId];
+            const relativeFilepath: string = generatedFileRelativeFilepaths[fileId];
 
             const absFilepathHere: string = path.join(this.enclaveDataVolMountpointHere, relativeFilepath);
             const absFilepathOnService: string = path.join(this.enclaveDataVolMountpointOnServiceContainer, relativeFilepath);
@@ -156,18 +151,15 @@ export class ServiceContext {
                 }
             })
         });
-
         const resultLoadStaticFiles: Result<LoadStaticFilesResponse, Error> = await promiseLoadStaticFiles;
-
         if (!resultLoadStaticFiles.isOk()) {
             return err(resultLoadStaticFiles.error);
         }
         const loadStaticFilesResp: LoadStaticFilesResponse = resultLoadStaticFiles.value;
 
         const staticFileAbsFilepathsOnService: Map<StaticFileID, string> = new Map();
-        for (let staticFileId in loadStaticFilesResp.getCopiedStaticFileRelativeFilepathsMap()) {
-            const filepathRelativeToExVolRoot: string = loadStaticFilesResp.getCopiedStaticFileRelativeFilepathsMap()[staticFileId];
-            const absFilepathOnContainer: string = path.join(this.enclaveDataVolMountpointOnServiceContainer, filepathRelativeToExVolRoot)
+        for (let [staticFileId, filepathRelativeToExVolRoot] of loadStaticFilesResp.getCopiedStaticFileRelativeFilepathsMap().entries()) {
+            const absFilepathOnContainer: string = path.join(this.enclaveDataVolMountpointOnServiceContainer, filepathRelativeToExVolRoot);
             staticFileAbsFilepathsOnService[<StaticFileID>(staticFileId)] = absFilepathOnContainer;
         }
         return ok(staticFileAbsFilepathsOnService);
