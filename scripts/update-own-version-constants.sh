@@ -17,17 +17,32 @@ root_dirpath="$(dirname "${script_dirpath}")"
 SUPPORTED_LANGS_FILENAME="supported-languages.txt"
 SED_REPLACE_SUFFIX_FOR_DELETION=".DELETEME"
 
+# Per-language filepath that needs updating to update the constant, relative to the repo root
+declare -a CONSTANT_FILE_RELATIVE_FILEPATHS
+
+# Name of the Bash function which will form the search/replace pattern used for updating the constant
+declare -a CONSTANT_PATTERN_GETTER_FUNCTION_NAMES
+
 # Go
-GO_CONST_FILE_RELATIVE_FILEPATH="golang/lib/kurtosis_api_version_const/kurtosis_api_version_const.go"
-GO_CONST_NAME="KurtosisApiVersion"
+CONSTANT_FILE_RELATIVE_FILEPATHS["golang"]="golang/lib/kurtosis_api_version_const/kurtosis_api_version_const.go"
+function get_go_constant_pattern() {
+    value="${1}"
+    echo "KurtosisApiVersion = \"${value}\""
+}
+CONSTANT_PATTERN_GETTER_FUNCTION_NAMES["golang"]="get_go_constant_pattern"
 
-
+# Typescript
+CONSTANT_FILE_RELATIVE_FILEPATHS["typescript"]="typescript/lib/kurtosis_api_version_const.ts"
+function get_typescript_constant_pattern() {
+    value="${1}"
+    echo "KURTOSIS_API_VERSION: string = \"${value}\""
+}
+CONSTANT_PATTERN_GETTER_FUNCTION_NAMES["typescript"]="get_typescript_constant_pattern"
 
 
 # ==================================================================================================
 #                                       Arg Parsing & Validation
 # ==================================================================================================
-# TODO Modify the arguments below to match the argument to your script
 show_helptext_and_exit() {
     echo "Usage: $(basename "${0}") new_version"
     echo ""
@@ -48,72 +63,60 @@ fi
 # ==================================================================================================
 #                                             Main Logic
 # ==================================================================================================
-function get_update_constant_function_name() {
+# Function that will update the constant file for a given language
+function idempotent_update_constant_file_for_lang() {
     lang="${1}"
-    echo "idempotent_update_${lang}_constant"
-}
+    constant_pattern_retrieving_func_name="${2}"    # Name of a function which takes in a constant pattern and returns the pattern to search for 
+    constant_relative_filepath="${3}"   # Relative to the repo root
+    new_version="${4}"
 
-# Gets the Go constant pattern, with the value passed in as an arg
-# E.g. if '.*' were passed in to this script, it would form a replace pattern
-# E.g. if '1.2.3' were passed in, it would form an actual string to replace with
-function get_go_constant_pattern() {
-    constant_value="${1}"
-    echo "${GO_CONST_NAME} = \"${constant_value}\""
-}
-
-# vvvvvvvvvvvv There MUST be one idempotent update function per supported language vvvvvvvvvvvvvvvvv
-# Note that, when doing a 'sed' in these functions, you can use the SED_REPLACE_SUFFIX_FOR_DELETION
-#  as the argument to -i, and the file will get deleted at the end of this script
-
-function idempotent_update_golang_constant() {
-    new_version="${1}"
-
-    to_update_filepath="${root_dirpath}/${GO_CONST_FILE_RELATIVE_FILEPATH}"
+    to_update_filepath="${root_dirpath}/${constant_relative_filepath}"
     if ! [ -f "${to_update_filepath}" ]; then
-        echo "Error: Needed to update file '${to_update_filepath}' containing Go version constant, but such file doesn't exist" >&2
+        echo "Error: Needed to update file '${to_update_filepath}' containing ${lang} version constant, but such file doesn't exist" >&2
         return 1
     fi
-    if ! search_pattern="$(get_go_constant_pattern ".*")"; then
-        echo "Error: Couldn't form Go constant search pattern" >&2
+    if ! search_pattern="$("${constant_pattern_retrieving_func_name}" ".*")"; then
+        echo "Error: Couldn't form ${lang} constant search pattern using function '${constant_pattern_retrieving_func_name}'" >&2
         return 1
     fi
     num_matching_lines="$(grep "${search_pattern}" "${to_update_filepath}" | wc -l)"
     if ! [ "${num_matching_lines}" -eq 1 ]; then
-        echo "Error: Expected exactly one line in '${to_update_filepath}' matching pattern '${search_pattern}' but got ${num_matching_lines}" >&2
+        echo "Error: Expected exactly one line in ${lang} constant file '${to_update_filepath}' matching pattern '${search_pattern}' but got ${num_matching_lines}" >&2
         return 1
     fi
 
-    if ! replace_value="$(get_go_constant_pattern "${new_version}")"; then
-        echo "Error: Couldn't form Go constant replacement value" >&2
+    if ! replace_value="$("${constant_pattern_retrieving_func_name}" "${new_version}")"; then
+        echo "Error: Couldn't form ${lang} constant replacement value" >&2
         return 1
     fi
     if ! sed -i "${SED_REPLACE_SUFFIX_FOR_DELETION}" "s|${search_pattern}|${replace_value}|" "${to_update_filepath}"; then
-        echo "Error: An error occurred replacing Go constant pattern '${search_pattern}' with value '${replace_value}'" >&2
+        echo "Error: An error occurred replacing ${lang} constant pattern '${search_pattern}' with value '${replace_value}'" >&2
         return 1
     fi
 }
 
-function idempotent_update_typescript_constant() {
-    new_version="${1}"
-}
-# ^^^^^^^^^^^^ There MUST be one idempotent update function per supported language ^^^^^^^^^^^^^^^^^
 
+# Before we do any updating, sanity-check that we have constant file relative filepaths & search pattern functions for all supported langs
 supported_langs_filepath="${root_dirpath}/${SUPPORTED_LANGS_FILENAME}"
-
-# Before we do any updating, sanity-check that we have update functions for all supported langs
 for lang in $(cat "${supported_langs_filepath}"); do
-    expected_function_name="$(get_update_constant_function_name "${lang}")"
-    if [ "$(type -t "${expected_function_name}")" != "function" ]; then
-        echo "Error: We support language '${lang}' but no '${expected_function_name}' function was found in this script; this must be provided!" >&2
+    constant_file_rel_filepath=CONSTANT_FILE_RELATIVE_FILEPATHS["${lang}"]
+    if [ -z "${constant_file_rel_filepath}" ]; then
+        echo "Error: No relative filepath to a constant file that needs replacing was found for language '${lang}'; this script needs to be updated with this information" >&2
+        exit 1
+    fi
+    if [ -z "${pattern_getter_function_name}" ]; then
+        echo "Error: No function name for getting the search/replace pattern was found for language '${lang}'; this script needs to be updated with this information" >&2
         exit 1
     fi
 done
 
 echo "Updating the constants containing this library's version for all supported languages..."
 for lang in $(cat "${supported_langs_filepath}"); do
-    update_function="$(get_update_constant_function_name "${lang}")"
-    if ! "${update_function}" "${new_version}"; then
-        echo "Error: The function '${update_function}' for updating the ${lang} constant containing this library's version exited with an error" >&2
+    constant_file_rel_filepath=CONSTANT_FILE_RELATIVE_FILEPATHS["${lang}"]
+    pattern_getter_function_name=CONSTANT_PATTERN_GETTER_FUNCTION_NAMES["${lang}"]
+
+    if ! idempotent_update_constant_file_for_lang "${lang}" "${pattern_getter_function_name}" "${constant_file_rel_filepath}" "${new_version}"; then
+        echo "Error: An error occurred updating the '${lang}' constant in file '${constant_file_rel_filepath}' using constant pattern retrieval function '${pattern_getter_function_name}' to version '${new_version}'" >&2
         exit 1
     fi
 done
