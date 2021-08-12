@@ -19,7 +19,7 @@ UPDATE_OWN_VERSION_CONSTS_SCRIPT_FILENAME="update-own-version-constants.sh"
 # ==================================================================================================
 #                                             Main Logic
 # ==================================================================================================
-if ! bash "${RELEASE_SCRIPT_FILENAME}" "${root_dirpath}" ; then
+if ! bash "${RELEASE_SCRIPT_FILENAME}" "${root_dirpath}" "${script_dirpath}/${UPDATE_OWN_VERSION_CONSTS_SCRIPT_FILENAME}"; then
     echo "Error: Couldn't cut the release" >&2
     exit 1
 fi
