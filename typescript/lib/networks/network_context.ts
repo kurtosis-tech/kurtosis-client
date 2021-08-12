@@ -31,13 +31,10 @@ class NetworkContext {
     // The location on the filesystem where this code is running where the enclave data volume is mounted
     private readonly enclaveDataVolMountpoint: string;
 
-
     /*
     Creates a new NetworkContext object with the given parameters.
     */
-    constructor (
-            client: ApiContainerServiceClient,
-            enclaveDataVolMountpoint: string) {
+    constructor(client: ApiContainerServiceClient, enclaveDataVolMountpoint: string) {
         this.client = client;
         this.enclaveDataVolMountpoint = enclaveDataVolMountpoint;
     }
