@@ -8,5 +8,32 @@
   "devDependencies": {
     "@types/chai": "^4.2.21",
     "@types/mocha": "^9.0.0"
+  },
+  "name": "kurtosis-js-lib",
+  "version": "1.0.0",
+  "description": "This repo contains clients for communicating with the Kurtosis API server, which both testsuites and Kurtosis Modules will use to manipulate the test environment.",
+  "main": "index.js",
+  "directories": {
+    "lib": "lib"
+  },
+  "scripts": {
+    "test": "mocha"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kurtosis-tech/kurtosis-client.git"
+  },
+  "keywords": [
+    "kurtosis-js",
+    "lib"
+  ],
+  "author": "Kurtosis <accounts@kurtosistech.com> (https://www.kurtosistech.com/)",
+  "license": "Apache-2",
+  "bugs": {
+    "url": "https://github.com/kurtosis-tech/kurtosis-client/issues"
+  },
+  "homepage": "https://github.com/kurtosis-tech/kurtosis-client#readme", 
+  "engines": {
+    "node": "= 14.17.1"
   }
 }
