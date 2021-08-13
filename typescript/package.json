@@ -10,7 +10,7 @@
     "@types/mocha": "^9.0.0"
   },
   "name": "kurtosis-js-lib",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "This repo contains clients for communicating with the Kurtosis API server, which both testsuites and Kurtosis Modules will use to manipulate the test environment.",
   "main": "index.js",
   "directories": {
