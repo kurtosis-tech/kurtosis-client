@@ -20,5 +20,8 @@ export { V0CommandType, V0CommandTypeVisitor } from './lib/bulk_command_executio
 //TODO Constructor Calls ?
 
 //Kurtosis Core RPC API Bindings
-export { ExecCommandArgs, GenerateFilesArgs, FileGenerationOptions, LoadStaticFilesArgs, LoadLambdaArgs, GetLambdaInfoArgs, RegisterStaticFilesArgs, RegisterFilesArtifactsArgs, GetServiceInfoArgs, PartitionServices, PartitionConnections, PartitionConnectionInfo, RegisterServiceArgs, StartServiceArgs, RemoveServiceArgs, RepartitionArgs, WaitForEndpointAvailabilityArgs, ExecuteBulkCommandsArgs, ExecuteLambdaArgs } from '../kurtosis_core_rpc_api_bindings/api_container_service_pb';
+export { ExecCommandArgs, GenerateFilesArgs, FileGenerationOptions, LoadStaticFilesArgs, LoadLambdaArgs, GetLambdaInfoArgs, RegisterStaticFilesArgs, RegisterFilesArtifactsArgs, GetServiceInfoArgs, PartitionServices, PartitionConnections, PartitionConnectionInfo, RegisterServiceArgs, StartServiceArgs, RemoveServiceArgs, RepartitionArgs, WaitForEndpointAvailabilityArgs, ExecuteBulkCommandsArgs, ExecuteLambdaArgs } from '../kurtosis_core_rpc_api_bindings/api_container_service_pb'; //TODO - export the fields of the args
+//TODO (comment) kurtosis-testsuite-api-lib = newApiContainerService but nothing else ; everything else proxied by networkContext
 export { loadLambda, executeLambda, getLambdaInfo, registerStaticFiles, registerFilesArtifactsregisterService, generateFiles, loadStaticFiles, startService, getServiceInfo, removeService, repartition, execCommand, waitForEndpointAvailability, executeBulkCommands } from './kurtosis_core_rpc_api_bindings/api_container_service_grpc_pb';
+
+//TOOD - Things we need in kurtosis-testsuite-api-lib: portBindings, partitionConnections, FileGenerationOptions
