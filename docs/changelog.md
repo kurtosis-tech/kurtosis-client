@@ -1,4 +1,6 @@
 # TBD
+
+# 0.11.2
 ### Features
 * Added constants which contains the version of this library, which is updated automatically during the release process of this repo
     * Go: `KurtosisApiVersion`
