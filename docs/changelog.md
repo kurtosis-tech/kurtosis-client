@@ -1,4 +1,9 @@
 # TBD
+### Features
+* Added constants which contains the version of this library, which is updated automatically during the release process of this repo
+    * Go: `KurtosisApiVersion`
+    * Typescript: `KURTOSIS_API_VERSION`
+
 ### Changes
 * Add explicit Apache-2 licensing
 
@@ -9,9 +14,6 @@
 * Ported `bulk_commands` to typescript inside `lib/bulk_command_execution/` directory
 * Added a file inside of `typescript/lib` directory that holds a template of constructor calls
 * Added our own constructors for each of the Protobuf messages, so that when you add a new field it's harder to forget to add it
-* Added constants which contains the version of this library, which is updated automatically during the release process of this repo
-    * Go: `KurtosisApiVersion`
-    * Typescript: `KURTOSIS_API_VERSION`
 
 ### Changes
 * Added grpc and google-protobuf to package.json inside of `typescript` folder
