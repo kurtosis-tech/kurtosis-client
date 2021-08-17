@@ -26,6 +26,7 @@ import (
 	"github.com/palantir/stacktrace"
 	"github.com/sirupsen/logrus"
 	"io"
+	"net/http"
 	"os"
 	"path"
 )
@@ -50,8 +51,8 @@ type NetworkContext struct {
 Creates a new NetworkContext object with the given parameters.
 */
 func NewNetworkContext(
-		client kurtosis_core_rpc_api_bindings.ApiContainerServiceClient,
-		enclaveDataVolMountpoint string) *NetworkContext {
+	client kurtosis_core_rpc_api_bindings.ApiContainerServiceClient,
+	enclaveDataVolMountpoint string) *NetworkContext {
 	return &NetworkContext{
 		client:                   client,
 		enclaveDataVolMountpoint: enclaveDataVolMountpoint,
@@ -60,9 +61,9 @@ func NewNetworkContext(
 
 // Docs available at https://docs.kurtosistech.com/kurtosis-libs/lib-documentation
 func (networkCtx *NetworkContext) LoadLambda(
-		lambdaId modules.LambdaID,
-		image string,
-		serializedParams string) (*modules.LambdaContext, error) {
+	lambdaId modules.LambdaID,
+	image string,
+	serializedParams string) (*modules.LambdaContext, error) {
 	args := binding_constructors.NewLoadLambdaArgs(string(lambdaId), image, serializedParams)
 
 	// We proxy calls to Lambda modules via the API container, so actually no need to use the response here
@@ -115,7 +116,7 @@ func (networkCtx *NetworkContext) RegisterStaticFiles(staticFileFilepaths map[se
 		destAbsFilepath := path.Join(networkCtx.enclaveDataVolMountpoint, destFilepathRelativeToEnclaveVolRoot)
 		if _, err := os.Stat(destAbsFilepath); os.IsNotExist(err) {
 			return stacktrace.NewError(
-				"The Kurtosis API asked us to copy static file '%v' to path '%v' in the enclave volume which means that an empty file should exist there, " +
+				"The Kurtosis API asked us to copy static file '%v' to path '%v' in the enclave volume which means that an empty file should exist there, "+
 					"but no file exists at that path - this is a bug in Kurtosis!",
 				staticFileId,
 				destFilepathRelativeToEnclaveVolRoot,
@@ -167,7 +168,7 @@ func (networkCtx *NetworkContext) AddService(
 		defaultPartitionId,
 		containerCreationConfig,
 		generateRunConfigFunc,
-		)
+	)
 	if err != nil {
 		return nil, nil, stacktrace.Propagate(err, "An error occurred adding service '%v' to the network in the default partition", serviceId)
 	}
@@ -254,14 +255,14 @@ func (networkCtx *NetworkContext) AddServiceToPartition(
 
 	logrus.Tracef("Starting new service with Kurtosis API...")
 	startServiceArgs := &kurtosis_core_rpc_api_bindings.StartServiceArgs{
-		ServiceId:                   string(serviceId),
-		DockerImage:                 containerCreationConfig.GetImage(),
-		UsedPorts:                   containerCreationConfig.GetUsedPortsSet(),
-		EntrypointArgs:              containerRunConfig.GetEntrypointOverrideArgs(),
-		CmdArgs:                     containerRunConfig.GetCmdOverrideArgs(),
-		DockerEnvVars:               containerRunConfig.GetEnvironmentVariableOverrides(),
-		EnclaveDataVolMntDirpath:    containerCreationConfig.GetKurtosisVolumeMountpoint(),
-		FilesArtifactMountDirpaths:  artifactIdStrToMountDirpath,
+		ServiceId:                  string(serviceId),
+		DockerImage:                containerCreationConfig.GetImage(),
+		UsedPorts:                  containerCreationConfig.GetUsedPortsSet(),
+		EntrypointArgs:             containerRunConfig.GetEntrypointOverrideArgs(),
+		CmdArgs:                    containerRunConfig.GetCmdOverrideArgs(),
+		DockerEnvVars:              containerRunConfig.GetEnvironmentVariableOverrides(),
+		EnclaveDataVolMntDirpath:   containerCreationConfig.GetKurtosisVolumeMountpoint(),
+		FilesArtifactMountDirpaths: artifactIdStrToMountDirpath,
 	}
 	resp, err := networkCtx.client.StartService(ctx, startServiceArgs)
 	if err != nil {
@@ -372,9 +373,14 @@ func (networkCtx *NetworkContext) RepartitionNetwork(
 }
 
 // Docs available at https://docs.kurtosistech.com/kurtosis-libs/lib-documentation
-func (networkCtx *NetworkContext) WaitForEndpointAvailability(serviceId services.ServiceID, port uint32, path string, initialDelaySeconds uint32, retries uint32, retriesDelayMilliseconds uint32, bodyText string) error {
+func (networkCtx *NetworkContext) WaitForEndpointAvailability(serviceId services.ServiceID, httpMethod string, port uint32, path string, initialDelaySeconds uint32, retries uint32, retriesDelayMilliseconds uint32, bodyText string) error {
+	if httpMethod != http.MethodGet && httpMethod != http.MethodPost {
+		return stacktrace.NewError("The value '%v' for param 'httpMethod' is not valid it should be GET or POST", httpMethod)
+	}
+
 	availabilityArgs := binding_constructors.NewWaitForEndpointAvailabilityArgs(
 		string(serviceId),
+		0,
 		port,
 		path,
 		initialDelaySeconds,
@@ -382,6 +388,11 @@ func (networkCtx *NetworkContext) WaitForEndpointAvailability(serviceId services
 		retriesDelayMilliseconds,
 		bodyText,
 	)
+
+	if httpMethod == http.MethodPost {
+		availabilityArgs.HttpMethod = 1
+	}
+
 	if _, err := networkCtx.client.WaitForEndpointAvailability(context.Background(), availabilityArgs); err != nil {
 		return stacktrace.Propagate(
 			err,
