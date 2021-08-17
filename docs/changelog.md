@@ -1,4 +1,6 @@
 # TBD
+
+# 0.12.0
 ### Features
 * Add new param `httpMethod` in `NetworkContext.WaitForAvailability` to specify the http method used in the http call to service's availability endpoint. The allowed values are GET or POST
 
