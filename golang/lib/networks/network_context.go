@@ -50,8 +50,8 @@ type NetworkContext struct {
 Creates a new NetworkContext object with the given parameters.
 */
 func NewNetworkContext(
-	client kurtosis_core_rpc_api_bindings.ApiContainerServiceClient,
-	enclaveDataVolMountpoint string) *NetworkContext {
+		client kurtosis_core_rpc_api_bindings.ApiContainerServiceClient,
+		enclaveDataVolMountpoint string) *NetworkContext {
 	return &NetworkContext{
 		client:                   client,
 		enclaveDataVolMountpoint: enclaveDataVolMountpoint,
@@ -60,9 +60,9 @@ func NewNetworkContext(
 
 // Docs available at https://docs.kurtosistech.com/kurtosis-libs/lib-documentation
 func (networkCtx *NetworkContext) LoadLambda(
-	lambdaId modules.LambdaID,
-	image string,
-	serializedParams string) (*modules.LambdaContext, error) {
+		lambdaId modules.LambdaID,
+		image string,
+		serializedParams string) (*modules.LambdaContext, error) {
 	args := binding_constructors.NewLoadLambdaArgs(string(lambdaId), image, serializedParams)
 
 	// We proxy calls to Lambda modules via the API container, so actually no need to use the response here
