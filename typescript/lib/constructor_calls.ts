@@ -175,6 +175,7 @@ export function newPartitionConnections(partitionAConnsStrMap: Map<string, Parti
 
 export function newWaitForEndpointAvailabilityArgs(
         serviceId: ServiceID,
+        httpMethod: WaitForEndpointAvailabilityArgs.HttpMethodMap[keyof WaitForEndpointAvailabilityArgs.HttpMethodMap],
         port: number, 
         path: string, 
         initialDelaySeconds: number, 
@@ -183,6 +184,7 @@ export function newWaitForEndpointAvailabilityArgs(
         bodyText: string): WaitForEndpointAvailabilityArgs {
     const result: WaitForEndpointAvailabilityArgs = new WaitForEndpointAvailabilityArgs();
     result.setServiceId(String(serviceId));
+    result.setHttpMethod(httpMethod);
     result.setPort(port);
     result.setPath(path);
     result.setInitialDelaySeconds(initialDelaySeconds);

@@ -26,7 +26,6 @@ import (
 	"github.com/palantir/stacktrace"
 	"github.com/sirupsen/logrus"
 	"io"
-	"net/http"
 	"os"
 	"path"
 )
@@ -373,14 +372,11 @@ func (networkCtx *NetworkContext) RepartitionNetwork(
 }
 
 // Docs available at https://docs.kurtosistech.com/kurtosis-libs/lib-documentation
-func (networkCtx *NetworkContext) WaitForEndpointAvailability(serviceId services.ServiceID, httpMethod string, port uint32, path string, initialDelaySeconds uint32, retries uint32, retriesDelayMilliseconds uint32, bodyText string) error {
-	if httpMethod != http.MethodGet && httpMethod != http.MethodPost {
-		return stacktrace.NewError("The value '%v' for param 'httpMethod' is not valid it should be GET or POST", httpMethod)
-	}
+func (networkCtx *NetworkContext) WaitForEndpointAvailability(serviceId services.ServiceID, httpMethod kurtosis_core_rpc_api_bindings.WaitForEndpointAvailabilityArgs_HttpMethod, port uint32, path string, initialDelaySeconds uint32, retries uint32, retriesDelayMilliseconds uint32, bodyText string) error {
 
 	availabilityArgs := binding_constructors.NewWaitForEndpointAvailabilityArgs(
 		string(serviceId),
-		0,
+		httpMethod,
 		port,
 		path,
 		initialDelaySeconds,
@@ -388,10 +384,6 @@ func (networkCtx *NetworkContext) WaitForEndpointAvailability(serviceId services
 		retriesDelayMilliseconds,
 		bodyText,
 	)
-
-	if httpMethod == http.MethodPost {
-		availabilityArgs.HttpMethod = 1
-	}
 
 	if _, err := networkCtx.client.WaitForEndpointAvailability(context.Background(), availabilityArgs); err != nil {
 		return stacktrace.Propagate(

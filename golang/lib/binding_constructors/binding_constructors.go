@@ -123,14 +123,14 @@ func NewLoadStaticFilesResponse(copiedstaticFileRelativeFilepaths map[string]str
 //                                        Start Service
 // ==============================================================================================
 func NewStartServiceArgs(
-	serviceId string,
-	image string,
-	usedPorts map[string]bool,
-	entrypointArgs []string,
-	cmdArgs []string,
-	envVars map[string]string,
-	enclaveDataVolMntDirpath string,
-	filesArtifactMountDirpaths map[string]string) *kurtosis_core_rpc_api_bindings.StartServiceArgs {
+		serviceId string,
+		image string,
+		usedPorts map[string]bool,
+		entrypointArgs []string,
+		cmdArgs []string,
+		envVars map[string]string,
+		enclaveDataVolMntDirpath string,
+		filesArtifactMountDirpaths map[string]string) *kurtosis_core_rpc_api_bindings.StartServiceArgs {
 	return &kurtosis_core_rpc_api_bindings.StartServiceArgs{
 		ServiceId:                  serviceId,
 		DockerImage:                image,
@@ -186,9 +186,9 @@ func NewRemoveServiceArgs(serviceId string, containerStopTimeoutSeconds uint64) 
 //                                          Repartition
 // ==============================================================================================
 func NewRepartitionArgs(
-	partitionServices map[string]*kurtosis_core_rpc_api_bindings.PartitionServices,
-	partitionConnections map[string]*kurtosis_core_rpc_api_bindings.PartitionConnections,
-	defaultConnection *kurtosis_core_rpc_api_bindings.PartitionConnectionInfo) *kurtosis_core_rpc_api_bindings.RepartitionArgs {
+		partitionServices map[string]*kurtosis_core_rpc_api_bindings.PartitionServices,
+		partitionConnections map[string]*kurtosis_core_rpc_api_bindings.PartitionConnections,
+		defaultConnection *kurtosis_core_rpc_api_bindings.PartitionConnectionInfo) *kurtosis_core_rpc_api_bindings.RepartitionArgs {
 	return &kurtosis_core_rpc_api_bindings.RepartitionArgs{
 		PartitionServices:    partitionServices,
 		PartitionConnections: partitionConnections,
@@ -235,17 +235,17 @@ func NewExecCommandResponse(exitCode int32, logOutput []byte) *kurtosis_core_rpc
 //                              Wait For Endpoint Availability
 // ==============================================================================================
 func NewWaitForEndpointAvailabilityArgs(
-	serviceId string,
-	httpMethod uint32,
-	port uint32,
-	path string,
-	initialDelaySeconds uint32,
-	retries uint32,
-	retriesDelayMilliseconds uint32,
-	bodyText string) *kurtosis_core_rpc_api_bindings.WaitForEndpointAvailabilityArgs {
+		serviceId string,
+		httpMethod kurtosis_core_rpc_api_bindings.WaitForEndpointAvailabilityArgs_HttpMethod,
+		port uint32,
+		path string,
+		initialDelaySeconds uint32,
+		retries uint32,
+		retriesDelayMilliseconds uint32,
+		bodyText string) *kurtosis_core_rpc_api_bindings.WaitForEndpointAvailabilityArgs {
 	return &kurtosis_core_rpc_api_bindings.WaitForEndpointAvailabilityArgs{
 		ServiceId:                serviceId,
-		HttpMethod:               kurtosis_core_rpc_api_bindings.WaitForEndpointAvailabilityArgs_HttpMethod(httpMethod),
+		HttpMethod:               httpMethod,
 		Port:                     port,
 		Path:                     path,
 		InitialDelaySeconds:      initialDelaySeconds,

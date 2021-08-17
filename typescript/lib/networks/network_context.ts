@@ -531,6 +531,7 @@ class NetworkContext {
     // Docs available at https://docs.kurtosistech.com/kurtosis-libs/lib-documentation
     public async waitForEndpointAvailability(
             serviceId: ServiceID,
+            httpMethod: WaitForEndpointAvailabilityArgs.HttpMethodMap[keyof WaitForEndpointAvailabilityArgs.HttpMethodMap],
             port: number, 
             path: string, 
             initialDelaySeconds: number, 
@@ -539,6 +540,7 @@ class NetworkContext {
             bodyText: string): Promise<Result<null, Error>> {
         const availabilityArgs: WaitForEndpointAvailabilityArgs = newWaitForEndpointAvailabilityArgs(
             serviceId,
+            httpMethod,
             port,
             path,
             initialDelaySeconds,
