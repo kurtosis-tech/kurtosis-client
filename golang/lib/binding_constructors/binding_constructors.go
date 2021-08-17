@@ -69,7 +69,6 @@ func NewRegisterFilesArtifactArgs(filesArtifactUrls map[string]string) *kurtosis
 	}
 }
 
-
 // ==============================================================================================
 //                                     Register Service
 // ==============================================================================================
@@ -83,7 +82,6 @@ func NewRegisterServiceArgs(serviceId string, partitionId string) *kurtosis_core
 func NewRegisterServiceResponse(ipAddr string) *kurtosis_core_rpc_api_bindings.RegisterServiceResponse {
 	return &kurtosis_core_rpc_api_bindings.RegisterServiceResponse{IpAddr: ipAddr}
 }
-
 
 // ==============================================================================================
 //                                     Generate Files
@@ -104,8 +102,6 @@ func NewGenerateFilesResponse(generatedFileRelativeFilepaths map[string]string) 
 		GeneratedFileRelativeFilepaths: generatedFileRelativeFilepaths,
 	}
 }
-
-
 
 // ==============================================================================================
 //                                         Load Static Files
@@ -240,6 +236,7 @@ func NewExecCommandResponse(exitCode int32, logOutput []byte) *kurtosis_core_rpc
 // ==============================================================================================
 func NewWaitForEndpointAvailabilityArgs(
 		serviceId string,
+		httpMethod kurtosis_core_rpc_api_bindings.WaitForEndpointAvailabilityArgs_HttpMethod,
 		port uint32,
 		path string,
 		initialDelaySeconds uint32,
@@ -248,6 +245,7 @@ func NewWaitForEndpointAvailabilityArgs(
 		bodyText string) *kurtosis_core_rpc_api_bindings.WaitForEndpointAvailabilityArgs {
 	return &kurtosis_core_rpc_api_bindings.WaitForEndpointAvailabilityArgs{
 		ServiceId:                serviceId,
+		HttpMethod:               httpMethod,
 		Port:                     port,
 		Path:                     path,
 		InitialDelaySeconds:      initialDelaySeconds,

@@ -629,6 +629,9 @@ export class WaitForEndpointAvailabilityArgs extends jspb.Message {
   getServiceId(): string;
   setServiceId(value: string): void;
 
+  getHttpMethod(): WaitForEndpointAvailabilityArgs.HttpMethodMap[keyof WaitForEndpointAvailabilityArgs.HttpMethodMap];
+  setHttpMethod(value: WaitForEndpointAvailabilityArgs.HttpMethodMap[keyof WaitForEndpointAvailabilityArgs.HttpMethodMap]): void;
+
   getPort(): number;
   setPort(value: number): void;
 
@@ -660,6 +663,7 @@ export class WaitForEndpointAvailabilityArgs extends jspb.Message {
 export namespace WaitForEndpointAvailabilityArgs {
   export type AsObject = {
     serviceId: string,
+    httpMethod: WaitForEndpointAvailabilityArgs.HttpMethodMap[keyof WaitForEndpointAvailabilityArgs.HttpMethodMap],
     port: number,
     path: string,
     initialDelaySeconds: number,
@@ -667,6 +671,13 @@ export namespace WaitForEndpointAvailabilityArgs {
     retriesDelayMilliseconds: number,
     bodyText: string,
   }
+
+  export interface HttpMethodMap {
+    GET: 0;
+    POST: 1;
+  }
+
+  export const HttpMethod: HttpMethodMap;
 }
 
 export class ExecuteBulkCommandsArgs extends jspb.Message {
