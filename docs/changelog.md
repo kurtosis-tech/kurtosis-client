@@ -1,4 +1,6 @@
 # TBD
+### Features
+* Added code to successfully publish typescript code to npm
 
 # 0.11.2
 ### Features
