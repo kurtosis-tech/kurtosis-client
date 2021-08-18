@@ -1,18 +1,9 @@
 {
-  "dependencies": {
-    "google-protobuf": "^3.17.3",
-    "grpc": "^1.24.11",
-    "loglevel": "^1.7.1",
-    "neverthrow": "^4.2.2"
-  },
-  "devDependencies": {
-    "@types/chai": "^4.2.21",
-    "@types/mocha": "^9.0.0"
-  },
   "name": "kurtosis-js-lib",
-  "version": "1.0.0",
+  "version": "1.0.35",
   "description": "This repo contains clients for communicating with the Kurtosis API server, which both testsuites and Kurtosis Modules will use to manipulate the test environment.",
-  "main": "build/index.js",
+  "main": "./build/index",
+  "types": "./build/index",
   "directories": {
     "lib": "lib"
   },
@@ -32,8 +23,18 @@
   "bugs": {
     "url": "https://github.com/kurtosis-tech/kurtosis-client/issues"
   },
-  "homepage": "https://github.com/kurtosis-tech/kurtosis-client#readme", 
+  "homepage": "https://github.com/kurtosis-tech/kurtosis-client#readme",
   "engines": {
     "node": "= 14.17.1"
+  },
+  "dependencies": {
+    "google-protobuf": "^3.17.3",
+    "grpc": "^1.24.11",
+    "loglevel": "^1.7.1",
+    "neverthrow": "^4.2.2"
+  },
+  "devDependencies": {
+    "@types/chai": "^4.2.21",
+    "@types/mocha": "^9.0.0"
   }
 }
