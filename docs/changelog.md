@@ -1,4 +1,6 @@
 # TBD
+### Changes
+* Updated the `update-own-version-constants.sh` script to use the version-updating component from devtools
 
 # 0.12.0
 ### Features
