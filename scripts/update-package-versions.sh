@@ -51,6 +51,7 @@ fi
 #                                             Main Logic
 # ==================================================================================================
 
+echo "Updating versions in package files for all supported langauges..."
 supported_langs_filepath="${root_dirpath}/${SUPPORTED_LANGS_FILENAME}"
 for lang in $(cat "${supported_langs_filepath}"); do
     to_update_relative_filepath="${PACKAGE_FILE_RELATIVE_FILEPATHS["${lang}"]}"
@@ -78,3 +79,4 @@ for lang in $(cat "${supported_langs_filepath}"); do
         exit 1
     fi
 done
+echo "Successfully updated the versions in the package files for all supported languages"
