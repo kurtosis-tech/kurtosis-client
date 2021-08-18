@@ -59,7 +59,7 @@ if test $(grep -c $(getSearchReplace [0-9]\+\.[0-9]\+\.[0-9]\+) "${LANG_ROOT_DIR
 fi
 
 # Do the replacement on the file - in this case, on package.json
-if ! sed -i "${SED_REPLACE_FILENAME_SUFFIX}" -E "s/$(getSearchReplace [0-9]\+\.[0-9]\+\.[0-9]\+)/$(getSearchReplace ${new_version})/g" ${SPECIFIED_FILENAME}; then #No magic values, but can I use regex in variables?
+if ! sed -i "${SED_REPLACE_FILENAME_SUFFIX}" -E "s/$(getSearchReplace [0-9]\+\.[0-9]\+\.[0-9]\+)/$(getSearchReplace ${new_version})/g" ${SPECIFIED_FILENAME}; then #TODO No magic values, but can I use regex in variables?
     echo "Error: Replacing pattern '${search_pattern}' with value '${new_version}' in file ${SPECIFIED_FILENAME}" >&2
     exit 1
 fi
