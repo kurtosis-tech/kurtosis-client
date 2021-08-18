@@ -6,7 +6,7 @@
 * Exported ContainerCreationConfigBuilder and ContainerRunConfigBuilder so that users can access this in the npm package
 
 ### Fixes
-* Removed incorrect second backslashs found in the import statements of some of the typescript files inside of 'typescript/lib/` 
+* Removed incorrect second backslashs found in the import statements of some of the typescript files inside of `typescript/lib/` 
 
 # 0.11.2
 ### Features
