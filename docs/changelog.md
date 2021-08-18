@@ -2,6 +2,12 @@
 ### Features
 * Added index.ts to successfully export all necessary typescript code to npm
 
+### Changes
+* Exported ContainerCreationConfigBuilder and ContainerRunConfigBuilder so that users can access this in the npm package
+
+### Fixes
+* Removed incorrect second backslashs found in the import statements of some of the typescript files inside of 'typescript/lib/` 
+
 # 0.11.2
 ### Features
 * Added constants which contains the version of this library, which is updated automatically during the release process of this repo
