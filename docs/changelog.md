@@ -11,6 +11,9 @@
 ### Fixes
 * Removed incorrect second backslashs found in the import statements of some of the typescript files inside of `typescript/lib/` 
 
+### Removals
+* Removed the `V0BulkCommandTest` in Typescript - it's not really testing anything, and we'll be removing this soon
+
 # 0.11.2
 ### Features
 * Added constants which contains the version of this library, which is updated automatically during the release process of this repo
