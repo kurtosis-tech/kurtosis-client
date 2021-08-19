@@ -1,4 +1,6 @@
 # TBD
+
+# 0.12.2
 ### Changes
 * Use the `npm-publisher` CircleCI orb for doing our NPM publishing
 
