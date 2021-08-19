@@ -10,6 +10,7 @@
 * Exported ContainerCreationConfigBuilder and ContainerRunConfigBuilder so that users can access them in the npm package
 * Updated typescript build.sh script so that it compiles the typescript files found inside the lib/ directory into separate .js and .d.ts files in a hidden build/typescript/ folder
 * Renamed Typescript library to `kurtosis-core-api-lib`
+* Updated the `update-own-version-constants.sh` script to use the version-updating component from devtools
 
 ### Fixes
 * Removed incorrect second backslashs found in the import statements of some of the typescript files inside of `typescript/lib/` 
