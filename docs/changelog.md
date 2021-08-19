@@ -1,4 +1,14 @@
 # TBD
+### Features
+* Added index.ts to successfully export all necessary typescript code to npm
+* Added an `update-package-versions.sh` script that's hooked into the release flow for automatically updating versions in package files (e.g. `package.json`)
+
+### Changes
+* Exported ContainerCreationConfigBuilder and ContainerRunConfigBuilder so that users can access them in the npm package
+* Updated typescript build.sh script so that it compiles the typescript files found inside the lib/ directory into separate .js and .d.ts files in a hidden build/typescript/ folder
+
+### Fixes
+* Removed incorrect second backslashs found in the import statements of some of the typescript files inside of `typescript/lib/` 
 
 # 0.12.0
 ### Features
