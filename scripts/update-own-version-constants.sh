@@ -28,7 +28,7 @@ CONSTANT_FILE_RELATIVE_FILEPATHS["golang"]="lib/kurtosis_api_version_const/kurto
 CONSTANT_PATTERNS["golang"]="KurtosisApiVersion = \"%s\""
 
 # Typescript
-CONSTANT_FILE_RELATIVE_FILEPATHS["typescript"]="lib/kurtosis_api_version_const.ts"
+CONSTANT_FILE_RELATIVE_FILEPATHS["typescript"]="src/lib/kurtosis_api_version_const.ts"
 CONSTANT_PATTERNS["typescript"]="KURTOSIS_API_VERSION: string = \"%s\""
 
 
