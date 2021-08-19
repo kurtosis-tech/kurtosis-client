@@ -57,6 +57,20 @@ jobs:
 
       - run: typescript/scripts/build.sh
 
+  publish_typescript:
+    docker:
+      - image: cimg/node:14.17.1
+    steps:
+      - checkout
+      - run: typescript/scripts/build.sh
+      - run:
+          name: Create NPM auth file
+          command: echo "//registry.npmjs.org/:_authToken=${NPMJS_AUTH_TOKEN}" > ~/typescript/.npmrc
+      - run: 
+          name: Publish package to NPM
+          command: cd typescript && npm publish
+
+
 workflows:
   build:
     jobs:
@@ -82,5 +96,13 @@ workflows:
       # -- End PR check jobs ---------------------------------------
 
       # -- Artifact-publishing jobs --------------------------------
-      # TODO Implement when we have a language that needs artifact-publishing
+      - publish_typescript:
+          context:
+            - npmjs-user
+          filters:
+            branches:
+              ignore: /.*/
+            tags:
+              only: /^[0-9]+\.[0-9]+\.[0-9]+$/
+
       # -- End artifact-publishing jobs ----------------------------
