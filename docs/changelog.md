@@ -2,6 +2,7 @@
 ### Features
 * Added index.ts to successfully export all necessary typescript code to npm
 * Added an `update-package-versions.sh` script that's hooked into the release flow for automatically updating versions in package files (e.g. `package.json`)
+* Added a CircleCI check to make run Typescript `build.sh`
 
 ### Changes
 * Exported ContainerCreationConfigBuilder and ContainerRunConfigBuilder so that users can access them in the npm package
