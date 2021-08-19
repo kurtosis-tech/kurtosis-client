@@ -2,6 +2,8 @@
 ### Features
 * Added index.ts to successfully export all necessary typescript code to npm
 * Added an `update-package-versions.sh` script that's hooked into the release flow for automatically updating versions in package files (e.g. `package.json`)
+* Added a CircleCI check to make run Typescript `build.sh`
+* Use `yarn` to build the Typescript package
 
 ### Changes
 * Exported ContainerCreationConfigBuilder and ContainerRunConfigBuilder so that users can access them in the npm package
@@ -9,6 +11,10 @@
 
 ### Fixes
 * Removed incorrect second backslashs found in the import statements of some of the typescript files inside of `typescript/lib/` 
+* Make Typescript license `Apache-2.0`, in SPDX format
+
+### Removals
+* Removed the `V0BulkCommandTest` in Typescript - it's not really testing anything, and we'll be removing this soon
 
 # 0.12.0
 ### Features
