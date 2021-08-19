@@ -16,6 +16,14 @@
 ### Removals
 * Removed the `V0BulkCommandTest` in Typescript - it's not really testing anything, and we'll be removing this soon
 
+# 0.12.0
+### Features
+* Add new param `httpMethod` in `NetworkContext.WaitForAvailability` to specify the http method used in the http call to service's availability endpoint. The allowed values are GET or POST
+
+### Breaking Changes
+* Add new param `httpMethod` in `NetworkContext.WaitForAvailability` to specify the http method used in the http call to service's availability endpoint. The allowed values are GET or POST
+  * Users should add the argument `httpMethod` with one of its valid values `GET` or `POST` everywhere they have used it.
+
 # 0.11.2
 ### Features
 * Added constants which contains the version of this library, which is updated automatically during the release process of this repo
