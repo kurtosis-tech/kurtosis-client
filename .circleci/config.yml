@@ -65,7 +65,7 @@ jobs:
       - run: typescript/scripts/build.sh
       - run:
           name: Create NPM auth file
-          command: echo "//registry.npmjs.org/:_authToken=${NPMJS_AUTH_TOKEN}" > ~/typescript/.npmrc
+          command: echo "//registry.npmjs.org/:_authToken=${NPMJS_AUTH_TOKEN}" > typescript/.npmrc
       - run: 
           name: Publish package to NPM
           command: cd typescript && npm publish
