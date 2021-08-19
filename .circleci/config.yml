@@ -55,8 +55,6 @@ jobs:
             circleci-agent step halt
           fi
 
-      - run: npm install -g typescript
-
       - run: typescript/scripts/build.sh
 
 workflows:
