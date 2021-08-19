@@ -36,7 +36,7 @@ export class ContainerRunConfig {
 // ====================================================================================================
 // TODO Defensive copies on all these With... functions???
 // Docs available at https://docs.kurtosistech.com/kurtosis-libs/lib-documentation
-class ContainerRunConfigBuilder {
+export class ContainerRunConfigBuilder {
 	private entrypointOverrideArgs: string[];
 	private cmdOverrideArgs: string[];
 	private environmentVariableOverrides: Map<string, string>;

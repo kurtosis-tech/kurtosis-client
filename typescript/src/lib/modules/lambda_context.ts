@@ -1,4 +1,4 @@
-import { ApiContainerServiceClient } from "../..//kurtosis_core_rpc_api_bindings/api_container_service_grpc_pb";
+import { ApiContainerServiceClient } from "../../kurtosis_core_rpc_api_bindings/api_container_service_grpc_pb";
 import { ExecuteLambdaArgs, ExecuteLambdaResponse } from "../../kurtosis_core_rpc_api_bindings/api_container_service_pb";
 import { newExecuteLambdaArgs } from "../constructor_calls";
 import { okAsync, errAsync, ResultAsync, ok, err, Result } from "neverthrow";

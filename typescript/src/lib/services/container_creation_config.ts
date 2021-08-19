@@ -66,7 +66,7 @@ export class ContainerCreationConfig {
 // ====================================================================================================
 // TODO Defensive copies on all these With... functions???
 // Docs available at https://docs.kurtosistech.com/kurtosis-libs/lib-documentation
-class ContainerCreationConfigBuilder {
+export class ContainerCreationConfigBuilder {
     private readonly image: string;
     private kurtosisVolumeMountpoint: string;
     private usedPortsSet: Set<string>;
