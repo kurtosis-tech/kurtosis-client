@@ -1,6 +1,6 @@
 {
     "name": "kurtosis-js-lib",
-    "version": "1.0.0",
+    "version": "1.0.39",
     "description": "This repo contains clients for communicating with the Kurtosis API server, which both testsuites and Kurtosis Modules will use to manipulate the test environment.",
     "main": "./build/index",
     "types": "./build/index",
