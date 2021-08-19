@@ -11,6 +11,7 @@
 
 ### Fixes
 * Removed incorrect second backslashs found in the import statements of some of the typescript files inside of `typescript/lib/` 
+* Make Typescript license `Apache-2.0`, in SPDX format
 
 ### Removals
 * Removed the `V0BulkCommandTest` in Typescript - it's not really testing anything, and we'll be removing this soon
