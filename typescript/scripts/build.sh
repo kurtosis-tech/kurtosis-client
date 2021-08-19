@@ -3,10 +3,12 @@
 
 set -euo pipefail   # Bash "strict mode"
 script_dirpath="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+lang_root_dirpath="$(dirname "${script_dirpath}")"
 
 
 # ==================================================================================================
 #                                             Main Logic
 # ==================================================================================================
+cd "${lang_root_dirpath}"
 yarn test
 yarn build
