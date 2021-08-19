@@ -1,17 +1,15 @@
 #!/usr/bin/env bash
-# The above is the most platform-agnostic way to guarantee this script runs with Bash
+# 2021-07-08 WATERMARK, DO NOT REMOVE - This script was generated from the Kurtosis Bash script template
 
 set -euo pipefail   # Bash "strict mode"
-
-# # ==================================================================================================
-# #                                             Constants
-# # ==================================================================================================
 script_dirpath="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 lang_root_dirpath="$(dirname "${script_dirpath}")"
 
 
-# # ==================================================================================================
-# #                                             Main Logic
-# # ==================================================================================================
-find_results="$(find ${lang_root_dirpath}/lib -name "*.ts")"
-tsc ${find_results} --outFile ${lang_root_dirpath}/build/output.js --module system --moduleResolution node --target es2015
+# ==================================================================================================
+#                                             Main Logic
+# ==================================================================================================
+cd "${lang_root_dirpath}"
+yarn install
+yarn test
+yarn build
