@@ -10,5 +10,6 @@ lang_root_dirpath="$(dirname "${script_dirpath}")"
 #                                             Main Logic
 # ==================================================================================================
 cd "${lang_root_dirpath}"
+yarn install
 yarn test
 yarn build
