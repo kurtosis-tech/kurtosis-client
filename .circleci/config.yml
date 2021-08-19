@@ -1,5 +1,8 @@
 version: 2.1
 
+orbs:
+  npm-publisher: uraway/npm-publisher@0.2.0
+
 # NOTE: Because CircleCI jobs run on separate machines from each other, we duplicate steps (like checkout) between jobs. This is because doing the "correct" DRY
 #  refactoring of, "one job for checkout, one job for build Docker image, etc." would require a) persisting files between jobs and b) persisting Docker images between
 #  jobs. Both are annoying (saving/loading workspaces require re-downloading the workspace over the network, and there doesn't seem to be a good way to do Docker
@@ -63,13 +66,9 @@ jobs:
     steps:
       - checkout
       - run: typescript/scripts/build.sh
-      - run:
-          name: Create NPM auth file
-          command: echo "//registry.npmjs.org/:_authToken=${NPMJS_AUTH_TOKEN}" > typescript/.npmrc
-      - run: 
-          name: Publish package to NPM
-          command: cd typescript && npm publish
-
+      - npm-publisher/publish-from-package-version:
+          package-path: typescript
+          publish-token-variable: NPMJS_AUTH_TOKEN
 
 workflows:
   build:
@@ -104,5 +103,4 @@ workflows:
               ignore: /.*/
             tags:
               only: /^[0-9]+\.[0-9]+\.[0-9]+$/
-
       # -- End artifact-publishing jobs ----------------------------
