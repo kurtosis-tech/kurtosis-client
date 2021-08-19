@@ -1,5 +1,9 @@
 # TBD
 
+# 0.12.2
+### Changes
+* Use the `npm-publisher` CircleCI orb for doing our NPM publishing
+
 # 0.12.1
 ### Features
 * Added index.ts to successfully export all necessary typescript code to npm
