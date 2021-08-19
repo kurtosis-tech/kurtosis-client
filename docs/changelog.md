@@ -1,4 +1,6 @@
 # TBD
+
+# 0.12.1
 ### Features
 * Added index.ts to successfully export all necessary typescript code to npm
 * Added an `update-package-versions.sh` script that's hooked into the release flow for automatically updating versions in package files (e.g. `package.json`)
