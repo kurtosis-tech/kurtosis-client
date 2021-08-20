@@ -638,6 +638,9 @@ export class WaitForEndpointAvailabilityArgs extends jspb.Message {
   getPath(): string;
   setPath(value: string): void;
 
+  getRequestBody(): string;
+  setRequestBody(value: string): void;
+
   getInitialDelaySeconds(): number;
   setInitialDelaySeconds(value: number): void;
 
@@ -666,6 +669,7 @@ export namespace WaitForEndpointAvailabilityArgs {
     httpMethod: WaitForEndpointAvailabilityArgs.HttpMethodMap[keyof WaitForEndpointAvailabilityArgs.HttpMethodMap],
     port: number,
     path: string,
+    requestBody: string,
     initialDelaySeconds: number,
     retries: number,
     retriesDelayMilliseconds: number,

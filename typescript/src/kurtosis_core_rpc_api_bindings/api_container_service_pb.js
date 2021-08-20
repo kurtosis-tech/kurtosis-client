@@ -4971,10 +4971,11 @@ proto.api_container_api.WaitForEndpointAvailabilityArgs.toObject = function(incl
     httpMethod: jspb.Message.getFieldWithDefault(msg, 2, 0),
     port: jspb.Message.getFieldWithDefault(msg, 3, 0),
     path: jspb.Message.getFieldWithDefault(msg, 4, ""),
-    initialDelaySeconds: jspb.Message.getFieldWithDefault(msg, 5, 0),
-    retries: jspb.Message.getFieldWithDefault(msg, 6, 0),
-    retriesDelayMilliseconds: jspb.Message.getFieldWithDefault(msg, 7, 0),
-    bodyText: jspb.Message.getFieldWithDefault(msg, 8, "")
+    requestBody: jspb.Message.getFieldWithDefault(msg, 5, ""),
+    initialDelaySeconds: jspb.Message.getFieldWithDefault(msg, 6, 0),
+    retries: jspb.Message.getFieldWithDefault(msg, 7, 0),
+    retriesDelayMilliseconds: jspb.Message.getFieldWithDefault(msg, 8, 0),
+    bodyText: jspb.Message.getFieldWithDefault(msg, 9, "")
   };
 
   if (includeInstance) {
@@ -5028,18 +5029,22 @@ proto.api_container_api.WaitForEndpointAvailabilityArgs.deserializeBinaryFromRea
       msg.setPath(value);
       break;
     case 5:
-      var value = /** @type {number} */ (reader.readUint32());
-      msg.setInitialDelaySeconds(value);
+      var value = /** @type {string} */ (reader.readString());
+      msg.setRequestBody(value);
       break;
     case 6:
       var value = /** @type {number} */ (reader.readUint32());
-      msg.setRetries(value);
+      msg.setInitialDelaySeconds(value);
       break;
     case 7:
       var value = /** @type {number} */ (reader.readUint32());
-      msg.setRetriesDelayMilliseconds(value);
+      msg.setRetries(value);
       break;
     case 8:
+      var value = /** @type {number} */ (reader.readUint32());
+      msg.setRetriesDelayMilliseconds(value);
+      break;
+    case 9:
       var value = /** @type {string} */ (reader.readString());
       msg.setBodyText(value);
       break;
@@ -5100,31 +5105,38 @@ proto.api_container_api.WaitForEndpointAvailabilityArgs.serializeBinaryToWriter 
       f
     );
   }
-  f = message.getInitialDelaySeconds();
-  if (f !== 0) {
-    writer.writeUint32(
+  f = message.getRequestBody();
+  if (f.length > 0) {
+    writer.writeString(
       5,
       f
     );
   }
-  f = message.getRetries();
+  f = message.getInitialDelaySeconds();
   if (f !== 0) {
     writer.writeUint32(
       6,
       f
     );
   }
-  f = message.getRetriesDelayMilliseconds();
+  f = message.getRetries();
   if (f !== 0) {
     writer.writeUint32(
       7,
       f
     );
   }
+  f = message.getRetriesDelayMilliseconds();
+  if (f !== 0) {
+    writer.writeUint32(
+      8,
+      f
+    );
+  }
   f = message.getBodyText();
   if (f.length > 0) {
     writer.writeString(
-      8,
+      9,
       f
     );
   }
@@ -5212,28 +5224,28 @@ proto.api_container_api.WaitForEndpointAvailabilityArgs.prototype.setPath = func
 
 
 /**
- * optional uint32 initial_delay_seconds = 5;
+ * optional string request_body = 5;
+ * @return {string}
+ */
+proto.api_container_api.WaitForEndpointAvailabilityArgs.prototype.getRequestBody = function() {
+  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 5, ""));
+};
+
+
+/**
+ * @param {string} value
+ * @return {!proto.api_container_api.WaitForEndpointAvailabilityArgs} returns this
+ */
+proto.api_container_api.WaitForEndpointAvailabilityArgs.prototype.setRequestBody = function(value) {
+  return jspb.Message.setProto3StringField(this, 5, value);
+};
+
+
+/**
+ * optional uint32 initial_delay_seconds = 6;
  * @return {number}
  */
 proto.api_container_api.WaitForEndpointAvailabilityArgs.prototype.getInitialDelaySeconds = function() {
-  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 5, 0));
-};
-
-
-/**
- * @param {number} value
- * @return {!proto.api_container_api.WaitForEndpointAvailabilityArgs} returns this
- */
-proto.api_container_api.WaitForEndpointAvailabilityArgs.prototype.setInitialDelaySeconds = function(value) {
-  return jspb.Message.setProto3IntField(this, 5, value);
-};
-
-
-/**
- * optional uint32 retries = 6;
- * @return {number}
- */
-proto.api_container_api.WaitForEndpointAvailabilityArgs.prototype.getRetries = function() {
   return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 6, 0));
 };
 
@@ -5242,16 +5254,16 @@ proto.api_container_api.WaitForEndpointAvailabilityArgs.prototype.getRetries = f
  * @param {number} value
  * @return {!proto.api_container_api.WaitForEndpointAvailabilityArgs} returns this
  */
-proto.api_container_api.WaitForEndpointAvailabilityArgs.prototype.setRetries = function(value) {
+proto.api_container_api.WaitForEndpointAvailabilityArgs.prototype.setInitialDelaySeconds = function(value) {
   return jspb.Message.setProto3IntField(this, 6, value);
 };
 
 
 /**
- * optional uint32 retries_delay_milliseconds = 7;
+ * optional uint32 retries = 7;
  * @return {number}
  */
-proto.api_container_api.WaitForEndpointAvailabilityArgs.prototype.getRetriesDelayMilliseconds = function() {
+proto.api_container_api.WaitForEndpointAvailabilityArgs.prototype.getRetries = function() {
   return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 7, 0));
 };
 
@@ -5260,17 +5272,35 @@ proto.api_container_api.WaitForEndpointAvailabilityArgs.prototype.getRetriesDela
  * @param {number} value
  * @return {!proto.api_container_api.WaitForEndpointAvailabilityArgs} returns this
  */
-proto.api_container_api.WaitForEndpointAvailabilityArgs.prototype.setRetriesDelayMilliseconds = function(value) {
+proto.api_container_api.WaitForEndpointAvailabilityArgs.prototype.setRetries = function(value) {
   return jspb.Message.setProto3IntField(this, 7, value);
 };
 
 
 /**
- * optional string body_text = 8;
+ * optional uint32 retries_delay_milliseconds = 8;
+ * @return {number}
+ */
+proto.api_container_api.WaitForEndpointAvailabilityArgs.prototype.getRetriesDelayMilliseconds = function() {
+  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 8, 0));
+};
+
+
+/**
+ * @param {number} value
+ * @return {!proto.api_container_api.WaitForEndpointAvailabilityArgs} returns this
+ */
+proto.api_container_api.WaitForEndpointAvailabilityArgs.prototype.setRetriesDelayMilliseconds = function(value) {
+  return jspb.Message.setProto3IntField(this, 8, value);
+};
+
+
+/**
+ * optional string body_text = 9;
  * @return {string}
  */
 proto.api_container_api.WaitForEndpointAvailabilityArgs.prototype.getBodyText = function() {
-  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 8, ""));
+  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 9, ""));
 };
 
 
@@ -5279,7 +5309,7 @@ proto.api_container_api.WaitForEndpointAvailabilityArgs.prototype.getBodyText = 
  * @return {!proto.api_container_api.WaitForEndpointAvailabilityArgs} returns this
  */
 proto.api_container_api.WaitForEndpointAvailabilityArgs.prototype.setBodyText = function(value) {
-  return jspb.Message.setProto3StringField(this, 8, value);
+  return jspb.Message.setProto3StringField(this, 9, value);
 };
 
 
