@@ -372,13 +372,14 @@ func (networkCtx *NetworkContext) RepartitionNetwork(
 }
 
 // Docs available at https://docs.kurtosistech.com/kurtosis-libs/lib-documentation
-func (networkCtx *NetworkContext) WaitForEndpointAvailability(serviceId services.ServiceID, httpMethod kurtosis_core_rpc_api_bindings.WaitForEndpointAvailabilityArgs_HttpMethod, port uint32, path string, initialDelaySeconds uint32, retries uint32, retriesDelayMilliseconds uint32, bodyText string) error {
+func (networkCtx *NetworkContext) WaitForEndpointAvailability(serviceId services.ServiceID, httpMethod kurtosis_core_rpc_api_bindings.WaitForEndpointAvailabilityArgs_HttpMethod, port uint32, path string, requestBody string,  initialDelaySeconds uint32, retries uint32, retriesDelayMilliseconds uint32, bodyText string) error {
 
 	availabilityArgs := binding_constructors.NewWaitForEndpointAvailabilityArgs(
 		string(serviceId),
 		httpMethod,
 		port,
 		path,
+		requestBody,
 		initialDelaySeconds,
 		retries,
 		retriesDelayMilliseconds,

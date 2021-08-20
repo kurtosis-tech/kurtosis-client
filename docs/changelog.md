@@ -1,4 +1,10 @@
 # TBD
+### Features
+* Add new param `bodyRequest` in `NetworkContext.WaitForAvailability` to specify the http request body used in the http call to service's availability endpoint.
+
+### Breaking Changes
+* Add new param `bodyRequest` in `NetworkContext.WaitForAvailability` to specify the http request body used in the http call to service's availability endpoint.
+  * Users should add the argument `bodyRequest` with its content.
 
 # 0.12.3
 
