@@ -177,7 +177,8 @@ export function newWaitForEndpointAvailabilityArgs(
         serviceId: ServiceID,
         httpMethod: WaitForEndpointAvailabilityArgs.HttpMethodMap[keyof WaitForEndpointAvailabilityArgs.HttpMethodMap],
         port: number, 
-        path: string, 
+        path: string,
+        requestBody: string,
         initialDelaySeconds: number, 
         retries: number, 
         retriesDelayMilliseconds: number, 
@@ -187,6 +188,7 @@ export function newWaitForEndpointAvailabilityArgs(
     result.setHttpMethod(httpMethod);
     result.setPort(port);
     result.setPath(path);
+    result.setRequestBody(requestBody)
     result.setInitialDelaySeconds(initialDelaySeconds);
     result.setRetries(retries);
     result.setRetriesDelayMilliseconds(retriesDelayMilliseconds);
