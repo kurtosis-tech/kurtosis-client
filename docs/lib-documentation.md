@@ -129,7 +129,7 @@ Waits until a service endpoint is available by making requests to the endpoint u
 * `httpMethod`: The HTTP method of the endpoint to check. Allowed values: GET or POST
 * `port`: The port (e.g. 8080) of the endpoint to check.
 * `path`: The path of the service to check, which must not start with a slash (e.g. `service/health`).
-* `requestBody`: The request body content used to send the endpoint to check.
+* `requestBody`: The request body content that will be sent to the endpoint being checked.
 * `initialDelaySeconds`: Number of seconds to wait until executing the first HTTP call
 * `retries`: Max number of HTTP call attempts that this will execute until giving up and returning an error
 * `retriesDelayMilliseconds`: Number of milliseconds to wait between retries
