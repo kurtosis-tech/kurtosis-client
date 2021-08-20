@@ -1,5 +1,9 @@
 # TBD
 
+### Changes
+* Exported Network and NetworkContext so that users can access them in the typescript npm package
+* Updated index.ts to represent a more exhaustive list of necessary exports
+
 # 0.12.2
 ### Changes
 * Use the `npm-publisher` CircleCI orb for doing our NPM publishing
