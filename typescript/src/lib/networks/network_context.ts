@@ -25,7 +25,7 @@ export type PartitionID = string;
 const DEFAULT_PARTITION_ID: PartitionID = "";
 
 // Docs available at https://docs.kurtosistech.com/kurtosis-libs/lib-documentation
-class NetworkContext {
+export class NetworkContext {
     private readonly client: ApiContainerServiceClient;
     
     // The location on the filesystem where this code is running where the enclave data volume is mounted

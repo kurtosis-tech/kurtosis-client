@@ -2,7 +2,8 @@ import { ContainerRunConfigBuilder } from "./lib/services/container_run_config";
 import { StaticFileID, FilesArtifactID, ContainerCreationConfigBuilder } from "./lib/services/container_creation_config";
 import { ServiceID } from "./lib/services/service";
 import { GeneratedFileFilepaths, ServiceContext } from "./lib/services/service_context";
-import { PartitionID } from "./lib/networks/network_context";
+import { Network } from "./lib/networks/network";
+import { PartitionID, NetworkContext } from "./lib/networks/network_context";
 import { LambdaID, LambdaContext } from "./lib/modules/lambda_context";
 import { SchemaVersion } from "./lib/bulk_command_execution/bulk_command_schema_version";
 import { V0BulkCommands, V0SerializableCommand } from "./lib/bulk_command_execution/v0_bulk_command_api/v0_bulk_commands";
@@ -18,8 +19,8 @@ export { ServiceID };
 export { GeneratedFileFilepaths, ServiceContext };
 
 //Networks
-export { PartitionID };
-//TODO NetworkContext and Network interface....
+export { Network };
+export { PartitionID, NetworkContext };
 
 //Modules
 export { LambdaContext, LambdaID };
