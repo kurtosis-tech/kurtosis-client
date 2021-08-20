@@ -1,5 +1,7 @@
 # TBD
 
+# 0.12.3
+
 ### Changes
 * Exported Network and NetworkContext so that users can access them in the typescript npm package
 * Updated index.ts to represent a more exhaustive list of necessary exports
