@@ -6,6 +6,37 @@
 * Add new param `bodyRequest` in `NetworkContext.WaitForAvailability` to specify the http request body used in the http call to service's availability endpoint.
   * Users should add the argument `bodyRequest` with its content.
 
+# 0.12.3
+
+### Changes
+* Exported Network and NetworkContext so that users can access them in the typescript npm package
+* Updated index.ts to represent a more exhaustive list of necessary exports
+
+# 0.12.2
+### Changes
+* Use the `npm-publisher` CircleCI orb for doing our NPM publishing
+
+# 0.12.1
+### Features
+* Added index.ts to successfully export all necessary typescript code to npm
+* Added an `update-package-versions.sh` script that's hooked into the release flow for automatically updating versions in package files (e.g. `package.json`)
+* Added a CircleCI check to make run Typescript `build.sh`
+* Use `yarn` to build the Typescript package
+* Added CircleCI job that runs upon tag releases to publish to NPM JS repository
+
+### Changes
+* Exported ContainerCreationConfigBuilder and ContainerRunConfigBuilder so that users can access them in the npm package
+* Updated typescript build.sh script so that it compiles the typescript files found inside the lib/ directory into separate .js and .d.ts files in a hidden build/typescript/ folder
+* Renamed Typescript library to `kurtosis-core-api-lib`
+* Updated the `update-own-version-constants.sh` script to use the version-updating component from devtools
+
+### Fixes
+* Removed incorrect second backslashs found in the import statements of some of the typescript files inside of `typescript/lib/` 
+* Make Typescript license `Apache-2.0`, in SPDX format
+
+### Removals
+* Removed the `V0BulkCommandTest` in Typescript - it's not really testing anything, and we'll be removing this soon
+
 # 0.12.0
 ### Features
 * Add new param `httpMethod` in `NetworkContext.WaitForAvailability` to specify the http method used in the http call to service's availability endpoint. The allowed values are GET or POST
