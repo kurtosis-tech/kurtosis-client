@@ -1,4 +1,6 @@
 # TBD
+### Changes
+* Use the devtools script for updating package versions
 
 # 0.13.0
 ### Features
