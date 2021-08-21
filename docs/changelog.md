@@ -1,4 +1,6 @@
 # TBD
+### Changes
+* Replace custom docs-checking job with Kurtosis docs-checker orb
 
 # 0.13.0
 ### Features
