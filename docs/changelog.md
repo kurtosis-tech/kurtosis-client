@@ -1,5 +1,12 @@
 # TBD
 
+# 0.13.2
+### Features
+* Set Typescript strict mode, for safer code
+
+### Fixes
+* Fixed a bunch of bugs that were exposed via strict mode
+
 # 0.13.1
 ### Changes
 * Replace custom docs-checking job with Kurtosis docs-checker orb
