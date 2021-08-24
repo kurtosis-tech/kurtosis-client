@@ -1,4 +1,6 @@
 # TBD
+
+# 0.13.2
 ### Features
 * Set Typescript strict mode, for safer code
 
