@@ -3,6 +3,9 @@
 * Replace custom docs-checking job with Kurtosis docs-checker orb
 * Use the devtools script for updating package versions
 
+### Fixes
+* Fixed Node engine dependency in Typescript library to be `>=14.17.0`
+
 # 0.13.0
 ### Features
 * Add new param `bodyRequest` in `NetworkContext.WaitForAvailability` to specify the http request body used in the http call to service's availability endpoint.
