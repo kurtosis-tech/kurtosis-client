@@ -2,6 +2,7 @@ import { ExecCommandArgs, GenerateFilesArgs, FileGenerationOptions, LoadStaticFi
 import { ServiceID } from './services/service';
 import { PartitionID } from './networks/network_context';
 import { LambdaID } from "./modules/lambda_context";
+import * as jspb from "google-protobuf";
 
 // // ====================================================================================================
 // //                                    Service Context
@@ -35,9 +36,9 @@ export function newFileGenerationOptions(): FileGenerationOptions {
 export function newLoadStaticFilesArgs(serviceId: ServiceID, staticFilesToCopyStringSet: Map<string, boolean>): LoadStaticFilesArgs {
     const result: LoadStaticFilesArgs = new LoadStaticFilesArgs();
     result.setServiceId(String(serviceId));
-    const staticFilesMap: Map<string, boolean> = result.getStaticFilesMap();
-    for (let staticFildID in staticFilesToCopyStringSet) {
-        staticFilesMap.set(staticFildID, true);
+    const staticFilesMap: jspb.Map<string, boolean> = result.getStaticFilesMap();
+    for (let staticFileID of staticFilesToCopyStringSet.keys()) {
+        staticFilesMap.set(staticFileID, true);
     }
 
     return result;
@@ -58,8 +59,8 @@ export function newLoadLambdaArgs(lambdaId: LambdaID, image: string, serializedP
 
 export function newRegisterStaticFilesArgs(strSet: Map<string, boolean>): RegisterStaticFilesArgs {
     const result: RegisterStaticFilesArgs = new RegisterStaticFilesArgs();
-    const staticFilesSetMap: Map<string, boolean> = result.getStaticFilesSetMap();
-    for (let staticFileID in strSet) {
+    const staticFilesSetMap: jspb.Map<string, boolean> = result.getStaticFilesSetMap();
+    for (let staticFileID of strSet.keys()) {
         staticFilesSetMap.set(staticFileID, true);
     }
 
@@ -68,9 +69,9 @@ export function newRegisterStaticFilesArgs(strSet: Map<string, boolean>): Regist
 
 export function newRegisterFilesArtifactsArgs(filesArtifactIdStrsToUrls: Map<string, string>): RegisterFilesArtifactsArgs {
     const result: RegisterFilesArtifactsArgs = new RegisterFilesArtifactsArgs();
-    const filesArtifactUrlsMap: Map<string, string> = result.getFilesArtifactUrlsMap();
-    for (let fileArtificactID in filesArtifactIdStrsToUrls) {
-        filesArtifactUrlsMap.set(fileArtificactID, filesArtifactIdStrsToUrls[fileArtificactID]);
+    const filesArtifactUrlsMap: jspb.Map<string, string> = result.getFilesArtifactUrlsMap();
+    for (let [artifactId, artifactUrl] of filesArtifactIdStrsToUrls.entries()) {
+        filesArtifactUrlsMap.set(artifactId, artifactUrl);
     }
     return result;
 }
@@ -95,26 +96,26 @@ export function newStartServiceArgs(
     const result: StartServiceArgs = new StartServiceArgs();
     result.setServiceId(String(serviceId));
     result.setDockerImage(dockerImage);
-    const usedPortsMap: Set<string> = result.getUsedPortsMap();
-    for (let portId in usedPorts) {
-        usedPortsMap.add(portId);
+    const usedPortsMap: jspb.Map<string, boolean> = result.getUsedPortsMap();
+    for (let portId of usedPorts) {
+        usedPortsMap.set(portId, true);
     }
     const entrypointArgsArray: string[] = result.getEntrypointArgsList();
-    for (let entryPoint in entrypointArgs) {
+    for (let entryPoint of entrypointArgs) {
         entrypointArgsArray.push(entryPoint);
     }
     const cmdArgsArray: string[] = result.getCmdArgsList();
-    for (let cmdArg in cmdArgs) {
+    for (let cmdArg of cmdArgs) {
         cmdArgsArray.push(cmdArg);
     }
-    const dockerEnvVarArray: Map<string, string> = result.getDockerEnvVarsMap();
-    for (let dockerEnvId in dockerEnvVars) {
-        dockerEnvVarArray.set(dockerEnvId, dockerEnvVars[dockerEnvId]);
+    const dockerEnvVarArray: jspb.Map<string, string> = result.getDockerEnvVarsMap();
+    for (let [name, value] of dockerEnvVars.entries()) {
+        dockerEnvVarArray.set(name, value);
     }
     result.setEnclaveDataVolMntDirpath(enclaveDataVolMntDirpath);
-    const filesArtificatMountDirpathsMap: Map<string, string> = result.getFilesArtifactMountDirpathsMap();
-    for (let filesArtifactMountDirpathId in filesArtifactMountDirpaths) {
-        filesArtificatMountDirpathsMap.set(filesArtifactMountDirpathId, filesArtifactMountDirpaths[filesArtifactMountDirpathId]);
+    const filesArtificatMountDirpathsMap: jspb.Map<string, string> = result.getFilesArtifactMountDirpathsMap();
+    for (let [artifactId, mountDirpath] of filesArtifactMountDirpaths.entries()) {
+        filesArtificatMountDirpathsMap.set(artifactId, mountDirpath);
     }
 
     return result;
@@ -137,8 +138,8 @@ export function newRemoveServiceArgs(serviceId: ServiceID, containerStopTimeoutS
 
 export function newPartitionServices(serviceIdStrSet: Set<string>): PartitionServices{
     const result: PartitionServices = new PartitionServices();
-    const partitionServicesMap: Map<string, boolean> = result.getServiceIdSetMap();
-    for (let serviceIdStr in serviceIdStrSet) {
+    const partitionServicesMap: jspb.Map<string, boolean> = result.getServiceIdSetMap();
+    for (let serviceIdStr of serviceIdStrSet) {
         partitionServicesMap.set(serviceIdStr, true);
     }
 
@@ -150,12 +151,12 @@ export function newRepartitionArgs(
         partitionConns: Map<string, PartitionConnections>,
         defaultConnection: PartitionConnectionInfo): RepartitionArgs {
     const result: RepartitionArgs = new RepartitionArgs();
-    const partitionServicesMap: Map<string, PartitionServices> = result.getPartitionConnectionsMap();
-    for (let [partitionServiceId, partitionId] of partitionServices.entries()) {
+    const partitionServicesMap: jspb.Map<string, PartitionServices> = result.getPartitionServicesMap();
+    for (const [partitionServiceId, partitionId] of partitionServices.entries()) {
         partitionServicesMap.set(partitionServiceId, partitionId);
     };
-    const partitionConnsMap: Map<string, PartitionConnections> = result.getPartitionConnectionsMap();
-    for (let [partitionConnId, partitionConn] of partitionConns.entries()) {
+    const partitionConnsMap: jspb.Map<string, PartitionConnections> = result.getPartitionConnectionsMap();
+    for (const [partitionConnId, partitionConn] of partitionConns.entries()) {
         partitionConnsMap.set(partitionConnId, partitionConn);
     };
     result.setDefaultConnection(defaultConnection);
@@ -163,11 +164,11 @@ export function newRepartitionArgs(
     return result;
 }
 
-export function newPartitionConnections(partitionAConnsStrMap: Map<string, PartitionConnectionInfo>): PartitionConnections {
+export function newPartitionConnections(allConnectionInfo: Map<string, PartitionConnectionInfo>): PartitionConnections {
     const result: PartitionConnections = new PartitionConnections();
-    const partitionsMap: Map<string, PartitionConnectionInfo> = result.getConnectionInfoMap();
-    for (let partitionId in partitionAConnsStrMap) {
-        partitionsMap.set(partitionId, partitionAConnsStrMap[partitionId]);
+    const partitionsMap: jspb.Map<string, PartitionConnectionInfo> = result.getConnectionInfoMap();
+    for (const [partitionId, connectionInfo] of allConnectionInfo.entries()) {
+        partitionsMap.set(partitionId, connectionInfo);
     }
 
     return result;

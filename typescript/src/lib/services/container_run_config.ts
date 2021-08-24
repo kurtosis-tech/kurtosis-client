@@ -42,8 +42,8 @@ export class ContainerRunConfigBuilder {
 	private environmentVariableOverrides: Map<string, string>;
 	
 	constructor() {
-        this.entrypointOverrideArgs = null;
-        this.cmdOverrideArgs = null;
+        this.entrypointOverrideArgs = [];
+        this.cmdOverrideArgs = [];
         this.environmentVariableOverrides = new Map();
 	}
 	
