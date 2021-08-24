@@ -17,6 +17,7 @@ import * as path from "path";
 import * as fs from 'fs';
 import * as grpc from "grpc";
 import * as google_protobuf_empty_pb from "google-protobuf/google/protobuf/empty_pb";
+import * as jspb from "google-protobuf";
 
 export type PartitionID = string;
 
@@ -46,16 +47,20 @@ export class NetworkContext {
             serializedParams: string): Promise<Result<LambdaContext, Error>> {
         const args: LoadLambdaArgs = newLoadLambdaArgs(lambdaId, image, serializedParams);
         
-        const promiseLoadLambda: Promise<ResultAsync<google_protobuf_empty_pb, Error>> = new Promise((resolve, _unusedReject) => {
-            this.client.loadLambda(args, (error: grpc.ServiceError, response: google_protobuf_empty_pb) => {
+        const promiseLoadLambda: Promise<ResultAsync<google_protobuf_empty_pb.Empty, Error>> = new Promise((resolve, _unusedReject) => {
+            this.client.loadLambda(args, (error: grpc.ServiceError | null, response?: google_protobuf_empty_pb.Empty) => {
                 if (error === null) {
-                    resolve(okAsync(response));
+                    if (!response) {
+                        resolve(errAsync(new Error("No error was encountered but the response was still falsy; this should never happen")));
+                    } else {
+                        resolve(okAsync(response!));
+                    }
                 } else {
                     resolve(errAsync(error));
                 }
             })
         });
-        const resultLoadLambda: Result<google_protobuf_empty_pb, Error> = await promiseLoadLambda;
+        const resultLoadLambda: Result<google_protobuf_empty_pb.Empty, Error> = await promiseLoadLambda;
         if (!resultLoadLambda.isOk()) {
             return err(resultLoadLambda.error);
         }
@@ -69,9 +74,12 @@ export class NetworkContext {
         const args: GetLambdaInfoArgs = newGetLambdaInfoArgs(lambdaId);
         
         const promiseGetLambdaInfo: Promise<ResultAsync<GetLambdaInfoResponse, Error>> = new Promise((resolve, _unusedReject) => {
-            this.client.getLambdaInfo(args, (error: grpc.ServiceError, response: GetLambdaInfoResponse) => {
+            this.client.getLambdaInfo(args, (error: grpc.ServiceError | null, response?: GetLambdaInfoResponse) => {
                 if (error === null) {
-                    resolve(okAsync(response));
+                    if (!response) {
+                        resolve(errAsync(new Error("No error was encountered but the response was still falsy; this should never happen")));
+                    }
+                    resolve(okAsync(response!));
                 } else {
                     resolve(errAsync(error));
                 }
@@ -93,7 +101,7 @@ export class NetworkContext {
             
             // Sanity-check that the source filepath exists
             const promiseStatSrcAbsFilepath: Promise<ResultAsync<fs.Stats, Error>> = new Promise((resolve, _unusedReject) => {
-                fs.stat(srcAbsFilepath, (error: Error, response: fs.Stats) => {
+                fs.stat(srcAbsFilepath, (error: Error | null, response: fs.Stats) => {
                     if (error === null) {
                         resolve(okAsync(response));
                     } else {
@@ -106,15 +114,19 @@ export class NetworkContext {
                 return err(new Error("Source filepath " + srcAbsFilepath + " associated with static file " + staticFileId + " doesn't exist"));
             }
             
-            strSet[String(staticFileId)] = true;
+            strSet.set(String(staticFileId), true);
         }
 
         const args: RegisterStaticFilesArgs = newRegisterStaticFilesArgs(strSet);
         
         const promiseRegisterStaticFiles: Promise<ResultAsync<RegisterStaticFilesResponse, Error>> = new Promise((resolve, _unusedReject) => {
-            this.client.registerStaticFiles(args, (error: grpc.ServiceError, response: RegisterStaticFilesResponse) => {
+            this.client.registerStaticFiles(args, (error: grpc.ServiceError | null, response?: RegisterStaticFilesResponse) => {
                 if (error === null) {
-                    resolve(okAsync(response));
+                    if (!response) {
+                        resolve(errAsync(new Error("No error was encountered but the response was still falsy; this should never happen")));
+                    } else {
+                        resolve(okAsync(response!));
+                    }
                 } else {
                     resolve(errAsync(error));
                 }
@@ -126,7 +138,7 @@ export class NetworkContext {
         }
         const resp: RegisterStaticFilesResponse = resultRegisterStaticFiles.value;
 
-        const staticFileDestRelativeFilepathsMap: Map<string, string> = resp.getStaticFileDestRelativeFilepathsMap();
+        const staticFileDestRelativeFilepathsMap: jspb.Map<string, string> = resp.getStaticFileDestRelativeFilepathsMap();
         for (let [staticFileIdStr, destFilepathRelativeToEnclaveVolRoot] of staticFileDestRelativeFilepathsMap.entries()) {
 
             const staticFileId: StaticFileID = <StaticFileID>(staticFileIdStr);
@@ -134,12 +146,12 @@ export class NetworkContext {
             if (!staticFileFilepaths.has(staticFileId)) {
                 return err(new Error("No source filepath found for static file " + staticFileId + "; this is a bug in Kurtosis"));
             }
-            const srcAbsFilepath: string = staticFileFilepaths[staticFileId];
+            const srcAbsFilepath: string = staticFileFilepaths.get(staticFileId)!;
 
             const destAbsFilepath: string = path.join(this.enclaveDataVolMountpoint, destFilepathRelativeToEnclaveVolRoot);
             
             const promiseStatDestAbsFilepath: Promise<ResultAsync<fs.Stats, Error>> = new Promise((resolve, _unusedReject) => {
-                fs.stat(destAbsFilepath, (error: Error, response: fs.Stats) => {
+                fs.stat(destAbsFilepath, (error: Error | null, response: fs.Stats) => {
                     if (error === null) {
                         resolve(okAsync(response));
                     } else {
@@ -154,9 +166,9 @@ export class NetworkContext {
             }
     
             const promiseOpenSrcFp: Promise<ResultAsync<number, Error>> = new Promise((resolve, _unusedReject) => {
-                fs.open(srcAbsFilepath, 'r', (error: Error, response: number) => {
+                fs.open(srcAbsFilepath, 'r', (error: Error | null, fd: number) => {
                     if (error === null) {
-                        resolve(okAsync(response));
+                        resolve(okAsync(fd));
                     } else {
                         resolve(errAsync(error));
                     }
@@ -171,7 +183,7 @@ export class NetworkContext {
             try {
 
                 const promiseOpenDestFp: Promise<ResultAsync<number, Error>> = new Promise((resolve, _unusedReject) => {
-                    fs.open(destAbsFilepath, 'w', (error: Error, response: number) => {
+                    fs.open(destAbsFilepath, 'w', (error: Error | null, response: number) => {
                         if (error === null) {
                             resolve(okAsync(response));
                         } else {
@@ -188,7 +200,7 @@ export class NetworkContext {
                 try {
 
                     const promiseCopyFile: Promise<ResultAsync<null, Error>> = new Promise((resolve, _unusedReject) => {
-                        fs.copyFile(srcAbsFilepath, destAbsFilepath, (error: Error) => {
+                        fs.copyFile(srcAbsFilepath, destAbsFilepath, (error: Error | null) => {
                             if (error === null) {
                                 resolve(okAsync(null));
                             } else {
@@ -216,20 +228,24 @@ export class NetworkContext {
     public async registerFilesArtifacts(filesArtifactUrls: Map<FilesArtifactID, string>): Promise<Result<null,Error>> {
         const filesArtifactIdStrsToUrls: Map<string, string> = new Map();
         for (let [artifactId, url] of filesArtifactUrls.entries()) {
-            filesArtifactIdStrsToUrls[String(artifactId)] = url;
+            filesArtifactIdStrsToUrls.set(String(artifactId), url);
         }
         const args: RegisterFilesArtifactsArgs = newRegisterFilesArtifactsArgs(filesArtifactIdStrsToUrls);
         
-        const promiseRegisterFilesArtifacts: Promise<ResultAsync<google_protobuf_empty_pb, Error>> = new Promise((resolve, _unusedReject) => {
-            this.client.registerFilesArtifacts(args, (error: grpc.ServiceError, response: google_protobuf_empty_pb) => {
+        const promiseRegisterFilesArtifacts: Promise<ResultAsync<google_protobuf_empty_pb.Empty, Error>> = new Promise((resolve, _unusedReject) => {
+            this.client.registerFilesArtifacts(args, (error: grpc.ServiceError | null, response?: google_protobuf_empty_pb.Empty) => {
                 if (error === null) {
-                    resolve(okAsync(response));
+                    if (!response) {
+                        resolve(errAsync(new Error("No error was encountered but the response was still falsy; this should never happen")));
+                    } else {
+                        resolve(okAsync(response!));
+                    }
                 } else {
                     resolve(errAsync(error));
                 }
             })
         });
-        const resultRegisterFilesArtifacts: Result<google_protobuf_empty_pb, Error> = await promiseRegisterFilesArtifacts;
+        const resultRegisterFilesArtifacts: Result<google_protobuf_empty_pb.Empty, Error> = await promiseRegisterFilesArtifacts;
         if (!resultRegisterFilesArtifacts.isOk()) {
             return err(resultRegisterFilesArtifacts.error);
         }
@@ -270,9 +286,13 @@ export class NetworkContext {
         const registerServiceArgs: RegisterServiceArgs = newRegisterServiceArgs(serviceId, partitionId);
 
         const promiseRegisterService: Promise<ResultAsync<RegisterServiceResponse, Error>> = new Promise((resolve, _unusedReject) => {
-            this.client.registerService(registerServiceArgs, (error: grpc.ServiceError, response: RegisterServiceResponse) => {
+            this.client.registerService(registerServiceArgs, (error: grpc.ServiceError | null, response?: RegisterServiceResponse) => {
                 if (error === null) {
-                    resolve(okAsync(response));
+                    if (!response) {
+                        resolve(errAsync(new Error("No error was encountered but the response was still falsy; this should never happen")));
+                    } else {
+                        resolve(okAsync(response!));
+                    }
                 } else {
                     resolve(errAsync(error));
                 }
@@ -326,12 +346,12 @@ export class NetworkContext {
                 return err(new Error("Needed to initialize file for file ID " + fileId +  ", but no generated file filepaths were " +
                 "found for that file ID; this is a Kurtosis bug"));
             }
-            const filepaths: GeneratedFileFilepaths = generatedFileFilepaths[fileId];
+            const filepaths: GeneratedFileFilepaths = generatedFileFilepaths.get(fileId)!;
 
             const promiseOpenFp: Promise<ResultAsync<number, Error>> = new Promise((resolve, _unusedReject) => {
-                fs.open(filepaths.getAbsoluteFilepathHere(), 'r', (error: Error, response: number) => {
+                fs.open(filepaths.getAbsoluteFilepathHere(), 'r', (error: Error | null, fd: number) => {
                     if (error === null) {
-                        resolve(okAsync(response));
+                        resolve(okAsync(fd));
                     } else {
                         resolve(errAsync(error));
                     }
@@ -348,7 +368,7 @@ export class NetworkContext {
                 return err(initalizingFuncResult.error);
             }
 
-            generatedFileAbsFilepathsOnService[fileId] = filepaths.getAbsoluteFilepathOnServiceContainer();
+            generatedFileAbsFilepathsOnService.set(fileId, filepaths.getAbsoluteFilepathOnServiceContainer());
         }
         log.trace("Successfully initialized generated files in suite execution volume");
 
@@ -362,7 +382,7 @@ export class NetworkContext {
         const artifactIdStrToMountDirpath: Map<string, string> = new Map();
         for (let [filesArtifactId, mountDirpath] of containerCreationConfig.getFilesArtifactMountpoints().entries()) {
 
-            artifactIdStrToMountDirpath[String(filesArtifactId)] = mountDirpath;
+            artifactIdStrToMountDirpath.set(String(filesArtifactId), mountDirpath);
         }
         log.trace("Successfully created files artifact ID str -> mount dirpaths map");
 
@@ -378,9 +398,13 @@ export class NetworkContext {
             artifactIdStrToMountDirpath);
 
         const promiseStartService: Promise<ResultAsync<StartServiceResponse, Error>> = new Promise((resolve, _unusedReject) => {
-            this.client.startService(startServiceArgs, (error: Error, response: StartServiceResponse) => {
+            this.client.startService(startServiceArgs, (error: Error | null, response?: StartServiceResponse) => {
                 if (error === null) {
-                    resolve(okAsync(response));
+                    if (!response) {
+                        resolve(errAsync(new Error("No error was encountered but the response was still falsy; this should never happen")));
+                    } else {
+                        resolve(okAsync(response!));
+                    }
                 } else {
                     resolve(errAsync(error));
                 }
@@ -394,7 +418,11 @@ export class NetworkContext {
         log.trace("Successfully started service with Kurtosis API");
 
         const resp: StartServiceResponse = resultStartService.value;
-        return ok([serviceContext, resp.getUsedPortsHostPortBindingsMap()]);
+        const resultMap: Map<string, PortBinding> = new Map();
+        for (const [key, value] of resp.getUsedPortsHostPortBindingsMap().entries()) {
+            resultMap.set(key, value);
+        }
+        return ok<[ServiceContext, Map<string, PortBinding>], Error>([serviceContext, resultMap]);
     }
 
     // Docs available at https://docs.kurtosistech.com/kurtosis-libs/lib-documentation
@@ -402,9 +430,13 @@ export class NetworkContext {
         const getServiceInfoArgs: GetServiceInfoArgs = newGetServiceInfoArgs(serviceId);
         
         const promiseGetServiceInfo: Promise<ResultAsync<GetServiceInfoResponse, Error>> = new Promise((resolve, _unusedReject) => {
-            this.client.getServiceInfo(getServiceInfoArgs, (error: Error, response: GetServiceInfoResponse) => {
+            this.client.getServiceInfo(getServiceInfoArgs, (error: Error | null, response?: GetServiceInfoResponse) => {
                 if (error === null) {
-                    resolve(okAsync(response));
+                    if (!response) {
+                        resolve(errAsync(new Error("No error was encountered but the response was still falsy; this should never happen")));
+                    } else {
+                        resolve(okAsync(response!));
+                    }
                 } else {
                     resolve(errAsync(error));
                 }
@@ -451,16 +483,16 @@ export class NetworkContext {
         // Independent of adding/removing them from the network
         const args: RemoveServiceArgs = newRemoveServiceArgs(serviceId, containerStopTimeoutSeconds);
         
-        const promiseRemoveService: Promise<ResultAsync<google_protobuf_empty_pb, Error>> = new Promise((resolve, _unusedReject) => {
-            this.client.removeService(args, (error: Error, response: google_protobuf_empty_pb) => {
+        const removeServicePromise: Promise<ResultAsync<null, Error>> = new Promise((resolve, _unusedReject) => {
+            this.client.removeService(args, (error: Error | null, _unusedResponse?: google_protobuf_empty_pb.Empty) => {
                 if (error === null) {
-                    resolve(okAsync(response));
+                    resolve(okAsync(null));
                 } else {
                     resolve(errAsync(error));
                 }
             })
         });
-        const resultRemoveService: Result<google_protobuf_empty_pb, Error> = await promiseRemoveService;
+        const resultRemoveService: Result<null, Error> = await removeServicePromise;
         if (!resultRemoveService.isOk()) {
             return err(resultRemoveService.error);
         }
@@ -492,7 +524,7 @@ export class NetworkContext {
         for (let [partitionId, serviceIdSet] of partitionServices.entries()) {
 
             const partitionIdStr: string = String(partitionId);
-            reqPartitionServices[partitionIdStr] = newPartitionServices(serviceIdSet);
+            reqPartitionServices.set(partitionIdStr, newPartitionServices(serviceIdSet));
         }
 
         const reqPartitionConns: Map<string, PartitionConnections> = new Map();
@@ -502,25 +534,25 @@ export class NetworkContext {
             for (let [partitionBId, connInfo] of partitionAConnsMap.entries()) {
 
                 const partitionBIdStr: string = String(partitionBId);
-                partitionAConnsStrMap[partitionBIdStr] = connInfo;
+                partitionAConnsStrMap.set(partitionBIdStr, connInfo);
             }
             const partitionAConns: PartitionConnections = newPartitionConnections(partitionAConnsStrMap);
             const partitionAIdStr: string = String(partitionAId);
-            reqPartitionConns[partitionAIdStr] = partitionAConns;
+            reqPartitionConns.set(partitionAIdStr, partitionAConns);
         }
 
         const repartitionArgs: RepartitionArgs = newRepartitionArgs(reqPartitionServices, reqPartitionConns, defaultConnection);
 
-        const promiseRepartition: Promise<ResultAsync<google_protobuf_empty_pb, Error>> = new Promise((resolve, _unusedReject) => {
-            this.client.repartition(repartitionArgs, (error: Error, response: google_protobuf_empty_pb) => {
+        const promiseRepartition: Promise<ResultAsync<null, Error>> = new Promise((resolve, _unusedReject) => {
+            this.client.repartition(repartitionArgs, (error: Error | null, _unusedResponse?: google_protobuf_empty_pb.Empty) => {
                 if (error === null) {
-                    resolve(okAsync(response));
+                    resolve(okAsync(null));
                 } else {
                     resolve(errAsync(error));
                 }
             })
         });
-        const resultRepartition: Result<google_protobuf_empty_pb, Error> = await promiseRepartition;
+        const resultRepartition: Result<null, Error> = await promiseRepartition;
         if (!resultRepartition.isOk()) {
             return err(resultRepartition.error);
         }
@@ -550,16 +582,16 @@ export class NetworkContext {
             retriesDelayMilliseconds,
             bodyText);
 
-        const promiseWaitForEndpointAvailability: Promise<ResultAsync<google_protobuf_empty_pb, Error>> = new Promise((resolve, _unusedReject) => {
-            this.client.waitForEndpointAvailability(availabilityArgs, (error: Error, response: google_protobuf_empty_pb) => {
+        const promiseWaitForEndpointAvailability: Promise<ResultAsync<null, Error>> = new Promise((resolve, _unusedReject) => {
+            this.client.waitForEndpointAvailability(availabilityArgs, (error: Error | null, _unusedResponse?: google_protobuf_empty_pb.Empty) => {
                 if (error === null) {
-                    resolve(okAsync(response));
+                    resolve(okAsync(null));
                 } else {
                     resolve(errAsync(error));
                 }
             })
         });
-        const resultWaitForEndpointAvailability: Result<google_protobuf_empty_pb, Error> = await promiseWaitForEndpointAvailability;
+        const resultWaitForEndpointAvailability: Result<null, Error> = await promiseWaitForEndpointAvailability;
         if (!resultWaitForEndpointAvailability.isOk()) {
             return err(resultWaitForEndpointAvailability.error);
         }
@@ -572,16 +604,16 @@ export class NetworkContext {
 
         const args: ExecuteBulkCommandsArgs = newExecuteBulkCommandsArgs(bulkCommandsJson);
         
-        const promiseExecuteBulkCommands: Promise<ResultAsync<google_protobuf_empty_pb, Error>> = new Promise((resolve, _unusedReject) => {
-            this.client.executeBulkCommands(args, (error: Error, response: google_protobuf_empty_pb) => {
+        const promiseExecuteBulkCommands: Promise<ResultAsync<null, Error>> = new Promise((resolve, _unusedReject) => {
+            this.client.executeBulkCommands(args, (error: Error | null, _unusedResponse?: google_protobuf_empty_pb.Empty) => {
                 if (error === null) {
-                    resolve(okAsync(response));
+                    resolve(okAsync(null));
                 } else {
                     resolve(errAsync(error));
                 }
             })
         });
-        const resultExecuteBulkCommands: Result<google_protobuf_empty_pb, Error> = await promiseExecuteBulkCommands;
+        const resultExecuteBulkCommands: Result<null, Error> = await promiseExecuteBulkCommands;
         if (!resultExecuteBulkCommands.isOk()) {
             return err(resultExecuteBulkCommands.error);
         }
