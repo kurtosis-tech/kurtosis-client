@@ -1,5 +1,9 @@
 # TBD
 
+# 0.13.3
+### Changes
+* Updated the index.ts to export ContainerRunConfig + ContainerCreationConfig
+
 # 0.13.2
 ### Features
 * Set Typescript strict mode, for safer code
