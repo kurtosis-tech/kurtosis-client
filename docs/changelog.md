@@ -1,8 +1,20 @@
 # TBD
+
+# 0.13.2
+### Features
+* Set Typescript strict mode, for safer code
+
+### Fixes
+* Fixed a bunch of bugs that were exposed via strict mode
+
+# 0.13.1
 ### Changes
 * Replace custom docs-checking job with Kurtosis docs-checker orb
 * Use the devtools script for updating package versions
 * Updated the index.ts to export ContainerRunConfig + ContainerCreationConfig
+
+### Fixes
+* Fixed Node engine dependency in Typescript library to be `>=14.17.0`
 
 # 0.13.0
 ### Features

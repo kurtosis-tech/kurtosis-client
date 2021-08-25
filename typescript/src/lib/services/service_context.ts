@@ -6,7 +6,7 @@ import { newExecCommandArgs, newGenerateFilesArgs, newFileGenerationOptions, new
 import { okAsync, errAsync, ResultAsync, ok, err, Result } from 'neverthrow';
 import * as grpc from "grpc";
 import * as path from "path";
-
+import * as jspb from "google-protobuf";
 
 // Docs available at https://docs.kurtosistech.com/kurtosis-libs/lib-documentation
 export class GeneratedFileFilepaths {
@@ -68,9 +68,13 @@ export class ServiceContext {
         const args: ExecCommandArgs = newExecCommandArgs(serviceId, command);
 
         const promiseExecCommand: Promise<ResultAsync<ExecCommandResponse, Error>> = new Promise((resolve, _unusedReject) => {
-            this.client.execCommand(args, (error: grpc.ServiceError, response: ExecCommandResponse) => {
+            this.client.execCommand(args, (error: grpc.ServiceError | null, response?: ExecCommandResponse) => {
                 if (error === null) {
-                    resolve(okAsync(response));
+                    if (!response) {
+                        resolve(errAsync(new Error("No error was encountered but the response was still falsy; this should never happen")));
+                    } else {
+                        resolve(okAsync(response!));
+                    }
                 } else {
                     resolve(errAsync(error));
                 }
@@ -98,9 +102,13 @@ export class ServiceContext {
         const args: GenerateFilesArgs = newGenerateFilesArgs(serviceId, fileGenerationOpts);
 
         const promiseGenerateFiles: Promise<ResultAsync<GenerateFilesResponse, Error>> = new Promise((resolve, _unusedReject) => {
-            this.client.generateFiles(args, (error: grpc.ServiceError, response: GenerateFilesResponse) => {
+            this.client.generateFiles(args, (error: grpc.ServiceError | null, response?: GenerateFilesResponse) => {
                 if (error === null) {
-                    resolve(okAsync(response));
+                    if (!response) {
+                        resolve(errAsync(new Error("No error was encountered but the response was still falsy; this should never happen")));
+                    } else {
+                        resolve(okAsync(response!));
+                    }
                 } else {
                     resolve(errAsync(error));
                 }
@@ -112,7 +120,7 @@ export class ServiceContext {
         } 
         const resp: GenerateFilesResponse = resultGenerateFiles.value;
 
-        const generatedFileRelativeFilepaths: Map<string, string> = resp.getGeneratedFileRelativeFilepathsMap();
+        const generatedFileRelativeFilepaths: jspb.Map<string, string> = resp.getGeneratedFileRelativeFilepathsMap();
 
         const result: Map<string, GeneratedFileFilepaths> = new Map();
         for (let fileId in filesToGenerateSet) {
@@ -123,7 +131,7 @@ export class ServiceContext {
                     )
                 );
             }
-            const relativeFilepath: string = generatedFileRelativeFilepaths[fileId];
+            const relativeFilepath: string = generatedFileRelativeFilepaths.get(fileId)!;
 
             const absFilepathHere: string = path.join(this.enclaveDataVolMountpointHere, relativeFilepath);
             const absFilepathOnService: string = path.join(this.enclaveDataVolMountpointOnServiceContainer, relativeFilepath);
@@ -136,17 +144,21 @@ export class ServiceContext {
     // Docs available at https://docs.kurtosistech.com/kurtosis-libs/lib-documentation
     public async loadStaticFiles(usedStaticFilesSet: Set<StaticFileID>): Promise<Result<Map<StaticFileID, string>, Error>> { 
         const serviceId: ServiceID = this.serviceId;
-        const staticFilesToCopyStringSet: Map<string, boolean> = new Map(); 
+        const staticFilesToCopyStringSet: Map<string, boolean> = new Map<string, boolean>(); 
         for (let staticFileId in usedStaticFilesSet) {
-            staticFilesToCopyStringSet[String(staticFileId)] = true;
+            staticFilesToCopyStringSet.set(String(staticFileId), true);
         }
 
         const loadStaticFilesArgs: LoadStaticFilesArgs = newLoadStaticFilesArgs(serviceId, staticFilesToCopyStringSet);
         
         const promiseLoadStaticFiles: Promise<ResultAsync<LoadStaticFilesResponse, Error>> = new Promise((resolve, _unusedReject) => {
-            this.client.loadStaticFiles(loadStaticFilesArgs, (error: grpc.ServiceError, response: LoadStaticFilesResponse) => {
+            this.client.loadStaticFiles(loadStaticFilesArgs, (error: grpc.ServiceError | null, response?: LoadStaticFilesResponse) => {
                 if (error === null) {
-                    resolve(okAsync(response));
+                    if (!response) {
+                        resolve(errAsync(new Error("No error was encountered but the response was still falsy; this should never happen")));
+                    } else {
+                        resolve(okAsync(response!));
+                    }
                 } else {
                     resolve(errAsync(error));
                 }
@@ -161,7 +173,7 @@ export class ServiceContext {
         const staticFileAbsFilepathsOnService: Map<StaticFileID, string> = new Map();
         for (let [staticFileId, filepathRelativeToExVolRoot] of loadStaticFilesResp.getCopiedStaticFileRelativeFilepathsMap().entries()) {
             const absFilepathOnContainer: string = path.join(this.enclaveDataVolMountpointOnServiceContainer, filepathRelativeToExVolRoot);
-            staticFileAbsFilepathsOnService[<StaticFileID>(staticFileId)] = absFilepathOnContainer;
+            staticFileAbsFilepathsOnService.set(<StaticFileID>(staticFileId), absFilepathOnContainer);
         }
         return ok(staticFileAbsFilepathsOnService);
 

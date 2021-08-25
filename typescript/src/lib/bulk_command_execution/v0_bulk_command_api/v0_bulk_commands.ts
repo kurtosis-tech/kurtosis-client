@@ -10,7 +10,7 @@ import * as protobuf from "google-protobuf";
 // Visitor that will be used to deserialize command args into
 class CmdArgDeserializingVisitor implements V0CommandTypeVisitor {
     private readonly bytesToDeserialize: string;
-    private deserializedCommandArgsPtr: protobuf.Message;
+    private deserializedCommandArgsPtr?: protobuf.Message;
 
     constructor (bytesToDeserialize: string) {
         this.bytesToDeserialize = bytesToDeserialize;
@@ -159,8 +159,11 @@ class CmdArgDeserializingVisitor implements V0CommandTypeVisitor {
         return ok(null);
     }
 
-    public getDeserializedCommandArgs(): protobuf.Message {
-        return this.deserializedCommandArgsPtr;
+    public getDeserializedCommandArgs(): Result<protobuf.Message, Error> {
+        if (!this.deserializedCommandArgsPtr) {
+            return err(new Error("Deserialized command args pointer was falsy; this indicates that it was never set through a visitor method, which should never happen"));
+        }
+        return ok(this.deserializedCommandArgsPtr!);
     }
 }
 

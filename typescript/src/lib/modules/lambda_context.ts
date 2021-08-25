@@ -21,9 +21,13 @@ export class LambdaContext {
         const args: ExecuteLambdaArgs = newExecuteLambdaArgs(this.lambdaId, serializedParams);
 
         const promiseExecuteLambda: Promise<ResultAsync<ExecuteLambdaResponse, Error>> = new Promise((resolve, _unusedReject) => {
-            this.client.executeLambda(args, (error: grpc.ServiceError, response: ExecuteLambdaResponse) => {
+            this.client.executeLambda(args, (error: grpc.ServiceError | null, response?: ExecuteLambdaResponse) => {
                 if (error === null) {
-                    resolve(okAsync(response));
+                    if (!response) {
+                        resolve(errAsync(new Error("No error was encountered but the response was still falsy; this should never happen")));
+                    } else {
+                        resolve(okAsync(response!));
+                    }
                 } else {
                     resolve(errAsync(error));
                 }
