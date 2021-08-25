@@ -1,4 +1,6 @@
 # TBD
+### Changes
+* Updated the index.ts to export ContainerRunConfig + ContainerCreationConfig
 
 # 0.13.2
 ### Features
@@ -11,7 +13,6 @@
 ### Changes
 * Replace custom docs-checking job with Kurtosis docs-checker orb
 * Use the devtools script for updating package versions
-* Updated the index.ts to export ContainerRunConfig + ContainerCreationConfig
 
 ### Fixes
 * Fixed Node engine dependency in Typescript library to be `>=14.17.0`
