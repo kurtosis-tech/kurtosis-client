@@ -1,5 +1,9 @@
 # TBD
 
+### Changes
+* Fixing semantical errors in kurtosis-client typescript files (i.e. for ... in loops, etc...)
+* Small update to index.ts that only holds a list of export statements instead of imports and exports
+
 # 0.13.2
 ### Features
 * Set Typescript strict mode, for safer code
