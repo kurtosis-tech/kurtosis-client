@@ -1,5 +1,5 @@
-import { ContainerRunConfigBuilder } from "./lib/services/container_run_config";
-import { StaticFileID, FilesArtifactID, ContainerCreationConfigBuilder } from "./lib/services/container_creation_config";
+import { ContainerRunConfigBuilder, ContainerRunConfig } from "./lib/services/container_run_config";
+import { StaticFileID, FilesArtifactID, ContainerCreationConfigBuilder, ContainerCreationConfig } from "./lib/services/container_creation_config";
 import { ServiceID } from "./lib/services/service";
 import { GeneratedFileFilepaths, ServiceContext } from "./lib/services/service_context";
 import { Network } from "./lib/networks/network";
@@ -14,9 +14,9 @@ import { PartitionConnections, FileGenerationOptions, PortBinding } from "./kurt
 
 //Services
 export { StaticFileID, FilesArtifactID, ContainerCreationConfigBuilder }; 
-export { ContainerRunConfigBuilder };
+export { ContainerRunConfigBuilder, ContainerRunConfig };
 export { ServiceID };
-export { GeneratedFileFilepaths, ServiceContext };
+export { GeneratedFileFilepaths, ServiceContext, ContainerCreationConfig };
 
 //Networks
 export { Network };
