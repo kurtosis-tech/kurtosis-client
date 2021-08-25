@@ -2,6 +2,7 @@
 ### Changes
 * Replace custom docs-checking job with Kurtosis docs-checker orb
 * Use the devtools script for updating package versions
+* Updated the index.ts to export ContainerRunConfig + ContainerCreationConfig
 
 # 0.13.0
 ### Features
