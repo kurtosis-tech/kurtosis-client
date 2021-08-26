@@ -1,5 +1,7 @@
 # TBD
 
+# 0.13.4
+
 ### Changes
 * Fixing semantical errors in kurtosis-client typescript files (i.e. for ... in loops, mutability with consts vs let, JSON error messages, etc...)
 * Small update to index.ts that only holds a list of export statements instead of imports and exports
