@@ -1,5 +1,8 @@
 # TBD
 
+### Changes
+* Updated the index.ts again to export ContainerRunConfig + ContainerCreationConfig (merging things together removed these exports)
+
 # 0.13.4
 
 ### Changes
