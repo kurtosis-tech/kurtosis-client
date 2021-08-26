@@ -97,7 +97,7 @@ export class NetworkContext {
     // Docs available at https://docs.kurtosistech.com/kurtosis-libs/lib-documentation
     public async registerStaticFiles(staticFileFilepaths: Map<StaticFileID, string>): Promise<Result<null, Error>> {
         const strSet: Map<string, boolean> = new Map();
-        for (let [staticFileId, srcAbsFilepath] of staticFileFilepaths.entries()) {
+        for (const [staticFileId, srcAbsFilepath] of staticFileFilepaths.entries()) {
             
             // Sanity-check that the source filepath exists
             const promiseStatSrcAbsFilepath: Promise<ResultAsync<fs.Stats, Error>> = new Promise((resolve, _unusedReject) => {
@@ -139,7 +139,7 @@ export class NetworkContext {
         const resp: RegisterStaticFilesResponse = resultRegisterStaticFiles.value;
 
         const staticFileDestRelativeFilepathsMap: jspb.Map<string, string> = resp.getStaticFileDestRelativeFilepathsMap();
-        for (let [staticFileIdStr, destFilepathRelativeToEnclaveVolRoot] of staticFileDestRelativeFilepathsMap.entries()) {
+        for (const [staticFileIdStr, destFilepathRelativeToEnclaveVolRoot] of staticFileDestRelativeFilepathsMap.entries()) {
 
             const staticFileId: StaticFileID = <StaticFileID>(staticFileIdStr);
 
@@ -227,7 +227,7 @@ export class NetworkContext {
     // Docs available at https://docs.kurtosistech.com/kurtosis-libs/lib-documentation
     public async registerFilesArtifacts(filesArtifactUrls: Map<FilesArtifactID, string>): Promise<Result<null,Error>> {
         const filesArtifactIdStrsToUrls: Map<string, string> = new Map();
-        for (let [artifactId, url] of filesArtifactUrls.entries()) {
+        for (const [artifactId, url] of filesArtifactUrls.entries()) {
             filesArtifactIdStrsToUrls.set(String(artifactId), url);
         }
         const args: RegisterFilesArtifactsArgs = newRegisterFilesArtifactsArgs(filesArtifactIdStrsToUrls);
@@ -318,7 +318,7 @@ export class NetworkContext {
         const usedStaticFilesMap: Set<string> = containerCreationConfig.getUsedStaticFiles();
 
         const usedStaticFiles: Set<string> = new Set();
-        for (let usedStaticFilesId in usedStaticFilesMap) {
+        for (const usedStaticFilesId of usedStaticFilesMap) {
             usedStaticFiles.add(usedStaticFilesId);
         }
 
@@ -331,7 +331,7 @@ export class NetworkContext {
 
         log.trace("Initializing generated files...");
         const filesToGenerate: Set<string> = new Set();
-        for (let fileId in containerCreationConfig.getFileGeneratingFuncs()) {
+        for (const fileId of containerCreationConfig.getFileGeneratingFuncs().keys()) {
             filesToGenerate.add(fileId);
         }
         const resultGenerateFiles: Result<Map<string, GeneratedFileFilepaths>, Error> = await serviceContext.generateFiles(filesToGenerate);
@@ -340,7 +340,7 @@ export class NetworkContext {
         }
         const generatedFileFilepaths: Map<string, GeneratedFileFilepaths> = resultGenerateFiles.value;
         const generatedFileAbsFilepathsOnService: Map<string, string> = new Map();
-        for (let [fileId, initializingFunc] of containerCreationConfig.getFileGeneratingFuncs().entries()) {
+        for (const [fileId, initializingFunc] of containerCreationConfig.getFileGeneratingFuncs().entries()) {
 
             if (!generatedFileFilepaths.has(fileId)) {
                 return err(new Error("Needed to initialize file for file ID " + fileId +  ", but no generated file filepaths were " +
@@ -380,7 +380,7 @@ export class NetworkContext {
 
         log.trace("Creating files artifact ID str -> mount dirpaths map...");
         const artifactIdStrToMountDirpath: Map<string, string> = new Map();
-        for (let [filesArtifactId, mountDirpath] of containerCreationConfig.getFilesArtifactMountpoints().entries()) {
+        for (const [filesArtifactId, mountDirpath] of containerCreationConfig.getFilesArtifactMountpoints().entries()) {
 
             artifactIdStrToMountDirpath.set(String(filesArtifactId), mountDirpath);
         }
@@ -521,17 +521,17 @@ export class NetworkContext {
         }
 
         const reqPartitionServices: Map<string, PartitionServices> = new Map();
-        for (let [partitionId, serviceIdSet] of partitionServices.entries()) {
+        for (const [partitionId, serviceIdSet] of partitionServices.entries()) {
 
             const partitionIdStr: string = String(partitionId);
             reqPartitionServices.set(partitionIdStr, newPartitionServices(serviceIdSet));
         }
 
         const reqPartitionConns: Map<string, PartitionConnections> = new Map();
-        for (let [partitionAId, partitionAConnsMap] of partitionConnections.entries()) {
+        for (const [partitionAId, partitionAConnsMap] of partitionConnections.entries()) {
             
             const partitionAConnsStrMap: Map<string, PartitionConnectionInfo> = new Map();
-            for (let [partitionBId, connInfo] of partitionAConnsMap.entries()) {
+            for (const [partitionBId, connInfo] of partitionAConnsMap.entries()) {
 
                 const partitionBIdStr: string = String(partitionBId);
                 partitionAConnsStrMap.set(partitionBIdStr, connInfo);
