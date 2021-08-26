@@ -331,7 +331,7 @@ export class NetworkContext {
 
         log.trace("Initializing generated files...");
         const filesToGenerate: Set<string> = new Set();
-        for (const [fileId, _] of containerCreationConfig.getFileGeneratingFuncs().entries()) {
+        for (const fileId of containerCreationConfig.getFileGeneratingFuncs().keys()) {
             filesToGenerate.add(fileId);
         }
         const resultGenerateFiles: Result<Map<string, GeneratedFileFilepaths>, Error> = await serviceContext.generateFiles(filesToGenerate);
