@@ -19,7 +19,7 @@ export function newExecCommandArgs(serviceId: ServiceID, command: string[]): Exe
 export function newGenerateFilesArgs(serviceId: ServiceID, fileGenerationOpts: Map<string, FileGenerationOptions>): GenerateFilesArgs {
     const result: GenerateFilesArgs = new GenerateFilesArgs();
     result.setServiceId(String(serviceId)); 
-    for (let [fileID, fileGenerationsOptions] of fileGenerationOpts.entries()) {
+    for (const [fileID, fileGenerationsOptions] of fileGenerationOpts.entries()) {
         result.getFilesToGenerateMap().set(fileID, fileGenerationsOptions);
     }
     
@@ -37,7 +37,7 @@ export function newLoadStaticFilesArgs(serviceId: ServiceID, staticFilesToCopySt
     const result: LoadStaticFilesArgs = new LoadStaticFilesArgs();
     result.setServiceId(String(serviceId));
     const staticFilesMap: jspb.Map<string, boolean> = result.getStaticFilesMap();
-    for (let staticFileID of staticFilesToCopyStringSet.keys()) {
+    for (const staticFileID of staticFilesToCopyStringSet.keys()) {
         staticFilesMap.set(staticFileID, true);
     }
 
@@ -60,7 +60,7 @@ export function newLoadLambdaArgs(lambdaId: LambdaID, image: string, serializedP
 export function newRegisterStaticFilesArgs(strSet: Map<string, boolean>): RegisterStaticFilesArgs {
     const result: RegisterStaticFilesArgs = new RegisterStaticFilesArgs();
     const staticFilesSetMap: jspb.Map<string, boolean> = result.getStaticFilesSetMap();
-    for (let staticFileID of strSet.keys()) {
+    for (const staticFileID of strSet.keys()) {
         staticFilesSetMap.set(staticFileID, true);
     }
 
@@ -70,7 +70,7 @@ export function newRegisterStaticFilesArgs(strSet: Map<string, boolean>): Regist
 export function newRegisterFilesArtifactsArgs(filesArtifactIdStrsToUrls: Map<string, string>): RegisterFilesArtifactsArgs {
     const result: RegisterFilesArtifactsArgs = new RegisterFilesArtifactsArgs();
     const filesArtifactUrlsMap: jspb.Map<string, string> = result.getFilesArtifactUrlsMap();
-    for (let [artifactId, artifactUrl] of filesArtifactIdStrsToUrls.entries()) {
+    for (const [artifactId, artifactUrl] of filesArtifactIdStrsToUrls.entries()) {
         filesArtifactUrlsMap.set(artifactId, artifactUrl);
     }
     return result;
@@ -97,24 +97,24 @@ export function newStartServiceArgs(
     result.setServiceId(String(serviceId));
     result.setDockerImage(dockerImage);
     const usedPortsMap: jspb.Map<string, boolean> = result.getUsedPortsMap();
-    for (let portId of usedPorts) {
+    for (const portId of usedPorts) {
         usedPortsMap.set(portId, true);
     }
     const entrypointArgsArray: string[] = result.getEntrypointArgsList();
-    for (let entryPoint of entrypointArgs) {
+    for (const entryPoint of entrypointArgs) {
         entrypointArgsArray.push(entryPoint);
     }
     const cmdArgsArray: string[] = result.getCmdArgsList();
-    for (let cmdArg of cmdArgs) {
+    for (const cmdArg of cmdArgs) {
         cmdArgsArray.push(cmdArg);
     }
     const dockerEnvVarArray: jspb.Map<string, string> = result.getDockerEnvVarsMap();
-    for (let [name, value] of dockerEnvVars.entries()) {
+    for (const [name, value] of dockerEnvVars.entries()) {
         dockerEnvVarArray.set(name, value);
     }
     result.setEnclaveDataVolMntDirpath(enclaveDataVolMntDirpath);
     const filesArtificatMountDirpathsMap: jspb.Map<string, string> = result.getFilesArtifactMountDirpathsMap();
-    for (let [artifactId, mountDirpath] of filesArtifactMountDirpaths.entries()) {
+    for (const [artifactId, mountDirpath] of filesArtifactMountDirpaths.entries()) {
         filesArtificatMountDirpathsMap.set(artifactId, mountDirpath);
     }
 
@@ -139,7 +139,7 @@ export function newRemoveServiceArgs(serviceId: ServiceID, containerStopTimeoutS
 export function newPartitionServices(serviceIdStrSet: Set<string>): PartitionServices{
     const result: PartitionServices = new PartitionServices();
     const partitionServicesMap: jspb.Map<string, boolean> = result.getServiceIdSetMap();
-    for (let serviceIdStr of serviceIdStrSet) {
+    for (const serviceIdStr of serviceIdStrSet) {
         partitionServicesMap.set(serviceIdStr, true);
     }
 

@@ -95,7 +95,7 @@ export class ServiceContext {
     public async generateFiles(filesToGenerateSet: Set<string>): Promise<Result<Map<string, GeneratedFileFilepaths>, Error>> {
         const serviceId: ServiceID = this.serviceId;
         const fileGenerationOpts: Map<string, FileGenerationOptions> = new Map();
-        for (let fileId in filesToGenerateSet) {
+        for (const fileId of filesToGenerateSet) {
             fileGenerationOpts.set(fileId, newFileGenerationOptions());
         }
 
@@ -123,7 +123,7 @@ export class ServiceContext {
         const generatedFileRelativeFilepaths: jspb.Map<string, string> = resp.getGeneratedFileRelativeFilepathsMap();
 
         const result: Map<string, GeneratedFileFilepaths> = new Map();
-        for (let fileId in filesToGenerateSet) {
+        for (const fileId of filesToGenerateSet) {
             
             if (!generatedFileRelativeFilepaths.has(fileId)) {
                 return err(new Error(
@@ -145,7 +145,7 @@ export class ServiceContext {
     public async loadStaticFiles(usedStaticFilesSet: Set<StaticFileID>): Promise<Result<Map<StaticFileID, string>, Error>> { 
         const serviceId: ServiceID = this.serviceId;
         const staticFilesToCopyStringSet: Map<string, boolean> = new Map<string, boolean>(); 
-        for (let staticFileId in usedStaticFilesSet) {
+        for (const staticFileId of usedStaticFilesSet) {
             staticFilesToCopyStringSet.set(String(staticFileId), true);
         }
 
@@ -171,7 +171,7 @@ export class ServiceContext {
         const loadStaticFilesResp: LoadStaticFilesResponse = resultLoadStaticFiles.value;
 
         const staticFileAbsFilepathsOnService: Map<StaticFileID, string> = new Map();
-        for (let [staticFileId, filepathRelativeToExVolRoot] of loadStaticFilesResp.getCopiedStaticFileRelativeFilepathsMap().entries()) {
+        for (const [staticFileId, filepathRelativeToExVolRoot] of loadStaticFilesResp.getCopiedStaticFileRelativeFilepathsMap().entries()) {
             const absFilepathOnContainer: string = path.join(this.enclaveDataVolMountpointOnServiceContainer, filepathRelativeToExVolRoot);
             staticFileAbsFilepathsOnService.set(<StaticFileID>(staticFileId), absFilepathOnContainer);
         }

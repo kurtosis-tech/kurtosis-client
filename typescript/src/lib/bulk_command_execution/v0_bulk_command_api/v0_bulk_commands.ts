@@ -22,7 +22,13 @@ class CmdArgDeserializingVisitor implements V0CommandTypeVisitor {
         try {
             args = JSON.parse(this.bytesToDeserialize);
         } catch(jsonErr) {
-            return err(jsonErr);
+            // Sadly, we have to do this because there's no great way to enforce the caught thing being an error
+            // See: https://stackoverflow.com/questions/30469261/checking-for-typeof-error-in-js
+            if (jsonErr && jsonErr.stack && jsonErr.message) {
+                return err(jsonErr as Error);
+            }
+            return err(new Error("Parsing bytesToDeserialize string '" + this.bytesToDeserialize + "' threw an exception, but " +
+                "it's not an Error so we can't report any more information than this"));
         }
 
         this.deserializedCommandArgsPtr = args;
@@ -35,7 +41,13 @@ class CmdArgDeserializingVisitor implements V0CommandTypeVisitor {
         try {
             args = JSON.parse(this.bytesToDeserialize);
         } catch(jsonErr) {
-            return err(jsonErr);
+            // Sadly, we have to do this because there's no great way to enforce the caught thing being an error
+            // See: https://stackoverflow.com/questions/30469261/checking-for-typeof-error-in-js
+            if (jsonErr && jsonErr.stack && jsonErr.message) {
+                return err(jsonErr as Error);
+            }
+            return err(new Error("Parsing bytesToDeserialize string '" + this.bytesToDeserialize + "' threw an exception, but " +
+                "it's not an Error so we can't report any more information than this"));
         }
 
     	this.deserializedCommandArgsPtr = args;
@@ -48,7 +60,13 @@ class CmdArgDeserializingVisitor implements V0CommandTypeVisitor {
         try {
             args = JSON.parse(this.bytesToDeserialize);
         } catch(jsonErr) {
-            return err(jsonErr);
+            // Sadly, we have to do this because there's no great way to enforce the caught thing being an error
+            // See: https://stackoverflow.com/questions/30469261/checking-for-typeof-error-in-js
+            if (jsonErr && jsonErr.stack && jsonErr.message) {
+                return err(jsonErr as Error);
+            }
+            return err(new Error("Parsing bytesToDeserialize string '" + this.bytesToDeserialize + "' threw an exception, but " +
+                "it's not an Error so we can't report any more information than this"));
         }
 
         this.deserializedCommandArgsPtr = args;
@@ -61,7 +79,13 @@ class CmdArgDeserializingVisitor implements V0CommandTypeVisitor {
         try {
             args = JSON.parse(this.bytesToDeserialize);
         } catch(jsonErr) {
-            return err(jsonErr);
+            // Sadly, we have to do this because there's no great way to enforce the caught thing being an error
+            // See: https://stackoverflow.com/questions/30469261/checking-for-typeof-error-in-js
+            if (jsonErr && jsonErr.stack && jsonErr.message) {
+                return err(jsonErr as Error);
+            }
+            return err(new Error("Parsing bytesToDeserialize string '" + this.bytesToDeserialize + "' threw an exception, but " +
+                "it's not an Error so we can't report any more information than this"));
         }
 
         this.deserializedCommandArgsPtr = args;
@@ -74,7 +98,13 @@ class CmdArgDeserializingVisitor implements V0CommandTypeVisitor {
         try {
             args = JSON.parse(this.bytesToDeserialize);
         } catch(jsonErr) {
-            return err(jsonErr);
+            // Sadly, we have to do this because there's no great way to enforce the caught thing being an error
+            // See: https://stackoverflow.com/questions/30469261/checking-for-typeof-error-in-js
+            if (jsonErr && jsonErr.stack && jsonErr.message) {
+                return err(jsonErr as Error);
+            }
+            return err(new Error("Parsing bytesToDeserialize string '" + this.bytesToDeserialize + "' threw an exception, but " +
+                "it's not an Error so we can't report any more information than this"));
         }
 
         this.deserializedCommandArgsPtr = args;
@@ -87,7 +117,13 @@ class CmdArgDeserializingVisitor implements V0CommandTypeVisitor {
         try {
             args = JSON.parse(this.bytesToDeserialize);
         } catch(jsonErr) {
-            return err(jsonErr);
+            // Sadly, we have to do this because there's no great way to enforce the caught thing being an error
+            // See: https://stackoverflow.com/questions/30469261/checking-for-typeof-error-in-js
+            if (jsonErr && jsonErr.stack && jsonErr.message) {
+                return err(jsonErr as Error);
+            }
+            return err(new Error("Parsing bytesToDeserialize string '" + this.bytesToDeserialize + "' threw an exception, but " +
+                "it's not an Error so we can't report any more information than this"));
         }
 
         this.deserializedCommandArgsPtr = args;
@@ -100,7 +136,13 @@ class CmdArgDeserializingVisitor implements V0CommandTypeVisitor {
         try {
             args = JSON.parse(this.bytesToDeserialize);
         } catch(jsonErr) {
-            return err(jsonErr);
+            // Sadly, we have to do this because there's no great way to enforce the caught thing being an error
+            // See: https://stackoverflow.com/questions/30469261/checking-for-typeof-error-in-js
+            if (jsonErr && jsonErr.stack && jsonErr.message) {
+                return err(jsonErr as Error);
+            }
+            return err(new Error("Parsing bytesToDeserialize string '" + this.bytesToDeserialize + "' threw an exception, but " +
+                "it's not an Error so we can't report any more information than this"));
         }
 
         this.deserializedCommandArgsPtr = args;
@@ -113,7 +155,13 @@ class CmdArgDeserializingVisitor implements V0CommandTypeVisitor {
         try {
             args = JSON.parse(this.bytesToDeserialize);
         } catch(jsonErr) {
-            return err(jsonErr);
+            // Sadly, we have to do this because there's no great way to enforce the caught thing being an error
+            // See: https://stackoverflow.com/questions/30469261/checking-for-typeof-error-in-js
+            if (jsonErr && jsonErr.stack && jsonErr.message) {
+                return err(jsonErr as Error);
+            }
+            return err(new Error("Parsing bytesToDeserialize string '" + this.bytesToDeserialize + "' threw an exception, but " +
+                "it's not an Error so we can't report any more information than this"));
         }
 
         this.deserializedCommandArgsPtr = args;
@@ -126,7 +174,13 @@ class CmdArgDeserializingVisitor implements V0CommandTypeVisitor {
         try {
             args = JSON.parse(this.bytesToDeserialize);
         } catch(jsonErr) {
-            return err(jsonErr);
+            // Sadly, we have to do this because there's no great way to enforce the caught thing being an error
+            // See: https://stackoverflow.com/questions/30469261/checking-for-typeof-error-in-js
+            if (jsonErr && jsonErr.stack && jsonErr.message) {
+                return err(jsonErr as Error);
+            }
+            return err(new Error("Parsing bytesToDeserialize string '" + this.bytesToDeserialize + "' threw an exception, but " +
+                "it's not an Error so we can't report any more information than this"));
         }
 
         this.deserializedCommandArgsPtr = args;
@@ -139,7 +193,13 @@ class CmdArgDeserializingVisitor implements V0CommandTypeVisitor {
         try {
             args = JSON.parse(this.bytesToDeserialize);
         } catch(jsonErr) {
-            return err(jsonErr);
+            // Sadly, we have to do this because there's no great way to enforce the caught thing being an error
+            // See: https://stackoverflow.com/questions/30469261/checking-for-typeof-error-in-js
+            if (jsonErr && jsonErr.stack && jsonErr.message) {
+                return err(jsonErr as Error);
+            }
+            return err(new Error("Parsing bytesToDeserialize string '" + this.bytesToDeserialize + "' threw an exception, but " +
+                "it's not an Error so we can't report any more information than this"));
         }
 
         this.deserializedCommandArgsPtr = args;
@@ -152,7 +212,13 @@ class CmdArgDeserializingVisitor implements V0CommandTypeVisitor {
         try {
             args = JSON.parse(this.bytesToDeserialize);
         } catch(jsonErr) {
-            return err(jsonErr);
+            // Sadly, we have to do this because there's no great way to enforce the caught thing being an error
+            // See: https://stackoverflow.com/questions/30469261/checking-for-typeof-error-in-js
+            if (jsonErr && jsonErr.stack && jsonErr.message) {
+                return err(jsonErr as Error);
+            }
+            return err(new Error("Parsing bytesToDeserialize string '" + this.bytesToDeserialize + "' threw an exception, but " +
+                "it's not an Error so we can't report any more information than this"));
         }
 
         this.deserializedCommandArgsPtr = args;
