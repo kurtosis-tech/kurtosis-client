@@ -1,5 +1,7 @@
 # TBD
 
+# 0.13.5
+
 ### Fixes
 * Updating JSON parses so that they can properly parse strings into typescript generated binding classes
 * Wrapping the return type of the fileGeneratingFuncs property in ContainerCreationConfig into a promise to match what is written in the kurotsis-testsuite-starter-pack tests
