@@ -363,7 +363,7 @@ export class NetworkContext {
             }
             const fp: number = resultOpenFp.value;
 
-            const initalizingFuncResult: Result<null, Error> = initializingFunc(fp);
+            const initalizingFuncResult: Result<null, Error> = await initializingFunc(fp);
             if (!initalizingFuncResult.isOk()){
                 return err(initalizingFuncResult.error);
             }
