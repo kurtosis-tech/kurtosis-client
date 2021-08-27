@@ -17,7 +17,7 @@ export class ContainerCreationConfig {
     private readonly image: string;
     private readonly kurtosisVolumeMountpoint: string; // Technically the enclave data volume, but we call it this for simplicity for the user
     private readonly usedPortsSet: Set<string>;
-    private readonly fileGeneratingFuncs: Map<string, (fp: number) => Result<null, Error>>; // File descriptors are just integers
+    private readonly fileGeneratingFuncs: Map<string, (fp: number) => Promise<Result<null, Error>>>; // File descriptors are just integers
     private readonly usedStaticFilesSet: Set<StaticFileID>;
     private readonly filesArtifactMountpoints: Map<FilesArtifactID, string>;
 
@@ -25,7 +25,7 @@ export class ContainerCreationConfig {
             image: string,
             kurtosisVolumeMountpoint: string,
             usedPortsSet: Set<string>,
-            fileGeneratingFuncs: Map<string, (fp: number) => Result<null, Error>>,
+            fileGeneratingFuncs: Map<string, (fp: number) => Promise<Result<null, Error>>>,
             usedStaticFilesSet: Set<StaticFileID>,
             filesArtifactMountpoints: Map<FilesArtifactID, string>){
         this.image = image;
@@ -48,7 +48,7 @@ export class ContainerCreationConfig {
         return this.usedPortsSet;
     }
 
-    public getFileGeneratingFuncs(): Map<string, (fp: number) => Result<null, Error>> {
+    public getFileGeneratingFuncs(): Map<string, (fp: number) => Promise<Result<null, Error>>> {
         return this.fileGeneratingFuncs;
     }
 
@@ -71,7 +71,7 @@ export class ContainerCreationConfigBuilder {
     private kurtosisVolumeMountpoint: string;
     private usedPortsSet: Set<string>;
     private usedStaticFilesSet: Set<StaticFileID>;
-    private fileGeneratingFuncs: Map<string, (fp: number) => Result<null, Error>>;
+    private fileGeneratingFuncs: Map<string, (fp: number) => Promise<Result<null, Error>>>;
     private filesArtifactMountpoints: Map<FilesArtifactID, string>;
 
     constructor (image: string) {
@@ -93,7 +93,7 @@ export class ContainerCreationConfigBuilder {
         return this;
     }
 
-    public withGeneratedFiles(fileGeneratingFuncs: Map<string, (fp: number) => Result<null, Error>>): ContainerCreationConfigBuilder {
+    public withGeneratedFiles(fileGeneratingFuncs: Map<string, (fp: number) => Promise<Result<null, Error>>>): ContainerCreationConfigBuilder {
         this.fileGeneratingFuncs = fileGeneratingFuncs;
         return this;
     }

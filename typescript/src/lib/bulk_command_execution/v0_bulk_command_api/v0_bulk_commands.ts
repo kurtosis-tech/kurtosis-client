@@ -20,7 +20,7 @@ class CmdArgDeserializingVisitor implements V0CommandTypeVisitor {
         let args: LoadLambdaArgs;
        
         try {
-            args = JSON.parse(this.bytesToDeserialize);
+            args = Object.assign(new LoadLambdaArgs(), JSON.parse(this.bytesToDeserialize));
         } catch(jsonErr) {
             // Sadly, we have to do this because there's no great way to enforce the caught thing being an error
             // See: https://stackoverflow.com/questions/30469261/checking-for-typeof-error-in-js
@@ -39,7 +39,7 @@ class CmdArgDeserializingVisitor implements V0CommandTypeVisitor {
     	let args: ExecuteLambdaArgs;
         
         try {
-            args = JSON.parse(this.bytesToDeserialize);
+            args = Object.assign(new ExecuteLambdaArgs(), JSON.parse(this.bytesToDeserialize));
         } catch(jsonErr) {
             // Sadly, we have to do this because there's no great way to enforce the caught thing being an error
             // See: https://stackoverflow.com/questions/30469261/checking-for-typeof-error-in-js
@@ -58,7 +58,7 @@ class CmdArgDeserializingVisitor implements V0CommandTypeVisitor {
         let args: RegisterServiceArgs;
         
         try {
-            args = JSON.parse(this.bytesToDeserialize);
+            args = Object.assign(new RegisterServiceArgs(), JSON.parse(this.bytesToDeserialize));
         } catch(jsonErr) {
             // Sadly, we have to do this because there's no great way to enforce the caught thing being an error
             // See: https://stackoverflow.com/questions/30469261/checking-for-typeof-error-in-js
@@ -77,7 +77,7 @@ class CmdArgDeserializingVisitor implements V0CommandTypeVisitor {
         let args: GenerateFilesArgs;
         
         try {
-            args = JSON.parse(this.bytesToDeserialize);
+            args = Object.assign(new GenerateFilesArgs(), JSON.parse(this.bytesToDeserialize));
         } catch(jsonErr) {
             // Sadly, we have to do this because there's no great way to enforce the caught thing being an error
             // See: https://stackoverflow.com/questions/30469261/checking-for-typeof-error-in-js
@@ -96,7 +96,7 @@ class CmdArgDeserializingVisitor implements V0CommandTypeVisitor {
     	let args: LoadStaticFilesArgs;
     	 
         try {
-            args = JSON.parse(this.bytesToDeserialize);
+            args = Object.assign(new LoadStaticFilesArgs(), JSON.parse(this.bytesToDeserialize));
         } catch(jsonErr) {
             // Sadly, we have to do this because there's no great way to enforce the caught thing being an error
             // See: https://stackoverflow.com/questions/30469261/checking-for-typeof-error-in-js
@@ -115,7 +115,7 @@ class CmdArgDeserializingVisitor implements V0CommandTypeVisitor {
         let args: StartServiceArgs;
 
         try {
-            args = JSON.parse(this.bytesToDeserialize);
+            args = Object.assign(new StartServiceArgs(), JSON.parse(this.bytesToDeserialize));
         } catch(jsonErr) {
             // Sadly, we have to do this because there's no great way to enforce the caught thing being an error
             // See: https://stackoverflow.com/questions/30469261/checking-for-typeof-error-in-js
@@ -134,7 +134,7 @@ class CmdArgDeserializingVisitor implements V0CommandTypeVisitor {
     	let args: RemoveServiceArgs;
     	
         try {
-            args = JSON.parse(this.bytesToDeserialize);
+            args = Object.assign(new RemoveServiceArgs(), JSON.parse(this.bytesToDeserialize));
         } catch(jsonErr) {
             // Sadly, we have to do this because there's no great way to enforce the caught thing being an error
             // See: https://stackoverflow.com/questions/30469261/checking-for-typeof-error-in-js
@@ -153,7 +153,7 @@ class CmdArgDeserializingVisitor implements V0CommandTypeVisitor {
     	let args: RepartitionArgs;
     	
         try {
-            args = JSON.parse(this.bytesToDeserialize);
+            args = Object.assign(new RepartitionArgs(), JSON.parse(this.bytesToDeserialize));
         } catch(jsonErr) {
             // Sadly, we have to do this because there's no great way to enforce the caught thing being an error
             // See: https://stackoverflow.com/questions/30469261/checking-for-typeof-error-in-js
@@ -172,7 +172,7 @@ class CmdArgDeserializingVisitor implements V0CommandTypeVisitor {
         let args: ExecCommandArgs;
      
         try {
-            args = JSON.parse(this.bytesToDeserialize);
+            args = Object.assign(new ExecCommandArgs(), JSON.parse(this.bytesToDeserialize));
         } catch(jsonErr) {
             // Sadly, we have to do this because there's no great way to enforce the caught thing being an error
             // See: https://stackoverflow.com/questions/30469261/checking-for-typeof-error-in-js
@@ -191,7 +191,7 @@ class CmdArgDeserializingVisitor implements V0CommandTypeVisitor {
     	let args: WaitForEndpointAvailabilityArgs;
     	
         try {
-            args = JSON.parse(this.bytesToDeserialize);
+            args = Object.assign(new WaitForEndpointAvailabilityArgs(), JSON.parse(this.bytesToDeserialize));
         } catch(jsonErr) {
             // Sadly, we have to do this because there's no great way to enforce the caught thing being an error
             // See: https://stackoverflow.com/questions/30469261/checking-for-typeof-error-in-js
@@ -210,7 +210,7 @@ class CmdArgDeserializingVisitor implements V0CommandTypeVisitor {
         let args: ExecuteBulkCommandsArgs;
 
         try {
-            args = JSON.parse(this.bytesToDeserialize);
+            args = Object.assign(new ExecuteBulkCommandsArgs(), JSON.parse(this.bytesToDeserialize));
         } catch(jsonErr) {
             // Sadly, we have to do this because there's no great way to enforce the caught thing being an error
             // See: https://stackoverflow.com/questions/30469261/checking-for-typeof-error-in-js
