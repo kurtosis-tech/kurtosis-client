@@ -1,5 +1,8 @@
 # TBD
 
+### Fixes
+* Updating JSON parses so that they can properly parse strings into typescript generated binding classes
+
 ### Changes
 * Updated the index.ts again to export ContainerRunConfig + ContainerCreationConfig (merging things together removed these exports)
 
