@@ -1,4 +1,6 @@
 # TBD
+
+# 0.13.7
 ### Changes
 * Abolished the use of ResultAsync, okAsync, and errAsync in favour of just regular Result
 * Cleaned up the `try/catch`es inside `V0BulkCommandDeserializer`
