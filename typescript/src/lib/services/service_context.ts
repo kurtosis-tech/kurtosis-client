@@ -80,7 +80,19 @@ export class ServiceContext {
                 }
             })
         });
-        const resultExecCommand: Result<ExecCommandResponse, Error> = await promiseExecCommand;
+        let resultExecCommand: Result<ExecCommandResponse, Error>;
+        try {
+            resultExecCommand = await promiseExecCommand;
+        } catch (exception: any) {
+            // Sadly, we have to do this because there's no great way to enforce the caught thing being an error
+            // See: https://stackoverflow.com/questions/30469261/checking-for-typeof-error-in-js
+            if (exception && exception.stack && exception.message) {
+                return err(exception as Error);
+            }
+            return err(new Error("Resolving promise with ExecCommand threw an exception, but " +
+                "it's not an Error so we can't report any more information than this"));
+        }
+
         if (!resultExecCommand.isOk()) {
             return err(resultExecCommand.error);
         }
@@ -114,7 +126,19 @@ export class ServiceContext {
                 }
             })
         });
-        const resultGenerateFiles: Result<GenerateFilesResponse, Error> = await promiseGenerateFiles;
+        let resultGenerateFiles: Result<GenerateFilesResponse, Error>;
+        try {
+            resultGenerateFiles = await promiseGenerateFiles;
+        } catch (exception: any) {
+            // Sadly, we have to do this because there's no great way to enforce the caught thing being an error
+            // See: https://stackoverflow.com/questions/30469261/checking-for-typeof-error-in-js
+            if (exception && exception.stack && exception.message) {
+                return err(exception as Error);
+            }
+            return err(new Error("Resolving promise with GenerateFiles threw an exception, but " +
+                "it's not an Error so we can't report any more information than this"));
+        }
+
         if (!resultGenerateFiles.isOk()) {
             return err(resultGenerateFiles.error);
         } 
@@ -164,7 +188,19 @@ export class ServiceContext {
                 }
             })
         });
-        const resultLoadStaticFiles: Result<LoadStaticFilesResponse, Error> = await promiseLoadStaticFiles;
+        let resultLoadStaticFiles: Result<LoadStaticFilesResponse, Error>;
+        try {
+            resultLoadStaticFiles = await promiseLoadStaticFiles;
+        } catch (exception: any) {
+            // Sadly, we have to do this because there's no great way to enforce the caught thing being an error
+            // See: https://stackoverflow.com/questions/30469261/checking-for-typeof-error-in-js
+            if (exception && exception.stack && exception.message) {
+                return err(exception as Error);
+            }
+            return err(new Error("Resolving promise with LoadStaticFiles threw an exception, but " +
+                "it's not an Error so we can't report any more information than this"));
+        }
+
         if (!resultLoadStaticFiles.isOk()) {
             return err(resultLoadStaticFiles.error);
         }

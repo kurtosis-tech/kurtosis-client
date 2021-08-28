@@ -21,7 +21,7 @@ class CmdArgDeserializingVisitor implements V0CommandTypeVisitor {
        
         try {
             args = Object.assign(new LoadLambdaArgs(), JSON.parse(this.bytesToDeserialize));
-        } catch(jsonErr) {
+        } catch(jsonErr: any) {
             // Sadly, we have to do this because there's no great way to enforce the caught thing being an error
             // See: https://stackoverflow.com/questions/30469261/checking-for-typeof-error-in-js
             if (jsonErr && jsonErr.stack && jsonErr.message) {
@@ -40,7 +40,7 @@ class CmdArgDeserializingVisitor implements V0CommandTypeVisitor {
         
         try {
             args = Object.assign(new ExecuteLambdaArgs(), JSON.parse(this.bytesToDeserialize));
-        } catch(jsonErr) {
+        } catch(jsonErr: any) {
             // Sadly, we have to do this because there's no great way to enforce the caught thing being an error
             // See: https://stackoverflow.com/questions/30469261/checking-for-typeof-error-in-js
             if (jsonErr && jsonErr.stack && jsonErr.message) {
@@ -59,7 +59,7 @@ class CmdArgDeserializingVisitor implements V0CommandTypeVisitor {
         
         try {
             args = Object.assign(new RegisterServiceArgs(), JSON.parse(this.bytesToDeserialize));
-        } catch(jsonErr) {
+        } catch(jsonErr: any) {
             // Sadly, we have to do this because there's no great way to enforce the caught thing being an error
             // See: https://stackoverflow.com/questions/30469261/checking-for-typeof-error-in-js
             if (jsonErr && jsonErr.stack && jsonErr.message) {
@@ -78,7 +78,7 @@ class CmdArgDeserializingVisitor implements V0CommandTypeVisitor {
         
         try {
             args = Object.assign(new GenerateFilesArgs(), JSON.parse(this.bytesToDeserialize));
-        } catch(jsonErr) {
+        } catch(jsonErr: any) {
             // Sadly, we have to do this because there's no great way to enforce the caught thing being an error
             // See: https://stackoverflow.com/questions/30469261/checking-for-typeof-error-in-js
             if (jsonErr && jsonErr.stack && jsonErr.message) {
@@ -97,7 +97,7 @@ class CmdArgDeserializingVisitor implements V0CommandTypeVisitor {
     	 
         try {
             args = Object.assign(new LoadStaticFilesArgs(), JSON.parse(this.bytesToDeserialize));
-        } catch(jsonErr) {
+        } catch(jsonErr: any) {
             // Sadly, we have to do this because there's no great way to enforce the caught thing being an error
             // See: https://stackoverflow.com/questions/30469261/checking-for-typeof-error-in-js
             if (jsonErr && jsonErr.stack && jsonErr.message) {
@@ -116,7 +116,7 @@ class CmdArgDeserializingVisitor implements V0CommandTypeVisitor {
 
         try {
             args = Object.assign(new StartServiceArgs(), JSON.parse(this.bytesToDeserialize));
-        } catch(jsonErr) {
+        } catch(jsonErr: any) {
             // Sadly, we have to do this because there's no great way to enforce the caught thing being an error
             // See: https://stackoverflow.com/questions/30469261/checking-for-typeof-error-in-js
             if (jsonErr && jsonErr.stack && jsonErr.message) {
@@ -135,7 +135,7 @@ class CmdArgDeserializingVisitor implements V0CommandTypeVisitor {
     	
         try {
             args = Object.assign(new RemoveServiceArgs(), JSON.parse(this.bytesToDeserialize));
-        } catch(jsonErr) {
+        } catch(jsonErr: any) {
             // Sadly, we have to do this because there's no great way to enforce the caught thing being an error
             // See: https://stackoverflow.com/questions/30469261/checking-for-typeof-error-in-js
             if (jsonErr && jsonErr.stack && jsonErr.message) {
@@ -154,7 +154,7 @@ class CmdArgDeserializingVisitor implements V0CommandTypeVisitor {
     	
         try {
             args = Object.assign(new RepartitionArgs(), JSON.parse(this.bytesToDeserialize));
-        } catch(jsonErr) {
+        } catch(jsonErr: any) {
             // Sadly, we have to do this because there's no great way to enforce the caught thing being an error
             // See: https://stackoverflow.com/questions/30469261/checking-for-typeof-error-in-js
             if (jsonErr && jsonErr.stack && jsonErr.message) {
@@ -173,7 +173,7 @@ class CmdArgDeserializingVisitor implements V0CommandTypeVisitor {
      
         try {
             args = Object.assign(new ExecCommandArgs(), JSON.parse(this.bytesToDeserialize));
-        } catch(jsonErr) {
+        } catch(jsonErr: any) {
             // Sadly, we have to do this because there's no great way to enforce the caught thing being an error
             // See: https://stackoverflow.com/questions/30469261/checking-for-typeof-error-in-js
             if (jsonErr && jsonErr.stack && jsonErr.message) {
@@ -192,7 +192,7 @@ class CmdArgDeserializingVisitor implements V0CommandTypeVisitor {
     	
         try {
             args = Object.assign(new WaitForEndpointAvailabilityArgs(), JSON.parse(this.bytesToDeserialize));
-        } catch(jsonErr) {
+        } catch(jsonErr: any) {
             // Sadly, we have to do this because there's no great way to enforce the caught thing being an error
             // See: https://stackoverflow.com/questions/30469261/checking-for-typeof-error-in-js
             if (jsonErr && jsonErr.stack && jsonErr.message) {
@@ -211,7 +211,7 @@ class CmdArgDeserializingVisitor implements V0CommandTypeVisitor {
 
         try {
             args = Object.assign(new ExecuteBulkCommandsArgs(), JSON.parse(this.bytesToDeserialize));
-        } catch(jsonErr) {
+        } catch(jsonErr: any) {
             // Sadly, we have to do this because there's no great way to enforce the caught thing being an error
             // See: https://stackoverflow.com/questions/30469261/checking-for-typeof-error-in-js
             if (jsonErr && jsonErr.stack && jsonErr.message) {

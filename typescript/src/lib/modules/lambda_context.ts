@@ -33,7 +33,19 @@ export class LambdaContext {
                 }
             })
         });
-        const resultExecuteLambda: Result<ExecuteLambdaResponse, Error> = await promiseExecuteLambda;
+        let resultExecuteLambda: Result<ExecuteLambdaResponse, Error>;
+        try {
+            resultExecuteLambda = await promiseExecuteLambda;
+        } catch (exception: any) {
+            // Sadly, we have to do this because there's no great way to enforce the caught thing being an error
+            // See: https://stackoverflow.com/questions/30469261/checking-for-typeof-error-in-js
+            if (exception && exception.stack && exception.message) {
+                return err(exception as Error);
+            }
+            return err(new Error("Resolving promise with ExecuteLambda threw an exception, but " +
+                "it's not an Error so we can't report any more information than this"));
+        }
+
         if (!resultExecuteLambda.isOk()) {
             return err(resultExecuteLambda.error);
         }
