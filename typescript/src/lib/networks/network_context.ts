@@ -349,7 +349,7 @@ export class NetworkContext {
             const filepaths: GeneratedFileFilepaths = generatedFileFilepaths.get(fileId)!;
 
             const promiseOpenFp: Promise<ResultAsync<number, Error>> = new Promise((resolve, _unusedReject) => {
-                fs.open(filepaths.getAbsoluteFilepathHere(), 'r', (error: Error | null, fd: number) => {
+                fs.open(filepaths.getAbsoluteFilepathHere(), 'w', (error: Error | null, fd: number) => {
                     if (error === null) {
                         resolve(okAsync(fd));
                     } else {

@@ -1,5 +1,10 @@
 # TBD
 
+# 0.13.6
+
+### Fixes
+* Changed one of the fs.open(..) to open one of the file descriptors with write access as needed in starter packer instead of read access
+
 # 0.13.5
 
 ### Fixes
