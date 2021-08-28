@@ -1,7 +1,7 @@
 import { ApiContainerServiceClient } from "../../kurtosis_core_rpc_api_bindings/api_container_service_grpc_pb";
 import { ExecuteLambdaArgs, ExecuteLambdaResponse } from "../../kurtosis_core_rpc_api_bindings/api_container_service_pb";
 import { newExecuteLambdaArgs } from "../constructor_calls";
-import { okAsync, errAsync, ResultAsync, ok, err, Result } from "neverthrow";
+import { ok, err, Result } from "neverthrow";
 import * as grpc from "grpc";
 
 export type LambdaID = string;
@@ -20,16 +20,16 @@ export class LambdaContext {
     public async execute(serializedParams: string): Promise<Result<string, Error>> {
         const args: ExecuteLambdaArgs = newExecuteLambdaArgs(this.lambdaId, serializedParams);
 
-        const promiseExecuteLambda: Promise<ResultAsync<ExecuteLambdaResponse, Error>> = new Promise((resolve, _unusedReject) => {
+        const promiseExecuteLambda: Promise<Result<ExecuteLambdaResponse, Error>> = new Promise((resolve, _unusedReject) => {
             this.client.executeLambda(args, (error: grpc.ServiceError | null, response?: ExecuteLambdaResponse) => {
                 if (error === null) {
                     if (!response) {
-                        resolve(errAsync(new Error("No error was encountered but the response was still falsy; this should never happen")));
+                        resolve(err(new Error("No error was encountered but the response was still falsy; this should never happen")));
                     } else {
-                        resolve(okAsync(response!));
+                        resolve(ok(response!));
                     }
                 } else {
-                    resolve(errAsync(error));
+                    resolve(err(error));
                 }
             })
         });

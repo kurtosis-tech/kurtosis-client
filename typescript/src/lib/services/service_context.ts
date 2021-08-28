@@ -3,7 +3,7 @@ import { ExecCommandArgs, ExecCommandResponse, FileGenerationOptions, GenerateFi
 import { ServiceID } from './service';
 import { StaticFileID } from './container_creation_config'; 
 import { newExecCommandArgs, newGenerateFilesArgs, newFileGenerationOptions, newLoadStaticFilesArgs } from "../constructor_calls";
-import { okAsync, errAsync, ResultAsync, ok, err, Result } from 'neverthrow';
+import { ok, err, Result } from 'neverthrow';
 import * as grpc from "grpc";
 import * as path from "path";
 import * as jspb from "google-protobuf";
@@ -67,16 +67,16 @@ export class ServiceContext {
         const serviceId: ServiceID = this.serviceId;
         const args: ExecCommandArgs = newExecCommandArgs(serviceId, command);
 
-        const promiseExecCommand: Promise<ResultAsync<ExecCommandResponse, Error>> = new Promise((resolve, _unusedReject) => {
+        const promiseExecCommand: Promise<Result<ExecCommandResponse, Error>> = new Promise((resolve, _unusedReject) => {
             this.client.execCommand(args, (error: grpc.ServiceError | null, response?: ExecCommandResponse) => {
                 if (error === null) {
                     if (!response) {
-                        resolve(errAsync(new Error("No error was encountered but the response was still falsy; this should never happen")));
+                        resolve(err(new Error("No error was encountered but the response was still falsy; this should never happen")));
                     } else {
-                        resolve(okAsync(response!));
+                        resolve(ok(response!));
                     }
                 } else {
-                    resolve(errAsync(error));
+                    resolve(err(error));
                 }
             })
         });
@@ -101,16 +101,16 @@ export class ServiceContext {
 
         const args: GenerateFilesArgs = newGenerateFilesArgs(serviceId, fileGenerationOpts);
 
-        const promiseGenerateFiles: Promise<ResultAsync<GenerateFilesResponse, Error>> = new Promise((resolve, _unusedReject) => {
+        const promiseGenerateFiles: Promise<Result<GenerateFilesResponse, Error>> = new Promise((resolve, _unusedReject) => {
             this.client.generateFiles(args, (error: grpc.ServiceError | null, response?: GenerateFilesResponse) => {
                 if (error === null) {
                     if (!response) {
-                        resolve(errAsync(new Error("No error was encountered but the response was still falsy; this should never happen")));
+                        resolve(err(new Error("No error was encountered but the response was still falsy; this should never happen")));
                     } else {
-                        resolve(okAsync(response!));
+                        resolve(ok(response!));
                     }
                 } else {
-                    resolve(errAsync(error));
+                    resolve(err(error));
                 }
             })
         });
@@ -151,16 +151,16 @@ export class ServiceContext {
 
         const loadStaticFilesArgs: LoadStaticFilesArgs = newLoadStaticFilesArgs(serviceId, staticFilesToCopyStringSet);
         
-        const promiseLoadStaticFiles: Promise<ResultAsync<LoadStaticFilesResponse, Error>> = new Promise((resolve, _unusedReject) => {
+        const promiseLoadStaticFiles: Promise<Result<LoadStaticFilesResponse, Error>> = new Promise((resolve, _unusedReject) => {
             this.client.loadStaticFiles(loadStaticFilesArgs, (error: grpc.ServiceError | null, response?: LoadStaticFilesResponse) => {
                 if (error === null) {
                     if (!response) {
-                        resolve(errAsync(new Error("No error was encountered but the response was still falsy; this should never happen")));
+                        resolve(err(new Error("No error was encountered but the response was still falsy; this should never happen")));
                     } else {
-                        resolve(okAsync(response!));
+                        resolve(ok(response!));
                     }
                 } else {
-                    resolve(errAsync(error));
+                    resolve(err(error));
                 }
             })
         });
