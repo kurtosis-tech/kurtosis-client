@@ -9,6 +9,8 @@ import * as protobuf from "google-protobuf";
 
 // Visitor that will be used to deserialize command args into
 class CmdArgDeserializingVisitor implements V0CommandTypeVisitor {
+    private static safeJsonParse = Result.fromThrowable(JSON.parse, CmdArgDeserializingVisitor.parseUnknownExceptionValueToError);
+
     private readonly bytesToDeserialize: string;
     private deserializedCommandArgsPtr?: protobuf.Message;
 
@@ -17,209 +19,121 @@ class CmdArgDeserializingVisitor implements V0CommandTypeVisitor {
     }
 
     public visitLoadLambda(): Result<null, Error> {
-        let args: LoadLambdaArgs;
-       
-        try {
-            args = Object.assign(new LoadLambdaArgs(), JSON.parse(this.bytesToDeserialize));
-        } catch(jsonErr) {
-            // Sadly, we have to do this because there's no great way to enforce the caught thing being an error
-            // See: https://stackoverflow.com/questions/30469261/checking-for-typeof-error-in-js
-            if (jsonErr && jsonErr.stack && jsonErr.message) {
-                return err(jsonErr as Error);
-            }
-            return err(new Error("Parsing bytesToDeserialize string '" + this.bytesToDeserialize + "' threw an exception, but " +
-                "it's not an Error so we can't report any more information than this"));
+        const deserializationResult: Result<any, Error> = CmdArgDeserializingVisitor.safeJsonParse(this.bytesToDeserialize);
+        if (deserializationResult.isErr()) {
+            return err(deserializationResult.error);
         }
+        const args: LoadLambdaArgs = Object.assign(new LoadLambdaArgs(), deserializationResult.value);
 
         this.deserializedCommandArgsPtr = args;
         return ok(null);
     }
 
     public visitExecuteLambda(): Result<null, Error> {
-    	let args: ExecuteLambdaArgs;
-        
-        try {
-            args = Object.assign(new ExecuteLambdaArgs(), JSON.parse(this.bytesToDeserialize));
-        } catch(jsonErr) {
-            // Sadly, we have to do this because there's no great way to enforce the caught thing being an error
-            // See: https://stackoverflow.com/questions/30469261/checking-for-typeof-error-in-js
-            if (jsonErr && jsonErr.stack && jsonErr.message) {
-                return err(jsonErr as Error);
-            }
-            return err(new Error("Parsing bytesToDeserialize string '" + this.bytesToDeserialize + "' threw an exception, but " +
-                "it's not an Error so we can't report any more information than this"));
+        const deserializationResult: Result<any, Error> = CmdArgDeserializingVisitor.safeJsonParse(this.bytesToDeserialize);
+        if (deserializationResult.isErr()) {
+            return err(deserializationResult.error);
         }
+        const args: ExecuteLambdaArgs = Object.assign(new ExecuteLambdaArgs(), deserializationResult.value);
 
     	this.deserializedCommandArgsPtr = args;
     	return ok(null);
     }
 
     public visitRegisterService(): Result<null, Error> {
-        let args: RegisterServiceArgs;
-        
-        try {
-            args = Object.assign(new RegisterServiceArgs(), JSON.parse(this.bytesToDeserialize));
-        } catch(jsonErr) {
-            // Sadly, we have to do this because there's no great way to enforce the caught thing being an error
-            // See: https://stackoverflow.com/questions/30469261/checking-for-typeof-error-in-js
-            if (jsonErr && jsonErr.stack && jsonErr.message) {
-                return err(jsonErr as Error);
-            }
-            return err(new Error("Parsing bytesToDeserialize string '" + this.bytesToDeserialize + "' threw an exception, but " +
-                "it's not an Error so we can't report any more information than this"));
+        const deserializationResult: Result<any, Error> = CmdArgDeserializingVisitor.safeJsonParse(this.bytesToDeserialize);
+        if (deserializationResult.isErr()) {
+            return err(deserializationResult.error);
         }
+        const args: RegisterServiceArgs = Object.assign(new RegisterServiceArgs(), deserializationResult.value);
 
         this.deserializedCommandArgsPtr = args;
         return ok(null);
     }
 
     public visitGenerateFiles(): Result<null, Error> {
-        let args: GenerateFilesArgs;
-        
-        try {
-            args = Object.assign(new GenerateFilesArgs(), JSON.parse(this.bytesToDeserialize));
-        } catch(jsonErr) {
-            // Sadly, we have to do this because there's no great way to enforce the caught thing being an error
-            // See: https://stackoverflow.com/questions/30469261/checking-for-typeof-error-in-js
-            if (jsonErr && jsonErr.stack && jsonErr.message) {
-                return err(jsonErr as Error);
-            }
-            return err(new Error("Parsing bytesToDeserialize string '" + this.bytesToDeserialize + "' threw an exception, but " +
-                "it's not an Error so we can't report any more information than this"));
+        const deserializationResult: Result<any, Error> = CmdArgDeserializingVisitor.safeJsonParse(this.bytesToDeserialize);
+        if (deserializationResult.isErr()) {
+            return err(deserializationResult.error);
         }
+        const args: GenerateFilesArgs = Object.assign(new GenerateFilesArgs(), deserializationResult.value);
 
         this.deserializedCommandArgsPtr = args;
         return ok(null);
     }
 
     public visitLoadStaticFiles(): Result<null, Error> {
-    	let args: LoadStaticFilesArgs;
-    	 
-        try {
-            args = Object.assign(new LoadStaticFilesArgs(), JSON.parse(this.bytesToDeserialize));
-        } catch(jsonErr) {
-            // Sadly, we have to do this because there's no great way to enforce the caught thing being an error
-            // See: https://stackoverflow.com/questions/30469261/checking-for-typeof-error-in-js
-            if (jsonErr && jsonErr.stack && jsonErr.message) {
-                return err(jsonErr as Error);
-            }
-            return err(new Error("Parsing bytesToDeserialize string '" + this.bytesToDeserialize + "' threw an exception, but " +
-                "it's not an Error so we can't report any more information than this"));
+        const deserializationResult: Result<any, Error> = CmdArgDeserializingVisitor.safeJsonParse(this.bytesToDeserialize);
+        if (deserializationResult.isErr()) {
+            return err(deserializationResult.error);
         }
+        const args: LoadStaticFilesArgs = Object.assign(new LoadStaticFilesArgs(), deserializationResult.value);
 
         this.deserializedCommandArgsPtr = args;
         return ok(null);
     }
 
     public visitStartService(): Result<null, Error> {
-        let args: StartServiceArgs;
-
-        try {
-            args = Object.assign(new StartServiceArgs(), JSON.parse(this.bytesToDeserialize));
-        } catch(jsonErr) {
-            // Sadly, we have to do this because there's no great way to enforce the caught thing being an error
-            // See: https://stackoverflow.com/questions/30469261/checking-for-typeof-error-in-js
-            if (jsonErr && jsonErr.stack && jsonErr.message) {
-                return err(jsonErr as Error);
-            }
-            return err(new Error("Parsing bytesToDeserialize string '" + this.bytesToDeserialize + "' threw an exception, but " +
-                "it's not an Error so we can't report any more information than this"));
+        const deserializationResult: Result<any, Error> = CmdArgDeserializingVisitor.safeJsonParse(this.bytesToDeserialize);
+        if (deserializationResult.isErr()) {
+            return err(deserializationResult.error);
         }
+        const args: StartServiceArgs = Object.assign(new StartServiceArgs(), deserializationResult.value);
 
         this.deserializedCommandArgsPtr = args;
         return ok(null);
     }
 
     public visitRemoveService(): Result<null, Error> {
-    	let args: RemoveServiceArgs;
-    	
-        try {
-            args = Object.assign(new RemoveServiceArgs(), JSON.parse(this.bytesToDeserialize));
-        } catch(jsonErr) {
-            // Sadly, we have to do this because there's no great way to enforce the caught thing being an error
-            // See: https://stackoverflow.com/questions/30469261/checking-for-typeof-error-in-js
-            if (jsonErr && jsonErr.stack && jsonErr.message) {
-                return err(jsonErr as Error);
-            }
-            return err(new Error("Parsing bytesToDeserialize string '" + this.bytesToDeserialize + "' threw an exception, but " +
-                "it's not an Error so we can't report any more information than this"));
+        const deserializationResult: Result<any, Error> = CmdArgDeserializingVisitor.safeJsonParse(this.bytesToDeserialize);
+        if (deserializationResult.isErr()) {
+            return err(deserializationResult.error);
         }
+        const args: RemoveServiceArgs = Object.assign(new RemoveServiceArgs(), deserializationResult.value);
 
         this.deserializedCommandArgsPtr = args;
         return ok(null);
     }
 
     public visitRepartition(): Result<null, Error> {
-    	let args: RepartitionArgs;
-    	
-        try {
-            args = Object.assign(new RepartitionArgs(), JSON.parse(this.bytesToDeserialize));
-        } catch(jsonErr) {
-            // Sadly, we have to do this because there's no great way to enforce the caught thing being an error
-            // See: https://stackoverflow.com/questions/30469261/checking-for-typeof-error-in-js
-            if (jsonErr && jsonErr.stack && jsonErr.message) {
-                return err(jsonErr as Error);
-            }
-            return err(new Error("Parsing bytesToDeserialize string '" + this.bytesToDeserialize + "' threw an exception, but " +
-                "it's not an Error so we can't report any more information than this"));
+        const deserializationResult: Result<any, Error> = CmdArgDeserializingVisitor.safeJsonParse(this.bytesToDeserialize);
+        if (deserializationResult.isErr()) {
+            return err(deserializationResult.error);
         }
+        const args: RepartitionArgs = Object.assign(new RepartitionArgs(), deserializationResult.value);
 
         this.deserializedCommandArgsPtr = args;
         return ok(null);
     }
 
     public visitExecCommand(): Result<null, Error> {
-        let args: ExecCommandArgs;
-     
-        try {
-            args = Object.assign(new ExecCommandArgs(), JSON.parse(this.bytesToDeserialize));
-        } catch(jsonErr) {
-            // Sadly, we have to do this because there's no great way to enforce the caught thing being an error
-            // See: https://stackoverflow.com/questions/30469261/checking-for-typeof-error-in-js
-            if (jsonErr && jsonErr.stack && jsonErr.message) {
-                return err(jsonErr as Error);
-            }
-            return err(new Error("Parsing bytesToDeserialize string '" + this.bytesToDeserialize + "' threw an exception, but " +
-                "it's not an Error so we can't report any more information than this"));
+        const deserializationResult: Result<any, Error> = CmdArgDeserializingVisitor.safeJsonParse(this.bytesToDeserialize);
+        if (deserializationResult.isErr()) {
+            return err(deserializationResult.error);
         }
+        const args: ExecCommandArgs = Object.assign(new ExecCommandArgs(), deserializationResult.value);
 
         this.deserializedCommandArgsPtr = args;
         return ok(null);
     }
 
     public visitWaitForEndpointAvailability(): Result<null, Error> {
-    	let args: WaitForEndpointAvailabilityArgs;
-    	
-        try {
-            args = Object.assign(new WaitForEndpointAvailabilityArgs(), JSON.parse(this.bytesToDeserialize));
-        } catch(jsonErr) {
-            // Sadly, we have to do this because there's no great way to enforce the caught thing being an error
-            // See: https://stackoverflow.com/questions/30469261/checking-for-typeof-error-in-js
-            if (jsonErr && jsonErr.stack && jsonErr.message) {
-                return err(jsonErr as Error);
-            }
-            return err(new Error("Parsing bytesToDeserialize string '" + this.bytesToDeserialize + "' threw an exception, but " +
-                "it's not an Error so we can't report any more information than this"));
+        const deserializationResult: Result<any, Error> = CmdArgDeserializingVisitor.safeJsonParse(this.bytesToDeserialize);
+        if (deserializationResult.isErr()) {
+            return err(deserializationResult.error);
         }
+        const args: WaitForEndpointAvailabilityArgs = Object.assign(new WaitForEndpointAvailabilityArgs(), deserializationResult.value);
 
         this.deserializedCommandArgsPtr = args;
         return ok(null);
     }
 
     public visitExecuteBulkCommands(): Result<null, Error> {
-        let args: ExecuteBulkCommandsArgs;
-
-        try {
-            args = Object.assign(new ExecuteBulkCommandsArgs(), JSON.parse(this.bytesToDeserialize));
-        } catch(jsonErr) {
-            // Sadly, we have to do this because there's no great way to enforce the caught thing being an error
-            // See: https://stackoverflow.com/questions/30469261/checking-for-typeof-error-in-js
-            if (jsonErr && jsonErr.stack && jsonErr.message) {
-                return err(jsonErr as Error);
-            }
-            return err(new Error("Parsing bytesToDeserialize string '" + this.bytesToDeserialize + "' threw an exception, but " +
-                "it's not an Error so we can't report any more information than this"));
+        const deserializationResult: Result<any, Error> = CmdArgDeserializingVisitor.safeJsonParse(this.bytesToDeserialize);
+        if (deserializationResult.isErr()) {
+            return err(deserializationResult.error);
         }
+        const args: ExecuteBulkCommandsArgs = Object.assign(new ExecuteBulkCommandsArgs(), deserializationResult.value);
 
         this.deserializedCommandArgsPtr = args;
         return ok(null);
@@ -230,6 +144,13 @@ class CmdArgDeserializingVisitor implements V0CommandTypeVisitor {
             return err(new Error("Deserialized command args pointer was falsy; this indicates that it was never set through a visitor method, which should never happen"));
         }
         return ok(this.deserializedCommandArgsPtr!);
+    }
+
+    private static parseUnknownExceptionValueToError(value: unknown): Error {
+        if (value instanceof Error) {
+            return value;
+        }
+        return new Error("Received an unknown exception value that wasn't an error: " + value);
     }
 }
 
