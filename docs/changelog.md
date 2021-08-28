@@ -1,12 +1,15 @@
 # TBD
 
-# 0.13.6
+# 0.13.7
+### Changes
+* Abolished the use of ResultAsync, okAsync, and errAsync in favour of just regular Result
+* Cleaned up the `try/catch`es inside `V0BulkCommandDeserializer`
 
+# 0.13.6
 ### Fixes
 * Changed one of the fs.open(..) to open one of the file descriptors with write access as needed in starter packer instead of read access
 
 # 0.13.5
-
 ### Fixes
 * Updating JSON parses so that they can properly parse strings into typescript generated binding classes
 * Wrapping the return type of the fileGeneratingFuncs property in ContainerCreationConfig into a promise to match what is written in the kurotsis-testsuite-starter-pack tests
@@ -15,7 +18,6 @@
 * Updated the index.ts again to export ContainerRunConfig + ContainerCreationConfig (merging things together removed these exports)
 
 # 0.13.4
-
 ### Changes
 * Fixing semantical errors in kurtosis-client typescript files (i.e. for ... in loops, mutability with consts vs let, JSON error messages, etc...)
 * Small update to index.ts that only holds a list of export statements instead of imports and exports
