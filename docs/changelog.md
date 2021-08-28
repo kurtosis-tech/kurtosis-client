@@ -1,5 +1,8 @@
 # TBD
 
+### Changes
+Abolishing the use of ResultAsync, okAsync, and errAsync in favour of just regular Result
+
 # 0.13.6
 
 ### Fixes

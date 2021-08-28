@@ -11,7 +11,7 @@ import { ServiceContext, GeneratedFileFilepaths } from "../services/service_cont
 import { StaticFileID, FilesArtifactID, ContainerCreationConfig } from "../services/container_creation_config"; 
 import { ContainerRunConfig } from "../services/container_run_config";
 import { newLoadLambdaArgs, newGetLambdaInfoArgs, newRegisterStaticFilesArgs, newRegisterFilesArtifactsArgs, newRegisterServiceArgs, newStartServiceArgs, newGetServiceInfoArgs, newRemoveServiceArgs, newPartitionServices, newPartitionConnections, newRepartitionArgs, newWaitForEndpointAvailabilityArgs, newExecuteBulkCommandsArgs } from "../constructor_calls";
-import { okAsync, errAsync, ResultAsync, ok, err, Result } from "neverthrow";
+import { ok, err, Result } from "neverthrow";
 import * as log from "loglevel";
 import * as path from "path";
 import * as fs from 'fs';
@@ -47,16 +47,16 @@ export class NetworkContext {
             serializedParams: string): Promise<Result<LambdaContext, Error>> {
         const args: LoadLambdaArgs = newLoadLambdaArgs(lambdaId, image, serializedParams);
         
-        const promiseLoadLambda: Promise<ResultAsync<google_protobuf_empty_pb.Empty, Error>> = new Promise((resolve, _unusedReject) => {
+        const promiseLoadLambda: Promise<Result<google_protobuf_empty_pb.Empty, Error>> = new Promise((resolve, _unusedReject) => {
             this.client.loadLambda(args, (error: grpc.ServiceError | null, response?: google_protobuf_empty_pb.Empty) => {
                 if (error === null) {
                     if (!response) {
-                        resolve(errAsync(new Error("No error was encountered but the response was still falsy; this should never happen")));
+                        resolve(err(new Error("No error was encountered but the response was still falsy; this should never happen")));
                     } else {
-                        resolve(okAsync(response!));
+                        resolve(ok(response!));
                     }
                 } else {
-                    resolve(errAsync(error));
+                    resolve(err(error));
                 }
             })
         });
@@ -73,15 +73,15 @@ export class NetworkContext {
     public async getLambdaContext(lambdaId: LambdaID): Promise<Result<LambdaContext, Error>> {
         const args: GetLambdaInfoArgs = newGetLambdaInfoArgs(lambdaId);
         
-        const promiseGetLambdaInfo: Promise<ResultAsync<GetLambdaInfoResponse, Error>> = new Promise((resolve, _unusedReject) => {
+        const promiseGetLambdaInfo: Promise<Result<GetLambdaInfoResponse, Error>> = new Promise((resolve, _unusedReject) => {
             this.client.getLambdaInfo(args, (error: grpc.ServiceError | null, response?: GetLambdaInfoResponse) => {
                 if (error === null) {
                     if (!response) {
-                        resolve(errAsync(new Error("No error was encountered but the response was still falsy; this should never happen")));
+                        resolve(err(new Error("No error was encountered but the response was still falsy; this should never happen")));
                     }
-                    resolve(okAsync(response!));
+                    resolve(ok(response!));
                 } else {
-                    resolve(errAsync(error));
+                    resolve(err(error));
                 }
             })
         });
@@ -100,12 +100,12 @@ export class NetworkContext {
         for (const [staticFileId, srcAbsFilepath] of staticFileFilepaths.entries()) {
             
             // Sanity-check that the source filepath exists
-            const promiseStatSrcAbsFilepath: Promise<ResultAsync<fs.Stats, Error>> = new Promise((resolve, _unusedReject) => {
+            const promiseStatSrcAbsFilepath: Promise<Result<fs.Stats, Error>> = new Promise((resolve, _unusedReject) => {
                 fs.stat(srcAbsFilepath, (error: Error | null, response: fs.Stats) => {
                     if (error === null) {
-                        resolve(okAsync(response));
+                        resolve(ok(response));
                     } else {
-                        resolve(errAsync(error));
+                        resolve(err(error));
                     }
                 })
             });
@@ -119,16 +119,16 @@ export class NetworkContext {
 
         const args: RegisterStaticFilesArgs = newRegisterStaticFilesArgs(strSet);
         
-        const promiseRegisterStaticFiles: Promise<ResultAsync<RegisterStaticFilesResponse, Error>> = new Promise((resolve, _unusedReject) => {
+        const promiseRegisterStaticFiles: Promise<Result<RegisterStaticFilesResponse, Error>> = new Promise((resolve, _unusedReject) => {
             this.client.registerStaticFiles(args, (error: grpc.ServiceError | null, response?: RegisterStaticFilesResponse) => {
                 if (error === null) {
                     if (!response) {
-                        resolve(errAsync(new Error("No error was encountered but the response was still falsy; this should never happen")));
+                        resolve(err(new Error("No error was encountered but the response was still falsy; this should never happen")));
                     } else {
-                        resolve(okAsync(response!));
+                        resolve(ok(response!));
                     }
                 } else {
-                    resolve(errAsync(error));
+                    resolve(err(error));
                 }
             })
         });
@@ -150,12 +150,12 @@ export class NetworkContext {
 
             const destAbsFilepath: string = path.join(this.enclaveDataVolMountpoint, destFilepathRelativeToEnclaveVolRoot);
             
-            const promiseStatDestAbsFilepath: Promise<ResultAsync<fs.Stats, Error>> = new Promise((resolve, _unusedReject) => {
+            const promiseStatDestAbsFilepath: Promise<Result<fs.Stats, Error>> = new Promise((resolve, _unusedReject) => {
                 fs.stat(destAbsFilepath, (error: Error | null, response: fs.Stats) => {
                     if (error === null) {
-                        resolve(okAsync(response));
+                        resolve(ok(response));
                     } else {
-                        resolve(errAsync(error));
+                        resolve(err(error));
                     }
                 })
             });
@@ -165,12 +165,12 @@ export class NetworkContext {
                 " in the enclave volume which means that an empty file should exist there, " + "but no file exists at that path - this is a bug in Kurtosis!"));
             }
     
-            const promiseOpenSrcFp: Promise<ResultAsync<number, Error>> = new Promise((resolve, _unusedReject) => {
+            const promiseOpenSrcFp: Promise<Result<number, Error>> = new Promise((resolve, _unusedReject) => {
                 fs.open(srcAbsFilepath, 'r', (error: Error | null, fd: number) => {
                     if (error === null) {
-                        resolve(okAsync(fd));
+                        resolve(ok(fd));
                     } else {
-                        resolve(errAsync(error));
+                        resolve(err(error));
                     }
                 })
             });
@@ -182,12 +182,12 @@ export class NetworkContext {
             
             try {
 
-                const promiseOpenDestFp: Promise<ResultAsync<number, Error>> = new Promise((resolve, _unusedReject) => {
+                const promiseOpenDestFp: Promise<Result<number, Error>> = new Promise((resolve, _unusedReject) => {
                     fs.open(destAbsFilepath, 'w', (error: Error | null, response: number) => {
                         if (error === null) {
-                            resolve(okAsync(response));
+                            resolve(ok(response));
                         } else {
-                            resolve(errAsync(error));
+                            resolve(err(error));
                         }
                     })
                 });
@@ -199,12 +199,12 @@ export class NetworkContext {
 
                 try {
 
-                    const promiseCopyFile: Promise<ResultAsync<null, Error>> = new Promise((resolve, _unusedReject) => {
+                    const promiseCopyFile: Promise<Result<null, Error>> = new Promise((resolve, _unusedReject) => {
                         fs.copyFile(srcAbsFilepath, destAbsFilepath, (error: Error | null) => {
                             if (error === null) {
-                                resolve(okAsync(null));
+                                resolve(ok(null));
                             } else {
-                                resolve(errAsync(error));
+                                resolve(err(error));
                             }
                         })
                     });
@@ -232,16 +232,16 @@ export class NetworkContext {
         }
         const args: RegisterFilesArtifactsArgs = newRegisterFilesArtifactsArgs(filesArtifactIdStrsToUrls);
         
-        const promiseRegisterFilesArtifacts: Promise<ResultAsync<google_protobuf_empty_pb.Empty, Error>> = new Promise((resolve, _unusedReject) => {
+        const promiseRegisterFilesArtifacts: Promise<Result<google_protobuf_empty_pb.Empty, Error>> = new Promise((resolve, _unusedReject) => {
             this.client.registerFilesArtifacts(args, (error: grpc.ServiceError | null, response?: google_protobuf_empty_pb.Empty) => {
                 if (error === null) {
                     if (!response) {
-                        resolve(errAsync(new Error("No error was encountered but the response was still falsy; this should never happen")));
+                        resolve(err(new Error("No error was encountered but the response was still falsy; this should never happen")));
                     } else {
-                        resolve(okAsync(response!));
+                        resolve(ok(response!));
                     }
                 } else {
-                    resolve(errAsync(error));
+                    resolve(err(error));
                 }
             })
         });
@@ -285,16 +285,16 @@ export class NetworkContext {
         log.trace("Registering new service ID with Kurtosis API...");
         const registerServiceArgs: RegisterServiceArgs = newRegisterServiceArgs(serviceId, partitionId);
 
-        const promiseRegisterService: Promise<ResultAsync<RegisterServiceResponse, Error>> = new Promise((resolve, _unusedReject) => {
+        const promiseRegisterService: Promise<Result<RegisterServiceResponse, Error>> = new Promise((resolve, _unusedReject) => {
             this.client.registerService(registerServiceArgs, (error: grpc.ServiceError | null, response?: RegisterServiceResponse) => {
                 if (error === null) {
                     if (!response) {
-                        resolve(errAsync(new Error("No error was encountered but the response was still falsy; this should never happen")));
+                        resolve(err(new Error("No error was encountered but the response was still falsy; this should never happen")));
                     } else {
-                        resolve(okAsync(response!));
+                        resolve(ok(response!));
                     }
                 } else {
-                    resolve(errAsync(error));
+                    resolve(err(error));
                 }
             })
         });
@@ -348,12 +348,12 @@ export class NetworkContext {
             }
             const filepaths: GeneratedFileFilepaths = generatedFileFilepaths.get(fileId)!;
 
-            const promiseOpenFp: Promise<ResultAsync<number, Error>> = new Promise((resolve, _unusedReject) => {
+            const promiseOpenFp: Promise<Result<number, Error>> = new Promise((resolve, _unusedReject) => {
                 fs.open(filepaths.getAbsoluteFilepathHere(), 'w', (error: Error | null, fd: number) => {
                     if (error === null) {
-                        resolve(okAsync(fd));
+                        resolve(ok(fd));
                     } else {
-                        resolve(errAsync(error));
+                        resolve(err(error));
                     }
                 })
             });
@@ -397,16 +397,16 @@ export class NetworkContext {
             containerCreationConfig.getKurtosisVolumeMountpoint(),
             artifactIdStrToMountDirpath);
 
-        const promiseStartService: Promise<ResultAsync<StartServiceResponse, Error>> = new Promise((resolve, _unusedReject) => {
+        const promiseStartService: Promise<Result<StartServiceResponse, Error>> = new Promise((resolve, _unusedReject) => {
             this.client.startService(startServiceArgs, (error: Error | null, response?: StartServiceResponse) => {
                 if (error === null) {
                     if (!response) {
-                        resolve(errAsync(new Error("No error was encountered but the response was still falsy; this should never happen")));
+                        resolve(err(new Error("No error was encountered but the response was still falsy; this should never happen")));
                     } else {
-                        resolve(okAsync(response!));
+                        resolve(ok(response!));
                     }
                 } else {
-                    resolve(errAsync(error));
+                    resolve(err(error));
                 }
             })
         });
@@ -429,16 +429,16 @@ export class NetworkContext {
     public async getServiceContext(serviceId: ServiceID): Promise<Result<ServiceContext, Error>> {
         const getServiceInfoArgs: GetServiceInfoArgs = newGetServiceInfoArgs(serviceId);
         
-        const promiseGetServiceInfo: Promise<ResultAsync<GetServiceInfoResponse, Error>> = new Promise((resolve, _unusedReject) => {
+        const promiseGetServiceInfo: Promise<Result<GetServiceInfoResponse, Error>> = new Promise((resolve, _unusedReject) => {
             this.client.getServiceInfo(getServiceInfoArgs, (error: Error | null, response?: GetServiceInfoResponse) => {
                 if (error === null) {
                     if (!response) {
-                        resolve(errAsync(new Error("No error was encountered but the response was still falsy; this should never happen")));
+                        resolve(err(new Error("No error was encountered but the response was still falsy; this should never happen")));
                     } else {
-                        resolve(okAsync(response!));
+                        resolve(ok(response!));
                     }
                 } else {
-                    resolve(errAsync(error));
+                    resolve(err(error));
                 }
             })
         });
@@ -483,12 +483,12 @@ export class NetworkContext {
         // Independent of adding/removing them from the network
         const args: RemoveServiceArgs = newRemoveServiceArgs(serviceId, containerStopTimeoutSeconds);
         
-        const removeServicePromise: Promise<ResultAsync<null, Error>> = new Promise((resolve, _unusedReject) => {
+        const removeServicePromise: Promise<Result<null, Error>> = new Promise((resolve, _unusedReject) => {
             this.client.removeService(args, (error: Error | null, _unusedResponse?: google_protobuf_empty_pb.Empty) => {
                 if (error === null) {
-                    resolve(okAsync(null));
+                    resolve(ok(null));
                 } else {
-                    resolve(errAsync(error));
+                    resolve(err(error));
                 }
             })
         });
@@ -543,12 +543,12 @@ export class NetworkContext {
 
         const repartitionArgs: RepartitionArgs = newRepartitionArgs(reqPartitionServices, reqPartitionConns, defaultConnection);
 
-        const promiseRepartition: Promise<ResultAsync<null, Error>> = new Promise((resolve, _unusedReject) => {
+        const promiseRepartition: Promise<Result<null, Error>> = new Promise((resolve, _unusedReject) => {
             this.client.repartition(repartitionArgs, (error: Error | null, _unusedResponse?: google_protobuf_empty_pb.Empty) => {
                 if (error === null) {
-                    resolve(okAsync(null));
+                    resolve(ok(null));
                 } else {
-                    resolve(errAsync(error));
+                    resolve(err(error));
                 }
             })
         });
@@ -582,12 +582,12 @@ export class NetworkContext {
             retriesDelayMilliseconds,
             bodyText);
 
-        const promiseWaitForEndpointAvailability: Promise<ResultAsync<null, Error>> = new Promise((resolve, _unusedReject) => {
+        const promiseWaitForEndpointAvailability: Promise<Result<null, Error>> = new Promise((resolve, _unusedReject) => {
             this.client.waitForEndpointAvailability(availabilityArgs, (error: Error | null, _unusedResponse?: google_protobuf_empty_pb.Empty) => {
                 if (error === null) {
-                    resolve(okAsync(null));
+                    resolve(ok(null));
                 } else {
-                    resolve(errAsync(error));
+                    resolve(err(error));
                 }
             })
         });
@@ -604,12 +604,12 @@ export class NetworkContext {
 
         const args: ExecuteBulkCommandsArgs = newExecuteBulkCommandsArgs(bulkCommandsJson);
         
-        const promiseExecuteBulkCommands: Promise<ResultAsync<null, Error>> = new Promise((resolve, _unusedReject) => {
+        const promiseExecuteBulkCommands: Promise<Result<null, Error>> = new Promise((resolve, _unusedReject) => {
             this.client.executeBulkCommands(args, (error: Error | null, _unusedResponse?: google_protobuf_empty_pb.Empty) => {
                 if (error === null) {
-                    resolve(okAsync(null));
+                    resolve(ok(null));
                 } else {
-                    resolve(errAsync(error));
+                    resolve(err(error));
                 }
             })
         });
