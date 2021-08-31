@@ -32,7 +32,7 @@ type FilesArtifactID string
 //                                    Config Object
 // ====================================================================================================
 // TODO defensive copy when we're giving back complex objects?????
-// Docs available at https://docs.kurtosistech.com/kurtosis-libs/lib-documentation
+// Docs available at https://docs.kurtosistech.com/kurtosis-client/lib-documentation
 type ContainerCreationConfig struct {
 	image                    string
 	kurtosisVolumeMountpoint string   // Technically the enclave data volume, but we call it this for simplicity for the user
@@ -70,7 +70,7 @@ func (config *ContainerCreationConfig) GetUsedStaticFiles() map[StaticFileID]boo
 //                                        Builder
 // ====================================================================================================
 // TODO Defensive copies on all these With... functions???
-// Docs available at https://docs.kurtosistech.com/kurtosis-libs/lib-documentation
+// Docs available at https://docs.kurtosistech.com/kurtosis-client/lib-documentation
 type ContainerCreationConfigBuilder struct {
 	image                    string
 	kurtosisVolumeMountpoint string

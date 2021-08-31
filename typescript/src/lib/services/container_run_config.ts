@@ -1,7 +1,7 @@
 // ====================================================================================================
 //                                    Config Object
 // ====================================================================================================
-// Docs available at https://docs.kurtosistech.com/kurtosis-libs/lib-documentation
+// Docs available at https://docs.kurtosistech.com/kurtosis-client/lib-documentation
 export class ContainerRunConfig {
 	private readonly entrypointOverrideArgs: string[];
 	private readonly cmdOverrideArgs: string[];
@@ -35,7 +35,7 @@ export class ContainerRunConfig {
 //                                      Builder
 // ====================================================================================================
 // TODO Defensive copies on all these With... functions???
-// Docs available at https://docs.kurtosistech.com/kurtosis-libs/lib-documentation
+// Docs available at https://docs.kurtosistech.com/kurtosis-client/lib-documentation
 export class ContainerRunConfigBuilder {
 	private entrypointOverrideArgs: string[];
 	private cmdOverrideArgs: string[];

@@ -8,7 +8,7 @@ import * as grpc from "grpc";
 import * as path from "path";
 import * as jspb from "google-protobuf";
 
-// Docs available at https://docs.kurtosistech.com/kurtosis-libs/lib-documentation
+// Docs available at https://docs.kurtosistech.com/kurtosis-client/lib-documentation
 export class GeneratedFileFilepaths {
     
     private readonly absoluteFilepathHere: string;
@@ -19,12 +19,12 @@ export class GeneratedFileFilepaths {
         this.absoluteFilepathOnServiceContainer = absoluteFilepathOnServiceContainer;
     }   
 
-    // Docs available at https://docs.kurtosistech.com/kurtosis-libs/lib-documentation
+    // Docs available at https://docs.kurtosistech.com/kurtosis-client/lib-documentation
     public getAbsoluteFilepathHere(): string { 
         return this.absoluteFilepathHere;
     }
 
-    // Docs available at https://docs.kurtosistech.com/kurtosis-libs/lib-documentation
+    // Docs available at https://docs.kurtosistech.com/kurtosis-client/lib-documentation
     public getAbsoluteFilepathOnServiceContainer(): string { 
         return this.absoluteFilepathOnServiceContainer;
     }
@@ -52,17 +52,17 @@ export class ServiceContext {
         this.enclaveDataVolMountpointOnServiceContainer = enclaveDataVolMountpointOnServiceContainer;
     }
 
-    // Docs available at https://docs.kurtosistech.com/kurtosis-libs/lib-documentation
+    // Docs available at https://docs.kurtosistech.com/kurtosis-client/lib-documentation
     public getServiceID(): ServiceID { 
         return this.serviceId;
     }
 
-    // Docs available at https://docs.kurtosistech.com/kurtosis-libs/lib-documentation
+    // Docs available at https://docs.kurtosistech.com/kurtosis-client/lib-documentation
     public getIPAddress(): string {
         return this.ipAddress;
     }
 
-    // Docs available at https://docs.kurtosistech.com/kurtosis-libs/lib-documentation
+    // Docs available at https://docs.kurtosistech.com/kurtosis-client/lib-documentation
     public async execCommand(command: string[]): Promise<Result<[number, Uint8Array | string], Error>> {
         const serviceId: ServiceID = this.serviceId;
         const args: ExecCommandArgs = newExecCommandArgs(serviceId, command);
@@ -91,7 +91,7 @@ export class ServiceContext {
 
     }
 
-    // Docs available at https://docs.kurtosistech.com/kurtosis-libs/lib-documentation
+    // Docs available at https://docs.kurtosistech.com/kurtosis-client/lib-documentation
     public async generateFiles(filesToGenerateSet: Set<string>): Promise<Result<Map<string, GeneratedFileFilepaths>, Error>> {
         const serviceId: ServiceID = this.serviceId;
         const fileGenerationOpts: Map<string, FileGenerationOptions> = new Map();
@@ -141,7 +141,7 @@ export class ServiceContext {
         return ok(result);
     }
 
-    // Docs available at https://docs.kurtosistech.com/kurtosis-libs/lib-documentation
+    // Docs available at https://docs.kurtosistech.com/kurtosis-client/lib-documentation
     public async loadStaticFiles(usedStaticFilesSet: Set<StaticFileID>): Promise<Result<Map<StaticFileID, string>, Error>> { 
         const serviceId: ServiceID = this.serviceId;
         const staticFilesToCopyStringSet: Map<string, boolean> = new Map<string, boolean>(); 

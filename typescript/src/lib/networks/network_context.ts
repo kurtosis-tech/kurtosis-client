@@ -25,7 +25,7 @@ export type PartitionID = string;
 //  or it was repartitioned away)
 const DEFAULT_PARTITION_ID: PartitionID = "";
 
-// Docs available at https://docs.kurtosistech.com/kurtosis-libs/lib-documentation
+// Docs available at https://docs.kurtosistech.com/kurtosis-client/lib-documentation
 export class NetworkContext {
     private readonly client: ApiContainerServiceClient;
     
@@ -40,7 +40,7 @@ export class NetworkContext {
         this.enclaveDataVolMountpoint = enclaveDataVolMountpoint;
     }
 
-    // Docs available at https://docs.kurtosistech.com/kurtosis-libs/lib-documentation
+    // Docs available at https://docs.kurtosistech.com/kurtosis-client/lib-documentation
     public async loadLambda(
             lambdaId: LambdaID,
             image: string,
@@ -69,7 +69,7 @@ export class NetworkContext {
         return ok(moduleCtx);
     }
 
-    // Docs available at https://docs.kurtosistech.com/kurtosis-libs/lib-documentation
+    // Docs available at https://docs.kurtosistech.com/kurtosis-client/lib-documentation
     public async getLambdaContext(lambdaId: LambdaID): Promise<Result<LambdaContext, Error>> {
         const args: GetLambdaInfoArgs = newGetLambdaInfoArgs(lambdaId);
         
@@ -94,7 +94,7 @@ export class NetworkContext {
         return ok(lambdaCtx);
     }
 
-    // Docs available at https://docs.kurtosistech.com/kurtosis-libs/lib-documentation
+    // Docs available at https://docs.kurtosistech.com/kurtosis-client/lib-documentation
     public async registerStaticFiles(staticFileFilepaths: Map<StaticFileID, string>): Promise<Result<null, Error>> {
         const strSet: Map<string, boolean> = new Map();
         for (const [staticFileId, srcAbsFilepath] of staticFileFilepaths.entries()) {
@@ -224,7 +224,7 @@ export class NetworkContext {
         return ok(null);
     }
 
-    // Docs available at https://docs.kurtosistech.com/kurtosis-libs/lib-documentation
+    // Docs available at https://docs.kurtosistech.com/kurtosis-client/lib-documentation
     public async registerFilesArtifacts(filesArtifactUrls: Map<FilesArtifactID, string>): Promise<Result<null,Error>> {
         const filesArtifactIdStrsToUrls: Map<string, string> = new Map();
         for (const [artifactId, url] of filesArtifactUrls.entries()) {
@@ -253,7 +253,7 @@ export class NetworkContext {
         return ok(null);
     }
 
-    // Docs available at https://docs.kurtosistech.com/kurtosis-libs/lib-documentation
+    // Docs available at https://docs.kurtosistech.com/kurtosis-client/lib-documentation
     public async addService(
         serviceId: ServiceID,
         containerCreationConfig: ContainerCreationConfig,
@@ -274,7 +274,7 @@ export class NetworkContext {
         return ok(resultAddServiceToPartition.value);
     }
 
-    // Docs available at https://docs.kurtosistech.com/kurtosis-libs/lib-documentation
+    // Docs available at https://docs.kurtosistech.com/kurtosis-client/lib-documentation
     public async addServiceToPartition(
             serviceId: ServiceID,
             partitionId: PartitionID,
@@ -425,7 +425,7 @@ export class NetworkContext {
         return ok<[ServiceContext, Map<string, PortBinding>], Error>([serviceContext, resultMap]);
     }
 
-    // Docs available at https://docs.kurtosistech.com/kurtosis-libs/lib-documentation
+    // Docs available at https://docs.kurtosistech.com/kurtosis-client/lib-documentation
     public async getServiceContext(serviceId: ServiceID): Promise<Result<ServiceContext, Error>> {
         const getServiceInfoArgs: GetServiceInfoArgs = newGetServiceInfoArgs(serviceId);
         
@@ -474,7 +474,7 @@ export class NetworkContext {
         return ok(serviceContext);
     }
 
-    // Docs available at https://docs.kurtosistech.com/kurtosis-libs/lib-documentation
+    // Docs available at https://docs.kurtosistech.com/kurtosis-client/lib-documentation
     public async removeService(serviceId: ServiceID, containerStopTimeoutSeconds: number): Promise<Result<null, Error>> {
 
         log.debug("Removing service '" + serviceId + "'...");
@@ -502,7 +502,7 @@ export class NetworkContext {
         return ok(null);
     }
 
-    // Docs available at https://docs.kurtosistech.com/kurtosis-libs/lib-documentation
+    // Docs available at https://docs.kurtosistech.com/kurtosis-client/lib-documentation
     public async repartitionNetwork(
             partitionServices: Map<PartitionID, Set<ServiceID>>,
             partitionConnections: Map<PartitionID, Map<PartitionID, PartitionConnectionInfo>>,
@@ -560,7 +560,7 @@ export class NetworkContext {
         return ok(null);
     }
 
-    // Docs available at https://docs.kurtosistech.com/kurtosis-libs/lib-documentation
+    // Docs available at https://docs.kurtosistech.com/kurtosis-client/lib-documentation
     public async waitForEndpointAvailability(
             serviceId: ServiceID,
             httpMethod: WaitForEndpointAvailabilityArgs.HttpMethodMap[keyof WaitForEndpointAvailabilityArgs.HttpMethodMap],
@@ -599,7 +599,7 @@ export class NetworkContext {
         return ok(null);
     }
 
-    // Docs available at https://docs.kurtosistech.com/kurtosis-libs/lib-documentation
+    // Docs available at https://docs.kurtosistech.com/kurtosis-client/lib-documentation
     public async executeBulkCommands(bulkCommandsJson: string): Promise<Result<null, Error>> {
 
         const args: ExecuteBulkCommandsArgs = newExecuteBulkCommandsArgs(bulkCommandsJson);
