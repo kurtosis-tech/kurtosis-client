@@ -6,7 +6,7 @@ import * as grpc from "grpc";
 
 export type LambdaID = string;
 
-// Docs available at https://docs.kurtosistech.com/kurtosis-libs/lib-documentation
+// Docs available at https://docs.kurtosistech.com/kurtosis-client/lib-documentation
 export class LambdaContext {
     private readonly client: ApiContainerServiceClient;
     private readonly lambdaId: LambdaID;
@@ -16,7 +16,7 @@ export class LambdaContext {
         this.lambdaId = lambdaId;
     }
 
-    // Docs available at https://docs.kurtosistech.com/kurtosis-libs/lib-documentation
+    // Docs available at https://docs.kurtosistech.com/kurtosis-client/lib-documentation
     public async execute(serializedParams: string): Promise<Result<string, Error>> {
         const args: ExecuteLambdaArgs = newExecuteLambdaArgs(this.lambdaId, serializedParams);
 

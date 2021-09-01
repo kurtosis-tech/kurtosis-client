@@ -26,7 +26,7 @@ import (
 
 type LambdaID string
 
-// Docs available at https://docs.kurtosistech.com/kurtosis-libs/lib-documentation
+// Docs available at https://docs.kurtosistech.com/kurtosis-client/lib-documentation
 type LambdaContext struct {
 	client   kurtosis_core_rpc_api_bindings.ApiContainerServiceClient
 	lambdaId LambdaID
@@ -36,7 +36,7 @@ func NewLambdaContext(client kurtosis_core_rpc_api_bindings.ApiContainerServiceC
 	return &LambdaContext{client: client, lambdaId: lambdaId}
 }
 
-// Docs available at https://docs.kurtosistech.com/kurtosis-libs/lib-documentation
+// Docs available at https://docs.kurtosistech.com/kurtosis-client/lib-documentation
 func (moduleCtx *LambdaContext) Execute(serializedParams string) (serializedResult string, resultErr error) {
 	args := binding_constructors.NewExecuteLambdaArgs(string(moduleCtx.lambdaId), serializedParams)
 	resp, err := moduleCtx.client.ExecuteLambda(context.Background(), args)

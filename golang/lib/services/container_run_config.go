@@ -21,7 +21,7 @@ package services
 // ====================================================================================================
 //                                    Config Object
 // ====================================================================================================
-// Docs available at https://docs.kurtosistech.com/kurtosis-libs/lib-documentation
+// Docs available at https://docs.kurtosistech.com/kurtosis-client/lib-documentation
 type ContainerRunConfig struct {
 	entrypointOverrideArgs  []string
 	cmdOverrideArgs         []string
@@ -46,7 +46,7 @@ func (config *ContainerRunConfig) GetEnvironmentVariableOverrides() map[string]s
 //                                      Builder
 // ====================================================================================================
 // TODO Defensive copies on all these With... functions???
-// Docs available at https://docs.kurtosistech.com/kurtosis-libs/lib-documentation
+// Docs available at https://docs.kurtosistech.com/kurtosis-client/lib-documentation
 type ContainerRunConfigBuilder struct {
 	entrypointOverrideArgs  []string
 	cmdOverrideArgs         []string
