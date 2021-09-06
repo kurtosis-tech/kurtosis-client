@@ -4,7 +4,7 @@
  */
 
 import { ApiContainerServiceClient } from "../..//kurtosis_core_rpc_api_bindings/api_container_service_grpc_pb";
-import { LoadLambdaArgs, GetLambdaInfoArgs, RegisterStaticFilesArgs, RegisterStaticFilesResponse, RegisterFilesArtifactsArgs, PortBinding, RegisterServiceArgs, RegisterServiceResponse, StartServiceArgs, GetServiceInfoArgs, GetServiceInfoResponse, RemoveServiceArgs, PartitionConnectionInfo, PartitionServices, PartitionConnections, RepartitionArgs, WaitForEndpointAvailabilityHttpGetArgs, WaitForEndpointAvailabilityHttpPostArgs, ExecuteBulkCommandsArgs, StartServiceResponse, GetLambdaInfoResponse } from "../../kurtosis_core_rpc_api_bindings/api_container_service_pb";
+import { LoadLambdaArgs, GetLambdaInfoArgs, RegisterStaticFilesArgs, RegisterStaticFilesResponse, RegisterFilesArtifactsArgs, PortBinding, RegisterServiceArgs, RegisterServiceResponse, StartServiceArgs, GetServiceInfoArgs, GetServiceInfoResponse, RemoveServiceArgs, PartitionConnectionInfo, PartitionServices, PartitionConnections, RepartitionArgs, WaitForEndpointAvailabilityHttpGetArgs, WaitForEndpointAvailabilityHttpPostArgs, ExecuteBulkCommandsArgs, StartServiceResponse, GetLambdaInfoResponse, GetServicesResponse, GetLambdasResponse } from "../../kurtosis_core_rpc_api_bindings/api_container_service_pb";
 import { LambdaID, LambdaContext } from "../modules/lambda_context";
 import { ServiceID } from "../services/service";
 import { ServiceContext, GeneratedFileFilepaths } from "../services/service_context";
@@ -653,4 +653,113 @@ export class NetworkContext {
 
         return ok(null);
     }
+
+    // Docs available at https://docs.kurtosistech.com/kurtosis-client/lib-documentation
+    public async getServices(): Promise<Result<ServiceID[], Error>> {
+        const emptyArg: google_protobuf_empty_pb.Empty = new google_protobuf_empty_pb.Empty()
+        
+        const promiseGetServices: Promise<Result<GetServicesResponse, Error>> = new Promise((resolve, _unusedReject) => {
+            this.client.getServices(emptyArg, (error: Error | null, response?: GetServicesResponse) => {
+                if (error === null) {
+                    if (!response) {
+                        resolve(err(new Error("No error was encountered but the response was still falsy; this should never happen")));
+                    } else {
+                        resolve(ok(response!));
+                    }
+                } else {
+                    resolve(err(error));
+                }
+            })
+        });
+
+        const resultGetServices: Result<GetServicesResponse, Error> = await promiseGetServices;
+        if (!resultGetServices.isOk()) {
+            return err(resultGetServices.error);
+        }
+
+        const getServicesResponse: GetServicesResponse = resultGetServices.value;
+
+        return ok(getServicesResponse.getServicesIdList())
+    }
+
+    // Docs available at https://docs.kurtosistech.com/kurtosis-client/lib-documentation
+    public async getLambdas(): Promise<Result<LambdaID[], Error>> {
+        const emptyArg: google_protobuf_empty_pb.Empty = new google_protobuf_empty_pb.Empty()
+        
+        const promiseGetLambdas: Promise<Result<GetLambdasResponse, Error>> = new Promise((resolve, _unusedReject) => {
+            this.client.getLambdas(emptyArg, (error: Error | null, response?: GetLambdasResponse) => {
+                if (error === null) {
+                    if (!response) {
+                        resolve(err(new Error("No error was encountered but the response was still falsy; this should never happen")));
+                    } else {
+                        resolve(ok(response!));
+                    }
+                } else {
+                    resolve(err(error));
+                }
+            })
+        });
+
+        const resultGetLambdas: Result<GetLambdasResponse, Error> = await promiseGetLambdas;
+        if (!resultGetLambdas.isOk()) {
+            return err(resultGetLambdas.error);
+        }
+
+        const getLambdasResponse: GetLambdasResponse = resultGetLambdas.value;
+
+        return ok(getLambdasResponse.getLambdasIdList())
+    }
 }
+
+/*
+
+// Docs available at https://docs.kurtosistech.com/kurtosis-client/lib-documentation
+    public async getServiceContext(serviceId: ServiceID): Promise<Result<ServiceContext, Error>> {
+        const getServiceInfoArgs: GetServiceInfoArgs = newGetServiceInfoArgs(serviceId);
+        
+        const promiseGetServiceInfo: Promise<Result<GetServiceInfoResponse, Error>> = new Promise((resolve, _unusedReject) => {
+            this.client.getServiceInfo(getServiceInfoArgs, (error: Error | null, response?: GetServiceInfoResponse) => {
+                if (error === null) {
+                    if (!response) {
+                        resolve(err(new Error("No error was encountered but the response was still falsy; this should never happen")));
+                    } else {
+                        resolve(ok(response!));
+                    }
+                } else {
+                    resolve(err(error));
+                }
+            })
+        });
+        const resultGetServiceInfo: Result<GetServiceInfoResponse, Error> = await promiseGetServiceInfo;
+        if (!resultGetServiceInfo.isOk()) {
+            return err(resultGetServiceInfo.error);
+        }
+
+        const serviceResponse: GetServiceInfoResponse = resultGetServiceInfo.value;
+        if (serviceResponse.getIpAddr() === "") {
+            return err(new Error(
+                "Kurtosis API reported an empty IP address for service " + serviceId +  " - this should never happen, and is a bug with Kurtosis!",
+                ) 
+            );
+        }
+
+        const enclaveDataVolMountDirpathOnSvcContainer: string = serviceResponse.getEnclaveDataVolumeMountDirpath();
+        if (enclaveDataVolMountDirpathOnSvcContainer === "") {
+            return err(new Error(
+                "Kurtosis API reported an empty enclave data volume directory path for service " + serviceId + " - this should never happen, and is a bug with Kurtosis!",
+                )
+            );
+        }
+
+        const serviceContext: ServiceContext = new ServiceContext(
+            this.client,
+            serviceId,
+            serviceResponse.getIpAddr(),
+            this.enclaveDataVolMountpoint,
+            enclaveDataVolMountDirpathOnSvcContainer,
+        );
+
+        return ok(serviceContext);
+    }
+
+*/

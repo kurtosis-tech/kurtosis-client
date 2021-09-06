@@ -436,6 +436,7 @@ func (networkCtx *NetworkContext) ExecuteBulkCommands(bulkCommandsJson string) e
 	return nil
 }
 
+// Docs available at https://docs.kurtosistech.com/kurtosis-client/lib-documentation
 func (networkCtx *NetworkContext) GetServices() ([]services.ServiceID, error){
 	response, err := networkCtx.client.GetServices(context.Background(), &emptypb.Empty{})
 	if err != nil {
@@ -451,6 +452,7 @@ func (networkCtx *NetworkContext) GetServices() ([]services.ServiceID, error){
 	return servicesID, nil
 }
 
+// Docs available at https://docs.kurtosistech.com/kurtosis-client/lib-documentation
 func (networkCtx *NetworkContext) GetLambdas() ([]modules.LambdaID, error){
 	response, err := networkCtx.client.GetLambdas(context.Background(), &emptypb.Empty{})
 	if err != nil {
