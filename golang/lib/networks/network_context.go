@@ -25,6 +25,7 @@ import (
 	"github.com/kurtosis-tech/kurtosis-client/golang/lib/services"
 	"github.com/palantir/stacktrace"
 	"github.com/sirupsen/logrus"
+	"google.golang.org/protobuf/types/known/emptypb"
 	"io"
 	"os"
 	"path"
@@ -433,4 +434,34 @@ func (networkCtx *NetworkContext) ExecuteBulkCommands(bulkCommandsJson string) e
 		return stacktrace.Propagate(err, "An error occurred executing the following bulk commands: %v", bulkCommandsJson)
 	}
 	return nil
+}
+
+func (networkCtx *NetworkContext) GetServices() ([]services.ServiceID, error){
+	response, err := networkCtx.client.GetServices(context.Background(), &emptypb.Empty{})
+	if err != nil {
+		return nil, stacktrace.Propagate(err, "An error occurred getting services' id list")
+	}
+
+	servicesID := make([]services.ServiceID, len(response.ServicesId))
+
+	for _, serviceID := range response.ServicesId {
+		servicesID = append(servicesID, services.ServiceID(serviceID))
+	}
+
+	return servicesID, nil
+}
+
+func (networkCtx *NetworkContext) GetLambdas() ([]modules.LambdaID, error){
+	response, err := networkCtx.client.GetLambdas(context.Background(), &emptypb.Empty{})
+	if err != nil {
+		return nil, stacktrace.Propagate(err, "An error occurred getting lambdas' id list")
+	}
+
+	lambdasID := make([]modules.LambdaID, len(response.LambdasId))
+
+	for _, lambdaID := range response.LambdasId {
+		lambdasID = append(lambdasID, modules.LambdaID(lambdaID))
+	}
+
+	return lambdasID, nil
 }

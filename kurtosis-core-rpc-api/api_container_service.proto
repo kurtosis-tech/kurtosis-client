@@ -57,6 +57,12 @@ service ApiContainerService {
 
   // Executes multiple commands at once
   rpc ExecuteBulkCommands(ExecuteBulkCommandsArgs) returns (google.protobuf.Empty) {};
+
+  // Returns a list of running services
+  rpc GetServices(google.protobuf.Empty) returns (GetServicesResponse) {};
+
+  // Returns a list of running Kurtosis Lambdas
+  rpc GetLambdas(google.protobuf.Empty) returns (GetLambdasResponse) {};
 }
 
 
@@ -355,4 +361,20 @@ message WaitForEndpointAvailabilityHttpPostArgs {
 message ExecuteBulkCommandsArgs {
   // Commands, serialized as JSON
   string serialized_commands = 1;
+}
+
+// ==============================================================================================
+//                                          Get Services
+// ==============================================================================================
+message GetServicesResponse {
+  // List of services' id
+  repeated string services_id = 1;
+}
+
+// ==============================================================================================
+//                                          Get Lambdas
+// ==============================================================================================
+message GetLambdasResponse {
+  // List of Kurtosis Lambas' id
+  repeated string lambdas_id = 1;
 }

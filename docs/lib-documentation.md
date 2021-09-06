@@ -147,6 +147,19 @@ Waits until a service endpoint is available by making requests to the endpoint u
 * `retriesDelayMilliseconds`: Number of milliseconds to wait between retries
 * `bodyText`: If this value is non-empty, the endpoint will not be marked as available until this value is returned (e.g. `Hello World`). If this value is emptystring, no body text comparison will be done.
 
+### getServices() -\> Set servicesID
+
+**Returns**
+
+* `servicesID`: A set of service's ID 
+
+### getLambdas() -\> Set lambdasID
+
+**Returns**
+
+* `lambdasID`: A set of Kurtosis Lambda's ID
+
+
 PartitionConnectionInfo
 -----------------------
 This class is a plain old object defining the state between two partitions (e.g. whether network traffic is blocked or not). It is auto-generated from a gRPC API, so exploring it in code is the best way to view its properties. 

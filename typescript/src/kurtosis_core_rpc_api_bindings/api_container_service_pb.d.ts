@@ -737,3 +737,47 @@ export namespace ExecuteBulkCommandsArgs {
   }
 }
 
+export class GetServicesResponse extends jspb.Message {
+  clearServicesIdList(): void;
+  getServicesIdList(): Array<string>;
+  setServicesIdList(value: Array<string>): void;
+  addServicesId(value: string, index?: number): string;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): GetServicesResponse.AsObject;
+  static toObject(includeInstance: boolean, msg: GetServicesResponse): GetServicesResponse.AsObject;
+  static extensions: {[key: number]: jspb.ExtensionFieldInfo<jspb.Message>};
+  static extensionsBinary: {[key: number]: jspb.ExtensionFieldBinaryInfo<jspb.Message>};
+  static serializeBinaryToWriter(message: GetServicesResponse, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): GetServicesResponse;
+  static deserializeBinaryFromReader(message: GetServicesResponse, reader: jspb.BinaryReader): GetServicesResponse;
+}
+
+export namespace GetServicesResponse {
+  export type AsObject = {
+    servicesIdList: Array<string>,
+  }
+}
+
+export class GetLambdasResponse extends jspb.Message {
+  clearLambdasIdList(): void;
+  getLambdasIdList(): Array<string>;
+  setLambdasIdList(value: Array<string>): void;
+  addLambdasId(value: string, index?: number): string;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): GetLambdasResponse.AsObject;
+  static toObject(includeInstance: boolean, msg: GetLambdasResponse): GetLambdasResponse.AsObject;
+  static extensions: {[key: number]: jspb.ExtensionFieldInfo<jspb.Message>};
+  static extensionsBinary: {[key: number]: jspb.ExtensionFieldBinaryInfo<jspb.Message>};
+  static serializeBinaryToWriter(message: GetLambdasResponse, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): GetLambdasResponse;
+  static deserializeBinaryFromReader(message: GetLambdasResponse, reader: jspb.BinaryReader): GetLambdasResponse;
+}
+
+export namespace GetLambdasResponse {
+  export type AsObject = {
+    lambdasIdList: Array<string>,
+  }
+}
+
