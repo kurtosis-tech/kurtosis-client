@@ -1,4 +1,8 @@
 # TBD
+### Features
+* Add `NetworkContext.GetServices` to get a list of running services' ID
+* Add `NetworkContext.GetLambdas` to get a list of running Kurtosis Lambdas' ID
+
 ### Breaking Changes
 * Split method `NetworkContext.WaitForAvailability` to `NetworkContext.WaitForAvailabilityHttpGet` and `NetworkContext.WaitForAvailabilityHttpPost`
   * Users should replace their `NetworkContext.WaitForAvailability` calls with `NetworkContext.WaitForAvailabilityHttpGet` or `NetworkContext.WaitForAvailabilityHttpPost` depending on the endpoint used to check availability
