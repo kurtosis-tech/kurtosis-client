@@ -32,26 +32,30 @@ type V0CommandTypeVisitor interface {
 	VisitRemoveService() error
 	VisitRepartition() error
 	VisitExecCommand() error
-	VisitWaitForEndpointAvailability() error
+	VisitWaitForEndpointAvailabilityHttpGet() error
+	VisitWaitForEndpointAvailabilityHttpPost() error
 	VisitExecuteBulkCommands() error
 }
 
 type V0CommandType string
+
 const (
 	// vvvvvvvvvvvvvvvvvvvv Update the visitor whenever you add an enum value!!! vvvvvvvvvvvvvvvvvvvvvvvvvvv
-	LoadLambdaCommandType			       V0CommandType = "LOAD_LAMBDA"
-	ExecuteLambdaCommandType      		   V0CommandType = "EXECUTE_LAMBDA"
-	RegisterServiceCommandType             V0CommandType = "REGISTER_SERVICE"
-	GenerateFilesCommandType               V0CommandType = "GENERATE_FILES"
-	LoadStaticFilesCommandType             V0CommandType = "LOAD_STATIC_FILES"
-	StartServiceCommandType                V0CommandType = "START_SERVICE"
-	RemoveServiceCommandType               V0CommandType = "REMOVE_SERVICE"
-	RepartitionCommandType                 V0CommandType = "REPARTITION"
-	ExecCommandCommandType                 V0CommandType = "EXEC_COMMAND"
-	WaitForEndpointAvailabilityCommandType V0CommandType = "WAIT_FOR_ENDPOINT_AVAILABILITY"
-	ExecuteBulkCommandsCommandType         V0CommandType = "EXECUTE_BULK_COMMANDS"
+	LoadLambdaCommandType                          V0CommandType = "LOAD_LAMBDA"
+	ExecuteLambdaCommandType                       V0CommandType = "EXECUTE_LAMBDA"
+	RegisterServiceCommandType                     V0CommandType = "REGISTER_SERVICE"
+	GenerateFilesCommandType                       V0CommandType = "GENERATE_FILES"
+	LoadStaticFilesCommandType                     V0CommandType = "LOAD_STATIC_FILES"
+	StartServiceCommandType                        V0CommandType = "START_SERVICE"
+	RemoveServiceCommandType                       V0CommandType = "REMOVE_SERVICE"
+	RepartitionCommandType                         V0CommandType = "REPARTITION"
+	ExecCommandCommandType                         V0CommandType = "EXEC_COMMAND"
+	WaitForEndpointAvailabilityHttpGetCommandType  V0CommandType = "WAIT_FOR_ENDPOINT_AVAILABILITY_HTTP_GET"
+	WaitForEndpointAvailabilityHttpPostCommandType V0CommandType = "WAIT_FOR_ENDPOINT_AVAILABILITY_HTTP_POST"
+	ExecuteBulkCommandsCommandType                 V0CommandType = "EXECUTE_BULK_COMMANDS"
 	// ^^^^^^^^^^^^^^^^^^^^ Update the visitor whenever you add an enum value!!! ^^^^^^^^^^^^^^^^^^^^^^^^^^^
 )
+
 func (commandType V0CommandType) AcceptVisitor(visitor V0CommandTypeVisitor) error {
 	var err error
 	switch commandType {
@@ -73,8 +77,10 @@ func (commandType V0CommandType) AcceptVisitor(visitor V0CommandTypeVisitor) err
 		err = visitor.VisitRepartition()
 	case ExecCommandCommandType:
 		err = visitor.VisitExecCommand()
-	case WaitForEndpointAvailabilityCommandType:
-		err = visitor.VisitWaitForEndpointAvailability()
+	case WaitForEndpointAvailabilityHttpGetCommandType:
+		err = visitor.VisitWaitForEndpointAvailabilityHttpGet()
+	case WaitForEndpointAvailabilityHttpPostCommandType:
+		err = visitor.VisitWaitForEndpointAvailabilityHttpPost()
 	case ExecuteBulkCommandsCommandType:
 		err = visitor.VisitExecuteBulkCommands()
 	default:

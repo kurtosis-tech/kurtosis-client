@@ -4,13 +4,13 @@
  */
 
 import { ApiContainerServiceClient } from "../..//kurtosis_core_rpc_api_bindings/api_container_service_grpc_pb";
-import { LoadLambdaArgs, GetLambdaInfoArgs, RegisterStaticFilesArgs, RegisterStaticFilesResponse, RegisterFilesArtifactsArgs, PortBinding, RegisterServiceArgs, RegisterServiceResponse, StartServiceArgs, GetServiceInfoArgs, GetServiceInfoResponse, RemoveServiceArgs, PartitionConnectionInfo, PartitionServices, PartitionConnections, RepartitionArgs, WaitForEndpointAvailabilityArgs, ExecuteBulkCommandsArgs, StartServiceResponse, GetLambdaInfoResponse } from "../../kurtosis_core_rpc_api_bindings/api_container_service_pb";
+import { LoadLambdaArgs, GetLambdaInfoArgs, RegisterStaticFilesArgs, RegisterStaticFilesResponse, RegisterFilesArtifactsArgs, PortBinding, RegisterServiceArgs, RegisterServiceResponse, StartServiceArgs, GetServiceInfoArgs, GetServiceInfoResponse, RemoveServiceArgs, PartitionConnectionInfo, PartitionServices, PartitionConnections, RepartitionArgs, WaitForEndpointAvailabilityHttpGetArgs, WaitForEndpointAvailabilityHttpPostArgs, ExecuteBulkCommandsArgs, StartServiceResponse, GetLambdaInfoResponse } from "../../kurtosis_core_rpc_api_bindings/api_container_service_pb";
 import { LambdaID, LambdaContext } from "../modules/lambda_context";
 import { ServiceID } from "../services/service";
 import { ServiceContext, GeneratedFileFilepaths } from "../services/service_context";
 import { StaticFileID, FilesArtifactID, ContainerCreationConfig } from "../services/container_creation_config"; 
 import { ContainerRunConfig } from "../services/container_run_config";
-import { newLoadLambdaArgs, newGetLambdaInfoArgs, newRegisterStaticFilesArgs, newRegisterFilesArtifactsArgs, newRegisterServiceArgs, newStartServiceArgs, newGetServiceInfoArgs, newRemoveServiceArgs, newPartitionServices, newPartitionConnections, newRepartitionArgs, newWaitForEndpointAvailabilityArgs, newExecuteBulkCommandsArgs } from "../constructor_calls";
+import { newLoadLambdaArgs, newGetLambdaInfoArgs, newRegisterStaticFilesArgs, newRegisterFilesArtifactsArgs, newRegisterServiceArgs, newStartServiceArgs, newGetServiceInfoArgs, newRemoveServiceArgs, newPartitionServices, newPartitionConnections, newRepartitionArgs, newWaitForEndpointAvailabilityHttpGetArgs, newWaitForEndpointAvailabilityHttpPostArgs, newExecuteBulkCommandsArgs } from "../constructor_calls";
 import { ok, err, Result } from "neverthrow";
 import * as log from "loglevel";
 import * as path from "path";
@@ -561,29 +561,62 @@ export class NetworkContext {
     }
 
     // Docs available at https://docs.kurtosistech.com/kurtosis-client/lib-documentation
-    public async waitForEndpointAvailability(
+    public async waitForEndpointAvailabilityHttpGet(
+        serviceId: ServiceID,
+        port: number, 
+        path: string,
+        initialDelayMilliseconds: number, 
+        retries: number, 
+        retriesDelayMilliseconds: number, 
+        bodyText: string): Promise<Result<null, Error>> {
+    const availabilityArgs: WaitForEndpointAvailabilityHttpGetArgs = newWaitForEndpointAvailabilityHttpGetArgs(
+        serviceId,
+        port,
+        path,
+        initialDelayMilliseconds,
+        retries,
+        retriesDelayMilliseconds,
+        bodyText);
+
+    const promiseWaitForEndpointAvailabilityHttpGet: Promise<Result<null, Error>> = new Promise((resolve, _unusedReject) => {
+        this.client.waitForEndpointAvailabilityHttpGet(availabilityArgs, (error: Error | null, _unusedResponse?: google_protobuf_empty_pb.Empty) => {
+            if (error === null) {
+                resolve(ok(null));
+            } else {
+                resolve(err(error));
+            }
+        })
+    });
+    const resultWaitForEndpointAvailabilityHttpPost: Result<null, Error> = await promiseWaitForEndpointAvailabilityHttpGet;
+    if (!resultWaitForEndpointAvailabilityHttpPost.isOk()) {
+        return err(resultWaitForEndpointAvailabilityHttpPost.error);
+    }
+
+    return ok(null);
+}
+
+    // Docs available at https://docs.kurtosistech.com/kurtosis-client/lib-documentation
+    public async waitForEndpointAvailabilityHttpPost(
             serviceId: ServiceID,
-            httpMethod: WaitForEndpointAvailabilityArgs.HttpMethodMap[keyof WaitForEndpointAvailabilityArgs.HttpMethodMap],
             port: number, 
             path: string,
             requestBody: string,
-            initialDelaySeconds: number, 
+            initialDelayMilliseconds: number, 
             retries: number, 
             retriesDelayMilliseconds: number, 
             bodyText: string): Promise<Result<null, Error>> {
-        const availabilityArgs: WaitForEndpointAvailabilityArgs = newWaitForEndpointAvailabilityArgs(
+        const availabilityArgs: WaitForEndpointAvailabilityHttpPostArgs = newWaitForEndpointAvailabilityHttpPostArgs(
             serviceId,
-            httpMethod,
             port,
             path,
             requestBody,
-            initialDelaySeconds,
+            initialDelayMilliseconds,
             retries,
             retriesDelayMilliseconds,
             bodyText);
 
-        const promiseWaitForEndpointAvailability: Promise<Result<null, Error>> = new Promise((resolve, _unusedReject) => {
-            this.client.waitForEndpointAvailability(availabilityArgs, (error: Error | null, _unusedResponse?: google_protobuf_empty_pb.Empty) => {
+        const promiseWaitForEndpointAvailabilityHttpPost: Promise<Result<null, Error>> = new Promise((resolve, _unusedReject) => {
+            this.client.waitForEndpointAvailabilityHttpPost(availabilityArgs, (error: Error | null, _unusedResponse?: google_protobuf_empty_pb.Empty) => {
                 if (error === null) {
                     resolve(ok(null));
                 } else {
@@ -591,9 +624,9 @@ export class NetworkContext {
                 }
             })
         });
-        const resultWaitForEndpointAvailability: Result<null, Error> = await promiseWaitForEndpointAvailability;
-        if (!resultWaitForEndpointAvailability.isOk()) {
-            return err(resultWaitForEndpointAvailability.error);
+        const resultWaitForEndpointAvailabilityHttpPost: Result<null, Error> = await promiseWaitForEndpointAvailabilityHttpPost;
+        if (!resultWaitForEndpointAvailabilityHttpPost.isOk()) {
+            return err(resultWaitForEndpointAvailabilityHttpPost.error);
         }
 
         return ok(null);

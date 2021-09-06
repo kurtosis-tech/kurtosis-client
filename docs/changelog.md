@@ -1,4 +1,8 @@
 # TBD
+### Breaking Changes
+* Split method `NetworkContext.WaitForAvailability` to `NetworkContext.WaitForAvailabilityHttpGet` and `NetworkContext.WaitForAvailabilityHttpPost`
+  * Users should replace their `NetworkContext.WaitForAvailability` calls with `NetworkContext.WaitForAvailabilityHttpGet` or `NetworkContext.WaitForAvailabilityHttpPost` depending on the endpoint used to check availability
+
 ### Fixes
 * Fixed broken documentation links in code
 

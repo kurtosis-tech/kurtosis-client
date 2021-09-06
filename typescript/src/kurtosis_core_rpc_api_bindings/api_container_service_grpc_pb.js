@@ -258,15 +258,26 @@ function deserialize_api_container_api_StartServiceResponse(buffer_arg) {
   return api_container_service_pb.StartServiceResponse.deserializeBinary(new Uint8Array(buffer_arg));
 }
 
-function serialize_api_container_api_WaitForEndpointAvailabilityArgs(arg) {
-  if (!(arg instanceof api_container_service_pb.WaitForEndpointAvailabilityArgs)) {
-    throw new Error('Expected argument of type api_container_api.WaitForEndpointAvailabilityArgs');
+function serialize_api_container_api_WaitForEndpointAvailabilityHttpGetArgs(arg) {
+  if (!(arg instanceof api_container_service_pb.WaitForEndpointAvailabilityHttpGetArgs)) {
+    throw new Error('Expected argument of type api_container_api.WaitForEndpointAvailabilityHttpGetArgs');
   }
   return Buffer.from(arg.serializeBinary());
 }
 
-function deserialize_api_container_api_WaitForEndpointAvailabilityArgs(buffer_arg) {
-  return api_container_service_pb.WaitForEndpointAvailabilityArgs.deserializeBinary(new Uint8Array(buffer_arg));
+function deserialize_api_container_api_WaitForEndpointAvailabilityHttpGetArgs(buffer_arg) {
+  return api_container_service_pb.WaitForEndpointAvailabilityHttpGetArgs.deserializeBinary(new Uint8Array(buffer_arg));
+}
+
+function serialize_api_container_api_WaitForEndpointAvailabilityHttpPostArgs(arg) {
+  if (!(arg instanceof api_container_service_pb.WaitForEndpointAvailabilityHttpPostArgs)) {
+    throw new Error('Expected argument of type api_container_api.WaitForEndpointAvailabilityHttpPostArgs');
+  }
+  return Buffer.from(arg.serializeBinary());
+}
+
+function deserialize_api_container_api_WaitForEndpointAvailabilityHttpPostArgs(buffer_arg) {
+  return api_container_service_pb.WaitForEndpointAvailabilityHttpPostArgs.deserializeBinary(new Uint8Array(buffer_arg));
 }
 
 function serialize_google_protobuf_Empty(arg) {
@@ -441,15 +452,27 @@ execCommand: {
     responseSerialize: serialize_api_container_api_ExecCommandResponse,
     responseDeserialize: deserialize_api_container_api_ExecCommandResponse,
   },
-  // Block until the given HTTP endpoint returns available
-waitForEndpointAvailability: {
-    path: '/api_container_api.ApiContainerService/WaitForEndpointAvailability',
+  // Block until the given HTTP endpoint returns available, calling it throw a HTTP Get request
+waitForEndpointAvailabilityHttpGet: {
+    path: '/api_container_api.ApiContainerService/WaitForEndpointAvailabilityHttpGet',
     requestStream: false,
     responseStream: false,
-    requestType: api_container_service_pb.WaitForEndpointAvailabilityArgs,
+    requestType: api_container_service_pb.WaitForEndpointAvailabilityHttpGetArgs,
     responseType: google_protobuf_empty_pb.Empty,
-    requestSerialize: serialize_api_container_api_WaitForEndpointAvailabilityArgs,
-    requestDeserialize: deserialize_api_container_api_WaitForEndpointAvailabilityArgs,
+    requestSerialize: serialize_api_container_api_WaitForEndpointAvailabilityHttpGetArgs,
+    requestDeserialize: deserialize_api_container_api_WaitForEndpointAvailabilityHttpGetArgs,
+    responseSerialize: serialize_google_protobuf_Empty,
+    responseDeserialize: deserialize_google_protobuf_Empty,
+  },
+  // Block until the given HTTP endpoint returns available, calling it throw a HTTP Post request
+waitForEndpointAvailabilityHttpPost: {
+    path: '/api_container_api.ApiContainerService/WaitForEndpointAvailabilityHttpPost',
+    requestStream: false,
+    responseStream: false,
+    requestType: api_container_service_pb.WaitForEndpointAvailabilityHttpPostArgs,
+    responseType: google_protobuf_empty_pb.Empty,
+    requestSerialize: serialize_api_container_api_WaitForEndpointAvailabilityHttpPostArgs,
+    requestDeserialize: deserialize_api_container_api_WaitForEndpointAvailabilityHttpPostArgs,
     responseSerialize: serialize_google_protobuf_Empty,
     responseDeserialize: deserialize_google_protobuf_Empty,
   },

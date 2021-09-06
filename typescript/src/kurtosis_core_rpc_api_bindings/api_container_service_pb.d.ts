@@ -625,12 +625,9 @@ export namespace ExecCommandResponse {
   }
 }
 
-export class WaitForEndpointAvailabilityArgs extends jspb.Message {
+export class WaitForEndpointAvailabilityHttpGetArgs extends jspb.Message {
   getServiceId(): string;
   setServiceId(value: string): void;
-
-  getHttpMethod(): WaitForEndpointAvailabilityArgs.HttpMethodMap[keyof WaitForEndpointAvailabilityArgs.HttpMethodMap];
-  setHttpMethod(value: WaitForEndpointAvailabilityArgs.HttpMethodMap[keyof WaitForEndpointAvailabilityArgs.HttpMethodMap]): void;
 
   getPort(): number;
   setPort(value: number): void;
@@ -638,11 +635,8 @@ export class WaitForEndpointAvailabilityArgs extends jspb.Message {
   getPath(): string;
   setPath(value: string): void;
 
-  getRequestBody(): string;
-  setRequestBody(value: string): void;
-
-  getInitialDelaySeconds(): number;
-  setInitialDelaySeconds(value: number): void;
+  getInitialDelayMilliseconds(): number;
+  setInitialDelayMilliseconds(value: number): void;
 
   getRetries(): number;
   setRetries(value: number): void;
@@ -654,34 +648,73 @@ export class WaitForEndpointAvailabilityArgs extends jspb.Message {
   setBodyText(value: string): void;
 
   serializeBinary(): Uint8Array;
-  toObject(includeInstance?: boolean): WaitForEndpointAvailabilityArgs.AsObject;
-  static toObject(includeInstance: boolean, msg: WaitForEndpointAvailabilityArgs): WaitForEndpointAvailabilityArgs.AsObject;
+  toObject(includeInstance?: boolean): WaitForEndpointAvailabilityHttpGetArgs.AsObject;
+  static toObject(includeInstance: boolean, msg: WaitForEndpointAvailabilityHttpGetArgs): WaitForEndpointAvailabilityHttpGetArgs.AsObject;
   static extensions: {[key: number]: jspb.ExtensionFieldInfo<jspb.Message>};
   static extensionsBinary: {[key: number]: jspb.ExtensionFieldBinaryInfo<jspb.Message>};
-  static serializeBinaryToWriter(message: WaitForEndpointAvailabilityArgs, writer: jspb.BinaryWriter): void;
-  static deserializeBinary(bytes: Uint8Array): WaitForEndpointAvailabilityArgs;
-  static deserializeBinaryFromReader(message: WaitForEndpointAvailabilityArgs, reader: jspb.BinaryReader): WaitForEndpointAvailabilityArgs;
+  static serializeBinaryToWriter(message: WaitForEndpointAvailabilityHttpGetArgs, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): WaitForEndpointAvailabilityHttpGetArgs;
+  static deserializeBinaryFromReader(message: WaitForEndpointAvailabilityHttpGetArgs, reader: jspb.BinaryReader): WaitForEndpointAvailabilityHttpGetArgs;
 }
 
-export namespace WaitForEndpointAvailabilityArgs {
+export namespace WaitForEndpointAvailabilityHttpGetArgs {
   export type AsObject = {
     serviceId: string,
-    httpMethod: WaitForEndpointAvailabilityArgs.HttpMethodMap[keyof WaitForEndpointAvailabilityArgs.HttpMethodMap],
     port: number,
     path: string,
-    requestBody: string,
-    initialDelaySeconds: number,
+    initialDelayMilliseconds: number,
     retries: number,
     retriesDelayMilliseconds: number,
     bodyText: string,
   }
+}
 
-  export interface HttpMethodMap {
-    GET: 0;
-    POST: 1;
+export class WaitForEndpointAvailabilityHttpPostArgs extends jspb.Message {
+  getServiceId(): string;
+  setServiceId(value: string): void;
+
+  getPort(): number;
+  setPort(value: number): void;
+
+  getPath(): string;
+  setPath(value: string): void;
+
+  getRequestBody(): string;
+  setRequestBody(value: string): void;
+
+  getInitialDelayMilliseconds(): number;
+  setInitialDelayMilliseconds(value: number): void;
+
+  getRetries(): number;
+  setRetries(value: number): void;
+
+  getRetriesDelayMilliseconds(): number;
+  setRetriesDelayMilliseconds(value: number): void;
+
+  getBodyText(): string;
+  setBodyText(value: string): void;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): WaitForEndpointAvailabilityHttpPostArgs.AsObject;
+  static toObject(includeInstance: boolean, msg: WaitForEndpointAvailabilityHttpPostArgs): WaitForEndpointAvailabilityHttpPostArgs.AsObject;
+  static extensions: {[key: number]: jspb.ExtensionFieldInfo<jspb.Message>};
+  static extensionsBinary: {[key: number]: jspb.ExtensionFieldBinaryInfo<jspb.Message>};
+  static serializeBinaryToWriter(message: WaitForEndpointAvailabilityHttpPostArgs, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): WaitForEndpointAvailabilityHttpPostArgs;
+  static deserializeBinaryFromReader(message: WaitForEndpointAvailabilityHttpPostArgs, reader: jspb.BinaryReader): WaitForEndpointAvailabilityHttpPostArgs;
+}
+
+export namespace WaitForEndpointAvailabilityHttpPostArgs {
+  export type AsObject = {
+    serviceId: string,
+    port: number,
+    path: string,
+    requestBody: string,
+    initialDelayMilliseconds: number,
+    retries: number,
+    retriesDelayMilliseconds: number,
+    bodyText: string,
   }
-
-  export const HttpMethod: HttpMethodMap;
 }
 
 export class ExecuteBulkCommandsArgs extends jspb.Message {

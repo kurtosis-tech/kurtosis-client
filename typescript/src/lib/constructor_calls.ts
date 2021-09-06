@@ -1,4 +1,4 @@
-import { ExecCommandArgs, GenerateFilesArgs, FileGenerationOptions, LoadStaticFilesArgs, LoadLambdaArgs, GetLambdaInfoArgs, RegisterStaticFilesArgs, RegisterFilesArtifactsArgs, GetServiceInfoArgs, PartitionServices, PartitionConnections, PartitionConnectionInfo, RegisterServiceArgs, StartServiceArgs, RemoveServiceArgs, RepartitionArgs, WaitForEndpointAvailabilityArgs, ExecuteBulkCommandsArgs, ExecuteLambdaArgs } from '../kurtosis_core_rpc_api_bindings/api_container_service_pb';
+import { ExecCommandArgs, GenerateFilesArgs, FileGenerationOptions, LoadStaticFilesArgs, LoadLambdaArgs, GetLambdaInfoArgs, RegisterStaticFilesArgs, RegisterFilesArtifactsArgs, GetServiceInfoArgs, PartitionServices, PartitionConnections, PartitionConnectionInfo, RegisterServiceArgs, StartServiceArgs, RemoveServiceArgs, RepartitionArgs, WaitForEndpointAvailabilityHttpGetArgs, WaitForEndpointAvailabilityHttpPostArgs, ExecuteBulkCommandsArgs, ExecuteLambdaArgs } from '../kurtosis_core_rpc_api_bindings/api_container_service_pb';
 import { ServiceID } from './services/service';
 import { PartitionID } from './networks/network_context';
 import { LambdaID } from "./modules/lambda_context";
@@ -174,23 +174,41 @@ export function newPartitionConnections(allConnectionInfo: Map<string, Partition
     return result;
 }
 
-export function newWaitForEndpointAvailabilityArgs(
+export function newWaitForEndpointAvailabilityHttpGetArgs(
         serviceId: ServiceID,
-        httpMethod: WaitForEndpointAvailabilityArgs.HttpMethodMap[keyof WaitForEndpointAvailabilityArgs.HttpMethodMap],
+        port: number, 
+        path: string,
+        initialDelayMilliseconds: number, 
+        retries: number, 
+        retriesDelayMilliseconds: number, 
+        bodyText: string): WaitForEndpointAvailabilityHttpGetArgs {
+    const result: WaitForEndpointAvailabilityHttpGetArgs = new WaitForEndpointAvailabilityHttpGetArgs();
+    result.setServiceId(String(serviceId));
+    result.setPort(port);
+    result.setPath(path);
+    result.setInitialDelayMilliseconds(initialDelayMilliseconds);
+    result.setRetries(retries);
+    result.setRetriesDelayMilliseconds(retriesDelayMilliseconds);
+    result.setBodyText(bodyText);
+
+    return result;
+}
+
+export function newWaitForEndpointAvailabilityHttpPostArgs(
+        serviceId: ServiceID,
         port: number, 
         path: string,
         requestBody: string,
-        initialDelaySeconds: number, 
+        initialDelayMilliseconds: number, 
         retries: number, 
         retriesDelayMilliseconds: number, 
-        bodyText: string): WaitForEndpointAvailabilityArgs {
-    const result: WaitForEndpointAvailabilityArgs = new WaitForEndpointAvailabilityArgs();
+        bodyText: string): WaitForEndpointAvailabilityHttpPostArgs {
+    const result: WaitForEndpointAvailabilityHttpPostArgs = new WaitForEndpointAvailabilityHttpPostArgs();
     result.setServiceId(String(serviceId));
-    result.setHttpMethod(httpMethod);
     result.setPort(port);
     result.setPath(path);
     result.setRequestBody(requestBody)
-    result.setInitialDelaySeconds(initialDelaySeconds);
+    result.setInitialDelayMilliseconds(initialDelayMilliseconds);
     result.setRetries(retries);
     result.setRetriesDelayMilliseconds(retriesDelayMilliseconds);
     result.setBodyText(bodyText);

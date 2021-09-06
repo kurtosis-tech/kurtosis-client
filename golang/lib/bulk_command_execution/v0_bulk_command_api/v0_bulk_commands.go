@@ -119,10 +119,19 @@ func (visitor *cmdArgDeserializingVisitor) VisitExecCommand() error {
 	return nil
 }
 
-func (visitor *cmdArgDeserializingVisitor) VisitWaitForEndpointAvailability() error {
-	args := &kurtosis_core_rpc_api_bindings.WaitForEndpointAvailabilityArgs{}
+func (visitor *cmdArgDeserializingVisitor) VisitWaitForEndpointAvailabilityHttpGet() error {
+	args := &kurtosis_core_rpc_api_bindings.WaitForEndpointAvailabilityHttpGetArgs{}
 	if err := json.Unmarshal(visitor.bytesToDeserialize, args); err != nil {
-		return stacktrace.Propagate(err, "An error occurred deserializing the endpoint availability-waiting args")
+		return stacktrace.Propagate(err, "An error occurred deserializing the endpoint availability-waiting-http-get args")
+	}
+	visitor.deserializedCommandArgsPtr = args
+	return nil
+}
+
+func (visitor *cmdArgDeserializingVisitor) VisitWaitForEndpointAvailabilityHttpPost() error {
+	args := &kurtosis_core_rpc_api_bindings.WaitForEndpointAvailabilityHttpPostArgs{}
+	if err := json.Unmarshal(visitor.bytesToDeserialize, args); err != nil {
+		return stacktrace.Propagate(err, "An error occurred deserializing the endpoint availability-waiting-http-post args")
 	}
 	visitor.deserializedCommandArgsPtr = args
 	return nil

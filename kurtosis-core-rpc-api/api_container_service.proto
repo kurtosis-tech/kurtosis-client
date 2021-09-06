@@ -49,8 +49,11 @@ service ApiContainerService {
   // Executes the given command inside a running container
   rpc ExecCommand(ExecCommandArgs) returns (ExecCommandResponse) {};
 
-  // Block until the given HTTP endpoint returns available
-  rpc WaitForEndpointAvailability(WaitForEndpointAvailabilityArgs) returns (google.protobuf.Empty) {};
+  // Block until the given HTTP endpoint returns available, calling it throw a HTTP Get request
+  rpc WaitForEndpointAvailabilityHttpGet(WaitForEndpointAvailabilityHttpGetArgs) returns (google.protobuf.Empty) {};
+
+  // Block until the given HTTP endpoint returns available, calling it throw a HTTP Post request
+  rpc WaitForEndpointAvailabilityHttpPost(WaitForEndpointAvailabilityHttpPostArgs) returns (google.protobuf.Empty) {};
 
   // Executes multiple commands at once
   rpc ExecuteBulkCommands(ExecuteBulkCommandsArgs) returns (google.protobuf.Empty) {};
@@ -305,31 +308,45 @@ message ExecCommandResponse {
 }
 
 // ==============================================================================================
-//                              Wait For Endpoint Availability
+//                           Wait For Endpoint Availability HTTP Get
 // ==============================================================================================
-message WaitForEndpointAvailabilityArgs {
+message WaitForEndpointAvailabilityHttpGetArgs {
   //The ID of the service to check.
   string service_id = 1;
-  //The HTTP method of the service to check. Valid values: 'GET' or 'POST'
-  enum HttpMethod {
-    GET = 0;
-    POST = 1;
-  }
-  HttpMethod http_method = 2;
   //The port of the service to check. For instance 8080
-  uint32 port = 3;
+  uint32 port = 2;
   //The path of the service to check. It mustn't start with the first slash. For instance `service/health`
-  string path = 4;
-  //The content of the request body.
-  string request_body = 5;
-  //The number of seconds to wait until executing the first HTTP call
-  uint32 initial_delay_seconds = 6;
+  string path = 3;
+  //The number of milliseconds to wait until executing the first HTTP call
+  uint32 initial_delay_milliseconds = 5;
   //Max number of HTTP call attempts that this will execute until giving up and returning an error
-  uint32 retries = 7;
+  uint32 retries = 6;
   //Number of milliseconds to wait between retries
-  uint32 retries_delay_milliseconds = 8;
+  uint32 retries_delay_milliseconds = 7;
   //If the endpoint returns this value, the service will be marked as available (e.g. Hello World).
-  string body_text = 9;
+  string body_text = 8;
+}
+
+// ==============================================================================================
+//                           Wait For Endpoint Availability HTTP Post
+// ==============================================================================================
+message WaitForEndpointAvailabilityHttpPostArgs {
+  //The ID of the service to check.
+  string service_id = 1;
+  //The port of the service to check. For instance 8080
+  uint32 port = 2;
+  //The path of the service to check. It mustn't start with the first slash. For instance `service/health`
+  string path = 3;
+  //The content of the request body.
+  string request_body = 4;
+  //The number of milliseconds to wait until executing the first HTTP call
+  uint32 initial_delay_milliseconds = 5;
+  //Max number of HTTP call attempts that this will execute until giving up and returning an error
+  uint32 retries = 6;
+  //Number of milliseconds to wait between retries
+  uint32 retries_delay_milliseconds = 7;
+  //If the endpoint returns this value, the service will be marked as available (e.g. Hello World).
+  string body_text = 8;
 }
 
 // ==============================================================================================
