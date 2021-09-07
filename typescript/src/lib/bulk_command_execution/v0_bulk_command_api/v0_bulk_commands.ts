@@ -1,4 +1,4 @@
-import { LoadLambdaArgs, ExecCommandArgs, ExecuteBulkCommandsArgs, ExecuteLambdaArgs, GenerateFilesArgs, LoadStaticFilesArgs, RegisterServiceArgs, RemoveServiceArgs, RepartitionArgs, StartServiceArgs, WaitForEndpointAvailabilityArgs } from "../../../kurtosis_core_rpc_api_bindings/api_container_service_pb";
+import { LoadLambdaArgs, ExecCommandArgs, ExecuteBulkCommandsArgs, ExecuteLambdaArgs, GenerateFilesArgs, LoadStaticFilesArgs, RegisterServiceArgs, RemoveServiceArgs, RepartitionArgs, StartServiceArgs, WaitForHttpGetEndpointAvailabilityArgs, WaitForHttpPostEndpointAvailabilityArgs } from "../../../kurtosis_core_rpc_api_bindings/api_container_service_pb";
 import { V0CommandTypeVisitor, V0CommandType } from "./v0_command_types";
 import { ok, err, Result } from "neverthrow";
 import * as protobuf from "google-protobuf";
@@ -117,12 +117,23 @@ class CmdArgDeserializingVisitor implements V0CommandTypeVisitor {
         return ok(null);
     }
 
-    public visitWaitForEndpointAvailability(): Result<null, Error> {
+    public visitWaitForHttpGetEndpointAvailability(): Result<null, Error> {
         const deserializationResult: Result<any, Error> = CmdArgDeserializingVisitor.safeJsonParse(this.bytesToDeserialize);
         if (deserializationResult.isErr()) {
             return err(deserializationResult.error);
         }
-        const args: WaitForEndpointAvailabilityArgs = Object.assign(new WaitForEndpointAvailabilityArgs(), deserializationResult.value);
+        const args: WaitForHttpGetEndpointAvailabilityArgs = Object.assign(new WaitForHttpGetEndpointAvailabilityArgs(), deserializationResult.value);
+
+        this.deserializedCommandArgsPtr = args;
+        return ok(null);
+    }
+
+    public visitWaitForHttpPostEndpointAvailability(): Result<null, Error> {
+        const deserializationResult: Result<any, Error> = CmdArgDeserializingVisitor.safeJsonParse(this.bytesToDeserialize);
+        if (deserializationResult.isErr()) {
+            return err(deserializationResult.error);
+        }
+        const args: WaitForHttpPostEndpointAvailabilityArgs = Object.assign(new WaitForHttpPostEndpointAvailabilityArgs(), deserializationResult.value);
 
         this.deserializedCommandArgsPtr = args;
         return ok(null);

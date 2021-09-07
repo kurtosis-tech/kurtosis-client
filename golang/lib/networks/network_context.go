@@ -372,21 +372,19 @@ func (networkCtx *NetworkContext) RepartitionNetwork(
 }
 
 // Docs available at https://docs.kurtosistech.com/kurtosis-client/lib-documentation
-func (networkCtx *NetworkContext) WaitForEndpointAvailability(serviceId services.ServiceID, httpMethod kurtosis_core_rpc_api_bindings.WaitForEndpointAvailabilityArgs_HttpMethod, port uint32, path string, requestBody string,  initialDelaySeconds uint32, retries uint32, retriesDelayMilliseconds uint32, bodyText string) error {
+func (networkCtx *NetworkContext) WaitForHttpGetEndpointAvailability(serviceId services.ServiceID, port uint32, path string, initialDelayMilliseconds uint32, retries uint32, retriesDelayMilliseconds uint32, bodyText string) error {
 
-	availabilityArgs := binding_constructors.NewWaitForEndpointAvailabilityArgs(
+	availabilityArgs := binding_constructors.NewWaitForHttpGetEndpointAvailabilityArgs(
 		string(serviceId),
-		httpMethod,
 		port,
 		path,
-		requestBody,
-		initialDelaySeconds,
+		initialDelayMilliseconds,
 		retries,
 		retriesDelayMilliseconds,
 		bodyText,
 	)
 
-	if _, err := networkCtx.client.WaitForEndpointAvailability(context.Background(), availabilityArgs); err != nil {
+	if _, err := networkCtx.client.WaitForHttpGetEndpointAvailability(context.Background(), availabilityArgs); err != nil {
 		return stacktrace.Propagate(
 			err,
 			"Endpoint '%v' on port '%v' for service '%v' did not become available despite polling %v times with %v between polls",
@@ -397,7 +395,34 @@ func (networkCtx *NetworkContext) WaitForEndpointAvailability(serviceId services
 			retriesDelayMilliseconds,
 		)
 	}
+	return nil
+}
 
+// Docs available at https://docs.kurtosistech.com/kurtosis-client/lib-documentation
+func (networkCtx *NetworkContext) WaitForHttpPostEndpointAvailability(serviceId services.ServiceID, port uint32, path string, requestBody string, initialDelayMilliseconds uint32, retries uint32, retriesDelayMilliseconds uint32, bodyText string) error {
+
+	availabilityArgs := binding_constructors.NewWaitForHttpPostEndpointAvailabilityArgs(
+		string(serviceId),
+		port,
+		path,
+		requestBody,
+		initialDelayMilliseconds,
+		retries,
+		retriesDelayMilliseconds,
+		bodyText,
+	)
+
+	if _, err := networkCtx.client.WaitForHttpPostEndpointAvailability(context.Background(), availabilityArgs); err != nil {
+		return stacktrace.Propagate(
+			err,
+			"Endpoint '%v' on port '%v' for service '%v' did not become available despite polling %v times with %v between polls",
+			path,
+			port,
+			serviceId,
+			retries,
+			retriesDelayMilliseconds,
+		)
+	}
 	return nil
 }
 

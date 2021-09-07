@@ -48,8 +48,10 @@ type ApiContainerServiceClient interface {
 	Repartition(ctx context.Context, in *RepartitionArgs, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	// Executes the given command inside a running container
 	ExecCommand(ctx context.Context, in *ExecCommandArgs, opts ...grpc.CallOption) (*ExecCommandResponse, error)
-	// Block until the given HTTP endpoint returns available
-	WaitForEndpointAvailability(ctx context.Context, in *WaitForEndpointAvailabilityArgs, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	// Block until the given HTTP endpoint returns available, calling it throw a HTTP Get request
+	WaitForHttpGetEndpointAvailability(ctx context.Context, in *WaitForHttpGetEndpointAvailabilityArgs, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	// Block until the given HTTP endpoint returns available, calling it throw a HTTP Post request
+	WaitForHttpPostEndpointAvailability(ctx context.Context, in *WaitForHttpPostEndpointAvailabilityArgs, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	// Executes multiple commands at once
 	ExecuteBulkCommands(ctx context.Context, in *ExecuteBulkCommandsArgs, opts ...grpc.CallOption) (*emptypb.Empty, error)
 }
@@ -179,9 +181,18 @@ func (c *apiContainerServiceClient) ExecCommand(ctx context.Context, in *ExecCom
 	return out, nil
 }
 
-func (c *apiContainerServiceClient) WaitForEndpointAvailability(ctx context.Context, in *WaitForEndpointAvailabilityArgs, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+func (c *apiContainerServiceClient) WaitForHttpGetEndpointAvailability(ctx context.Context, in *WaitForHttpGetEndpointAvailabilityArgs, opts ...grpc.CallOption) (*emptypb.Empty, error) {
 	out := new(emptypb.Empty)
-	err := c.cc.Invoke(ctx, "/api_container_api.ApiContainerService/WaitForEndpointAvailability", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/api_container_api.ApiContainerService/WaitForHttpGetEndpointAvailability", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *apiContainerServiceClient) WaitForHttpPostEndpointAvailability(ctx context.Context, in *WaitForHttpPostEndpointAvailabilityArgs, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, "/api_container_api.ApiContainerService/WaitForHttpPostEndpointAvailability", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -230,8 +241,10 @@ type ApiContainerServiceServer interface {
 	Repartition(context.Context, *RepartitionArgs) (*emptypb.Empty, error)
 	// Executes the given command inside a running container
 	ExecCommand(context.Context, *ExecCommandArgs) (*ExecCommandResponse, error)
-	// Block until the given HTTP endpoint returns available
-	WaitForEndpointAvailability(context.Context, *WaitForEndpointAvailabilityArgs) (*emptypb.Empty, error)
+	// Block until the given HTTP endpoint returns available, calling it throw a HTTP Get request
+	WaitForHttpGetEndpointAvailability(context.Context, *WaitForHttpGetEndpointAvailabilityArgs) (*emptypb.Empty, error)
+	// Block until the given HTTP endpoint returns available, calling it throw a HTTP Post request
+	WaitForHttpPostEndpointAvailability(context.Context, *WaitForHttpPostEndpointAvailabilityArgs) (*emptypb.Empty, error)
 	// Executes multiple commands at once
 	ExecuteBulkCommands(context.Context, *ExecuteBulkCommandsArgs) (*emptypb.Empty, error)
 	mustEmbedUnimplementedApiContainerServiceServer()
@@ -280,8 +293,11 @@ func (UnimplementedApiContainerServiceServer) Repartition(context.Context, *Repa
 func (UnimplementedApiContainerServiceServer) ExecCommand(context.Context, *ExecCommandArgs) (*ExecCommandResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ExecCommand not implemented")
 }
-func (UnimplementedApiContainerServiceServer) WaitForEndpointAvailability(context.Context, *WaitForEndpointAvailabilityArgs) (*emptypb.Empty, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method WaitForEndpointAvailability not implemented")
+func (UnimplementedApiContainerServiceServer) WaitForHttpGetEndpointAvailability(context.Context, *WaitForHttpGetEndpointAvailabilityArgs) (*emptypb.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method WaitForHttpGetEndpointAvailability not implemented")
+}
+func (UnimplementedApiContainerServiceServer) WaitForHttpPostEndpointAvailability(context.Context, *WaitForHttpPostEndpointAvailabilityArgs) (*emptypb.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method WaitForHttpPostEndpointAvailability not implemented")
 }
 func (UnimplementedApiContainerServiceServer) ExecuteBulkCommands(context.Context, *ExecuteBulkCommandsArgs) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ExecuteBulkCommands not implemented")
@@ -533,20 +549,38 @@ func _ApiContainerService_ExecCommand_Handler(srv interface{}, ctx context.Conte
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ApiContainerService_WaitForEndpointAvailability_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(WaitForEndpointAvailabilityArgs)
+func _ApiContainerService_WaitForHttpGetEndpointAvailability_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(WaitForHttpGetEndpointAvailabilityArgs)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(ApiContainerServiceServer).WaitForEndpointAvailability(ctx, in)
+		return srv.(ApiContainerServiceServer).WaitForHttpGetEndpointAvailability(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/api_container_api.ApiContainerService/WaitForEndpointAvailability",
+		FullMethod: "/api_container_api.ApiContainerService/WaitForHttpGetEndpointAvailability",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ApiContainerServiceServer).WaitForEndpointAvailability(ctx, req.(*WaitForEndpointAvailabilityArgs))
+		return srv.(ApiContainerServiceServer).WaitForHttpGetEndpointAvailability(ctx, req.(*WaitForHttpGetEndpointAvailabilityArgs))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ApiContainerService_WaitForHttpPostEndpointAvailability_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(WaitForHttpPostEndpointAvailabilityArgs)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ApiContainerServiceServer).WaitForHttpPostEndpointAvailability(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/api_container_api.ApiContainerService/WaitForHttpPostEndpointAvailability",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ApiContainerServiceServer).WaitForHttpPostEndpointAvailability(ctx, req.(*WaitForHttpPostEndpointAvailabilityArgs))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -629,8 +663,12 @@ var ApiContainerService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _ApiContainerService_ExecCommand_Handler,
 		},
 		{
-			MethodName: "WaitForEndpointAvailability",
-			Handler:    _ApiContainerService_WaitForEndpointAvailability_Handler,
+			MethodName: "WaitForHttpGetEndpointAvailability",
+			Handler:    _ApiContainerService_WaitForHttpGetEndpointAvailability_Handler,
+		},
+		{
+			MethodName: "WaitForHttpPostEndpointAvailability",
+			Handler:    _ApiContainerService_WaitForHttpPostEndpointAvailability_Handler,
 		},
 		{
 			MethodName: "ExecuteBulkCommands",
