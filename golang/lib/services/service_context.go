@@ -25,7 +25,7 @@ import (
 	"path"
 )
 
-// Docs available at https://docs.kurtosistech.com/kurtosis-libs/lib-documentation
+// Docs available at https://docs.kurtosistech.com/kurtosis-client/lib-documentation
 type GeneratedFileFilepaths struct {
 	absoluteFilepathHere               string
 	absoluteFilepathOnServiceContainer string
@@ -35,19 +35,19 @@ func newGeneratedFileFilepaths(absoluteFilepathHere string, absoluteFilepathOnSe
 	return &GeneratedFileFilepaths{absoluteFilepathHere: absoluteFilepathHere, absoluteFilepathOnServiceContainer: absoluteFilepathOnServiceContainer}
 }
 
-// Docs available at https://docs.kurtosistech.com/kurtosis-libs/lib-documentation
+// Docs available at https://docs.kurtosistech.com/kurtosis-client/lib-documentation
 func (generated *GeneratedFileFilepaths) GetAbsoluteFilepathHere() string {
 	return generated.absoluteFilepathHere
 }
 
-// Docs available at https://docs.kurtosistech.com/kurtosis-libs/lib-documentation
+// Docs available at https://docs.kurtosistech.com/kurtosis-client/lib-documentation
 func (generated *GeneratedFileFilepaths) GetAbsoluteFilepathOnServiceContainer() string {
 	return generated.absoluteFilepathOnServiceContainer
 }
 
 
 
-// Docs available at https://docs.kurtosistech.com/kurtosis-libs/lib-documentation
+// Docs available at https://docs.kurtosistech.com/kurtosis-client/lib-documentation
 type ServiceContext struct {
 	client                                     kurtosis_core_rpc_api_bindings.ApiContainerServiceClient
 	serviceId                                  ServiceID
@@ -71,17 +71,17 @@ func NewServiceContext(
 	}
 }
 
-// Docs available at https://docs.kurtosistech.com/kurtosis-libs/lib-documentation
+// Docs available at https://docs.kurtosistech.com/kurtosis-client/lib-documentation
 func (self *ServiceContext) GetServiceID() ServiceID {
 	return self.serviceId
 }
 
-// Docs available at https://docs.kurtosistech.com/kurtosis-libs/lib-documentation
+// Docs available at https://docs.kurtosistech.com/kurtosis-client/lib-documentation
 func (self *ServiceContext) GetIPAddress() string {
 	return self.ipAddress
 }
 
-// Docs available at https://docs.kurtosistech.com/kurtosis-libs/lib-documentation
+// Docs available at https://docs.kurtosistech.com/kurtosis-client/lib-documentation
 func (self *ServiceContext) ExecCommand(command []string) (int32, *[]byte, error) {
 	serviceId := self.serviceId
 	args := binding_constructors.NewExecCommandArgs(string(serviceId), command)
@@ -96,7 +96,7 @@ func (self *ServiceContext) ExecCommand(command []string) (int32, *[]byte, error
 	return resp.ExitCode, &resp.LogOutput, nil
 }
 
-// Docs available at https://docs.kurtosistech.com/kurtosis-libs/lib-documentation
+// Docs available at https://docs.kurtosistech.com/kurtosis-client/lib-documentation
 func (self *ServiceContext) GenerateFiles(filesToGenerateSet map[string]bool) (map[string]*GeneratedFileFilepaths, error) {
 	serviceId := self.serviceId
 	fileGenerationOpts := map[string]*kurtosis_core_rpc_api_bindings.FileGenerationOptions{}
@@ -125,7 +125,7 @@ func (self *ServiceContext) GenerateFiles(filesToGenerateSet map[string]bool) (m
 	return result, nil
 }
 
-// Docs available at https://docs.kurtosistech.com/kurtosis-libs/lib-documentation
+// Docs available at https://docs.kurtosistech.com/kurtosis-client/lib-documentation
 func (self *ServiceContext) LoadStaticFiles(usedStaticFilesSet map[StaticFileID]bool) (map[StaticFileID]string, error) {
 	serviceId := self.serviceId
 	staticFilesToCopyStringSet := map[string]bool{}

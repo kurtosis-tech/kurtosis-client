@@ -24,7 +24,7 @@ fi
 echo "Successfully generated Go bindings in directory '${go_output_dirpath}'"
 
 # TypeScript
-typescript_output_dirpath="${root_dirpath}/${TYPESCRIPT_DIRNAME}/kurtosis_core_rpc_api_bindings"
+typescript_output_dirpath="${root_dirpath}/${TYPESCRIPT_DIRNAME}/src/kurtosis_core_rpc_api_bindings"
 if ! "${GENERATOR_SCRIPT_FILENAME}" "${input_dirpath}" "${typescript_output_dirpath}" typescript; then
     echo "Error: An error occurred generating TypeScript bindings in directory '${typescript_output_dirpath}'" >&2
     exit 1

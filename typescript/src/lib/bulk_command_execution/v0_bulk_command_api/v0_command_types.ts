@@ -13,7 +13,8 @@ export interface V0CommandTypeVisitor {
 	visitRemoveService: () => Result<null, Error>;
 	visitRepartition: () => Result<null, Error>;
 	visitExecCommand: () => Result<null, Error>;
-	visitWaitForEndpointAvailability: () => Result<null, Error>;
+	visitWaitForHttpGetEndpointAvailability: () => Result<null, Error>;
+	visitWaitForHttpPostEndpointAvailability: () => Result<null, Error>;
 	visitExecuteBulkCommands: () => Result<null, Error>;
 }
 
@@ -28,7 +29,8 @@ export enum V0CommandType {
 	RemoveService = "REMOVE_SERVICE",
 	Repartition = "REPARTITION",
 	ExecCommand = "EXEC_COMMAND",
-	WaitForEndpointAvailability = "WAIT_FOR_ENDPOINT_AVAILABILITY",
+	WaitForHttpGetEndpointAvailability = "WAIT_FOR_HTTP_GET_ENDPOINT_AVAILABILITY",
+	WaitForHttpPostEndpointAvailability = "WAIT_FOR_HTTP_POST_ENDPOINT_AVAILABILITY",
 	ExecuteBulkCommands = "EXECUTE_BULK_COMMANDS"
 }
 // ^^^^^^^^^^^^^^^^^^^^ Update the visitor whenever you add an enum value!!! ^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -64,8 +66,11 @@ export namespace V0CommandType {
 			case V0CommandType.ExecCommand:
 				result = visitor.visitExecCommand();
 				break;
-			case V0CommandType.WaitForEndpointAvailability:
-				result = visitor.visitWaitForEndpointAvailability();
+			case V0CommandType.WaitForHttpGetEndpointAvailability:
+				result = visitor.visitWaitForHttpGetEndpointAvailability();
+				break;
+			case V0CommandType.WaitForHttpPostEndpointAvailability:
+				result = visitor.visitWaitForHttpPostEndpointAvailability();
 				break;
 			case V0CommandType.ExecuteBulkCommands:
 				result = visitor.visitExecuteBulkCommands();

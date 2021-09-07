@@ -11,7 +11,7 @@ export type FilesArtifactID = string;
 //                                    Config Object
 // ====================================================================================================
 // TODO defensive copy when we're giving back complex objects?????
-// Docs available at https://docs.kurtosistech.com/kurtosis-libs/lib-documentation
+// Docs available at https://docs.kurtosistech.com/kurtosis-client/lib-documentation
 export class ContainerCreationConfig {
 	
     private readonly image: string;
@@ -65,7 +65,7 @@ export class ContainerCreationConfig {
 //                                        Builder
 // ====================================================================================================
 // TODO Defensive copies on all these With... functions???
-// Docs available at https://docs.kurtosistech.com/kurtosis-libs/lib-documentation
+// Docs available at https://docs.kurtosistech.com/kurtosis-client/lib-documentation
 export class ContainerCreationConfigBuilder {
     private readonly image: string;
     private kurtosisVolumeMountpoint: string;

@@ -232,25 +232,45 @@ func NewExecCommandResponse(exitCode int32, logOutput []byte) *kurtosis_core_rpc
 }
 
 // ==============================================================================================
-//                              Wait For Endpoint Availability
+//                           Wait For Http Get Endpoint Availability
 // ==============================================================================================
-func NewWaitForEndpointAvailabilityArgs(
+func NewWaitForHttpGetEndpointAvailabilityArgs(
+	serviceId string,
+	port uint32,
+	path string,
+	initialDelayMilliseconds uint32,
+	retries uint32,
+	retriesDelayMilliseconds uint32,
+	bodyText string) *kurtosis_core_rpc_api_bindings.WaitForHttpGetEndpointAvailabilityArgs {
+	return &kurtosis_core_rpc_api_bindings.WaitForHttpGetEndpointAvailabilityArgs{
+		ServiceId:                serviceId,
+		Port:                     port,
+		Path:                     path,
+		InitialDelayMilliseconds: initialDelayMilliseconds,
+		Retries:                  retries,
+		RetriesDelayMilliseconds: retriesDelayMilliseconds,
+		BodyText:                 bodyText,
+	}
+}
+
+// ==============================================================================================
+//                           Wait For Http Post Endpoint Availability
+// ==============================================================================================
+func NewWaitForHttpPostEndpointAvailabilityArgs(
 		serviceId string,
-		httpMethod kurtosis_core_rpc_api_bindings.WaitForEndpointAvailabilityArgs_HttpMethod,
 		port uint32,
 		path string,
 		requestBody string,
-		initialDelaySeconds uint32,
+		initialDelayMilliseconds uint32,
 		retries uint32,
 		retriesDelayMilliseconds uint32,
-		bodyText string) *kurtosis_core_rpc_api_bindings.WaitForEndpointAvailabilityArgs {
-	return &kurtosis_core_rpc_api_bindings.WaitForEndpointAvailabilityArgs{
+		bodyText string) *kurtosis_core_rpc_api_bindings.WaitForHttpPostEndpointAvailabilityArgs {
+	return &kurtosis_core_rpc_api_bindings.WaitForHttpPostEndpointAvailabilityArgs{
 		ServiceId:                serviceId,
-		HttpMethod:               httpMethod,
 		Port:                     port,
 		Path:                     path,
-		RequestBody: 			  requestBody,
-		InitialDelaySeconds:      initialDelaySeconds,
+		RequestBody:              requestBody,
+		InitialDelayMilliseconds: initialDelayMilliseconds,
 		Retries:                  retries,
 		RetriesDelayMilliseconds: retriesDelayMilliseconds,
 		BodyText:                 bodyText,

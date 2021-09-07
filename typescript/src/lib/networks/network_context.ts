@@ -4,13 +4,13 @@
  */
 
 import { ApiContainerServiceClient } from "../..//kurtosis_core_rpc_api_bindings/api_container_service_grpc_pb";
-import { LoadLambdaArgs, GetLambdaInfoArgs, RegisterStaticFilesArgs, RegisterStaticFilesResponse, RegisterFilesArtifactsArgs, PortBinding, RegisterServiceArgs, RegisterServiceResponse, StartServiceArgs, GetServiceInfoArgs, GetServiceInfoResponse, RemoveServiceArgs, PartitionConnectionInfo, PartitionServices, PartitionConnections, RepartitionArgs, WaitForEndpointAvailabilityArgs, ExecuteBulkCommandsArgs, StartServiceResponse, GetLambdaInfoResponse } from "../../kurtosis_core_rpc_api_bindings/api_container_service_pb";
+import { LoadLambdaArgs, GetLambdaInfoArgs, RegisterStaticFilesArgs, RegisterStaticFilesResponse, RegisterFilesArtifactsArgs, PortBinding, RegisterServiceArgs, RegisterServiceResponse, StartServiceArgs, GetServiceInfoArgs, GetServiceInfoResponse, RemoveServiceArgs, PartitionConnectionInfo, PartitionServices, PartitionConnections, RepartitionArgs, WaitForHttpGetEndpointAvailabilityArgs, WaitForHttpPostEndpointAvailabilityArgs, ExecuteBulkCommandsArgs, StartServiceResponse, GetLambdaInfoResponse } from "../../kurtosis_core_rpc_api_bindings/api_container_service_pb";
 import { LambdaID, LambdaContext } from "../modules/lambda_context";
 import { ServiceID } from "../services/service";
 import { ServiceContext, GeneratedFileFilepaths } from "../services/service_context";
 import { StaticFileID, FilesArtifactID, ContainerCreationConfig } from "../services/container_creation_config"; 
 import { ContainerRunConfig } from "../services/container_run_config";
-import { newLoadLambdaArgs, newGetLambdaInfoArgs, newRegisterStaticFilesArgs, newRegisterFilesArtifactsArgs, newRegisterServiceArgs, newStartServiceArgs, newGetServiceInfoArgs, newRemoveServiceArgs, newPartitionServices, newPartitionConnections, newRepartitionArgs, newWaitForEndpointAvailabilityArgs, newExecuteBulkCommandsArgs } from "../constructor_calls";
+import { newLoadLambdaArgs, newGetLambdaInfoArgs, newRegisterStaticFilesArgs, newRegisterFilesArtifactsArgs, newRegisterServiceArgs, newStartServiceArgs, newGetServiceInfoArgs, newRemoveServiceArgs, newPartitionServices, newPartitionConnections, newRepartitionArgs, newWaitForHttpGetEndpointAvailabilityArgs, newWaitForHttpPostEndpointAvailabilityArgs, newExecuteBulkCommandsArgs } from "../constructor_calls";
 import { ok, err, Result } from "neverthrow";
 import * as log from "loglevel";
 import * as path from "path";
@@ -25,7 +25,7 @@ export type PartitionID = string;
 //  or it was repartitioned away)
 const DEFAULT_PARTITION_ID: PartitionID = "";
 
-// Docs available at https://docs.kurtosistech.com/kurtosis-libs/lib-documentation
+// Docs available at https://docs.kurtosistech.com/kurtosis-client/lib-documentation
 export class NetworkContext {
     private readonly client: ApiContainerServiceClient;
     
@@ -40,7 +40,7 @@ export class NetworkContext {
         this.enclaveDataVolMountpoint = enclaveDataVolMountpoint;
     }
 
-    // Docs available at https://docs.kurtosistech.com/kurtosis-libs/lib-documentation
+    // Docs available at https://docs.kurtosistech.com/kurtosis-client/lib-documentation
     public async loadLambda(
             lambdaId: LambdaID,
             image: string,
@@ -69,7 +69,7 @@ export class NetworkContext {
         return ok(moduleCtx);
     }
 
-    // Docs available at https://docs.kurtosistech.com/kurtosis-libs/lib-documentation
+    // Docs available at https://docs.kurtosistech.com/kurtosis-client/lib-documentation
     public async getLambdaContext(lambdaId: LambdaID): Promise<Result<LambdaContext, Error>> {
         const args: GetLambdaInfoArgs = newGetLambdaInfoArgs(lambdaId);
         
@@ -94,7 +94,7 @@ export class NetworkContext {
         return ok(lambdaCtx);
     }
 
-    // Docs available at https://docs.kurtosistech.com/kurtosis-libs/lib-documentation
+    // Docs available at https://docs.kurtosistech.com/kurtosis-client/lib-documentation
     public async registerStaticFiles(staticFileFilepaths: Map<StaticFileID, string>): Promise<Result<null, Error>> {
         const strSet: Map<string, boolean> = new Map();
         for (const [staticFileId, srcAbsFilepath] of staticFileFilepaths.entries()) {
@@ -224,7 +224,7 @@ export class NetworkContext {
         return ok(null);
     }
 
-    // Docs available at https://docs.kurtosistech.com/kurtosis-libs/lib-documentation
+    // Docs available at https://docs.kurtosistech.com/kurtosis-client/lib-documentation
     public async registerFilesArtifacts(filesArtifactUrls: Map<FilesArtifactID, string>): Promise<Result<null,Error>> {
         const filesArtifactIdStrsToUrls: Map<string, string> = new Map();
         for (const [artifactId, url] of filesArtifactUrls.entries()) {
@@ -253,7 +253,7 @@ export class NetworkContext {
         return ok(null);
     }
 
-    // Docs available at https://docs.kurtosistech.com/kurtosis-libs/lib-documentation
+    // Docs available at https://docs.kurtosistech.com/kurtosis-client/lib-documentation
     public async addService(
         serviceId: ServiceID,
         containerCreationConfig: ContainerCreationConfig,
@@ -274,7 +274,7 @@ export class NetworkContext {
         return ok(resultAddServiceToPartition.value);
     }
 
-    // Docs available at https://docs.kurtosistech.com/kurtosis-libs/lib-documentation
+    // Docs available at https://docs.kurtosistech.com/kurtosis-client/lib-documentation
     public async addServiceToPartition(
             serviceId: ServiceID,
             partitionId: PartitionID,
@@ -425,7 +425,7 @@ export class NetworkContext {
         return ok<[ServiceContext, Map<string, PortBinding>], Error>([serviceContext, resultMap]);
     }
 
-    // Docs available at https://docs.kurtosistech.com/kurtosis-libs/lib-documentation
+    // Docs available at https://docs.kurtosistech.com/kurtosis-client/lib-documentation
     public async getServiceContext(serviceId: ServiceID): Promise<Result<ServiceContext, Error>> {
         const getServiceInfoArgs: GetServiceInfoArgs = newGetServiceInfoArgs(serviceId);
         
@@ -474,7 +474,7 @@ export class NetworkContext {
         return ok(serviceContext);
     }
 
-    // Docs available at https://docs.kurtosistech.com/kurtosis-libs/lib-documentation
+    // Docs available at https://docs.kurtosistech.com/kurtosis-client/lib-documentation
     public async removeService(serviceId: ServiceID, containerStopTimeoutSeconds: number): Promise<Result<null, Error>> {
 
         log.debug("Removing service '" + serviceId + "'...");
@@ -502,7 +502,7 @@ export class NetworkContext {
         return ok(null);
     }
 
-    // Docs available at https://docs.kurtosistech.com/kurtosis-libs/lib-documentation
+    // Docs available at https://docs.kurtosistech.com/kurtosis-client/lib-documentation
     public async repartitionNetwork(
             partitionServices: Map<PartitionID, Set<ServiceID>>,
             partitionConnections: Map<PartitionID, Map<PartitionID, PartitionConnectionInfo>>,
@@ -560,30 +560,63 @@ export class NetworkContext {
         return ok(null);
     }
 
-    // Docs available at https://docs.kurtosistech.com/kurtosis-libs/lib-documentation
-    public async waitForEndpointAvailability(
+    // Docs available at https://docs.kurtosistech.com/kurtosis-client/lib-documentation
+    public async waitForHttpGetEndpointAvailability(
+        serviceId: ServiceID,
+        port: number, 
+        path: string,
+        initialDelayMilliseconds: number, 
+        retries: number, 
+        retriesDelayMilliseconds: number, 
+        bodyText: string): Promise<Result<null, Error>> {
+    const availabilityArgs: WaitForHttpGetEndpointAvailabilityArgs = newWaitForHttpGetEndpointAvailabilityArgs(
+        serviceId,
+        port,
+        path,
+        initialDelayMilliseconds,
+        retries,
+        retriesDelayMilliseconds,
+        bodyText);
+
+    const promiseWaitForHttpGetEndpointAvailability: Promise<Result<null, Error>> = new Promise((resolve, _unusedReject) => {
+        this.client.waitForHttpGetEndpointAvailability(availabilityArgs, (error: Error | null, _unusedResponse?: google_protobuf_empty_pb.Empty) => {
+            if (error === null) {
+                resolve(ok(null));
+            } else {
+                resolve(err(error));
+            }
+        })
+    });
+    const resultWaitForHttpGetEndpointAvailability: Result<null, Error> = await promiseWaitForHttpGetEndpointAvailability;
+    if (!resultWaitForHttpGetEndpointAvailability.isOk()) {
+        return err(resultWaitForHttpGetEndpointAvailability.error);
+    }
+
+    return ok(null);
+}
+
+    // Docs available at https://docs.kurtosistech.com/kurtosis-client/lib-documentation
+    public async waitForHttpPostEndpointAvailability(
             serviceId: ServiceID,
-            httpMethod: WaitForEndpointAvailabilityArgs.HttpMethodMap[keyof WaitForEndpointAvailabilityArgs.HttpMethodMap],
             port: number, 
             path: string,
             requestBody: string,
-            initialDelaySeconds: number, 
+            initialDelayMilliseconds: number, 
             retries: number, 
             retriesDelayMilliseconds: number, 
             bodyText: string): Promise<Result<null, Error>> {
-        const availabilityArgs: WaitForEndpointAvailabilityArgs = newWaitForEndpointAvailabilityArgs(
+        const availabilityArgs: WaitForHttpPostEndpointAvailabilityArgs = newWaitForHttpPostEndpointAvailabilityArgs(
             serviceId,
-            httpMethod,
             port,
             path,
             requestBody,
-            initialDelaySeconds,
+            initialDelayMilliseconds,
             retries,
             retriesDelayMilliseconds,
             bodyText);
 
-        const promiseWaitForEndpointAvailability: Promise<Result<null, Error>> = new Promise((resolve, _unusedReject) => {
-            this.client.waitForEndpointAvailability(availabilityArgs, (error: Error | null, _unusedResponse?: google_protobuf_empty_pb.Empty) => {
+        const promiseWaitForHttpPostEndpointAvailability: Promise<Result<null, Error>> = new Promise((resolve, _unusedReject) => {
+            this.client.waitForHttpPostEndpointAvailability(availabilityArgs, (error: Error | null, _unusedResponse?: google_protobuf_empty_pb.Empty) => {
                 if (error === null) {
                     resolve(ok(null));
                 } else {
@@ -591,15 +624,15 @@ export class NetworkContext {
                 }
             })
         });
-        const resultWaitForEndpointAvailability: Result<null, Error> = await promiseWaitForEndpointAvailability;
-        if (!resultWaitForEndpointAvailability.isOk()) {
-            return err(resultWaitForEndpointAvailability.error);
+        const resultWaitForHttpPostEndpointAvailability: Result<null, Error> = await promiseWaitForHttpPostEndpointAvailability;
+        if (!resultWaitForHttpPostEndpointAvailability.isOk()) {
+            return err(resultWaitForHttpPostEndpointAvailability.error);
         }
 
         return ok(null);
     }
 
-    // Docs available at https://docs.kurtosistech.com/kurtosis-libs/lib-documentation
+    // Docs available at https://docs.kurtosistech.com/kurtosis-client/lib-documentation
     public async executeBulkCommands(bulkCommandsJson: string): Promise<Result<null, Error>> {
 
         const args: ExecuteBulkCommandsArgs = newExecuteBulkCommandsArgs(bulkCommandsJson);

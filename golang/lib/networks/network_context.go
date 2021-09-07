@@ -38,7 +38,7 @@ const (
 	defaultPartitionId PartitionID = ""
 )
 
-// Docs available at https://docs.kurtosistech.com/kurtosis-libs/lib-documentation
+// Docs available at https://docs.kurtosistech.com/kurtosis-client/lib-documentation
 type NetworkContext struct {
 	client kurtosis_core_rpc_api_bindings.ApiContainerServiceClient
 
@@ -58,7 +58,7 @@ func NewNetworkContext(
 	}
 }
 
-// Docs available at https://docs.kurtosistech.com/kurtosis-libs/lib-documentation
+// Docs available at https://docs.kurtosistech.com/kurtosis-client/lib-documentation
 func (networkCtx *NetworkContext) LoadLambda(
 		lambdaId modules.LambdaID,
 		image string,
@@ -74,7 +74,7 @@ func (networkCtx *NetworkContext) LoadLambda(
 	return moduleCtx, nil
 }
 
-// Docs available at https://docs.kurtosistech.com/kurtosis-libs/lib-documentation
+// Docs available at https://docs.kurtosistech.com/kurtosis-client/lib-documentation
 func (networkCtx *NetworkContext) GetLambdaContext(lambdaId modules.LambdaID) (*modules.LambdaContext, error) {
 	args := binding_constructors.NewGetLambdaInfoArgs(string(lambdaId))
 
@@ -87,7 +87,7 @@ func (networkCtx *NetworkContext) GetLambdaContext(lambdaId modules.LambdaID) (*
 	return lambdaCtx, nil
 }
 
-// Docs available at https://docs.kurtosistech.com/kurtosis-libs/lib-documentation
+// Docs available at https://docs.kurtosistech.com/kurtosis-client/lib-documentation
 func (networkCtx *NetworkContext) RegisterStaticFiles(staticFileFilepaths map[services.StaticFileID]string) error {
 	strSet := map[string]bool{}
 	for staticFileId, srcAbsFilepath := range staticFileFilepaths {
@@ -142,7 +142,7 @@ func (networkCtx *NetworkContext) RegisterStaticFiles(staticFileFilepaths map[se
 	return nil
 }
 
-// Docs available at https://docs.kurtosistech.com/kurtosis-libs/lib-documentation
+// Docs available at https://docs.kurtosistech.com/kurtosis-client/lib-documentation
 func (networkCtx *NetworkContext) RegisterFilesArtifacts(filesArtifactUrls map[services.FilesArtifactID]string) error {
 	filesArtifactIdStrsToUrls := map[string]string{}
 	for artifactId, url := range filesArtifactUrls {
@@ -155,7 +155,7 @@ func (networkCtx *NetworkContext) RegisterFilesArtifacts(filesArtifactUrls map[s
 	return nil
 }
 
-// Docs available at https://docs.kurtosistech.com/kurtosis-libs/lib-documentation
+// Docs available at https://docs.kurtosistech.com/kurtosis-client/lib-documentation
 func (networkCtx *NetworkContext) AddService(
 	serviceId services.ServiceID,
 	containerCreationConfig *services.ContainerCreationConfig,
@@ -175,7 +175,7 @@ func (networkCtx *NetworkContext) AddService(
 	return serviceContext, hostPortBindings, nil
 }
 
-// Docs available at https://docs.kurtosistech.com/kurtosis-libs/lib-documentation
+// Docs available at https://docs.kurtosistech.com/kurtosis-client/lib-documentation
 func (networkCtx *NetworkContext) AddServiceToPartition(
 	serviceId services.ServiceID,
 	partitionId PartitionID,
@@ -272,7 +272,7 @@ func (networkCtx *NetworkContext) AddServiceToPartition(
 	return serviceContext, resp.UsedPortsHostPortBindings, nil
 }
 
-// Docs available at https://docs.kurtosistech.com/kurtosis-libs/lib-documentation
+// Docs available at https://docs.kurtosistech.com/kurtosis-client/lib-documentation
 func (networkCtx *NetworkContext) GetServiceContext(serviceId services.ServiceID) (*services.ServiceContext, error) {
 	getServiceInfoArgs := binding_constructors.NewGetServiceInfoArgs(string(serviceId))
 	serviceResponse, err := networkCtx.client.GetServiceInfo(context.Background(), getServiceInfoArgs)
@@ -306,7 +306,7 @@ func (networkCtx *NetworkContext) GetServiceContext(serviceId services.ServiceID
 	return serviceContext, nil
 }
 
-// Docs available at https://docs.kurtosistech.com/kurtosis-libs/lib-documentation
+// Docs available at https://docs.kurtosistech.com/kurtosis-client/lib-documentation
 func (networkCtx *NetworkContext) RemoveService(serviceId services.ServiceID, containerStopTimeoutSeconds uint64) error {
 
 	logrus.Debugf("Removing service '%v'...", serviceId)
@@ -323,7 +323,7 @@ func (networkCtx *NetworkContext) RemoveService(serviceId services.ServiceID, co
 	return nil
 }
 
-// Docs available at https://docs.kurtosistech.com/kurtosis-libs/lib-documentation
+// Docs available at https://docs.kurtosistech.com/kurtosis-client/lib-documentation
 func (networkCtx *NetworkContext) RepartitionNetwork(
 	partitionServices map[PartitionID]map[services.ServiceID]bool,
 	partitionConnections map[PartitionID]map[PartitionID]*kurtosis_core_rpc_api_bindings.PartitionConnectionInfo,
@@ -371,22 +371,20 @@ func (networkCtx *NetworkContext) RepartitionNetwork(
 	return nil
 }
 
-// Docs available at https://docs.kurtosistech.com/kurtosis-libs/lib-documentation
-func (networkCtx *NetworkContext) WaitForEndpointAvailability(serviceId services.ServiceID, httpMethod kurtosis_core_rpc_api_bindings.WaitForEndpointAvailabilityArgs_HttpMethod, port uint32, path string, requestBody string,  initialDelaySeconds uint32, retries uint32, retriesDelayMilliseconds uint32, bodyText string) error {
+// Docs available at https://docs.kurtosistech.com/kurtosis-client/lib-documentation
+func (networkCtx *NetworkContext) WaitForHttpGetEndpointAvailability(serviceId services.ServiceID, port uint32, path string, initialDelayMilliseconds uint32, retries uint32, retriesDelayMilliseconds uint32, bodyText string) error {
 
-	availabilityArgs := binding_constructors.NewWaitForEndpointAvailabilityArgs(
+	availabilityArgs := binding_constructors.NewWaitForHttpGetEndpointAvailabilityArgs(
 		string(serviceId),
-		httpMethod,
 		port,
 		path,
-		requestBody,
-		initialDelaySeconds,
+		initialDelayMilliseconds,
 		retries,
 		retriesDelayMilliseconds,
 		bodyText,
 	)
 
-	if _, err := networkCtx.client.WaitForEndpointAvailability(context.Background(), availabilityArgs); err != nil {
+	if _, err := networkCtx.client.WaitForHttpGetEndpointAvailability(context.Background(), availabilityArgs); err != nil {
 		return stacktrace.Propagate(
 			err,
 			"Endpoint '%v' on port '%v' for service '%v' did not become available despite polling %v times with %v between polls",
@@ -397,11 +395,38 @@ func (networkCtx *NetworkContext) WaitForEndpointAvailability(serviceId services
 			retriesDelayMilliseconds,
 		)
 	}
-
 	return nil
 }
 
-// Docs available at https://docs.kurtosistech.com/kurtosis-libs/lib-documentation
+// Docs available at https://docs.kurtosistech.com/kurtosis-client/lib-documentation
+func (networkCtx *NetworkContext) WaitForHttpPostEndpointAvailability(serviceId services.ServiceID, port uint32, path string, requestBody string, initialDelayMilliseconds uint32, retries uint32, retriesDelayMilliseconds uint32, bodyText string) error {
+
+	availabilityArgs := binding_constructors.NewWaitForHttpPostEndpointAvailabilityArgs(
+		string(serviceId),
+		port,
+		path,
+		requestBody,
+		initialDelayMilliseconds,
+		retries,
+		retriesDelayMilliseconds,
+		bodyText,
+	)
+
+	if _, err := networkCtx.client.WaitForHttpPostEndpointAvailability(context.Background(), availabilityArgs); err != nil {
+		return stacktrace.Propagate(
+			err,
+			"Endpoint '%v' on port '%v' for service '%v' did not become available despite polling %v times with %v between polls",
+			path,
+			port,
+			serviceId,
+			retries,
+			retriesDelayMilliseconds,
+		)
+	}
+	return nil
+}
+
+// Docs available at https://docs.kurtosistech.com/kurtosis-client/lib-documentation
 func (networkCtx *NetworkContext) ExecuteBulkCommands(bulkCommandsJson string) error {
 	args := binding_constructors.NewExecuteBulkCommandsArgs(bulkCommandsJson)
 	if _, err := networkCtx.client.ExecuteBulkCommands(context.Background(), args); err != nil {
