@@ -372,9 +372,9 @@ func (networkCtx *NetworkContext) RepartitionNetwork(
 }
 
 // Docs available at https://docs.kurtosistech.com/kurtosis-client/lib-documentation
-func (networkCtx *NetworkContext) WaitForEndpointAvailabilityHttpGet(serviceId services.ServiceID, port uint32, path string, initialDelayMilliseconds uint32, retries uint32, retriesDelayMilliseconds uint32, bodyText string) error {
+func (networkCtx *NetworkContext) WaitForHttpGetEndpointAvailability(serviceId services.ServiceID, port uint32, path string, initialDelayMilliseconds uint32, retries uint32, retriesDelayMilliseconds uint32, bodyText string) error {
 
-	availabilityArgs := binding_constructors.NewWaitForEndpointAvailabilityHttpGetArgs(
+	availabilityArgs := binding_constructors.NewWaitForHttpGetEndpointAvailabilityArgs(
 		string(serviceId),
 		port,
 		path,
@@ -384,7 +384,7 @@ func (networkCtx *NetworkContext) WaitForEndpointAvailabilityHttpGet(serviceId s
 		bodyText,
 	)
 
-	if _, err := networkCtx.client.WaitForEndpointAvailabilityHttpGet(context.Background(), availabilityArgs); err != nil {
+	if _, err := networkCtx.client.WaitForHttpGetEndpointAvailability(context.Background(), availabilityArgs); err != nil {
 		return stacktrace.Propagate(
 			err,
 			"Endpoint '%v' on port '%v' for service '%v' did not become available despite polling %v times with %v between polls",
@@ -399,9 +399,9 @@ func (networkCtx *NetworkContext) WaitForEndpointAvailabilityHttpGet(serviceId s
 }
 
 // Docs available at https://docs.kurtosistech.com/kurtosis-client/lib-documentation
-func (networkCtx *NetworkContext) WaitForEndpointAvailabilityHttpPost(serviceId services.ServiceID, port uint32, path string, requestBody string, initialDelayMilliseconds uint32, retries uint32, retriesDelayMilliseconds uint32, bodyText string) error {
+func (networkCtx *NetworkContext) WaitForHttpPostEndpointAvailability(serviceId services.ServiceID, port uint32, path string, requestBody string, initialDelayMilliseconds uint32, retries uint32, retriesDelayMilliseconds uint32, bodyText string) error {
 
-	availabilityArgs := binding_constructors.NewWaitForEndpointAvailabilityHttpPostArgs(
+	availabilityArgs := binding_constructors.NewWaitForHttpPostEndpointAvailabilityArgs(
 		string(serviceId),
 		port,
 		path,
@@ -412,7 +412,7 @@ func (networkCtx *NetworkContext) WaitForEndpointAvailabilityHttpPost(serviceId 
 		bodyText,
 	)
 
-	if _, err := networkCtx.client.WaitForEndpointAvailabilityHttpPost(context.Background(), availabilityArgs); err != nil {
+	if _, err := networkCtx.client.WaitForHttpPostEndpointAvailability(context.Background(), availabilityArgs); err != nil {
 		return stacktrace.Propagate(
 			err,
 			"Endpoint '%v' on port '%v' for service '%v' did not become available despite polling %v times with %v between polls",

@@ -50,10 +50,10 @@ service ApiContainerService {
   rpc ExecCommand(ExecCommandArgs) returns (ExecCommandResponse) {};
 
   // Block until the given HTTP endpoint returns available, calling it throw a HTTP Get request
-  rpc WaitForEndpointAvailabilityHttpGet(WaitForEndpointAvailabilityHttpGetArgs) returns (google.protobuf.Empty) {};
+  rpc WaitForHttpGetEndpointAvailability(WaitForHttpGetEndpointAvailabilityArgs) returns (google.protobuf.Empty) {};
 
   // Block until the given HTTP endpoint returns available, calling it throw a HTTP Post request
-  rpc WaitForEndpointAvailabilityHttpPost(WaitForEndpointAvailabilityHttpPostArgs) returns (google.protobuf.Empty) {};
+  rpc WaitForHttpPostEndpointAvailability(WaitForHttpPostEndpointAvailabilityArgs) returns (google.protobuf.Empty) {};
 
   // Executes multiple commands at once
   rpc ExecuteBulkCommands(ExecuteBulkCommandsArgs) returns (google.protobuf.Empty) {};
@@ -308,9 +308,9 @@ message ExecCommandResponse {
 }
 
 // ==============================================================================================
-//                           Wait For Endpoint Availability HTTP Get
+//                             Wait For HTTP Get Endpoint Availability
 // ==============================================================================================
-message WaitForEndpointAvailabilityHttpGetArgs {
+message WaitForHttpGetEndpointAvailabilityArgs {
   //The ID of the service to check.
   string service_id = 1;
   //The port of the service to check. For instance 8080
@@ -328,9 +328,9 @@ message WaitForEndpointAvailabilityHttpGetArgs {
 }
 
 // ==============================================================================================
-//                           Wait For Endpoint Availability HTTP Post
+//                           Wait For HTTP Post Endpoint Availability
 // ==============================================================================================
-message WaitForEndpointAvailabilityHttpPostArgs {
+message WaitForHttpPostEndpointAvailabilityArgs {
   //The ID of the service to check.
   string service_id = 1;
   //The port of the service to check. For instance 8080

@@ -232,17 +232,17 @@ func NewExecCommandResponse(exitCode int32, logOutput []byte) *kurtosis_core_rpc
 }
 
 // ==============================================================================================
-//                           Wait For Endpoint Availability Http Get
+//                           Wait For Http Get Endpoint Availability
 // ==============================================================================================
-func NewWaitForEndpointAvailabilityHttpGetArgs(
+func NewWaitForHttpGetEndpointAvailabilityArgs(
 	serviceId string,
 	port uint32,
 	path string,
 	initialDelayMilliseconds uint32,
 	retries uint32,
 	retriesDelayMilliseconds uint32,
-	bodyText string) *kurtosis_core_rpc_api_bindings.WaitForEndpointAvailabilityHttpGetArgs {
-	return &kurtosis_core_rpc_api_bindings.WaitForEndpointAvailabilityHttpGetArgs{
+	bodyText string) *kurtosis_core_rpc_api_bindings.WaitForHttpGetEndpointAvailabilityArgs {
+	return &kurtosis_core_rpc_api_bindings.WaitForHttpGetEndpointAvailabilityArgs{
 		ServiceId:                serviceId,
 		Port:                     port,
 		Path:                     path,
@@ -254,9 +254,9 @@ func NewWaitForEndpointAvailabilityHttpGetArgs(
 }
 
 // ==============================================================================================
-//                           Wait For Endpoint Availability Http Post
+//                           Wait For Http Post Endpoint Availability
 // ==============================================================================================
-func NewWaitForEndpointAvailabilityHttpPostArgs(
+func NewWaitForHttpPostEndpointAvailabilityArgs(
 		serviceId string,
 		port uint32,
 		path string,
@@ -264,8 +264,8 @@ func NewWaitForEndpointAvailabilityHttpPostArgs(
 		initialDelayMilliseconds uint32,
 		retries uint32,
 		retriesDelayMilliseconds uint32,
-		bodyText string) *kurtosis_core_rpc_api_bindings.WaitForEndpointAvailabilityHttpPostArgs {
-	return &kurtosis_core_rpc_api_bindings.WaitForEndpointAvailabilityHttpPostArgs{
+		bodyText string) *kurtosis_core_rpc_api_bindings.WaitForHttpPostEndpointAvailabilityArgs {
+	return &kurtosis_core_rpc_api_bindings.WaitForHttpPostEndpointAvailabilityArgs{
 		ServiceId:                serviceId,
 		Port:                     port,
 		Path:                     path,

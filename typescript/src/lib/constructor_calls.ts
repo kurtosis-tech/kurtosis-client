@@ -1,4 +1,4 @@
-import { ExecCommandArgs, GenerateFilesArgs, FileGenerationOptions, LoadStaticFilesArgs, LoadLambdaArgs, GetLambdaInfoArgs, RegisterStaticFilesArgs, RegisterFilesArtifactsArgs, GetServiceInfoArgs, PartitionServices, PartitionConnections, PartitionConnectionInfo, RegisterServiceArgs, StartServiceArgs, RemoveServiceArgs, RepartitionArgs, WaitForEndpointAvailabilityHttpGetArgs, WaitForEndpointAvailabilityHttpPostArgs, ExecuteBulkCommandsArgs, ExecuteLambdaArgs } from '../kurtosis_core_rpc_api_bindings/api_container_service_pb';
+import { ExecCommandArgs, GenerateFilesArgs, FileGenerationOptions, LoadStaticFilesArgs, LoadLambdaArgs, GetLambdaInfoArgs, RegisterStaticFilesArgs, RegisterFilesArtifactsArgs, GetServiceInfoArgs, PartitionServices, PartitionConnections, PartitionConnectionInfo, RegisterServiceArgs, StartServiceArgs, RemoveServiceArgs, RepartitionArgs, WaitForHttpGetEndpointAvailabilityArgs, WaitForHttpPostEndpointAvailabilityArgs, ExecuteBulkCommandsArgs, ExecuteLambdaArgs } from '../kurtosis_core_rpc_api_bindings/api_container_service_pb';
 import { ServiceID } from './services/service';
 import { PartitionID } from './networks/network_context';
 import { LambdaID } from "./modules/lambda_context";
@@ -174,15 +174,15 @@ export function newPartitionConnections(allConnectionInfo: Map<string, Partition
     return result;
 }
 
-export function newWaitForEndpointAvailabilityHttpGetArgs(
+export function newWaitForHttpGetEndpointAvailabilityArgs(
         serviceId: ServiceID,
         port: number, 
         path: string,
         initialDelayMilliseconds: number, 
         retries: number, 
         retriesDelayMilliseconds: number, 
-        bodyText: string): WaitForEndpointAvailabilityHttpGetArgs {
-    const result: WaitForEndpointAvailabilityHttpGetArgs = new WaitForEndpointAvailabilityHttpGetArgs();
+        bodyText: string): WaitForHttpGetEndpointAvailabilityArgs {
+    const result: WaitForHttpGetEndpointAvailabilityArgs = new WaitForHttpGetEndpointAvailabilityArgs();
     result.setServiceId(String(serviceId));
     result.setPort(port);
     result.setPath(path);
@@ -194,7 +194,7 @@ export function newWaitForEndpointAvailabilityHttpGetArgs(
     return result;
 }
 
-export function newWaitForEndpointAvailabilityHttpPostArgs(
+export function newWaitForHttpPostEndpointAvailabilityArgs(
         serviceId: ServiceID,
         port: number, 
         path: string,
@@ -202,8 +202,8 @@ export function newWaitForEndpointAvailabilityHttpPostArgs(
         initialDelayMilliseconds: number, 
         retries: number, 
         retriesDelayMilliseconds: number, 
-        bodyText: string): WaitForEndpointAvailabilityHttpPostArgs {
-    const result: WaitForEndpointAvailabilityHttpPostArgs = new WaitForEndpointAvailabilityHttpPostArgs();
+        bodyText: string): WaitForHttpPostEndpointAvailabilityArgs {
+    const result: WaitForHttpPostEndpointAvailabilityArgs = new WaitForHttpPostEndpointAvailabilityArgs();
     result.setServiceId(String(serviceId));
     result.setPort(port);
     result.setPath(path);
