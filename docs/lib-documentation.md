@@ -121,7 +121,7 @@ Repartitions the network so that the connections between services match the spec
 * `defaultConnection`: The network state between two partitions that will be used if the connection isn't defined in the partition connections map.
 
 ### waitForHttpGetEndpointAvailability(ServiceID serviceId, uint32 port, String path, String requestBody, uint32 initialDelayMilliseconds, uint32 retries, uint32 retriesDelayMilliseconds, String bodyText)
-Waits until a service endpoint is available by making requests to the endpoint using the given parameters, and the http post method. An error is thrown if the number of retries is exceeded.
+Waits until a service endpoint is available by making requests to the endpoint using the given parameters, and the HTTP GET method. An error is thrown if the number of retries is exceeded.
 
 **Args**
 
@@ -134,7 +134,7 @@ Waits until a service endpoint is available by making requests to the endpoint u
 * `bodyText`: If this value is non-empty, the endpoint will not be marked as available until this value is returned (e.g. `Hello World`). If this value is emptystring, no body text comparison will be done.
 
 ### waitForHttpPostEndpointAvailability(ServiceID serviceId, uint32 port, String path, String requestBody, uint32 initialDelayMilliseconds, uint32 retries, uint32 retriesDelayMilliseconds, String bodyText)
-Waits until a service endpoint is available by making requests to the endpoint using the given parameters, and the http get method. An error is thrown if the number of retries is exceeded.
+Waits until a service endpoint is available by making requests to the endpoint using the given parameters, and the HTTP POST method. An error is thrown if the number of retries is exceeded.
 
 **Args**
 

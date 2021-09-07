@@ -49,10 +49,10 @@ service ApiContainerService {
   // Executes the given command inside a running container
   rpc ExecCommand(ExecCommandArgs) returns (ExecCommandResponse) {};
 
-  // Block until the given HTTP endpoint returns available, calling it throw a HTTP Get request
+  // Block until the given HTTP endpoint returns available, calling it through a HTTP Get request
   rpc WaitForHttpGetEndpointAvailability(WaitForHttpGetEndpointAvailabilityArgs) returns (google.protobuf.Empty) {};
 
-  // Block until the given HTTP endpoint returns available, calling it throw a HTTP Post request
+  // Block until the given HTTP endpoint returns available, calling it through a HTTP Post request
   rpc WaitForHttpPostEndpointAvailability(WaitForHttpPostEndpointAvailabilityArgs) returns (google.protobuf.Empty) {};
 
   // Executes multiple commands at once
