@@ -16,6 +16,8 @@ export interface V0CommandTypeVisitor {
 	visitWaitForEndpointAvailabilityHttpGet: () => Result<null, Error>;
 	visitWaitForEndpointAvailabilityHttpPost: () => Result<null, Error>;
 	visitExecuteBulkCommands: () => Result<null, Error>;
+	visitGetServices: () => Result<null, Error>;
+	visitGetLambdas: () => Result<null, Error>;
 }
 
 // vvvvvvvvvvvvvvvvvvvv Update the visitor whenever you add an enum value!!! vvvvvvvvvvvvvvvvvvvvvvvvvvv
@@ -31,7 +33,9 @@ export enum V0CommandType {
 	ExecCommand = "EXEC_COMMAND",
 	WaitForEndpointAvailabilityHttpGet = "WAIT_FOR_ENDPOINT_AVAILABILITY_HTTP_GET",
 	WaitForEndpointAvailabilityHttpPost = "WAIT_FOR_ENDPOINT_AVAILABILITY_HTTP_POST",
-	ExecuteBulkCommands = "EXECUTE_BULK_COMMANDS"
+	ExecuteBulkCommands = "EXECUTE_BULK_COMMANDS",
+	GetServices = "GET_SERVICES",
+	GetLambdas = "GET_LAMBDAS"
 }
 // ^^^^^^^^^^^^^^^^^^^^ Update the visitor whenever you add an enum value!!! ^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
@@ -74,6 +78,12 @@ export namespace V0CommandType {
 				break;
 			case V0CommandType.ExecuteBulkCommands:
 				result = visitor.visitExecuteBulkCommands();
+				break;
+			case V0CommandType.GetServices:
+				result = visitor.visitGetServices();
+				break;
+			case V0CommandType.GetLambdas:
+				result = visitor.visitGetLambdas();
 				break;
 			default:
 				return err(new Error("Unrecognized command type " + commandType));

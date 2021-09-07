@@ -35,6 +35,8 @@ type V0CommandTypeVisitor interface {
 	VisitWaitForEndpointAvailabilityHttpGet() error
 	VisitWaitForEndpointAvailabilityHttpPost() error
 	VisitExecuteBulkCommands() error
+	VisitGetServices() error
+	VisitGetLambdas() error
 }
 
 type V0CommandType string
@@ -53,6 +55,8 @@ const (
 	WaitForEndpointAvailabilityHttpGetCommandType  V0CommandType = "WAIT_FOR_ENDPOINT_AVAILABILITY_HTTP_GET"
 	WaitForEndpointAvailabilityHttpPostCommandType V0CommandType = "WAIT_FOR_ENDPOINT_AVAILABILITY_HTTP_POST"
 	ExecuteBulkCommandsCommandType                 V0CommandType = "EXECUTE_BULK_COMMANDS"
+	GetServicesCommandType                         V0CommandType = "GET_SERVICES"
+	GetLambdasCommandType                          V0CommandType = "GET_LAMBDAS"
 	// ^^^^^^^^^^^^^^^^^^^^ Update the visitor whenever you add an enum value!!! ^^^^^^^^^^^^^^^^^^^^^^^^^^^
 )
 
@@ -83,6 +87,10 @@ func (commandType V0CommandType) AcceptVisitor(visitor V0CommandTypeVisitor) err
 		err = visitor.VisitWaitForEndpointAvailabilityHttpPost()
 	case ExecuteBulkCommandsCommandType:
 		err = visitor.VisitExecuteBulkCommands()
+	case GetServicesCommandType:
+		err = visitor.VisitGetServices()
+	case GetLambdasCommandType:
+		err = visitor.VisitGetLambdas()
 	default:
 		return stacktrace.NewError("Unrecognized command type '%v'", commandType)
 	}

@@ -150,6 +150,16 @@ class CmdArgDeserializingVisitor implements V0CommandTypeVisitor {
         return ok(null);
     }
 
+    public visitGetServices(): Result<null, Error> {
+        this.deserializedCommandArgsPtr = undefined
+        return ok(null);
+    }
+
+    public visitGetLambdas(): Result<null, Error> {
+        this.deserializedCommandArgsPtr = undefined
+        return ok(null);
+    }
+
     public getDeserializedCommandArgs(): Result<protobuf.Message, Error> {
         if (!this.deserializedCommandArgsPtr) {
             return err(new Error("Deserialized command args pointer was falsy; this indicates that it was never set through a visitor method, which should never happen"));

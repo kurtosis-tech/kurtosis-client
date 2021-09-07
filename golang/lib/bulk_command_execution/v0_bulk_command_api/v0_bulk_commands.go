@@ -146,6 +146,16 @@ func (visitor *cmdArgDeserializingVisitor) VisitExecuteBulkCommands() error {
 	return nil
 }
 
+func (visitor *cmdArgDeserializingVisitor) VisitGetServices() error {
+	visitor.deserializedCommandArgsPtr = nil
+	return nil
+}
+
+func (visitor *cmdArgDeserializingVisitor) VisitGetLambdas() error {
+	visitor.deserializedCommandArgsPtr = nil
+	return nil
+}
+
 func (visitor *cmdArgDeserializingVisitor) GetDeserializedCommandArgs() proto.Message {
 	return visitor.deserializedCommandArgsPtr
 }
