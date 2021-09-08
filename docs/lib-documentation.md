@@ -4,6 +4,8 @@ This documentation describes how to interact with the Kurtosis API from within a
 
 _Found a bug? File it on [the repo](https://github.com/kurtosis-tech/kurtosis-client/issues)!_
 
+
+
 LambdaContext
 -------------
 <!-- TODO need to add docs for what Kurtosis modules are -->
@@ -20,14 +22,17 @@ Executes the function packaged inside the Kurtosis Lambda module with the given 
 
 * `serializedResult`: Serialized data containing the results of executing the Lambda function. Consult the documentation for the module you're using to determine what this will contain.
 
+
+
 Network
 -------
 This interface provides the option to define a higher level of abstraction for manipulating your test network than is provided by [NetworkContext][networkcontext], so that test-writing is easier. This commonly looks like wrapping several [NetworkContext][networkcontext] methods into a single one - e.g. if you're running a Cassandra cluster that must bootstrap off three nodes, you might define a `CassandraNetwork` implementation with a `startBootstrappers` method that does the gruntwork so each test doesn't need to add the services manually. Each of your tests will then receive this custom implementation in their [Test.run][test_run] method.
 
+
+
 NetworkContext
 --------------
 This Kurtosis-provided class is the lowest-level representation of a test network, and provides methods for inspecting and manipulating the network. All [Network][network] implementations will encapsulate an instance of this class.
-
 
 ### loadLambda(String lambdaId, String image, String serializedParams) -\> [LambdaContext][lambdacontext] lambdaContext
 Starts a new Kurtosis Lambda module (configured using the serialized params) inside the test network, which makes its function available for use.
@@ -41,7 +46,6 @@ Starts a new Kurtosis Lambda module (configured using the serialized params) ins
 **Returns**
 
 * `lambdaContext`: The [LambdaContext][lambdacontext] representation of the running Lambda container, which allows execution of the Lambda function.
-
 
 ### getLambdaContext(String lambdaId) -\> [LambdaContext][lambdacontext] lambdaContext
 Gets the [LambdaContext][lambdacontext] associated with an already-running Lambda container identified by the given ID.
@@ -100,7 +104,6 @@ Gets relevant information about a service (identified by the given service ID) t
 
 The [ServiceContext][servicecontext] representation of a service running in a Docker container.
 
-
 ### removeService(ServiceID serviceId, uint64 containerStopTimeoutSeconds)
 Stops the container with the given service ID and removes it from the network.
 
@@ -147,17 +150,20 @@ Waits until a service endpoint is available by making requests to the endpoint u
 * `retriesDelayMilliseconds`: Number of milliseconds to wait between retries
 * `bodyText`: If this value is non-empty, the endpoint will not be marked as available until this value is returned (e.g. `Hello World`). If this value is emptystring, no body text comparison will be done.
 
-### getServices() -\> Set servicesID
+### getServices() -\> Set\<ServiceID\> serviceIDs
+Gets the IDs of the current services in the test network
 
 **Returns**
 
-* `servicesID`: A set of service's ID 
+* `serviceIDs`: A set of service IDs
 
-### getLambdas() -\> Set lambdasID
+### getLambdas() -\> Set\<LambdaID\> lambdaIDs
+Gets the IDs of the Kurtosis Lambdas that have been loaded into the test network.
 
 **Returns**
 
-* `lambdasID`: A set of Kurtosis Lambda's ID
+* `lambdaIDs`: A set of Kurtosis Lambda IDs
+
 
 
 PartitionConnectionInfo
@@ -225,7 +231,6 @@ The builder that should be used to create [ContainerRunConfig][containerrunconfi
 
 
 
-
 ServiceContext
 --------------
 This Kurtosis-provided class is the lowest-level representation of a service running inside a Docker container. It is your handle for retrieving container information and manipulating the container.
@@ -278,6 +283,7 @@ Loads static files that have been previously registered with the Kurtosis API vi
 **Returns**
 
 A map of the static file IDs (corresponding to the set passed in as input) mapped to the filepath _inside the service container_ where the static file is now available.
+
 
 
 GeneratedFileFilepaths

@@ -691,7 +691,7 @@ if (goog.DEBUG && !COMPILED) {
  * @constructor
  */
 proto.api_container_api.GetServicesResponse = function(opt_data) {
-  jspb.Message.initialize(this, opt_data, 0, -1, proto.api_container_api.GetServicesResponse.repeatedFields_, null);
+  jspb.Message.initialize(this, opt_data, 0, -1, null, null);
 };
 goog.inherits(proto.api_container_api.GetServicesResponse, jspb.Message);
 if (goog.DEBUG && !COMPILED) {
@@ -712,7 +712,7 @@ if (goog.DEBUG && !COMPILED) {
  * @constructor
  */
 proto.api_container_api.GetLambdasResponse = function(opt_data) {
-  jspb.Message.initialize(this, opt_data, 0, -1, proto.api_container_api.GetLambdasResponse.repeatedFields_, null);
+  jspb.Message.initialize(this, opt_data, 0, -1, null, null);
 };
 goog.inherits(proto.api_container_api.GetLambdasResponse, jspb.Message);
 if (goog.DEBUG && !COMPILED) {
@@ -5781,13 +5781,6 @@ proto.api_container_api.ExecuteBulkCommandsArgs.prototype.setSerializedCommands 
 
 
 
-/**
- * List of repeated fields within this message type.
- * @private {!Array<number>}
- * @const
- */
-proto.api_container_api.GetServicesResponse.repeatedFields_ = [1];
-
 
 
 if (jspb.Message.GENERATE_TO_OBJECT) {
@@ -5819,7 +5812,7 @@ proto.api_container_api.GetServicesResponse.prototype.toObject = function(opt_in
  */
 proto.api_container_api.GetServicesResponse.toObject = function(includeInstance, msg) {
   var f, obj = {
-    servicesIdList: (f = jspb.Message.getRepeatedField(msg, 1)) == null ? undefined : f
+    serviceIdsMap: (f = msg.getServiceIdsMap()) ? f.toObject(includeInstance, undefined) : []
   };
 
   if (includeInstance) {
@@ -5857,8 +5850,10 @@ proto.api_container_api.GetServicesResponse.deserializeBinaryFromReader = functi
     var field = reader.getFieldNumber();
     switch (field) {
     case 1:
-      var value = /** @type {string} */ (reader.readString());
-      msg.addServicesId(value);
+      var value = msg.getServiceIdsMap();
+      reader.readMessage(value, function(message, reader) {
+        jspb.Map.deserializeBinary(message, reader, jspb.BinaryReader.prototype.readString, jspb.BinaryReader.prototype.readBool, null, "", false);
+         });
       break;
     default:
       reader.skipField();
@@ -5889,60 +5884,35 @@ proto.api_container_api.GetServicesResponse.prototype.serializeBinary = function
  */
 proto.api_container_api.GetServicesResponse.serializeBinaryToWriter = function(message, writer) {
   var f = undefined;
-  f = message.getServicesIdList();
-  if (f.length > 0) {
-    writer.writeRepeatedString(
-      1,
-      f
-    );
+  f = message.getServiceIdsMap(true);
+  if (f && f.getLength() > 0) {
+    f.serializeBinary(1, writer, jspb.BinaryWriter.prototype.writeString, jspb.BinaryWriter.prototype.writeBool);
   }
 };
 
 
 /**
- * repeated string services_id = 1;
- * @return {!Array<string>}
+ * map<string, bool> service_ids = 1;
+ * @param {boolean=} opt_noLazyCreate Do not create the map if
+ * empty, instead returning `undefined`
+ * @return {!jspb.Map<string,boolean>}
  */
-proto.api_container_api.GetServicesResponse.prototype.getServicesIdList = function() {
-  return /** @type {!Array<string>} */ (jspb.Message.getRepeatedField(this, 1));
+proto.api_container_api.GetServicesResponse.prototype.getServiceIdsMap = function(opt_noLazyCreate) {
+  return /** @type {!jspb.Map<string,boolean>} */ (
+      jspb.Message.getMapField(this, 1, opt_noLazyCreate,
+      null));
 };
 
 
 /**
- * @param {!Array<string>} value
+ * Clears values from the map. The map will be non-null.
  * @return {!proto.api_container_api.GetServicesResponse} returns this
  */
-proto.api_container_api.GetServicesResponse.prototype.setServicesIdList = function(value) {
-  return jspb.Message.setField(this, 1, value || []);
-};
+proto.api_container_api.GetServicesResponse.prototype.clearServiceIdsMap = function() {
+  this.getServiceIdsMap().clear();
+  return this;};
 
 
-/**
- * @param {string} value
- * @param {number=} opt_index
- * @return {!proto.api_container_api.GetServicesResponse} returns this
- */
-proto.api_container_api.GetServicesResponse.prototype.addServicesId = function(value, opt_index) {
-  return jspb.Message.addToRepeatedField(this, 1, value, opt_index);
-};
-
-
-/**
- * Clears the list making it empty but non-null.
- * @return {!proto.api_container_api.GetServicesResponse} returns this
- */
-proto.api_container_api.GetServicesResponse.prototype.clearServicesIdList = function() {
-  return this.setServicesIdList([]);
-};
-
-
-
-/**
- * List of repeated fields within this message type.
- * @private {!Array<number>}
- * @const
- */
-proto.api_container_api.GetLambdasResponse.repeatedFields_ = [1];
 
 
 
@@ -5975,7 +5945,7 @@ proto.api_container_api.GetLambdasResponse.prototype.toObject = function(opt_inc
  */
 proto.api_container_api.GetLambdasResponse.toObject = function(includeInstance, msg) {
   var f, obj = {
-    lambdasIdList: (f = jspb.Message.getRepeatedField(msg, 1)) == null ? undefined : f
+    lambdaIdsMap: (f = msg.getLambdaIdsMap()) ? f.toObject(includeInstance, undefined) : []
   };
 
   if (includeInstance) {
@@ -6013,8 +5983,10 @@ proto.api_container_api.GetLambdasResponse.deserializeBinaryFromReader = functio
     var field = reader.getFieldNumber();
     switch (field) {
     case 1:
-      var value = /** @type {string} */ (reader.readString());
-      msg.addLambdasId(value);
+      var value = msg.getLambdaIdsMap();
+      reader.readMessage(value, function(message, reader) {
+        jspb.Map.deserializeBinary(message, reader, jspb.BinaryReader.prototype.readString, jspb.BinaryReader.prototype.readBool, null, "", false);
+         });
       break;
     default:
       reader.skipField();
@@ -6045,51 +6017,33 @@ proto.api_container_api.GetLambdasResponse.prototype.serializeBinary = function(
  */
 proto.api_container_api.GetLambdasResponse.serializeBinaryToWriter = function(message, writer) {
   var f = undefined;
-  f = message.getLambdasIdList();
-  if (f.length > 0) {
-    writer.writeRepeatedString(
-      1,
-      f
-    );
+  f = message.getLambdaIdsMap(true);
+  if (f && f.getLength() > 0) {
+    f.serializeBinary(1, writer, jspb.BinaryWriter.prototype.writeString, jspb.BinaryWriter.prototype.writeBool);
   }
 };
 
 
 /**
- * repeated string lambdas_id = 1;
- * @return {!Array<string>}
+ * map<string, bool> lambda_ids = 1;
+ * @param {boolean=} opt_noLazyCreate Do not create the map if
+ * empty, instead returning `undefined`
+ * @return {!jspb.Map<string,boolean>}
  */
-proto.api_container_api.GetLambdasResponse.prototype.getLambdasIdList = function() {
-  return /** @type {!Array<string>} */ (jspb.Message.getRepeatedField(this, 1));
+proto.api_container_api.GetLambdasResponse.prototype.getLambdaIdsMap = function(opt_noLazyCreate) {
+  return /** @type {!jspb.Map<string,boolean>} */ (
+      jspb.Message.getMapField(this, 1, opt_noLazyCreate,
+      null));
 };
 
 
 /**
- * @param {!Array<string>} value
+ * Clears values from the map. The map will be non-null.
  * @return {!proto.api_container_api.GetLambdasResponse} returns this
  */
-proto.api_container_api.GetLambdasResponse.prototype.setLambdasIdList = function(value) {
-  return jspb.Message.setField(this, 1, value || []);
-};
-
-
-/**
- * @param {string} value
- * @param {number=} opt_index
- * @return {!proto.api_container_api.GetLambdasResponse} returns this
- */
-proto.api_container_api.GetLambdasResponse.prototype.addLambdasId = function(value, opt_index) {
-  return jspb.Message.addToRepeatedField(this, 1, value, opt_index);
-};
-
-
-/**
- * Clears the list making it empty but non-null.
- * @return {!proto.api_container_api.GetLambdasResponse} returns this
- */
-proto.api_container_api.GetLambdasResponse.prototype.clearLambdasIdList = function() {
-  return this.setLambdasIdList([]);
-};
+proto.api_container_api.GetLambdasResponse.prototype.clearLambdaIdsMap = function() {
+  this.getLambdaIdsMap().clear();
+  return this;};
 
 
 goog.object.extend(exports, proto.api_container_api);

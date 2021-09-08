@@ -738,11 +738,8 @@ export namespace ExecuteBulkCommandsArgs {
 }
 
 export class GetServicesResponse extends jspb.Message {
-  clearServicesIdList(): void;
-  getServicesIdList(): Array<string>;
-  setServicesIdList(value: Array<string>): void;
-  addServicesId(value: string, index?: number): string;
-
+  getServiceIdsMap(): jspb.Map<string, boolean>;
+  clearServiceIdsMap(): void;
   serializeBinary(): Uint8Array;
   toObject(includeInstance?: boolean): GetServicesResponse.AsObject;
   static toObject(includeInstance: boolean, msg: GetServicesResponse): GetServicesResponse.AsObject;
@@ -755,16 +752,13 @@ export class GetServicesResponse extends jspb.Message {
 
 export namespace GetServicesResponse {
   export type AsObject = {
-    servicesIdList: Array<string>,
+    serviceIdsMap: Array<[string, boolean]>,
   }
 }
 
 export class GetLambdasResponse extends jspb.Message {
-  clearLambdasIdList(): void;
-  getLambdasIdList(): Array<string>;
-  setLambdasIdList(value: Array<string>): void;
-  addLambdasId(value: string, index?: number): string;
-
+  getLambdaIdsMap(): jspb.Map<string, boolean>;
+  clearLambdaIdsMap(): void;
   serializeBinary(): Uint8Array;
   toObject(includeInstance?: boolean): GetLambdasResponse.AsObject;
   static toObject(includeInstance: boolean, msg: GetLambdasResponse): GetLambdasResponse.AsObject;
@@ -777,7 +771,7 @@ export class GetLambdasResponse extends jspb.Message {
 
 export namespace GetLambdasResponse {
   export type AsObject = {
-    lambdasIdList: Array<string>,
+    lambdaIdsMap: Array<[string, boolean]>,
   }
 }
 

@@ -58,10 +58,10 @@ service ApiContainerService {
   // Executes multiple commands at once
   rpc ExecuteBulkCommands(ExecuteBulkCommandsArgs) returns (google.protobuf.Empty) {};
 
-  // Returns a list of running services
+  // Returns the IDs of the current services in the test network
   rpc GetServices(google.protobuf.Empty) returns (GetServicesResponse) {};
 
-  // Returns a list of running Kurtosis Lambdas
+  // Returns the IDs of the Kurtosis Lambdas that have been loaded into the test network.
   rpc GetLambdas(google.protobuf.Empty) returns (GetLambdasResponse) {};
 }
 
@@ -367,14 +367,14 @@ message ExecuteBulkCommandsArgs {
 //                                          Get Services
 // ==============================================================================================
 message GetServicesResponse {
-  // List of services' id
-  repeated string services_id = 1;
+  // "Set" of current service IDs in the test network
+  map<string, bool> service_ids = 1;
 }
 
 // ==============================================================================================
 //                                          Get Lambdas
 // ==============================================================================================
 message GetLambdasResponse {
-  // List of Kurtosis Lambas' id
-  repeated string lambdas_id = 1;
+  // "Set" of current Kurtosis Lambda IDs loaded in the test network
+  map<string, bool> lambda_ids = 1;
 }

@@ -4,7 +4,7 @@
  */
 
 import { ApiContainerServiceClient } from "../..//kurtosis_core_rpc_api_bindings/api_container_service_grpc_pb";
-import { LoadLambdaArgs, GetLambdaInfoArgs, RegisterStaticFilesArgs, RegisterStaticFilesResponse, RegisterFilesArtifactsArgs, PortBinding, RegisterServiceArgs, RegisterServiceResponse, StartServiceArgs, GetServiceInfoArgs, GetServiceInfoResponse, RemoveServiceArgs, PartitionConnectionInfo, PartitionServices, PartitionConnections, RepartitionArgs, WaitForHttpGetEndpointAvailabilityArgs, WaitForHttpPostEndpointAvailabilityArgs, ExecuteBulkCommandsArgs, StartServiceResponse, GetLambdaInfoResponse, GetServicesResponse, GetLambdasResponse } from "../../kurtosis_core_rpc_api_bindings/api_container_service_pb";
+import { LoadLambdaArgs, GetLambdaInfoArgs, RegisterStaticFilesArgs, RegisterStaticFilesResponse, RegisterFilesArtifactsArgs, PortBinding, RegisterServiceArgs, RegisterServiceResponse, StartServiceArgs, GetServiceInfoArgs, GetServiceInfoResponse, RemoveServiceArgs, PartitionConnectionInfo, PartitionServices, PartitionConnections, RepartitionArgs, WaitForHttpGetEndpointAvailabilityArgs, WaitForHttpPostEndpointAvailabilityArgs, ExecuteBulkCommandsArgs, StartServiceResponse, GetLambdaInfoResponse, GetServicesResponse, GetLambdasResponse } from "../..//kurtosis_core_rpc_api_bindings/api_container_service_pb";
 import { LambdaID, LambdaContext } from "../modules/lambda_context";
 import { ServiceID } from "../services/service";
 import { ServiceContext, GeneratedFileFilepaths } from "../services/service_context";
@@ -655,7 +655,7 @@ export class NetworkContext {
     }
 
     // Docs available at https://docs.kurtosistech.com/kurtosis-client/lib-documentation
-    public async getServices(): Promise<Result<ServiceID[], Error>> {
+    public async getServices(): Promise<Result<Set<ServiceID>, Error>> {
         const emptyArg: google_protobuf_empty_pb.Empty = new google_protobuf_empty_pb.Empty()
         
         const promiseGetServices: Promise<Result<GetServicesResponse, Error>> = new Promise((resolve, _unusedReject) => {
@@ -679,11 +679,17 @@ export class NetworkContext {
 
         const getServicesResponse: GetServicesResponse = resultGetServices.value;
 
-        return ok(getServicesResponse.getServicesIdList())
+        const serviceIDs: Set<ServiceID> = new Set<ServiceID>()
+
+        getServicesResponse.getServiceIdsMap().forEach((value: boolean, key: string) => {
+            serviceIDs.add(key)
+        });
+
+        return ok(serviceIDs)
     }
 
     // Docs available at https://docs.kurtosistech.com/kurtosis-client/lib-documentation
-    public async getLambdas(): Promise<Result<LambdaID[], Error>> {
+    public async getLambdas(): Promise<Result<Set<LambdaID>, Error>> {
         const emptyArg: google_protobuf_empty_pb.Empty = new google_protobuf_empty_pb.Empty()
         
         const promiseGetLambdas: Promise<Result<GetLambdasResponse, Error>> = new Promise((resolve, _unusedReject) => {
@@ -707,6 +713,12 @@ export class NetworkContext {
 
         const getLambdasResponse: GetLambdasResponse = resultGetLambdas.value;
 
-        return ok(getLambdasResponse.getLambdasIdList())
+        const lambdaIDs: Set<LambdaID> = new Set<LambdaID>()
+
+        getLambdasResponse.getLambdaIdsMap().forEach((value: boolean, key: string) => {
+            lambdaIDs.add(key)
+        })
+
+        return ok(lambdaIDs)
     }
 }

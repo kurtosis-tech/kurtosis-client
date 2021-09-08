@@ -437,33 +437,39 @@ func (networkCtx *NetworkContext) ExecuteBulkCommands(bulkCommandsJson string) e
 }
 
 // Docs available at https://docs.kurtosistech.com/kurtosis-client/lib-documentation
-func (networkCtx *NetworkContext) GetServices() ([]services.ServiceID, error){
+func (networkCtx *NetworkContext) GetServices() (map[services.ServiceID]bool, error){
 	response, err := networkCtx.client.GetServices(context.Background(), &emptypb.Empty{})
 	if err != nil {
-		return nil, stacktrace.Propagate(err, "An error occurred getting services' id list")
+		return nil, stacktrace.Propagate(err, "An error occurred getting the service IDs in the network")
 	}
 
-	servicesID := make([]services.ServiceID, len(response.ServicesId))
+	serviceIDs := make(map[services.ServiceID]bool, len(response.GetServiceIds()))
 
-	for _, serviceID := range response.ServicesId {
-		servicesID = append(servicesID, services.ServiceID(serviceID))
+	for key, _ := range response.GetServiceIds() {
+		serviceID := services.ServiceID(key)
+		if _, ok := serviceIDs[serviceID]; !ok{
+			serviceIDs[serviceID] = true
+		}
 	}
 
-	return servicesID, nil
+	return serviceIDs, nil
 }
 
 // Docs available at https://docs.kurtosistech.com/kurtosis-client/lib-documentation
-func (networkCtx *NetworkContext) GetLambdas() ([]modules.LambdaID, error){
+func (networkCtx *NetworkContext) GetLambdas() (map[modules.LambdaID]bool, error){
 	response, err := networkCtx.client.GetLambdas(context.Background(), &emptypb.Empty{})
 	if err != nil {
-		return nil, stacktrace.Propagate(err, "An error occurred getting lambdas' id list")
+		return nil, stacktrace.Propagate(err, "An error occurred getting the Lambda IDs in the network")
 	}
 
-	lambdasID := make([]modules.LambdaID, len(response.LambdasId))
+	lambdaIDs := make(map[modules.LambdaID]bool, len(response.GetLambdaIds()))
 
-	for _, lambdaID := range response.LambdasId {
-		lambdasID = append(lambdasID, modules.LambdaID(lambdaID))
+	for key, _ := range response.GetLambdaIds() {
+		lambdaID := modules.LambdaID(key)
+		if _, ok := lambdaIDs[lambdaID]; !ok {
+			lambdaIDs[lambdaID] = true
+		}
 	}
 
-	return lambdasID, nil
+	return lambdaIDs, nil
 }

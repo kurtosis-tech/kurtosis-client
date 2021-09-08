@@ -2,6 +2,7 @@ import { LoadLambdaArgs, ExecCommandArgs, ExecuteBulkCommandsArgs, ExecuteLambda
 import { V0CommandTypeVisitor, V0CommandType } from "./v0_command_types";
 import { ok, err, Result } from "neverthrow";
 import * as protobuf from "google-protobuf";
+import * as google_protobuf_empty_pb from "google-protobuf/google/protobuf/empty_pb";
 
 // ====================================================================================================
 //                                   Command Arg Deserialization Visitor
@@ -151,12 +152,12 @@ class CmdArgDeserializingVisitor implements V0CommandTypeVisitor {
     }
 
     public visitGetServices(): Result<null, Error> {
-        this.deserializedCommandArgsPtr = undefined
+        this.deserializedCommandArgsPtr = new google_protobuf_empty_pb.Empty()
         return ok(null);
     }
 
     public visitGetLambdas(): Result<null, Error> {
-        this.deserializedCommandArgsPtr = undefined
+        this.deserializedCommandArgsPtr = new google_protobuf_empty_pb.Empty()
         return ok(null);
     }
 
