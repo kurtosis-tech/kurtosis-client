@@ -25,6 +25,7 @@ import (
 	"github.com/kurtosis-tech/kurtosis-client/golang/lib/services"
 	"github.com/palantir/stacktrace"
 	"github.com/sirupsen/logrus"
+	"google.golang.org/protobuf/types/known/emptypb"
 	"io"
 	"os"
 	"path"
@@ -433,4 +434,42 @@ func (networkCtx *NetworkContext) ExecuteBulkCommands(bulkCommandsJson string) e
 		return stacktrace.Propagate(err, "An error occurred executing the following bulk commands: %v", bulkCommandsJson)
 	}
 	return nil
+}
+
+// Docs available at https://docs.kurtosistech.com/kurtosis-client/lib-documentation
+func (networkCtx *NetworkContext) GetServices() (map[services.ServiceID]bool, error){
+	response, err := networkCtx.client.GetServices(context.Background(), &emptypb.Empty{})
+	if err != nil {
+		return nil, stacktrace.Propagate(err, "An error occurred getting the service IDs in the network")
+	}
+
+	serviceIDs := make(map[services.ServiceID]bool, len(response.GetServiceIds()))
+
+	for key, _ := range response.GetServiceIds() {
+		serviceID := services.ServiceID(key)
+		if _, ok := serviceIDs[serviceID]; !ok{
+			serviceIDs[serviceID] = true
+		}
+	}
+
+	return serviceIDs, nil
+}
+
+// Docs available at https://docs.kurtosistech.com/kurtosis-client/lib-documentation
+func (networkCtx *NetworkContext) GetLambdas() (map[modules.LambdaID]bool, error){
+	response, err := networkCtx.client.GetLambdas(context.Background(), &emptypb.Empty{})
+	if err != nil {
+		return nil, stacktrace.Propagate(err, "An error occurred getting the Lambda IDs in the network")
+	}
+
+	lambdaIDs := make(map[modules.LambdaID]bool, len(response.GetLambdaIds()))
+
+	for key, _ := range response.GetLambdaIds() {
+		lambdaID := modules.LambdaID(key)
+		if _, ok := lambdaIDs[lambdaID]; !ok {
+			lambdaIDs[lambdaID] = true
+		}
+	}
+
+	return lambdaIDs, nil
 }

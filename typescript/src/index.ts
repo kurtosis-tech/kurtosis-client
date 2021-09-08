@@ -21,4 +21,4 @@ export { newExecCommandArgs, newGenerateFilesArgs, newFileGenerationOptions, new
 
 //Kurtosis Core RPC API Bindings
 export { ApiContainerServiceClient } from "./kurtosis_core_rpc_api_bindings/api_container_service_grpc_pb";
-export { PartitionConnections, FileGenerationOptions, PortBinding } from "./kurtosis_core_rpc_api_bindings/api_container_service_pb";
+export { PartitionConnections, FileGenerationOptions, PortBinding } from ".//kurtosis_core_rpc_api_bindings/api_container_service_pb";

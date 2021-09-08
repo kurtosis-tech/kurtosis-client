@@ -4,7 +4,7 @@
  */
 
 import { ApiContainerServiceClient } from "../..//kurtosis_core_rpc_api_bindings/api_container_service_grpc_pb";
-import { LoadLambdaArgs, GetLambdaInfoArgs, RegisterStaticFilesArgs, RegisterStaticFilesResponse, RegisterFilesArtifactsArgs, PortBinding, RegisterServiceArgs, RegisterServiceResponse, StartServiceArgs, GetServiceInfoArgs, GetServiceInfoResponse, RemoveServiceArgs, PartitionConnectionInfo, PartitionServices, PartitionConnections, RepartitionArgs, WaitForHttpGetEndpointAvailabilityArgs, WaitForHttpPostEndpointAvailabilityArgs, ExecuteBulkCommandsArgs, StartServiceResponse, GetLambdaInfoResponse } from "../../kurtosis_core_rpc_api_bindings/api_container_service_pb";
+import { LoadLambdaArgs, GetLambdaInfoArgs, RegisterStaticFilesArgs, RegisterStaticFilesResponse, RegisterFilesArtifactsArgs, PortBinding, RegisterServiceArgs, RegisterServiceResponse, StartServiceArgs, GetServiceInfoArgs, GetServiceInfoResponse, RemoveServiceArgs, PartitionConnectionInfo, PartitionServices, PartitionConnections, RepartitionArgs, WaitForHttpGetEndpointAvailabilityArgs, WaitForHttpPostEndpointAvailabilityArgs, ExecuteBulkCommandsArgs, StartServiceResponse, GetLambdaInfoResponse, GetServicesResponse, GetLambdasResponse } from "../..//kurtosis_core_rpc_api_bindings/api_container_service_pb";
 import { LambdaID, LambdaContext } from "../modules/lambda_context";
 import { ServiceID } from "../services/service";
 import { ServiceContext, GeneratedFileFilepaths } from "../services/service_context";
@@ -652,5 +652,73 @@ export class NetworkContext {
         }
 
         return ok(null);
+    }
+
+    // Docs available at https://docs.kurtosistech.com/kurtosis-client/lib-documentation
+    public async getServices(): Promise<Result<Set<ServiceID>, Error>> {
+        const emptyArg: google_protobuf_empty_pb.Empty = new google_protobuf_empty_pb.Empty()
+        
+        const promiseGetServices: Promise<Result<GetServicesResponse, Error>> = new Promise((resolve, _unusedReject) => {
+            this.client.getServices(emptyArg, (error: Error | null, response?: GetServicesResponse) => {
+                if (error === null) {
+                    if (!response) {
+                        resolve(err(new Error("No error was encountered but the response was still falsy; this should never happen")));
+                    } else {
+                        resolve(ok(response!));
+                    }
+                } else {
+                    resolve(err(error));
+                }
+            })
+        });
+
+        const resultGetServices: Result<GetServicesResponse, Error> = await promiseGetServices;
+        if (!resultGetServices.isOk()) {
+            return err(resultGetServices.error);
+        }
+
+        const getServicesResponse: GetServicesResponse = resultGetServices.value;
+
+        const serviceIDs: Set<ServiceID> = new Set<ServiceID>()
+
+        getServicesResponse.getServiceIdsMap().forEach((value: boolean, key: string) => {
+            serviceIDs.add(key)
+        });
+
+        return ok(serviceIDs)
+    }
+
+    // Docs available at https://docs.kurtosistech.com/kurtosis-client/lib-documentation
+    public async getLambdas(): Promise<Result<Set<LambdaID>, Error>> {
+        const emptyArg: google_protobuf_empty_pb.Empty = new google_protobuf_empty_pb.Empty()
+        
+        const promiseGetLambdas: Promise<Result<GetLambdasResponse, Error>> = new Promise((resolve, _unusedReject) => {
+            this.client.getLambdas(emptyArg, (error: Error | null, response?: GetLambdasResponse) => {
+                if (error === null) {
+                    if (!response) {
+                        resolve(err(new Error("No error was encountered but the response was still falsy; this should never happen")));
+                    } else {
+                        resolve(ok(response!));
+                    }
+                } else {
+                    resolve(err(error));
+                }
+            })
+        });
+
+        const resultGetLambdas: Result<GetLambdasResponse, Error> = await promiseGetLambdas;
+        if (!resultGetLambdas.isOk()) {
+            return err(resultGetLambdas.error);
+        }
+
+        const getLambdasResponse: GetLambdasResponse = resultGetLambdas.value;
+
+        const lambdaIDs: Set<LambdaID> = new Set<LambdaID>()
+
+        getLambdasResponse.getLambdaIdsMap().forEach((value: boolean, key: string) => {
+            lambdaIDs.add(key)
+        })
+
+        return ok(lambdaIDs)
     }
 }

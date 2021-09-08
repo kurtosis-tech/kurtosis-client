@@ -104,6 +104,17 @@ function deserialize_api_container_api_GetLambdaInfoResponse(buffer_arg) {
   return api_container_service_pb.GetLambdaInfoResponse.deserializeBinary(new Uint8Array(buffer_arg));
 }
 
+function serialize_api_container_api_GetLambdasResponse(arg) {
+  if (!(arg instanceof api_container_service_pb.GetLambdasResponse)) {
+    throw new Error('Expected argument of type api_container_api.GetLambdasResponse');
+  }
+  return Buffer.from(arg.serializeBinary());
+}
+
+function deserialize_api_container_api_GetLambdasResponse(buffer_arg) {
+  return api_container_service_pb.GetLambdasResponse.deserializeBinary(new Uint8Array(buffer_arg));
+}
+
 function serialize_api_container_api_GetServiceInfoArgs(arg) {
   if (!(arg instanceof api_container_service_pb.GetServiceInfoArgs)) {
     throw new Error('Expected argument of type api_container_api.GetServiceInfoArgs');
@@ -124,6 +135,17 @@ function serialize_api_container_api_GetServiceInfoResponse(arg) {
 
 function deserialize_api_container_api_GetServiceInfoResponse(buffer_arg) {
   return api_container_service_pb.GetServiceInfoResponse.deserializeBinary(new Uint8Array(buffer_arg));
+}
+
+function serialize_api_container_api_GetServicesResponse(arg) {
+  if (!(arg instanceof api_container_service_pb.GetServicesResponse)) {
+    throw new Error('Expected argument of type api_container_api.GetServicesResponse');
+  }
+  return Buffer.from(arg.serializeBinary());
+}
+
+function deserialize_api_container_api_GetServicesResponse(buffer_arg) {
+  return api_container_service_pb.GetServicesResponse.deserializeBinary(new Uint8Array(buffer_arg));
 }
 
 function serialize_api_container_api_LoadLambdaArgs(arg) {
@@ -452,7 +474,7 @@ execCommand: {
     responseSerialize: serialize_api_container_api_ExecCommandResponse,
     responseDeserialize: deserialize_api_container_api_ExecCommandResponse,
   },
-  // Block until the given HTTP endpoint returns available, calling it throw a HTTP Get request
+  // Block until the given HTTP endpoint returns available, calling it through a HTTP Get request
 waitForHttpGetEndpointAvailability: {
     path: '/api_container_api.ApiContainerService/WaitForHttpGetEndpointAvailability',
     requestStream: false,
@@ -464,7 +486,7 @@ waitForHttpGetEndpointAvailability: {
     responseSerialize: serialize_google_protobuf_Empty,
     responseDeserialize: deserialize_google_protobuf_Empty,
   },
-  // Block until the given HTTP endpoint returns available, calling it throw a HTTP Post request
+  // Block until the given HTTP endpoint returns available, calling it through a HTTP Post request
 waitForHttpPostEndpointAvailability: {
     path: '/api_container_api.ApiContainerService/WaitForHttpPostEndpointAvailability',
     requestStream: false,
@@ -487,6 +509,30 @@ executeBulkCommands: {
     requestDeserialize: deserialize_api_container_api_ExecuteBulkCommandsArgs,
     responseSerialize: serialize_google_protobuf_Empty,
     responseDeserialize: deserialize_google_protobuf_Empty,
+  },
+  // Returns a list of running services
+getServices: {
+    path: '/api_container_api.ApiContainerService/GetServices',
+    requestStream: false,
+    responseStream: false,
+    requestType: google_protobuf_empty_pb.Empty,
+    responseType: api_container_service_pb.GetServicesResponse,
+    requestSerialize: serialize_google_protobuf_Empty,
+    requestDeserialize: deserialize_google_protobuf_Empty,
+    responseSerialize: serialize_api_container_api_GetServicesResponse,
+    responseDeserialize: deserialize_api_container_api_GetServicesResponse,
+  },
+  // Returns a list of running Kurtosis Lambdas
+getLambdas: {
+    path: '/api_container_api.ApiContainerService/GetLambdas',
+    requestStream: false,
+    responseStream: false,
+    requestType: google_protobuf_empty_pb.Empty,
+    responseType: api_container_service_pb.GetLambdasResponse,
+    requestSerialize: serialize_google_protobuf_Empty,
+    requestDeserialize: deserialize_google_protobuf_Empty,
+    responseSerialize: serialize_api_container_api_GetLambdasResponse,
+    responseDeserialize: deserialize_api_container_api_GetLambdasResponse,
   },
 };
 
