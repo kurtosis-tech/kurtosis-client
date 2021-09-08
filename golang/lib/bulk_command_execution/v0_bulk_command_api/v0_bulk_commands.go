@@ -22,6 +22,7 @@ import (
 	"github.com/kurtosis-tech/kurtosis-client/golang/kurtosis_core_rpc_api_bindings"
 	"github.com/palantir/stacktrace"
 	"google.golang.org/protobuf/proto"
+	"google.golang.org/protobuf/types/known/emptypb"
 )
 
 // ====================================================================================================
@@ -143,6 +144,16 @@ func (visitor *cmdArgDeserializingVisitor) VisitExecuteBulkCommands() error {
 		return stacktrace.Propagate(err, "An error occurred deserializing the bulk command execution args")
 	}
 	visitor.deserializedCommandArgsPtr = args
+	return nil
+}
+
+func (visitor *cmdArgDeserializingVisitor) VisitGetServices() error {
+	visitor.deserializedCommandArgsPtr = &emptypb.Empty{}
+	return nil
+}
+
+func (visitor *cmdArgDeserializingVisitor) VisitGetLambdas() error {
+	visitor.deserializedCommandArgsPtr = &emptypb.Empty{}
 	return nil
 }
 

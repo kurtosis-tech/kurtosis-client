@@ -48,12 +48,16 @@ type ApiContainerServiceClient interface {
 	Repartition(ctx context.Context, in *RepartitionArgs, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	// Executes the given command inside a running container
 	ExecCommand(ctx context.Context, in *ExecCommandArgs, opts ...grpc.CallOption) (*ExecCommandResponse, error)
-	// Block until the given HTTP endpoint returns available, calling it throw a HTTP Get request
+	// Block until the given HTTP endpoint returns available, calling it through a HTTP Get request
 	WaitForHttpGetEndpointAvailability(ctx context.Context, in *WaitForHttpGetEndpointAvailabilityArgs, opts ...grpc.CallOption) (*emptypb.Empty, error)
-	// Block until the given HTTP endpoint returns available, calling it throw a HTTP Post request
+	// Block until the given HTTP endpoint returns available, calling it through a HTTP Post request
 	WaitForHttpPostEndpointAvailability(ctx context.Context, in *WaitForHttpPostEndpointAvailabilityArgs, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	// Executes multiple commands at once
 	ExecuteBulkCommands(ctx context.Context, in *ExecuteBulkCommandsArgs, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	// Returns a list of running services
+	GetServices(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*GetServicesResponse, error)
+	// Returns a list of running Kurtosis Lambdas
+	GetLambdas(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*GetLambdasResponse, error)
 }
 
 type apiContainerServiceClient struct {
@@ -208,6 +212,24 @@ func (c *apiContainerServiceClient) ExecuteBulkCommands(ctx context.Context, in 
 	return out, nil
 }
 
+func (c *apiContainerServiceClient) GetServices(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*GetServicesResponse, error) {
+	out := new(GetServicesResponse)
+	err := c.cc.Invoke(ctx, "/api_container_api.ApiContainerService/GetServices", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *apiContainerServiceClient) GetLambdas(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*GetLambdasResponse, error) {
+	out := new(GetLambdasResponse)
+	err := c.cc.Invoke(ctx, "/api_container_api.ApiContainerService/GetLambdas", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // ApiContainerServiceServer is the server API for ApiContainerService service.
 // All implementations must embed UnimplementedApiContainerServiceServer
 // for forward compatibility
@@ -241,12 +263,16 @@ type ApiContainerServiceServer interface {
 	Repartition(context.Context, *RepartitionArgs) (*emptypb.Empty, error)
 	// Executes the given command inside a running container
 	ExecCommand(context.Context, *ExecCommandArgs) (*ExecCommandResponse, error)
-	// Block until the given HTTP endpoint returns available, calling it throw a HTTP Get request
+	// Block until the given HTTP endpoint returns available, calling it through a HTTP Get request
 	WaitForHttpGetEndpointAvailability(context.Context, *WaitForHttpGetEndpointAvailabilityArgs) (*emptypb.Empty, error)
-	// Block until the given HTTP endpoint returns available, calling it throw a HTTP Post request
+	// Block until the given HTTP endpoint returns available, calling it through a HTTP Post request
 	WaitForHttpPostEndpointAvailability(context.Context, *WaitForHttpPostEndpointAvailabilityArgs) (*emptypb.Empty, error)
 	// Executes multiple commands at once
 	ExecuteBulkCommands(context.Context, *ExecuteBulkCommandsArgs) (*emptypb.Empty, error)
+	// Returns a list of running services
+	GetServices(context.Context, *emptypb.Empty) (*GetServicesResponse, error)
+	// Returns a list of running Kurtosis Lambdas
+	GetLambdas(context.Context, *emptypb.Empty) (*GetLambdasResponse, error)
 	mustEmbedUnimplementedApiContainerServiceServer()
 }
 
@@ -301,6 +327,12 @@ func (UnimplementedApiContainerServiceServer) WaitForHttpPostEndpointAvailabilit
 }
 func (UnimplementedApiContainerServiceServer) ExecuteBulkCommands(context.Context, *ExecuteBulkCommandsArgs) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ExecuteBulkCommands not implemented")
+}
+func (UnimplementedApiContainerServiceServer) GetServices(context.Context, *emptypb.Empty) (*GetServicesResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetServices not implemented")
+}
+func (UnimplementedApiContainerServiceServer) GetLambdas(context.Context, *emptypb.Empty) (*GetLambdasResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetLambdas not implemented")
 }
 func (UnimplementedApiContainerServiceServer) mustEmbedUnimplementedApiContainerServiceServer() {}
 
@@ -603,6 +635,42 @@ func _ApiContainerService_ExecuteBulkCommands_Handler(srv interface{}, ctx conte
 	return interceptor(ctx, in, info, handler)
 }
 
+func _ApiContainerService_GetServices_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(emptypb.Empty)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ApiContainerServiceServer).GetServices(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/api_container_api.ApiContainerService/GetServices",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ApiContainerServiceServer).GetServices(ctx, req.(*emptypb.Empty))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ApiContainerService_GetLambdas_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(emptypb.Empty)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ApiContainerServiceServer).GetLambdas(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/api_container_api.ApiContainerService/GetLambdas",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ApiContainerServiceServer).GetLambdas(ctx, req.(*emptypb.Empty))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // ApiContainerService_ServiceDesc is the grpc.ServiceDesc for ApiContainerService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -673,6 +741,14 @@ var ApiContainerService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "ExecuteBulkCommands",
 			Handler:    _ApiContainerService_ExecuteBulkCommands_Handler,
+		},
+		{
+			MethodName: "GetServices",
+			Handler:    _ApiContainerService_GetServices_Handler,
+		},
+		{
+			MethodName: "GetLambdas",
+			Handler:    _ApiContainerService_GetLambdas_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
