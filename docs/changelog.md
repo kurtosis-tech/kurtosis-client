@@ -1,4 +1,6 @@
 # TBD
+
+# 0.14.1
 ### Features
 * Add `NetworkContext.GetServices` to get a set of running service IDs
 * Add `NetworkContext.GetLambdas` to get a set of running Kurtosis Lambda IDs
