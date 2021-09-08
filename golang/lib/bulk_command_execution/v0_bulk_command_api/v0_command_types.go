@@ -32,8 +32,8 @@ type V0CommandTypeVisitor interface {
 	VisitRemoveService() error
 	VisitRepartition() error
 	VisitExecCommand() error
-	VisitWaitForEndpointAvailabilityHttpGet() error
-	VisitWaitForEndpointAvailabilityHttpPost() error
+	VisitWaitForHttpGetEndpointAvailability() error
+	VisitWaitForHttpPostEndpointAvailability() error
 	VisitExecuteBulkCommands() error
 	VisitGetServices() error
 	VisitGetLambdas() error
@@ -52,8 +52,8 @@ const (
 	RemoveServiceCommandType                       V0CommandType = "REMOVE_SERVICE"
 	RepartitionCommandType                         V0CommandType = "REPARTITION"
 	ExecCommandCommandType                         V0CommandType = "EXEC_COMMAND"
-	WaitForEndpointAvailabilityHttpGetCommandType  V0CommandType = "WAIT_FOR_ENDPOINT_AVAILABILITY_HTTP_GET"
-	WaitForEndpointAvailabilityHttpPostCommandType V0CommandType = "WAIT_FOR_ENDPOINT_AVAILABILITY_HTTP_POST"
+	WaitForHttpGetEndpointAvailabilityCommandType  V0CommandType = "WAIT_FOR_HTTP_GET_ENDPOINT_AVAILABILITY"
+	WaitForHttpPostEndpointAvailabilityCommandType V0CommandType = "WAIT_FOR_HTTP_POST_ENDPOINT_AVAILABILITY"
 	ExecuteBulkCommandsCommandType                 V0CommandType = "EXECUTE_BULK_COMMANDS"
 	GetServicesCommandType                         V0CommandType = "GET_SERVICES"
 	GetLambdasCommandType                          V0CommandType = "GET_LAMBDAS"
@@ -81,10 +81,10 @@ func (commandType V0CommandType) AcceptVisitor(visitor V0CommandTypeVisitor) err
 		err = visitor.VisitRepartition()
 	case ExecCommandCommandType:
 		err = visitor.VisitExecCommand()
-	case WaitForEndpointAvailabilityHttpGetCommandType:
-		err = visitor.VisitWaitForEndpointAvailabilityHttpGet()
-	case WaitForEndpointAvailabilityHttpPostCommandType:
-		err = visitor.VisitWaitForEndpointAvailabilityHttpPost()
+	case WaitForHttpGetEndpointAvailabilityCommandType:
+		err = visitor.VisitWaitForHttpGetEndpointAvailability()
+	case WaitForHttpPostEndpointAvailabilityCommandType:
+		err = visitor.VisitWaitForHttpPostEndpointAvailability()
 	case ExecuteBulkCommandsCommandType:
 		err = visitor.VisitExecuteBulkCommands()
 	case GetServicesCommandType:

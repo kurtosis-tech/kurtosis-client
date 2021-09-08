@@ -13,8 +13,8 @@ export interface V0CommandTypeVisitor {
 	visitRemoveService: () => Result<null, Error>;
 	visitRepartition: () => Result<null, Error>;
 	visitExecCommand: () => Result<null, Error>;
-	visitWaitForEndpointAvailabilityHttpGet: () => Result<null, Error>;
-	visitWaitForEndpointAvailabilityHttpPost: () => Result<null, Error>;
+	visitWaitForHttpGetEndpointAvailability: () => Result<null, Error>;
+	visitWaitForHttpPostEndpointAvailability: () => Result<null, Error>;
 	visitExecuteBulkCommands: () => Result<null, Error>;
 	visitGetServices: () => Result<null, Error>;
 	visitGetLambdas: () => Result<null, Error>;
@@ -31,8 +31,8 @@ export enum V0CommandType {
 	RemoveService = "REMOVE_SERVICE",
 	Repartition = "REPARTITION",
 	ExecCommand = "EXEC_COMMAND",
-	WaitForEndpointAvailabilityHttpGet = "WAIT_FOR_ENDPOINT_AVAILABILITY_HTTP_GET",
-	WaitForEndpointAvailabilityHttpPost = "WAIT_FOR_ENDPOINT_AVAILABILITY_HTTP_POST",
+	WaitForHttpGetEndpointAvailability = "WAIT_FOR_HTTP_GET_ENDPOINT_AVAILABILITY",
+	WaitForHttpPostEndpointAvailability = "WAIT_FOR_HTTP_POST_ENDPOINT_AVAILABILITY",
 	ExecuteBulkCommands = "EXECUTE_BULK_COMMANDS",
 	GetServices = "GET_SERVICES",
 	GetLambdas = "GET_LAMBDAS"
@@ -70,11 +70,11 @@ export namespace V0CommandType {
 			case V0CommandType.ExecCommand:
 				result = visitor.visitExecCommand();
 				break;
-			case V0CommandType.WaitForEndpointAvailabilityHttpGet:
-				result = visitor.visitWaitForEndpointAvailabilityHttpGet();
+			case V0CommandType.WaitForHttpGetEndpointAvailability:
+				result = visitor.visitWaitForHttpGetEndpointAvailability();
 				break;
-			case V0CommandType.WaitForEndpointAvailabilityHttpPost:
-				result = visitor.visitWaitForEndpointAvailabilityHttpPost();
+			case V0CommandType.WaitForHttpPostEndpointAvailability:
+				result = visitor.visitWaitForHttpPostEndpointAvailability();
 				break;
 			case V0CommandType.ExecuteBulkCommands:
 				result = visitor.visitExecuteBulkCommands();

@@ -120,8 +120,8 @@ Repartitions the network so that the connections between services match the spec
 * `partitionConnections`: Definitions of the connection state between the new partitions. If a connection between two partitions isn't defined in this map, the default connection will be used. Connections are not directional, so an error will be thrown if the same connection is defined twice (e.g. `Map[A][B] = someConnectionInfo`, and `Map[B][A] = otherConnectionInfo`).
 * `defaultConnection`: The network state between two partitions that will be used if the connection isn't defined in the partition connections map.
 
-### waitForEndpointAvailabilityHttpGet(ServiceID serviceId, uint32 port, String path, String requestBody, uint32 initialDelayMilliseconds, uint32 retries, uint32 retriesDelayMilliseconds, String bodyText)
-Waits until a service endpoint is available by making requests to the endpoint using the given parameters, and the http post method. An error is thrown if the number of retries is exceeded.
+### waitForHttpGetEndpointAvailability(ServiceID serviceId, uint32 port, String path, String requestBody, uint32 initialDelayMilliseconds, uint32 retries, uint32 retriesDelayMilliseconds, String bodyText)
+Waits until a service endpoint is available by making requests to the endpoint using the given parameters, and the HTTP GET method. An error is thrown if the number of retries is exceeded.
 
 **Args**
 
@@ -133,8 +133,8 @@ Waits until a service endpoint is available by making requests to the endpoint u
 * `retriesDelayMilliseconds`: Number of milliseconds to wait between retries
 * `bodyText`: If this value is non-empty, the endpoint will not be marked as available until this value is returned (e.g. `Hello World`). If this value is emptystring, no body text comparison will be done.
 
-### waitForEndpointAvailabilityHttpPost(ServiceID serviceId, uint32 port, String path, String requestBody, uint32 initialDelayMilliseconds, uint32 retries, uint32 retriesDelayMilliseconds, String bodyText)
-Waits until a service endpoint is available by making requests to the endpoint using the given parameters, and the http get method. An error is thrown if the number of retries is exceeded.
+### waitForHttpPostEndpointAvailability(ServiceID serviceId, uint32 port, String path, String requestBody, uint32 initialDelayMilliseconds, uint32 retries, uint32 retriesDelayMilliseconds, String bodyText)
+Waits until a service endpoint is available by making requests to the endpoint using the given parameters, and the HTTP POST method. An error is thrown if the number of retries is exceeded.
 
 **Args**
 

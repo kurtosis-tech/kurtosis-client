@@ -1578,9 +1578,9 @@ func (x *ExecCommandResponse) GetLogOutput() []byte {
 }
 
 // ==============================================================================================
-//                           Wait For Endpoint Availability HTTP Get
+//                             Wait For HTTP Get Endpoint Availability
 // ==============================================================================================
-type WaitForEndpointAvailabilityHttpGetArgs struct {
+type WaitForHttpGetEndpointAvailabilityArgs struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
@@ -1601,8 +1601,8 @@ type WaitForEndpointAvailabilityHttpGetArgs struct {
 	BodyText string `protobuf:"bytes,7,opt,name=body_text,json=bodyText,proto3" json:"body_text,omitempty"`
 }
 
-func (x *WaitForEndpointAvailabilityHttpGetArgs) Reset() {
-	*x = WaitForEndpointAvailabilityHttpGetArgs{}
+func (x *WaitForHttpGetEndpointAvailabilityArgs) Reset() {
+	*x = WaitForHttpGetEndpointAvailabilityArgs{}
 	if protoimpl.UnsafeEnabled {
 		mi := &file_api_container_service_proto_msgTypes[27]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -1610,13 +1610,13 @@ func (x *WaitForEndpointAvailabilityHttpGetArgs) Reset() {
 	}
 }
 
-func (x *WaitForEndpointAvailabilityHttpGetArgs) String() string {
+func (x *WaitForHttpGetEndpointAvailabilityArgs) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*WaitForEndpointAvailabilityHttpGetArgs) ProtoMessage() {}
+func (*WaitForHttpGetEndpointAvailabilityArgs) ProtoMessage() {}
 
-func (x *WaitForEndpointAvailabilityHttpGetArgs) ProtoReflect() protoreflect.Message {
+func (x *WaitForHttpGetEndpointAvailabilityArgs) ProtoReflect() protoreflect.Message {
 	mi := &file_api_container_service_proto_msgTypes[27]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -1628,54 +1628,54 @@ func (x *WaitForEndpointAvailabilityHttpGetArgs) ProtoReflect() protoreflect.Mes
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use WaitForEndpointAvailabilityHttpGetArgs.ProtoReflect.Descriptor instead.
-func (*WaitForEndpointAvailabilityHttpGetArgs) Descriptor() ([]byte, []int) {
+// Deprecated: Use WaitForHttpGetEndpointAvailabilityArgs.ProtoReflect.Descriptor instead.
+func (*WaitForHttpGetEndpointAvailabilityArgs) Descriptor() ([]byte, []int) {
 	return file_api_container_service_proto_rawDescGZIP(), []int{27}
 }
 
-func (x *WaitForEndpointAvailabilityHttpGetArgs) GetServiceId() string {
+func (x *WaitForHttpGetEndpointAvailabilityArgs) GetServiceId() string {
 	if x != nil {
 		return x.ServiceId
 	}
 	return ""
 }
 
-func (x *WaitForEndpointAvailabilityHttpGetArgs) GetPort() uint32 {
+func (x *WaitForHttpGetEndpointAvailabilityArgs) GetPort() uint32 {
 	if x != nil {
 		return x.Port
 	}
 	return 0
 }
 
-func (x *WaitForEndpointAvailabilityHttpGetArgs) GetPath() string {
+func (x *WaitForHttpGetEndpointAvailabilityArgs) GetPath() string {
 	if x != nil {
 		return x.Path
 	}
 	return ""
 }
 
-func (x *WaitForEndpointAvailabilityHttpGetArgs) GetInitialDelayMilliseconds() uint32 {
+func (x *WaitForHttpGetEndpointAvailabilityArgs) GetInitialDelayMilliseconds() uint32 {
 	if x != nil {
 		return x.InitialDelayMilliseconds
 	}
 	return 0
 }
 
-func (x *WaitForEndpointAvailabilityHttpGetArgs) GetRetries() uint32 {
+func (x *WaitForHttpGetEndpointAvailabilityArgs) GetRetries() uint32 {
 	if x != nil {
 		return x.Retries
 	}
 	return 0
 }
 
-func (x *WaitForEndpointAvailabilityHttpGetArgs) GetRetriesDelayMilliseconds() uint32 {
+func (x *WaitForHttpGetEndpointAvailabilityArgs) GetRetriesDelayMilliseconds() uint32 {
 	if x != nil {
 		return x.RetriesDelayMilliseconds
 	}
 	return 0
 }
 
-func (x *WaitForEndpointAvailabilityHttpGetArgs) GetBodyText() string {
+func (x *WaitForHttpGetEndpointAvailabilityArgs) GetBodyText() string {
 	if x != nil {
 		return x.BodyText
 	}
@@ -1683,9 +1683,9 @@ func (x *WaitForEndpointAvailabilityHttpGetArgs) GetBodyText() string {
 }
 
 // ==============================================================================================
-//                           Wait For Endpoint Availability HTTP Post
+//                           Wait For HTTP Post Endpoint Availability
 // ==============================================================================================
-type WaitForEndpointAvailabilityHttpPostArgs struct {
+type WaitForHttpPostEndpointAvailabilityArgs struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
@@ -1708,8 +1708,8 @@ type WaitForEndpointAvailabilityHttpPostArgs struct {
 	BodyText string `protobuf:"bytes,8,opt,name=body_text,json=bodyText,proto3" json:"body_text,omitempty"`
 }
 
-func (x *WaitForEndpointAvailabilityHttpPostArgs) Reset() {
-	*x = WaitForEndpointAvailabilityHttpPostArgs{}
+func (x *WaitForHttpPostEndpointAvailabilityArgs) Reset() {
+	*x = WaitForHttpPostEndpointAvailabilityArgs{}
 	if protoimpl.UnsafeEnabled {
 		mi := &file_api_container_service_proto_msgTypes[28]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -1717,13 +1717,13 @@ func (x *WaitForEndpointAvailabilityHttpPostArgs) Reset() {
 	}
 }
 
-func (x *WaitForEndpointAvailabilityHttpPostArgs) String() string {
+func (x *WaitForHttpPostEndpointAvailabilityArgs) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*WaitForEndpointAvailabilityHttpPostArgs) ProtoMessage() {}
+func (*WaitForHttpPostEndpointAvailabilityArgs) ProtoMessage() {}
 
-func (x *WaitForEndpointAvailabilityHttpPostArgs) ProtoReflect() protoreflect.Message {
+func (x *WaitForHttpPostEndpointAvailabilityArgs) ProtoReflect() protoreflect.Message {
 	mi := &file_api_container_service_proto_msgTypes[28]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -1735,61 +1735,61 @@ func (x *WaitForEndpointAvailabilityHttpPostArgs) ProtoReflect() protoreflect.Me
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use WaitForEndpointAvailabilityHttpPostArgs.ProtoReflect.Descriptor instead.
-func (*WaitForEndpointAvailabilityHttpPostArgs) Descriptor() ([]byte, []int) {
+// Deprecated: Use WaitForHttpPostEndpointAvailabilityArgs.ProtoReflect.Descriptor instead.
+func (*WaitForHttpPostEndpointAvailabilityArgs) Descriptor() ([]byte, []int) {
 	return file_api_container_service_proto_rawDescGZIP(), []int{28}
 }
 
-func (x *WaitForEndpointAvailabilityHttpPostArgs) GetServiceId() string {
+func (x *WaitForHttpPostEndpointAvailabilityArgs) GetServiceId() string {
 	if x != nil {
 		return x.ServiceId
 	}
 	return ""
 }
 
-func (x *WaitForEndpointAvailabilityHttpPostArgs) GetPort() uint32 {
+func (x *WaitForHttpPostEndpointAvailabilityArgs) GetPort() uint32 {
 	if x != nil {
 		return x.Port
 	}
 	return 0
 }
 
-func (x *WaitForEndpointAvailabilityHttpPostArgs) GetPath() string {
+func (x *WaitForHttpPostEndpointAvailabilityArgs) GetPath() string {
 	if x != nil {
 		return x.Path
 	}
 	return ""
 }
 
-func (x *WaitForEndpointAvailabilityHttpPostArgs) GetRequestBody() string {
+func (x *WaitForHttpPostEndpointAvailabilityArgs) GetRequestBody() string {
 	if x != nil {
 		return x.RequestBody
 	}
 	return ""
 }
 
-func (x *WaitForEndpointAvailabilityHttpPostArgs) GetInitialDelayMilliseconds() uint32 {
+func (x *WaitForHttpPostEndpointAvailabilityArgs) GetInitialDelayMilliseconds() uint32 {
 	if x != nil {
 		return x.InitialDelayMilliseconds
 	}
 	return 0
 }
 
-func (x *WaitForEndpointAvailabilityHttpPostArgs) GetRetries() uint32 {
+func (x *WaitForHttpPostEndpointAvailabilityArgs) GetRetries() uint32 {
 	if x != nil {
 		return x.Retries
 	}
 	return 0
 }
 
-func (x *WaitForEndpointAvailabilityHttpPostArgs) GetRetriesDelayMilliseconds() uint32 {
+func (x *WaitForHttpPostEndpointAvailabilityArgs) GetRetriesDelayMilliseconds() uint32 {
 	if x != nil {
 		return x.RetriesDelayMilliseconds
 	}
 	return 0
 }
 
-func (x *WaitForEndpointAvailabilityHttpPostArgs) GetBodyText() string {
+func (x *WaitForHttpPostEndpointAvailabilityArgs) GetBodyText() string {
 	if x != nil {
 		return x.BodyText
 	}
@@ -2272,8 +2272,8 @@ var file_api_container_service_proto_rawDesc = []byte{
 	0x78, 0x69, 0x74, 0x43, 0x6f, 0x64, 0x65, 0x12, 0x1d, 0x0a, 0x0a, 0x6c, 0x6f, 0x67, 0x5f, 0x6f,
 	0x75, 0x74, 0x70, 0x75, 0x74, 0x18, 0x02, 0x20, 0x01, 0x28, 0x0c, 0x52, 0x09, 0x6c, 0x6f, 0x67,
 	0x4f, 0x75, 0x74, 0x70, 0x75, 0x74, 0x22, 0xa2, 0x02, 0x0a, 0x26, 0x57, 0x61, 0x69, 0x74, 0x46,
-	0x6f, 0x72, 0x45, 0x6e, 0x64, 0x70, 0x6f, 0x69, 0x6e, 0x74, 0x41, 0x76, 0x61, 0x69, 0x6c, 0x61,
-	0x62, 0x69, 0x6c, 0x69, 0x74, 0x79, 0x48, 0x74, 0x74, 0x70, 0x47, 0x65, 0x74, 0x41, 0x72, 0x67,
+	0x6f, 0x72, 0x48, 0x74, 0x74, 0x70, 0x47, 0x65, 0x74, 0x45, 0x6e, 0x64, 0x70, 0x6f, 0x69, 0x6e,
+	0x74, 0x41, 0x76, 0x61, 0x69, 0x6c, 0x61, 0x62, 0x69, 0x6c, 0x69, 0x74, 0x79, 0x41, 0x72, 0x67,
 	0x73, 0x12, 0x1d, 0x0a, 0x0a, 0x73, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x5f, 0x69, 0x64, 0x18,
 	0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x09, 0x73, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x49, 0x64,
 	0x12, 0x12, 0x0a, 0x04, 0x70, 0x6f, 0x72, 0x74, 0x18, 0x02, 0x20, 0x01, 0x28, 0x0d, 0x52, 0x04,
@@ -2290,9 +2290,9 @@ var file_api_container_service_proto_rawDesc = []byte{
 	0x61, 0x79, 0x4d, 0x69, 0x6c, 0x6c, 0x69, 0x73, 0x65, 0x63, 0x6f, 0x6e, 0x64, 0x73, 0x12, 0x1b,
 	0x0a, 0x09, 0x62, 0x6f, 0x64, 0x79, 0x5f, 0x74, 0x65, 0x78, 0x74, 0x18, 0x07, 0x20, 0x01, 0x28,
 	0x09, 0x52, 0x08, 0x62, 0x6f, 0x64, 0x79, 0x54, 0x65, 0x78, 0x74, 0x22, 0xc6, 0x02, 0x0a, 0x27,
-	0x57, 0x61, 0x69, 0x74, 0x46, 0x6f, 0x72, 0x45, 0x6e, 0x64, 0x70, 0x6f, 0x69, 0x6e, 0x74, 0x41,
-	0x76, 0x61, 0x69, 0x6c, 0x61, 0x62, 0x69, 0x6c, 0x69, 0x74, 0x79, 0x48, 0x74, 0x74, 0x70, 0x50,
-	0x6f, 0x73, 0x74, 0x41, 0x72, 0x67, 0x73, 0x12, 0x1d, 0x0a, 0x0a, 0x73, 0x65, 0x72, 0x76, 0x69,
+	0x57, 0x61, 0x69, 0x74, 0x46, 0x6f, 0x72, 0x48, 0x74, 0x74, 0x70, 0x50, 0x6f, 0x73, 0x74, 0x45,
+	0x6e, 0x64, 0x70, 0x6f, 0x69, 0x6e, 0x74, 0x41, 0x76, 0x61, 0x69, 0x6c, 0x61, 0x62, 0x69, 0x6c,
+	0x69, 0x74, 0x79, 0x41, 0x72, 0x67, 0x73, 0x12, 0x1d, 0x0a, 0x0a, 0x73, 0x65, 0x72, 0x76, 0x69,
 	0x63, 0x65, 0x5f, 0x69, 0x64, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x09, 0x73, 0x65, 0x72,
 	0x76, 0x69, 0x63, 0x65, 0x49, 0x64, 0x12, 0x12, 0x0a, 0x04, 0x70, 0x6f, 0x72, 0x74, 0x18, 0x02,
 	0x20, 0x01, 0x28, 0x0d, 0x52, 0x04, 0x70, 0x6f, 0x72, 0x74, 0x12, 0x12, 0x0a, 0x04, 0x70, 0x61,
@@ -2401,20 +2401,20 @@ var file_api_container_service_proto_rawDesc = []byte{
 	0x6f, 0x6d, 0x6d, 0x61, 0x6e, 0x64, 0x41, 0x72, 0x67, 0x73, 0x1a, 0x26, 0x2e, 0x61, 0x70, 0x69,
 	0x5f, 0x63, 0x6f, 0x6e, 0x74, 0x61, 0x69, 0x6e, 0x65, 0x72, 0x5f, 0x61, 0x70, 0x69, 0x2e, 0x45,
 	0x78, 0x65, 0x63, 0x43, 0x6f, 0x6d, 0x6d, 0x61, 0x6e, 0x64, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e,
-	0x73, 0x65, 0x22, 0x00, 0x12, 0x79, 0x0a, 0x22, 0x57, 0x61, 0x69, 0x74, 0x46, 0x6f, 0x72, 0x45,
-	0x6e, 0x64, 0x70, 0x6f, 0x69, 0x6e, 0x74, 0x41, 0x76, 0x61, 0x69, 0x6c, 0x61, 0x62, 0x69, 0x6c,
-	0x69, 0x74, 0x79, 0x48, 0x74, 0x74, 0x70, 0x47, 0x65, 0x74, 0x12, 0x39, 0x2e, 0x61, 0x70, 0x69,
+	0x73, 0x65, 0x22, 0x00, 0x12, 0x79, 0x0a, 0x22, 0x57, 0x61, 0x69, 0x74, 0x46, 0x6f, 0x72, 0x48,
+	0x74, 0x74, 0x70, 0x47, 0x65, 0x74, 0x45, 0x6e, 0x64, 0x70, 0x6f, 0x69, 0x6e, 0x74, 0x41, 0x76,
+	0x61, 0x69, 0x6c, 0x61, 0x62, 0x69, 0x6c, 0x69, 0x74, 0x79, 0x12, 0x39, 0x2e, 0x61, 0x70, 0x69,
 	0x5f, 0x63, 0x6f, 0x6e, 0x74, 0x61, 0x69, 0x6e, 0x65, 0x72, 0x5f, 0x61, 0x70, 0x69, 0x2e, 0x57,
-	0x61, 0x69, 0x74, 0x46, 0x6f, 0x72, 0x45, 0x6e, 0x64, 0x70, 0x6f, 0x69, 0x6e, 0x74, 0x41, 0x76,
-	0x61, 0x69, 0x6c, 0x61, 0x62, 0x69, 0x6c, 0x69, 0x74, 0x79, 0x48, 0x74, 0x74, 0x70, 0x47, 0x65,
-	0x74, 0x41, 0x72, 0x67, 0x73, 0x1a, 0x16, 0x2e, 0x67, 0x6f, 0x6f, 0x67, 0x6c, 0x65, 0x2e, 0x70,
+	0x61, 0x69, 0x74, 0x46, 0x6f, 0x72, 0x48, 0x74, 0x74, 0x70, 0x47, 0x65, 0x74, 0x45, 0x6e, 0x64,
+	0x70, 0x6f, 0x69, 0x6e, 0x74, 0x41, 0x76, 0x61, 0x69, 0x6c, 0x61, 0x62, 0x69, 0x6c, 0x69, 0x74,
+	0x79, 0x41, 0x72, 0x67, 0x73, 0x1a, 0x16, 0x2e, 0x67, 0x6f, 0x6f, 0x67, 0x6c, 0x65, 0x2e, 0x70,
 	0x72, 0x6f, 0x74, 0x6f, 0x62, 0x75, 0x66, 0x2e, 0x45, 0x6d, 0x70, 0x74, 0x79, 0x22, 0x00, 0x12,
-	0x7b, 0x0a, 0x23, 0x57, 0x61, 0x69, 0x74, 0x46, 0x6f, 0x72, 0x45, 0x6e, 0x64, 0x70, 0x6f, 0x69,
-	0x6e, 0x74, 0x41, 0x76, 0x61, 0x69, 0x6c, 0x61, 0x62, 0x69, 0x6c, 0x69, 0x74, 0x79, 0x48, 0x74,
-	0x74, 0x70, 0x50, 0x6f, 0x73, 0x74, 0x12, 0x3a, 0x2e, 0x61, 0x70, 0x69, 0x5f, 0x63, 0x6f, 0x6e,
+	0x7b, 0x0a, 0x23, 0x57, 0x61, 0x69, 0x74, 0x46, 0x6f, 0x72, 0x48, 0x74, 0x74, 0x70, 0x50, 0x6f,
+	0x73, 0x74, 0x45, 0x6e, 0x64, 0x70, 0x6f, 0x69, 0x6e, 0x74, 0x41, 0x76, 0x61, 0x69, 0x6c, 0x61,
+	0x62, 0x69, 0x6c, 0x69, 0x74, 0x79, 0x12, 0x3a, 0x2e, 0x61, 0x70, 0x69, 0x5f, 0x63, 0x6f, 0x6e,
 	0x74, 0x61, 0x69, 0x6e, 0x65, 0x72, 0x5f, 0x61, 0x70, 0x69, 0x2e, 0x57, 0x61, 0x69, 0x74, 0x46,
-	0x6f, 0x72, 0x45, 0x6e, 0x64, 0x70, 0x6f, 0x69, 0x6e, 0x74, 0x41, 0x76, 0x61, 0x69, 0x6c, 0x61,
-	0x62, 0x69, 0x6c, 0x69, 0x74, 0x79, 0x48, 0x74, 0x74, 0x70, 0x50, 0x6f, 0x73, 0x74, 0x41, 0x72,
+	0x6f, 0x72, 0x48, 0x74, 0x74, 0x70, 0x50, 0x6f, 0x73, 0x74, 0x45, 0x6e, 0x64, 0x70, 0x6f, 0x69,
+	0x6e, 0x74, 0x41, 0x76, 0x61, 0x69, 0x6c, 0x61, 0x62, 0x69, 0x6c, 0x69, 0x74, 0x79, 0x41, 0x72,
 	0x67, 0x73, 0x1a, 0x16, 0x2e, 0x67, 0x6f, 0x6f, 0x67, 0x6c, 0x65, 0x2e, 0x70, 0x72, 0x6f, 0x74,
 	0x6f, 0x62, 0x75, 0x66, 0x2e, 0x45, 0x6d, 0x70, 0x74, 0x79, 0x22, 0x00, 0x12, 0x5b, 0x0a, 0x13,
 	0x45, 0x78, 0x65, 0x63, 0x75, 0x74, 0x65, 0x42, 0x75, 0x6c, 0x6b, 0x43, 0x6f, 0x6d, 0x6d, 0x61,
@@ -2484,8 +2484,8 @@ var file_api_container_service_proto_goTypes = []interface{}{
 	(*PartitionConnectionInfo)(nil),                 // 25: api_container_api.PartitionConnectionInfo
 	(*ExecCommandArgs)(nil),                         // 26: api_container_api.ExecCommandArgs
 	(*ExecCommandResponse)(nil),                     // 27: api_container_api.ExecCommandResponse
-	(*WaitForEndpointAvailabilityHttpGetArgs)(nil),  // 28: api_container_api.WaitForEndpointAvailabilityHttpGetArgs
-	(*WaitForEndpointAvailabilityHttpPostArgs)(nil), // 29: api_container_api.WaitForEndpointAvailabilityHttpPostArgs
+	(*WaitForHttpGetEndpointAvailabilityArgs)(nil),  // 28: api_container_api.WaitForHttpGetEndpointAvailabilityArgs
+	(*WaitForHttpPostEndpointAvailabilityArgs)(nil), // 29: api_container_api.WaitForHttpPostEndpointAvailabilityArgs
 	(*ExecuteBulkCommandsArgs)(nil),                 // 30: api_container_api.ExecuteBulkCommandsArgs
 	(*GetServicesResponse)(nil),                     // 31: api_container_api.GetServicesResponse
 	(*GetLambdasResponse)(nil),                      // 32: api_container_api.GetLambdasResponse
@@ -2542,8 +2542,8 @@ var file_api_container_service_proto_depIdxs = []int32{
 	21, // 32: api_container_api.ApiContainerService.RemoveService:input_type -> api_container_api.RemoveServiceArgs
 	22, // 33: api_container_api.ApiContainerService.Repartition:input_type -> api_container_api.RepartitionArgs
 	26, // 34: api_container_api.ApiContainerService.ExecCommand:input_type -> api_container_api.ExecCommandArgs
-	28, // 35: api_container_api.ApiContainerService.WaitForEndpointAvailabilityHttpGet:input_type -> api_container_api.WaitForEndpointAvailabilityHttpGetArgs
-	29, // 36: api_container_api.ApiContainerService.WaitForEndpointAvailabilityHttpPost:input_type -> api_container_api.WaitForEndpointAvailabilityHttpPostArgs
+	28, // 35: api_container_api.ApiContainerService.WaitForHttpGetEndpointAvailability:input_type -> api_container_api.WaitForHttpGetEndpointAvailabilityArgs
+	29, // 36: api_container_api.ApiContainerService.WaitForHttpPostEndpointAvailability:input_type -> api_container_api.WaitForHttpPostEndpointAvailabilityArgs
 	30, // 37: api_container_api.ApiContainerService.ExecuteBulkCommands:input_type -> api_container_api.ExecuteBulkCommandsArgs
 	48, // 38: api_container_api.ApiContainerService.GetServices:input_type -> google.protobuf.Empty
 	48, // 39: api_container_api.ApiContainerService.GetLambdas:input_type -> google.protobuf.Empty
@@ -2560,8 +2560,8 @@ var file_api_container_service_proto_depIdxs = []int32{
 	48, // 50: api_container_api.ApiContainerService.RemoveService:output_type -> google.protobuf.Empty
 	48, // 51: api_container_api.ApiContainerService.Repartition:output_type -> google.protobuf.Empty
 	27, // 52: api_container_api.ApiContainerService.ExecCommand:output_type -> api_container_api.ExecCommandResponse
-	48, // 53: api_container_api.ApiContainerService.WaitForEndpointAvailabilityHttpGet:output_type -> google.protobuf.Empty
-	48, // 54: api_container_api.ApiContainerService.WaitForEndpointAvailabilityHttpPost:output_type -> google.protobuf.Empty
+	48, // 53: api_container_api.ApiContainerService.WaitForHttpGetEndpointAvailability:output_type -> google.protobuf.Empty
+	48, // 54: api_container_api.ApiContainerService.WaitForHttpPostEndpointAvailability:output_type -> google.protobuf.Empty
 	48, // 55: api_container_api.ApiContainerService.ExecuteBulkCommands:output_type -> google.protobuf.Empty
 	31, // 56: api_container_api.ApiContainerService.GetServices:output_type -> api_container_api.GetServicesResponse
 	32, // 57: api_container_api.ApiContainerService.GetLambdas:output_type -> api_container_api.GetLambdasResponse
@@ -2903,7 +2903,7 @@ func file_api_container_service_proto_init() {
 			}
 		}
 		file_api_container_service_proto_msgTypes[27].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*WaitForEndpointAvailabilityHttpGetArgs); i {
+			switch v := v.(*WaitForHttpGetEndpointAvailabilityArgs); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -2915,7 +2915,7 @@ func file_api_container_service_proto_init() {
 			}
 		}
 		file_api_container_service_proto_msgTypes[28].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*WaitForEndpointAvailabilityHttpPostArgs); i {
+			switch v := v.(*WaitForHttpPostEndpointAvailabilityArgs); i {
 			case 0:
 				return &v.state
 			case 1:
