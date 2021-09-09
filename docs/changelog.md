@@ -1,4 +1,6 @@
 # TBD
+
+# 0.15.0
 ### Fixes
 * Fixed typo: `ContainerRunConfigBuilder.wthEntrypointOverride` -> `ContainerRunConfigBuilder.withEntrypointOverride`
 
