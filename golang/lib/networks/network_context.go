@@ -158,8 +158,8 @@ func (networkCtx *NetworkContext) RegisterFilesArtifacts(filesArtifactUrls map[s
 
 // Docs available at https://docs.kurtosistech.com/kurtosis-client/lib-documentation
 func (networkCtx *NetworkContext) RegisterService(
-	serviceId services.ServiceID,
-	kurtosisVolumeMountpoint string,
+		serviceId services.ServiceID,
+		kurtosisVolumeMountpoint string,
 	)(*services.ServiceContext, error) {
 
 	serviceCtx, err := networkCtx.RegisterServiceToPartition(serviceId, kurtosisVolumeMountpoint, defaultPartitionId)
@@ -172,9 +172,9 @@ func (networkCtx *NetworkContext) RegisterService(
 
 // Docs available at https://docs.kurtosistech.com/kurtosis-client/lib-documentation
 func (networkCtx *NetworkContext) RegisterServiceToPartition(
-	serviceId services.ServiceID,
-	kurtosisVolumeMountpoint string,
-	partitionId PartitionID,
+		serviceId services.ServiceID,
+		kurtosisVolumeMountpoint string,
+		partitionId PartitionID,
 )(*services.ServiceContext, error) {
 
 	ctx := context.Background()
@@ -203,8 +203,8 @@ func (networkCtx *NetworkContext) RegisterServiceToPartition(
 }
 
 func (networkCtx *NetworkContext) StartService(
-	serviceContext *services.ServiceContext,
-	containerConfig *services.ContainerConfig) error {
+		serviceContext *services.ServiceContext,
+		containerConfig *services.ContainerConfig) (map[string]*kurtosis_core_rpc_api_bindings.PortBinding, error) {
 
 	ctx := context.Background()
 
@@ -226,12 +226,13 @@ func (networkCtx *NetworkContext) StartService(
 		EnclaveDataVolMntDirpath:   containerConfig.GetKurtosisVolumeMountpoint(),
 		FilesArtifactMountDirpaths: artifactIdStrToMountDirpath,
 	}
-	if _, err := networkCtx.client.StartService(ctx, startServiceArgs); err != nil {
-		return  stacktrace.Propagate(err, "An error occurred starting the service with the Kurtosis API")
+	resp, err := networkCtx.client.StartService(ctx, startServiceArgs)
+	if err != nil {
+		return map[string]*kurtosis_core_rpc_api_bindings.PortBinding{}, stacktrace.Propagate(err, "An error occurred starting the service with the Kurtosis API")
 	}
 	logrus.Tracef("Successfully started service with Kurtosis API")
 
-	return nil
+	return resp.UsedPortsHostPortBindings, nil
 }
 
 // Docs available at https://docs.kurtosistech.com/kurtosis-client/lib-documentation
