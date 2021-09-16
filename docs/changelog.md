@@ -1,5 +1,13 @@
 # TBD
 
+# 0.15.0
+### Fixes
+* Fixed typo: `ContainerRunConfigBuilder.wthEntrypointOverride` -> `ContainerRunConfigBuilder.withEntrypointOverride`
+
+### Breaking Changes
+* `ContainerRunConfigBuilder.wthEntrypointOverride` renamed to `ContainerRunConfigBuilder.withEntrypointOverride`
+    * Users should use the non-typo'd version
+
 # 0.14.1
 ### Features
 * Add `NetworkContext.GetServices` to get a set of running service IDs

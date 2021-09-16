@@ -47,7 +47,7 @@ export class ContainerRunConfigBuilder {
         this.environmentVariableOverrides = new Map();
 	}
 	
-	public wthEntrypointOverride(args: string[]): ContainerRunConfigBuilder {
+	public withEntrypointOverride(args: string[]): ContainerRunConfigBuilder {
         this.entrypointOverrideArgs = args;
         return this;
 	}
