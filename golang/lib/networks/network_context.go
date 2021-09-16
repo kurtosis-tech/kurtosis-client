@@ -159,10 +159,10 @@ func (networkCtx *NetworkContext) RegisterFilesArtifacts(filesArtifactUrls map[s
 // Docs available at https://docs.kurtosistech.com/kurtosis-client/lib-documentation
 func (networkCtx *NetworkContext) RegisterService(
 	serviceId services.ServiceID,
-	containerCreationConfig *services.ContainerConfig,
+	kurtosisVolumeMountpoint string,
 	)(*services.ServiceContext, error) {
 
-	serviceCtx, err := networkCtx.RegisterServiceToPartition(serviceId, defaultPartitionId, containerCreationConfig)
+	serviceCtx, err := networkCtx.RegisterServiceToPartition(serviceId, kurtosisVolumeMountpoint, defaultPartitionId)
 	if err != nil {
 		return nil, stacktrace.Propagate(err, "An error occurred registering service '%v' to the network in the default partition", serviceId)
 	}
@@ -173,6 +173,7 @@ func (networkCtx *NetworkContext) RegisterService(
 // Docs available at https://docs.kurtosistech.com/kurtosis-client/lib-documentation
 func (networkCtx *NetworkContext) RegisterServiceToPartition(
 	serviceId services.ServiceID,
+	kurtosisVolumeMountpoint string,
 	partitionId PartitionID,
 )(*services.ServiceContext, error) {
 
@@ -194,6 +195,7 @@ func (networkCtx *NetworkContext) RegisterServiceToPartition(
 		serviceId,
 		serviceIpAddr,
 		networkCtx.enclaveDataVolMountpoint,
+		kurtosisVolumeMountpoint,
 		)
 	logrus.Tracef("New service successfully registered with Kurtosis API")
 
@@ -202,34 +204,32 @@ func (networkCtx *NetworkContext) RegisterServiceToPartition(
 
 func (networkCtx *NetworkContext) StartService(
 	serviceContext *services.ServiceContext,
-	containerRunConfig *services.ContainerConfig) error {
+	containerConfig *services.ContainerConfig) error {
+
+	ctx := context.Background()
 
 	logrus.Tracef("Creating files artifact ID str -> mount dirpaths map...")
 	artifactIdStrToMountDirpath := map[string]string{}
-	for filesArtifactId, mountDirpath := range containerRunConfig.GetFilesArtifactMountpoints() {
+	for filesArtifactId, mountDirpath := range containerConfig.GetFilesArtifactMountpoints() {
 		artifactIdStrToMountDirpath[string(filesArtifactId)] = mountDirpath
 	}
 	logrus.Tracef("Successfully created files artifact ID str -> mount dirpaths map")
 
 	logrus.Tracef("Starting new service with Kurtosis API...")
 	startServiceArgs := &kurtosis_core_rpc_api_bindings.StartServiceArgs{
-		ServiceId:                  string(serviceId),
-		DockerImage:                containerCreationConfig.GetImage(),
-		UsedPorts:                  containerCreationConfig.GetUsedPortsSet(),
-		EntrypointArgs:             containerRunConfig.GetEntrypointOverrideArgs(),
-		CmdArgs:                    containerRunConfig.GetCmdOverrideArgs(),
-		DockerEnvVars:              containerRunConfig.GetEnvironmentVariableOverrides(),
-		EnclaveDataVolMntDirpath:   containerRunConfig.GetKurtosisVolumeMountpoint(),
+		ServiceId:                  string(serviceContext.GetServiceID()),
+		DockerImage:                containerConfig.GetImage(),
+		UsedPorts:                  containerConfig.GetUsedPortsSet(),
+		EntrypointArgs:             containerConfig.GetEntrypointOverrideArgs(),
+		CmdArgs:                    containerConfig.GetCmdOverrideArgs(),
+		DockerEnvVars:              containerConfig.GetEnvironmentVariableOverrides(),
+		EnclaveDataVolMntDirpath:   containerConfig.GetKurtosisVolumeMountpoint(),
 		FilesArtifactMountDirpaths: artifactIdStrToMountDirpath,
 	}
-	resp, err := networkCtx.client.StartService(ctx, startServiceArgs)
-	if err != nil {
-		return nil, nil, stacktrace.Propagate(err, "An error occurred starting the service with the Kurtosis API")
+	if _, err := networkCtx.client.StartService(ctx, startServiceArgs); err != nil {
+		return  stacktrace.Propagate(err, "An error occurred starting the service with the Kurtosis API")
 	}
 	logrus.Tracef("Successfully started service with Kurtosis API")
-
-	//TODO add this to network context
-	//containerCreationConfig.GetKurtosisVolumeMountpoint()
 
 	return nil
 }

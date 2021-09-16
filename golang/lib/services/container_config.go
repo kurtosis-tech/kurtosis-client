@@ -100,7 +100,7 @@ func (builder *ContainerConfigBuilder) WithUsedPorts(usedPortsSet map[string]boo
 	return builder
 }
 
-func (builder *ContainerCreationConfigBuilder) WithKurtosisVolumeMountpoint(kurtosisVolumeMountpoint string) *ContainerCreationConfigBuilder {
+func (builder *ContainerConfigBuilder) WithKurtosisVolumeMountpoint(kurtosisVolumeMountpoint string) *ContainerConfigBuilder {
 	builder.kurtosisVolumeMountpoint = kurtosisVolumeMountpoint
 	return builder
 }
