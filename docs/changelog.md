@@ -1,8 +1,11 @@
 # TBD
 ### Breaking Changes
 * Split `networkCtx.AddService()` method in to new methods `networkCtx.RegisterService()` and `networkCtx.StartService()`
-* Merge `containerCreationConfig` and `containerRunConfig` into a new type `containerConfig` to centralize Docker container definitions
   * Users should update all the `networkCtx.AddService()` and first call to `networkCtx.RegisterService()` passing it the `service ID` and the `kurtosisVolumeMountpoint` and then `networkCtx.StartService()` passing it the `serviceCtx` and the `containerConfig`
+    any static/dynamic file stuff they were doing now needs to be done manually in between registerService and startService
+* Merge `containerCreationConfig` and `containerRunConfig` into a new type `containerConfig` to centralize Docker container definitions
+  * Users probably need to shift some stuff from `containerCreationConfig` and `containerRunConfig`  to the new `containerConfig`
+  
 
 # 0.15.0
 ### Fixes
