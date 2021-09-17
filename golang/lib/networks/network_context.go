@@ -228,7 +228,7 @@ func (networkCtx *NetworkContext) StartService(
 	}
 	resp, err := networkCtx.client.StartService(ctx, startServiceArgs)
 	if err != nil {
-		return map[string]*kurtosis_core_rpc_api_bindings.PortBinding{}, stacktrace.Propagate(err, "An error occurred starting the service with the Kurtosis API")
+		return nil, stacktrace.Propagate(err, "An error occurred starting the service with the Kurtosis API")
 	}
 	logrus.Tracef("Successfully started service with Kurtosis API")
 

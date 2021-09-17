@@ -87,7 +87,7 @@ func NewContainerConfigBuilder(image string) *ContainerConfigBuilder {
 	return &ContainerConfigBuilder{
 		image:                        image,
 		usedPortsSet:                 map[string]bool{},
-		kurtosisVolumeMountpoint:     "",
+		kurtosisVolumeMountpoint:     defaultKurtosisVolumeMountpoint,
 		filesArtifactMountpoints:     map[FilesArtifactID]string{},
 		entrypointOverrideArgs:       nil,
 		cmdOverrideArgs:              nil,
