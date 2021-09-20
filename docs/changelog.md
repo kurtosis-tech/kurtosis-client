@@ -3,6 +3,9 @@
 * Add `SharedDirectory` object which contains two fields `absFilepathOnThisContainer` and `absFilepathOnServiceContainer` that store the values of the service directory absolute path in the testsuite container and the service container
 * Update API container service proto definition adding the `relative_service_dirpath` field in `RegisterServiceResponse` and `GetServiceInfoResponse`
 
+### Changes
+* Remove `RegisterStaticFiles()`, `GenerateFiles()` and `LoadStaticFiles()` methods from protobuf `ApiContainerService`
+
 ### Breaking Changes
 * Mix `ContainerCreationConfig` and `ContainerRunConfig` in the new `ContainerConfig` which contains all the necessary information used to create and run a service container
   * Users should replace the creation of `ContainerCreationConfig` and `ContainerRunConfig` objects with an implementation of an anonymous function that dynamically generates the new `ContainerConfig` object

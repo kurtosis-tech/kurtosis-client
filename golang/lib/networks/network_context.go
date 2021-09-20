@@ -122,7 +122,7 @@ func (networkCtx *NetworkContext) AddServiceToPartition(
 		serviceId services.ServiceID,
 		partitionID PartitionID,
 		kurtosisEnclaveDataVolMountpointOnServiceContainer string,
-		containerConfigSupplier func(ipAddr string, sharedDirectory *services.SharedDirectory) (services.ContainerConfig, error),
+		containerConfigSupplier func(ipAddr string, sharedDirectory *services.SharedDirectory) (*services.ContainerConfig, error),
 		) (*services.ServiceContext, map[string]*kurtosis_core_rpc_api_bindings.PortBinding, error) {
 
 	ctx := context.Background()

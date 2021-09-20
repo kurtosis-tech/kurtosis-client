@@ -16,20 +16,12 @@ service ApiContainerService {
   // Gets information about a loaded Lambda module
   rpc GetLambdaInfo(GetLambdaInfoArgs) returns (GetLambdaInfoResponse) {};
 
-  // Tells the API container that the client has static files it would like the API container to know about
-  // The API container will respond with paths inside the enclave directory; the client is then responsible for copying their
-  //  files there
-  rpc RegisterStaticFiles(RegisterStaticFilesArgs) returns (RegisterStaticFilesResponse) {};
-
   // Tells the API container that the client has files artifacts from the web that it would like the API container to know about
   // The API container will download these artifacts locally, so they're available when launching services
   rpc RegisterFilesArtifacts(RegisterFilesArtifactsArgs) returns (google.protobuf.Empty) {};
 
   // Registers a service with the API container but doesn't start the container for it
   rpc RegisterService(RegisterServiceArgs) returns (RegisterServiceResponse) {};
-
-  // Generates files inside the enclave data volume on the filesystem for a container
-  rpc GenerateFiles(GenerateFilesArgs) returns (GenerateFilesResponse) {};
 
   // Copies static files that have been registered with the API container into the file namespace of the given service
   rpc LoadStaticFiles(LoadStaticFilesArgs) returns (LoadStaticFilesResponse) {};
