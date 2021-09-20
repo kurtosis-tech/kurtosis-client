@@ -510,7 +510,7 @@ executeBulkCommands: {
     responseSerialize: serialize_google_protobuf_Empty,
     responseDeserialize: deserialize_google_protobuf_Empty,
   },
-  // Returns a list of running services
+  // Returns the IDs of the current services in the test network
 getServices: {
     path: '/api_container_api.ApiContainerService/GetServices',
     requestStream: false,
@@ -522,7 +522,7 @@ getServices: {
     responseSerialize: serialize_api_container_api_GetServicesResponse,
     responseDeserialize: deserialize_api_container_api_GetServicesResponse,
   },
-  // Returns a list of running Kurtosis Lambdas
+  // Returns the IDs of the Kurtosis Lambdas that have been loaded into the test network.
 getLambdas: {
     path: '/api_container_api.ApiContainerService/GetLambdas',
     requestStream: false,
