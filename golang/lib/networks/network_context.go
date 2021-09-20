@@ -202,9 +202,9 @@ func (networkCtx *NetworkContext) AddServiceToPartition(
 	serviceIpAddr := registerServiceResp.IpAddr
 	relativeServiceDirpath := registerServiceResp.RelativeServiceDirpath
 
-	sharedDirectory := networkCtx.getServiceDirectory(relativeServiceDirpath, kurtosisEnclaveDataVolMountpointOnServiceContainer)
+	sharedDirectory := networkCtx.getSharedDirectory(relativeServiceDirpath, kurtosisEnclaveDataVolMountpointOnServiceContainer)
 
-	logrus.Tracef("Executting container config supplier in order to generate the container config object")
+	logrus.Tracef("Generating container config object using the container config supplier...")
 	containerConfig, err := containerConfigSupplier(serviceIpAddr, sharedDirectory)
 	if err != nil {
 		return nil, nil, stacktrace.Propagate(
@@ -278,7 +278,7 @@ func (networkCtx *NetworkContext) GetServiceContext(serviceId services.ServiceID
 			serviceId)
 	}
 
-	sharedDirectory := networkCtx.getServiceDirectory(relativeServiceDirpath, enclaveDataVolMountDirpathOnSvcContainer)
+	sharedDirectory := networkCtx.getSharedDirectory(relativeServiceDirpath, enclaveDataVolMountDirpathOnSvcContainer)
 
 	serviceContext := services.NewServiceContext(
 		networkCtx.client,
@@ -460,7 +460,7 @@ func (networkCtx *NetworkContext) GetLambdas() (map[modules.LambdaID]bool, error
 // ====================================================================================================
 // 									   Private helper methods
 // ====================================================================================================
-func (networkCtx *NetworkContext) getServiceDirectory(relativeServiceDirpath string, kurtosisEnclaveDataVolMountpointOnServiceContainer string) *services.SharedDirectory {
+func (networkCtx *NetworkContext) getSharedDirectory(relativeServiceDirpath string, kurtosisEnclaveDataVolMountpointOnServiceContainer string) *services.SharedDirectory {
 
 	absFilepathOnThisContainer := networkCtx.enclaveDataVolMountpoint + "/" + relativeServiceDirpath
 	absFilepathOnServiceContainer := kurtosisEnclaveDataVolMountpointOnServiceContainer + "/" + relativeServiceDirpath

@@ -1,4 +1,19 @@
 # TBD
+### Features
+* Add `SharedDirectory` object which contains two fields `absFilepathOnThisContainer` and `absFilepathOnServiceContainer` that store the values of the service directory absolute path in the testsuite container and the service container
+* Update API container service proto definition adding the `relative_service_dirpath` field in `RegisterServiceResponse` and `GetServiceInfoResponse`
+
+### Breaking Changes
+* Mix `ContainerCreationConfig` and `ContainerRunConfig` in the new `ContainerConfig` which contains all the necessary information used to create and run a service container
+  * Users should replace the creation of `ContainerCreationConfig` and `ContainerRunConfig` objects with an implementation of an anonymous function that dynamically generates the new `ContainerConfig` object
+* Update `NetworkCtx.AddService()` method adding the `kurtosisEnclaveDataVolMountpointOnServiceContainer` param and replacing the `containerCreationConfig` param and the `generateRunConfigFunc` with the `containerConfigSupplier` param
+  * Users should update `NetworkCtx.AddService()` calls passing it now the `kurtosisEnclaveDataVolMountpointOnServiceContainer` which is the root mountpoint name in the service container and the `containerConfigSupplier` which is 
+    an anonymous function that should be created to dynamically generate the `containerConfig` object 
+* Replace `enclaveDataVolMountpointHere` and `enclaveDataVolMountpointOnServiceContainer` in `ServiceContext` fields with a `SharedDirectory` object
+  * Users should use the fields of `SharedDirectory` object to get the service directory absolute paths
+* Remove the `ServiceContext.GenerateFiles()` and the `ServiceContext.LoadStaticFiles()` methods
+  * Users should manually create, generate and copy static and dynamic files into the service container with the help of the new `SharedDirectory` object
+
 
 # 0.15.0
 ### Fixes
