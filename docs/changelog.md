@@ -11,9 +11,8 @@
     an anonymous function that should be created to dynamically generate the `containerConfig` object 
 * Replace `enclaveDataVolMountpointHere` and `enclaveDataVolMountpointOnServiceContainer` in `ServiceContext` fields with a `SharedDirectory` object
   * Users should use the fields of `SharedDirectory` object to get the service directory absolute paths
-* Remove the `ServiceContext.GenerateFiles()` and the `ServiceContext.LoadStaticFiles()` methods
+* Remove the `ServiceContext.GenerateFiles()`, the `ServiceContext.LoadStaticFiles()` and the `NetworkCtx.RegisterStaticFiles()` methods
   * Users should manually create, generate and copy static and dynamic files into the service container with the help of the new `SharedDirectory` object
-
 
 # 0.15.0
 ### Fixes

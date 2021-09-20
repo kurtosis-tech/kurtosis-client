@@ -26,9 +26,6 @@ import (
 	"github.com/palantir/stacktrace"
 	"github.com/sirupsen/logrus"
 	"google.golang.org/protobuf/types/known/emptypb"
-	"io"
-	"os"
-	"path"
 )
 
 type PartitionID string
@@ -89,61 +86,6 @@ func (networkCtx *NetworkContext) GetLambdaContext(lambdaId modules.LambdaID) (*
 }
 
 // Docs available at https://docs.kurtosistech.com/kurtosis-client/lib-documentation
-func (networkCtx *NetworkContext) RegisterStaticFiles(staticFileFilepaths map[services.StaticFileID]string) error {
-	strSet := map[string]bool{}
-	for staticFileId, srcAbsFilepath := range staticFileFilepaths {
-		// Sanity-check that the source filepath exists
-		if _, err := os.Stat(srcAbsFilepath); os.IsNotExist(err) {
-			return stacktrace.NewError("Source filepath '%v' associated with static file '%v' doesn't exist", srcAbsFilepath, staticFileId)
-		}
-		strSet[string(staticFileId)] = true
-	}
-
-	args := binding_constructors.NewRegisterStaticFilesArgs(strSet)
-	resp, err := networkCtx.client.RegisterStaticFiles(context.Background(), args)
-	if err != nil {
-		return stacktrace.Propagate(err, "An error occurred registering static files: %+v", staticFileFilepaths)
-	}
-
-	for staticFileIdStr, destFilepathRelativeToEnclaveVolRoot := range resp.StaticFileDestRelativeFilepaths {
-		staticFileId := services.StaticFileID(staticFileIdStr)
-
-		srcAbsFilepath, found := staticFileFilepaths[staticFileId]
-		if !found {
-			return stacktrace.NewError("No source filepath found for static file '%v'; this is a bug in Kurtosis", staticFileId)
-		}
-
-		destAbsFilepath := path.Join(networkCtx.enclaveDataVolMountpoint, destFilepathRelativeToEnclaveVolRoot)
-		if _, err := os.Stat(destAbsFilepath); os.IsNotExist(err) {
-			return stacktrace.NewError(
-				"The Kurtosis API asked us to copy static file '%v' to path '%v' in the enclave volume which means that an empty file should exist there, "+
-					"but no file exists at that path - this is a bug in Kurtosis!",
-				staticFileId,
-				destFilepathRelativeToEnclaveVolRoot,
-			)
-		}
-
-		srcFp, err := os.Open(srcAbsFilepath)
-		if err != nil {
-			return stacktrace.Propagate(err, "An error occurred opening static file '%v' source file '%v' for reading", staticFileId, srcAbsFilepath)
-		}
-		defer srcFp.Close()
-
-		destFp, err := os.Create(destAbsFilepath)
-		if err != nil {
-			return stacktrace.Propagate(err, "An error occurred opening static file '%v' destination file '%v' for writing", staticFileId, destAbsFilepath)
-		}
-		defer destFp.Close()
-
-		if _, err := io.Copy(destFp, srcFp); err != nil {
-			return stacktrace.Propagate(err, "An error occurred copying all the bytes from static file '%v' source filepath '%v' to destination filepath '%v'", staticFileId, srcAbsFilepath, destAbsFilepath)
-		}
-
-	}
-	return nil
-}
-
-// Docs available at https://docs.kurtosistech.com/kurtosis-client/lib-documentation
 func (networkCtx *NetworkContext) RegisterFilesArtifacts(filesArtifactUrls map[services.FilesArtifactID]string) error {
 	filesArtifactIdStrsToUrls := map[string]string{}
 	for artifactId, url := range filesArtifactUrls {
@@ -155,8 +97,6 @@ func (networkCtx *NetworkContext) RegisterFilesArtifacts(filesArtifactUrls map[s
 	}
 	return nil
 }
-
-
 
 // Docs available at https://docs.kurtosistech.com/kurtosis-client/lib-documentation
 func (networkCtx *NetworkContext) AddService(
@@ -187,7 +127,7 @@ func (networkCtx *NetworkContext) AddServiceToPartition(
 
 	ctx := context.Background()
 
-	logrus.Tracef("Registering new service ID with Kurtosis API...")
+	logrus.Trace("Registering new service ID with Kurtosis API...")
 	registerServiceArgs := binding_constructors.NewRegisterServiceArgs(string(serviceId), string(partitionID))
 
 	registerServiceResp, err := networkCtx.client.RegisterService(ctx, registerServiceArgs)
@@ -197,14 +137,14 @@ func (networkCtx *NetworkContext) AddServiceToPartition(
 			"An error occurred registering service with ID '%v' with the Kurtosis API",
 			serviceId)
 	}
-	logrus.Tracef("New service successfully registered with Kurtosis API")
+	logrus.Trace("New service successfully registered with Kurtosis API")
 
 	serviceIpAddr := registerServiceResp.IpAddr
 	relativeServiceDirpath := registerServiceResp.RelativeServiceDirpath
 
 	sharedDirectory := networkCtx.getSharedDirectory(relativeServiceDirpath, kurtosisEnclaveDataVolMountpointOnServiceContainer)
 
-	logrus.Tracef("Generating container config object using the container config supplier...")
+	logrus.Trace("Generating container config object using the container config supplier...")
 	containerConfig, err := containerConfigSupplier(serviceIpAddr, sharedDirectory)
 	if err != nil {
 		return nil, nil, stacktrace.Propagate(
@@ -212,16 +152,16 @@ func (networkCtx *NetworkContext) AddServiceToPartition(
 			"An error occurred executing the container config supplier for service with ID '%v'",
 			serviceId)
 	}
-	logrus.Tracef("Container config object successfully generated")
+	logrus.Trace("Container config object successfully generated")
 
 	logrus.Tracef("Creating files artifact ID str -> mount dirpaths map...")
 	artifactIdStrToMountDirpath := map[string]string{}
 	for filesArtifactId, mountDirpath := range containerConfig.GetFilesArtifactMountpoints() {
 		artifactIdStrToMountDirpath[string(filesArtifactId)] = mountDirpath
 	}
-	logrus.Tracef("Successfully created files artifact ID str -> mount dirpaths map")
+	logrus.Trace("Successfully created files artifact ID str -> mount dirpaths map")
 
-	logrus.Tracef("Starting new service with Kurtosis API...")
+	logrus.Trace("Starting new service with Kurtosis API...")
 	startServiceArgs := &kurtosis_core_rpc_api_bindings.StartServiceArgs{
 		ServiceId:                  string(serviceId),
 		DockerImage:                containerConfig.GetImage(),
@@ -236,7 +176,7 @@ func (networkCtx *NetworkContext) AddServiceToPartition(
 	if err != nil {
 		return nil, nil, stacktrace.Propagate(err, "An error occurred starting the service with the Kurtosis API")
 	}
-	logrus.Tracef("Successfully started service with Kurtosis API")
+	logrus.Trace("Successfully started service with Kurtosis API")
 
 	serviceContext := services.NewServiceContext(
 		networkCtx.client,

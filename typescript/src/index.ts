@@ -1,8 +1,7 @@
 //Services
-export { StaticFileID, FilesArtifactID, ContainerCreationConfigBuilder, ContainerCreationConfig } from "./lib/services/container_creation_config"; 
-export { ContainerRunConfigBuilder, ContainerRunConfig } from "./lib/services/container_run_config";
+export { StaticFileID, FilesArtifactID, ContainerConfig, ContainerConfigBuilder } from "./lib/services/container_config"; 
 export { ServiceID } from "./lib/services/service";
-export { GeneratedFileFilepaths, ServiceContext } from "./lib/services/service_context";
+export { ServiceContext } from "./lib/services/service_context";
 
 //Networks
 export { Network } from "./lib/networks/network";
