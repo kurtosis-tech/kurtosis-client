@@ -102,7 +102,7 @@ func (networkCtx *NetworkContext) RegisterFilesArtifacts(filesArtifactUrls map[s
 func (networkCtx *NetworkContext) AddService(
 		serviceId services.ServiceID,
 		kurtosisEnclaveDataVolMountpointOnServiceContainer string,
-		containerConfigSupplier func(ipAddr string, sharedDirectory *services.SharedDirectory) (services.ContainerConfig, error),
+		containerConfigSupplier func(ipAddr string, sharedDirectory *services.SharedDirectory) (*services.ContainerConfig, error),
 	) (*services.ServiceContext, map[string]*kurtosis_core_rpc_api_bindings.PortBinding, error) {
 
 	serviceContext, hostPortBindings, err := networkCtx.AddServiceToPartition(
