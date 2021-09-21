@@ -21,6 +21,8 @@ export type PartitionID = string;
 // This will always resolve to the default partition ID (regardless of whether such a partition exists in the network,
 //  or it was repartitioned away)
 const DEFAULT_PARTITION_ID: PartitionID = "";
+// The default enclave data volume name
+const DEFAULT_KURTOSIS_VOLUME_MOUNTPOINT: string = "/kurtosis-enclave-data";
 
 // Docs available at https://docs.kurtosistech.com/kurtosis-client/lib-documentation
 export class NetworkContext {
@@ -123,14 +125,12 @@ export class NetworkContext {
     // Docs available at https://docs.kurtosistech.com/kurtosis-client/lib-documentation
     public async addService(
             serviceId: ServiceID,
-            kurtosisEnclaveDataVolMountpointOnServiceContainer: string,
             containerConfigSupplier: (ipAddr: string, sharedDirectory: SharedDirectory) => Result<ContainerConfig, Error>
         ): Promise<Result<[ServiceContext, Map<string, PortBinding>], Error>> {
 
         const resultAddServiceToPartition: Result<[ServiceContext, Map<string, PortBinding>], Error> = await this.addServiceToPartition(
             serviceId,
             DEFAULT_PARTITION_ID,
-            kurtosisEnclaveDataVolMountpointOnServiceContainer,
             containerConfigSupplier,
         );
 
@@ -145,7 +145,6 @@ export class NetworkContext {
     public async addServiceToPartition(
             serviceId: ServiceID,
             partitionId: PartitionID,
-            kurtosisEnclaveDataVolMountpointOnServiceContainer: string,
             containerConfigSupplier: (ipAddr: string, sharedDirectory: SharedDirectory) => Result<ContainerConfig, Error>
         ): Promise<Result<[ServiceContext, Map<string, PortBinding>], Error>> {
 
@@ -176,7 +175,7 @@ export class NetworkContext {
         const serviceIpAddr: string = registerServiceResp.getIpAddr();
         const relativeServiceDirpath: string = registerServiceResp.getRelativeServiceDirpath();
 
-        const sharedDirectory = this.getSharedDirectory(relativeServiceDirpath, kurtosisEnclaveDataVolMountpointOnServiceContainer)
+        const sharedDirectory = this.getSharedDirectory(relativeServiceDirpath)
 
         log.trace("Generating container config object using the container config supplier...")
         const containerConfigSupplierResult: Result<ContainerConfig, Error> = containerConfigSupplier(serviceIpAddr, sharedDirectory);
@@ -202,7 +201,7 @@ export class NetworkContext {
             containerConfig.getEntrypointOverrideArgs(),
             containerConfig.getCmdOverrideArgs(),
             containerConfig.getEnvironmentVariableOverrides(),
-            containerConfig.getKurtosisVolumeMountpoint(),
+            DEFAULT_KURTOSIS_VOLUME_MOUNTPOINT,
             artifactIdStrToMountDirpath);
 
         const promiseStartService: Promise<Result<StartServiceResponse, Error>> = new Promise((resolve, _unusedReject) => {
@@ -285,7 +284,7 @@ export class NetworkContext {
             );
         }
 
-        const sharedDirectory: SharedDirectory = this.getSharedDirectory(relativeServiceDirpath, enclaveDataVolMountDirpathOnSvcContainer)
+        const sharedDirectory: SharedDirectory = this.getSharedDirectory(relativeServiceDirpath)
 
         const serviceContext: ServiceContext = new ServiceContext(
             this.client,
@@ -548,10 +547,10 @@ export class NetworkContext {
     // ====================================================================================================
     //                                       Private helper functions
     // ====================================================================================================
-    private getSharedDirectory(relativeServiceDirpath: string, kurtosisEnclaveDataVolMountpointOnServiceContainer: string): SharedDirectory {
+    private getSharedDirectory(relativeServiceDirpath: string): SharedDirectory {
        
         const absFilepathOnThisContainer = this.enclaveDataVolMountpoint + "/" + relativeServiceDirpath;
-        const absFilepathOnServiceContainer = kurtosisEnclaveDataVolMountpointOnServiceContainer  + "/" + relativeServiceDirpath;
+        const absFilepathOnServiceContainer = DEFAULT_KURTOSIS_VOLUME_MOUNTPOINT  + "/" + relativeServiceDirpath;
 
         const sharedDirectory = new SharedDirectory(absFilepathOnThisContainer, absFilepathOnServiceContainer)
 

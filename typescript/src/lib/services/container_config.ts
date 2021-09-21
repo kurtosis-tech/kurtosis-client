@@ -1,5 +1,3 @@
-const DEFAULT_KURTOSIS_VOLUME_MOUNTPOINT: string = "/kurtosis-enclave-data";
-
 export type StaticFileID = string;
 
 // The ID of an artifact containing files that should be mounted into a service container
@@ -14,7 +12,6 @@ export class ContainerConfig {
 	
     private readonly image: string;
     private readonly usedPortsSet: Set<string>;
-    private readonly kurtosisVolumeMountpoint: string; // Technically the enclave data volume, but we call it this for simplicity for the user
     private readonly filesArtifactMountpoints: Map<FilesArtifactID, string>;
     private readonly entrypointOverrideArgs: string[];
 	private readonly cmdOverrideArgs: string[];
@@ -23,14 +20,12 @@ export class ContainerConfig {
     constructor(
             image: string,
             usedPortsSet: Set<string>,
-            kurtosisVolumeMountpoint: string,
             filesArtifactMountpoints: Map<FilesArtifactID, string>,
             entrypointOverrideArgs: string[],
             cmdOverrideArgs: string[],
             environmentVariableOverrides: Map<string,string>) {
         this.image = image;
         this.usedPortsSet = usedPortsSet;
-        this.kurtosisVolumeMountpoint = kurtosisVolumeMountpoint;
         this.filesArtifactMountpoints = filesArtifactMountpoints;
         this.entrypointOverrideArgs = entrypointOverrideArgs;
         this.cmdOverrideArgs = cmdOverrideArgs;
@@ -43,10 +38,6 @@ export class ContainerConfig {
 
     public getUsedPortsSet(): Set<string> {
         return this.usedPortsSet;
-    }
-
-    public getKurtosisVolumeMountpoint(): string {
-        return this.kurtosisVolumeMountpoint;
     }
 
     public getFilesArtifactMountpoints(): Map<FilesArtifactID, string> {
@@ -74,7 +65,6 @@ export class ContainerConfig {
 export class ContainerConfigBuilder {
     private readonly image: string;
     private usedPortsSet: Set<string>;
-    private kurtosisVolumeMountpoint: string;
     private filesArtifactMountpoints: Map<FilesArtifactID, string>;
     private entrypointOverrideArgs: string[];
 	private cmdOverrideArgs: string[];
@@ -83,7 +73,6 @@ export class ContainerConfigBuilder {
     constructor (image: string) {
         this.image = image;
         this.usedPortsSet = new Set();
-        this.kurtosisVolumeMountpoint = DEFAULT_KURTOSIS_VOLUME_MOUNTPOINT;
         this.filesArtifactMountpoints = new Map();
         this.entrypointOverrideArgs = [];
         this.cmdOverrideArgs = [];
@@ -92,11 +81,6 @@ export class ContainerConfigBuilder {
 
     public withUsedPorts(usedPortsSet: Set<string>): ContainerConfigBuilder {
         this.usedPortsSet = usedPortsSet;
-        return this;
-    }
-    
-    public withKurtosisVolumeMountpoint(kurtosisVolumeMountpoint: string): ContainerConfigBuilder {
-        this.kurtosisVolumeMountpoint = kurtosisVolumeMountpoint;
         return this;
     }
 
@@ -124,7 +108,6 @@ export class ContainerConfigBuilder {
         return new ContainerConfig(
             this.image,
             this.usedPortsSet,
-            this.kurtosisVolumeMountpoint,
             this.filesArtifactMountpoints,
             this.entrypointOverrideArgs,
             this.cmdOverrideArgs,

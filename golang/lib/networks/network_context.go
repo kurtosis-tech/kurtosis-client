@@ -35,6 +35,8 @@ const (
 	// This will always resolve to the default partition ID (regardless of whether such a partition exists in the network,
 	//  or it was repartitioned away)
 	defaultPartitionId PartitionID = ""
+	// The default enclave data volume name
+	defaultKurtosisVolumeMountpoint = "/kurtosis-enclave-data"
 )
 
 // Docs available at https://docs.kurtosistech.com/kurtosis-client/lib-documentation
@@ -102,14 +104,12 @@ func (networkCtx *NetworkContext) RegisterFilesArtifacts(filesArtifactUrls map[s
 // Docs available at https://docs.kurtosistech.com/kurtosis-client/lib-documentation
 func (networkCtx *NetworkContext) AddService(
 		serviceId services.ServiceID,
-		kurtosisEnclaveDataVolMountpointOnServiceContainer string,
 		containerConfigSupplier func(ipAddr string, sharedDirectory *services.SharedDirectory) (*services.ContainerConfig, error),
 	) (*services.ServiceContext, map[string]*kurtosis_core_rpc_api_bindings.PortBinding, error) {
 
 	serviceContext, hostPortBindings, err := networkCtx.AddServiceToPartition(
 		serviceId,
 		defaultPartitionId,
-		kurtosisEnclaveDataVolMountpointOnServiceContainer,
 		containerConfigSupplier,
 	)
 	if err != nil {
@@ -122,7 +122,6 @@ func (networkCtx *NetworkContext) AddService(
 func (networkCtx *NetworkContext) AddServiceToPartition(
 		serviceId services.ServiceID,
 		partitionID PartitionID,
-		kurtosisEnclaveDataVolMountpointOnServiceContainer string,
 		containerConfigSupplier func(ipAddr string, sharedDirectory *services.SharedDirectory) (*services.ContainerConfig, error),
 		) (*services.ServiceContext, map[string]*kurtosis_core_rpc_api_bindings.PortBinding, error) {
 
@@ -143,7 +142,7 @@ func (networkCtx *NetworkContext) AddServiceToPartition(
 	serviceIpAddr := registerServiceResp.IpAddr
 	relativeServiceDirpath := registerServiceResp.RelativeServiceDirpath
 
-	sharedDirectory := networkCtx.getSharedDirectory(relativeServiceDirpath, kurtosisEnclaveDataVolMountpointOnServiceContainer)
+	sharedDirectory := networkCtx.getSharedDirectory(relativeServiceDirpath)
 
 	logrus.Trace("Generating container config object using the container config supplier...")
 	containerConfig, err := containerConfigSupplier(serviceIpAddr, sharedDirectory)
@@ -170,7 +169,7 @@ func (networkCtx *NetworkContext) AddServiceToPartition(
 		EntrypointArgs:             containerConfig.GetEntrypointOverrideArgs(),
 		CmdArgs:                    containerConfig.GetCmdOverrideArgs(),
 		DockerEnvVars:              containerConfig.GetEnvironmentVariableOverrides(),
-		EnclaveDataVolMntDirpath:   containerConfig.GetKurtosisVolumeMountpoint(),
+		EnclaveDataVolMntDirpath:   defaultKurtosisVolumeMountpoint,
 		FilesArtifactMountDirpaths: artifactIdStrToMountDirpath,
 	}
 	resp, err := networkCtx.client.StartService(ctx, startServiceArgs)
@@ -219,7 +218,7 @@ func (networkCtx *NetworkContext) GetServiceContext(serviceId services.ServiceID
 			serviceId)
 	}
 
-	sharedDirectory := networkCtx.getSharedDirectory(relativeServiceDirpath, enclaveDataVolMountDirpathOnSvcContainer)
+	sharedDirectory := networkCtx.getSharedDirectory(relativeServiceDirpath)
 
 	serviceContext := services.NewServiceContext(
 		networkCtx.client,
@@ -401,10 +400,10 @@ func (networkCtx *NetworkContext) GetLambdas() (map[modules.LambdaID]bool, error
 // ====================================================================================================
 // 									   Private helper methods
 // ====================================================================================================
-func (networkCtx *NetworkContext) getSharedDirectory(relativeServiceDirpath string, kurtosisEnclaveDataVolMountpointOnServiceContainer string) *services.SharedDirectory {
+func (networkCtx *NetworkContext) getSharedDirectory(relativeServiceDirpath string) *services.SharedDirectory {
 
 	absFilepathOnThisContainer := path.Join(networkCtx.enclaveDataVolMountpoint, relativeServiceDirpath)
-	absFilepathOnServiceContainer := path.Join(kurtosisEnclaveDataVolMountpointOnServiceContainer, relativeServiceDirpath)
+	absFilepathOnServiceContainer := path.Join(defaultKurtosisVolumeMountpoint, relativeServiceDirpath)
 
 	sharedDirectory := services.NewSharedDirectory(absFilepathOnThisContainer, absFilepathOnServiceContainer)
 
