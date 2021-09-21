@@ -4849,7 +4849,7 @@ proto.api_container_api.ExecCommandResponse.prototype.toObject = function(opt_in
 proto.api_container_api.ExecCommandResponse.toObject = function(includeInstance, msg) {
   var f, obj = {
     exitCode: jspb.Message.getFieldWithDefault(msg, 1, 0),
-    logOutput: msg.getLogOutput_asB64()
+    logOutput: jspb.Message.getFieldWithDefault(msg, 2, "")
   };
 
   if (includeInstance) {
@@ -4891,7 +4891,7 @@ proto.api_container_api.ExecCommandResponse.deserializeBinaryFromReader = functi
       msg.setExitCode(value);
       break;
     case 2:
-      var value = /** @type {!Uint8Array} */ (reader.readBytes());
+      var value = /** @type {string} */ (reader.readString());
       msg.setLogOutput(value);
       break;
     default:
@@ -4930,9 +4930,9 @@ proto.api_container_api.ExecCommandResponse.serializeBinaryToWriter = function(m
       f
     );
   }
-  f = message.getLogOutput_asU8();
+  f = message.getLogOutput();
   if (f.length > 0) {
-    writer.writeBytes(
+    writer.writeString(
       2,
       f
     );
@@ -4959,44 +4959,20 @@ proto.api_container_api.ExecCommandResponse.prototype.setExitCode = function(val
 
 
 /**
- * optional bytes log_output = 2;
- * @return {!(string|Uint8Array)}
- */
-proto.api_container_api.ExecCommandResponse.prototype.getLogOutput = function() {
-  return /** @type {!(string|Uint8Array)} */ (jspb.Message.getFieldWithDefault(this, 2, ""));
-};
-
-
-/**
- * optional bytes log_output = 2;
- * This is a type-conversion wrapper around `getLogOutput()`
+ * optional string log_output = 2;
  * @return {string}
  */
-proto.api_container_api.ExecCommandResponse.prototype.getLogOutput_asB64 = function() {
-  return /** @type {string} */ (jspb.Message.bytesAsB64(
-      this.getLogOutput()));
+proto.api_container_api.ExecCommandResponse.prototype.getLogOutput = function() {
+  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 2, ""));
 };
 
 
 /**
- * optional bytes log_output = 2;
- * Note that Uint8Array is not supported on all browsers.
- * @see http://caniuse.com/Uint8Array
- * This is a type-conversion wrapper around `getLogOutput()`
- * @return {!Uint8Array}
- */
-proto.api_container_api.ExecCommandResponse.prototype.getLogOutput_asU8 = function() {
-  return /** @type {!Uint8Array} */ (jspb.Message.bytesAsU8(
-      this.getLogOutput()));
-};
-
-
-/**
- * @param {!(string|Uint8Array)} value
+ * @param {string} value
  * @return {!proto.api_container_api.ExecCommandResponse} returns this
  */
 proto.api_container_api.ExecCommandResponse.prototype.setLogOutput = function(value) {
-  return jspb.Message.setProto3BytesField(this, 2, value);
+  return jspb.Message.setProto3StringField(this, 2, value);
 };
 
 
