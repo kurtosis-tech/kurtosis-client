@@ -7,8 +7,6 @@ export interface V0CommandTypeVisitor {
 	visitLoadLambda: () => Result<null, Error>;
 	visitExecuteLambda: () => Result<null, Error>;
 	visitRegisterService: () => Result<null, Error>;
-	visitGenerateFiles: () => Result<null, Error>;
-	visitLoadStaticFiles: () => Result<null, Error>;
 	visitStartService: () => Result<null, Error>;
 	visitRemoveService: () => Result<null, Error>;
 	visitRepartition: () => Result<null, Error>;
@@ -25,8 +23,6 @@ export enum V0CommandType {
 	LoadLambda = "LOAD_LAMBDA",
 	ExecuteLambda = "EXECUTE_LAMBDA",
 	RegisterService = "REGISTER_SERVICE",
-	GenerateFiles = "GENERATE_FILES",
-	LoadStaticFiles = "LOAD_STATIC_FILES",
 	StartService = "START_SERVICE",
 	RemoveService = "REMOVE_SERVICE",
 	Repartition = "REPARTITION",
@@ -51,12 +47,6 @@ export namespace V0CommandType {
 				break;
 			case V0CommandType.RegisterService:
 				result = visitor.visitRegisterService();
-				break;
-			case V0CommandType.GenerateFiles:
-				result = visitor.visitGenerateFiles();
-				break;
-			case V0CommandType.LoadStaticFiles:
-				result = visitor.visitLoadStaticFiles();
 				break;
 			case V0CommandType.StartService:
 				result = visitor.visitStartService();

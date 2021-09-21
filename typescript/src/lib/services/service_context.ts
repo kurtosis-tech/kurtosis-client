@@ -1,6 +1,7 @@
 import { ApiContainerServiceClient } from '../../kurtosis_core_rpc_api_bindings/api_container_service_grpc_pb'; 
 import { ExecCommandArgs, ExecCommandResponse } from '../../kurtosis_core_rpc_api_bindings/api_container_service_pb';
-import { ServiceID, SharedDirectory } from './service';
+import { ServiceID} from './service';
+import { SharedDirectory } from './shared_directory';
 import { newExecCommandArgs} from "../constructor_calls";
 import { ok, err, Result } from 'neverthrow';
 import * as grpc from "grpc";

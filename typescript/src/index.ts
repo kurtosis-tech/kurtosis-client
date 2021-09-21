@@ -16,8 +16,8 @@ export { V0BulkCommands, V0SerializableCommand } from "./lib/bulk_command_execut
 export { V0CommandType, V0CommandTypeVisitor } from "./lib/bulk_command_execution/v0_bulk_command_api/v0_command_types";;
 
 //Constructor Calls
-export { newExecCommandArgs, newGenerateFilesArgs, newFileGenerationOptions, newLoadStaticFilesArgs, newLoadLambdaArgs, newRegisterStaticFilesArgs, newRegisterFilesArtifactsArgs, newRegisterServiceArgs, newStartServiceArgs, newGetServiceInfoArgs, newRemoveServiceArgs, newPartitionServices, newRepartitionArgs, newPartitionConnections, newWaitForHttpGetEndpointAvailabilityArgs, newWaitForHttpPostEndpointAvailabilityArgs, newExecuteBulkCommandsArgs, newExecuteLambdaArgs, newGetLambdaInfoArgs } from "./lib/constructor_calls";
+export { newExecCommandArgs, newLoadLambdaArgs, newRegisterFilesArtifactsArgs, newRegisterServiceArgs, newStartServiceArgs, newGetServiceInfoArgs, newRemoveServiceArgs, newPartitionServices, newRepartitionArgs, newPartitionConnections, newWaitForHttpGetEndpointAvailabilityArgs, newWaitForHttpPostEndpointAvailabilityArgs, newExecuteBulkCommandsArgs, newExecuteLambdaArgs, newGetLambdaInfoArgs } from "./lib/constructor_calls";
 
 //Kurtosis Core RPC API Bindings
 export { ApiContainerServiceClient } from "./kurtosis_core_rpc_api_bindings/api_container_service_grpc_pb";
-export { PartitionConnections, FileGenerationOptions, PortBinding } from ".//kurtosis_core_rpc_api_bindings/api_container_service_pb";
+export { PartitionConnections, PortBinding } from ".//kurtosis_core_rpc_api_bindings/api_container_service_pb";

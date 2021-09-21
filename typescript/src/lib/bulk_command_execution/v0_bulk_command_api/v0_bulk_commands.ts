@@ -1,4 +1,4 @@
-import { LoadLambdaArgs, ExecCommandArgs, ExecuteBulkCommandsArgs, ExecuteLambdaArgs, GenerateFilesArgs, LoadStaticFilesArgs, RegisterServiceArgs, RemoveServiceArgs, RepartitionArgs, StartServiceArgs, WaitForHttpGetEndpointAvailabilityArgs, WaitForHttpPostEndpointAvailabilityArgs } from "../../../kurtosis_core_rpc_api_bindings/api_container_service_pb";
+import { LoadLambdaArgs, ExecCommandArgs, ExecuteBulkCommandsArgs, ExecuteLambdaArgs, RegisterServiceArgs, RemoveServiceArgs, RepartitionArgs, StartServiceArgs, WaitForHttpGetEndpointAvailabilityArgs, WaitForHttpPostEndpointAvailabilityArgs } from "../../../kurtosis_core_rpc_api_bindings/api_container_service_pb";
 import { V0CommandTypeVisitor, V0CommandType } from "./v0_command_types";
 import { ok, err, Result } from "neverthrow";
 import * as protobuf from "google-protobuf";
@@ -47,28 +47,6 @@ class CmdArgDeserializingVisitor implements V0CommandTypeVisitor {
             return err(deserializationResult.error);
         }
         const args: RegisterServiceArgs = Object.assign(new RegisterServiceArgs(), deserializationResult.value);
-
-        this.deserializedCommandArgsPtr = args;
-        return ok(null);
-    }
-
-    public visitGenerateFiles(): Result<null, Error> {
-        const deserializationResult: Result<any, Error> = CmdArgDeserializingVisitor.safeJsonParse(this.bytesToDeserialize);
-        if (deserializationResult.isErr()) {
-            return err(deserializationResult.error);
-        }
-        const args: GenerateFilesArgs = Object.assign(new GenerateFilesArgs(), deserializationResult.value);
-
-        this.deserializedCommandArgsPtr = args;
-        return ok(null);
-    }
-
-    public visitLoadStaticFiles(): Result<null, Error> {
-        const deserializationResult: Result<any, Error> = CmdArgDeserializingVisitor.safeJsonParse(this.bytesToDeserialize);
-        if (deserializationResult.isErr()) {
-            return err(deserializationResult.error);
-        }
-        const args: LoadStaticFilesArgs = Object.assign(new LoadStaticFilesArgs(), deserializationResult.value);
 
         this.deserializedCommandArgsPtr = args;
         return ok(null);
