@@ -224,7 +224,7 @@ func NewExecCommandArgs(serviceId string, commandArgs []string) *kurtosis_core_r
 	}
 }
 
-func NewExecCommandResponse(exitCode int32, logOutput []byte) *kurtosis_core_rpc_api_bindings.ExecCommandResponse {
+func NewExecCommandResponse(exitCode int32, logOutput string) *kurtosis_core_rpc_api_bindings.ExecCommandResponse {
 	return &kurtosis_core_rpc_api_bindings.ExecCommandResponse{
 		ExitCode:  exitCode,
 		LogOutput: logOutput,
