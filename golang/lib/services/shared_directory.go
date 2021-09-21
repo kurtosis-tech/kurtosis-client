@@ -1,21 +1,49 @@
 package services
 
+import (
+	"github.com/kurtosis-tech/kurtosis-client/golang/lib/services/shared_file_object"
+	"github.com/palantir/stacktrace"
+	"os"
+	"path"
+)
+
+//TODO add documentation
 type SharedDirectory struct {
 	//The service directory absolute path in the container where this code is running
-	absFilepathOnThisContainer string
+	sharedDirectoryMountpathOnThisContainer string
 	//The service directory absolute path in the service container
-	absFilepathOnServiceContainer string
+	sharedDirectoryMountpathOnServiceContainer string
 }
 
 func NewSharedDirectory(absFilepathOnThisContainer string, absFilepathOnServiceContainer string) *SharedDirectory {
-	return &SharedDirectory{absFilepathOnThisContainer: absFilepathOnThisContainer, absFilepathOnServiceContainer: absFilepathOnServiceContainer}
+	return &SharedDirectory{sharedDirectoryMountpathOnThisContainer: absFilepathOnThisContainer, sharedDirectoryMountpathOnServiceContainer: absFilepathOnServiceContainer}
 }
 
-func (s SharedDirectory) GetAbsFilepathOnThisContainer() string {
-	return s.absFilepathOnThisContainer
+//TODO add documentation
+func (s SharedDirectory) GetSharedDirectoryMountpathOnThisContainer() string {
+	return s.sharedDirectoryMountpathOnThisContainer
 }
 
-func (s SharedDirectory) GetAbsFilepathOnServiceContainer() string {
-	return s.absFilepathOnServiceContainer
+//TODO add documentation
+func (s SharedDirectory) GetSharedDirectoryMountpathOnServiceContainer() string {
+	return s.sharedDirectoryMountpathOnServiceContainer
 }
 
+//TODO add documentation
+func (s SharedDirectory) GetFileObject(fileName string) (*shared_file_object.SharedFileObject, error) {
+	absFilepathOnThisContainer := path.Join(s.sharedDirectoryMountpathOnThisContainer, fileName)
+
+	if _, err := os.Stat(absFilepathOnThisContainer); os.IsNotExist(err) {
+		fp, err := os.Create(absFilepathOnThisContainer)
+		if err != nil {
+			return nil, stacktrace.Propagate(err, "An error occurred creating file '%v'", absFilepathOnThisContainer)
+		}
+		fp.Close()
+	}
+
+	absFilepathOnServiceContainer := path.Join(s.sharedDirectoryMountpathOnServiceContainer, fileName)
+
+	sharedFileObject := shared_file_object.NewSharedFileObject(absFilepathOnThisContainer, absFilepathOnServiceContainer)
+
+	return sharedFileObject, nil
+}
