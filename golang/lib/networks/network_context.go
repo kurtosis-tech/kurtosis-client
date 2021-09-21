@@ -462,8 +462,8 @@ func (networkCtx *NetworkContext) GetLambdas() (map[modules.LambdaID]bool, error
 // ====================================================================================================
 func (networkCtx *NetworkContext) getSharedDirectory(relativeServiceDirpath string, kurtosisEnclaveDataVolMountpointOnServiceContainer string) *services.SharedDirectory {
 
-	absFilepathOnThisContainer := networkCtx.enclaveDataVolMountpoint + "/" + relativeServiceDirpath
-	absFilepathOnServiceContainer := kurtosisEnclaveDataVolMountpointOnServiceContainer + "/" + relativeServiceDirpath
+	absFilepathOnThisContainer := path.Join(networkCtx.enclaveDataVolMountpoint, relativeServiceDirpath)
+	absFilepathOnServiceContainer := path.Join(kurtosisEnclaveDataVolMountpointOnServiceContainer, relativeServiceDirpath)
 
 	sharedDirectory := services.NewSharedDirectory(absFilepathOnThisContainer, absFilepathOnServiceContainer)
 
