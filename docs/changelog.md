@@ -1,4 +1,10 @@
 # TBD
+### Features
+* `ServiceContext.execCommand` now returns log output as a string, parsed via UTF-8
+
+### Breaking Changes
+* `ServiceContext.execCommand` returns log output as a string, rather than bytes
+    * Users should drop any decoding they were doing and use the string output instead
 
 # 0.15.0
 ### Fixes

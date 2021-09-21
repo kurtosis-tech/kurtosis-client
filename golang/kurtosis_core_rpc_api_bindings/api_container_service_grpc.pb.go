@@ -54,9 +54,9 @@ type ApiContainerServiceClient interface {
 	WaitForHttpPostEndpointAvailability(ctx context.Context, in *WaitForHttpPostEndpointAvailabilityArgs, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	// Executes multiple commands at once
 	ExecuteBulkCommands(ctx context.Context, in *ExecuteBulkCommandsArgs, opts ...grpc.CallOption) (*emptypb.Empty, error)
-	// Returns a list of running services
+	// Returns the IDs of the current services in the test network
 	GetServices(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*GetServicesResponse, error)
-	// Returns a list of running Kurtosis Lambdas
+	// Returns the IDs of the Kurtosis Lambdas that have been loaded into the test network.
 	GetLambdas(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*GetLambdasResponse, error)
 }
 
@@ -269,9 +269,9 @@ type ApiContainerServiceServer interface {
 	WaitForHttpPostEndpointAvailability(context.Context, *WaitForHttpPostEndpointAvailabilityArgs) (*emptypb.Empty, error)
 	// Executes multiple commands at once
 	ExecuteBulkCommands(context.Context, *ExecuteBulkCommandsArgs) (*emptypb.Empty, error)
-	// Returns a list of running services
+	// Returns the IDs of the current services in the test network
 	GetServices(context.Context, *emptypb.Empty) (*GetServicesResponse, error)
-	// Returns a list of running Kurtosis Lambdas
+	// Returns the IDs of the Kurtosis Lambdas that have been loaded into the test network.
 	GetLambdas(context.Context, *emptypb.Empty) (*GetLambdasResponse, error)
 	mustEmbedUnimplementedApiContainerServiceServer()
 }

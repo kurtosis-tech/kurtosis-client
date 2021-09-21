@@ -603,10 +603,8 @@ export class ExecCommandResponse extends jspb.Message {
   getExitCode(): number;
   setExitCode(value: number): void;
 
-  getLogOutput(): Uint8Array | string;
-  getLogOutput_asU8(): Uint8Array;
-  getLogOutput_asB64(): string;
-  setLogOutput(value: Uint8Array | string): void;
+  getLogOutput(): string;
+  setLogOutput(value: string): void;
 
   serializeBinary(): Uint8Array;
   toObject(includeInstance?: boolean): ExecCommandResponse.AsObject;
@@ -621,7 +619,7 @@ export class ExecCommandResponse extends jspb.Message {
 export namespace ExecCommandResponse {
   export type AsObject = {
     exitCode: number,
-    logOutput: Uint8Array | string,
+    logOutput: string,
   }
 }
 

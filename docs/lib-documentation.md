@@ -250,7 +250,7 @@ Gets the IP address of the Docker container that the service is running inside.
 
 The service's IP address.
 
-### execCommand(List\<String\> command) -\> (int exitCode, List\<byte\> logs)
+### execCommand(List\<String\> command) -\> (int exitCode, String logs)
 Uses [Docker exec](https://docs.docker.com/engine/reference/commandline/exec/) functionality to execute a command inside the service's running Docker container.
 
 **Args**
@@ -260,7 +260,7 @@ Uses [Docker exec](https://docs.docker.com/engine/reference/commandline/exec/) f
 **Returns**
 
 * `exitCode`: The exit code of the command.
-* `logs`: The bytes of the command logs. This isn't a string because Kurtosis can't know what text encoding scheme the container uses.
+* `logs`: The output of the run command, assuming a UTF-8 encoding. **NOTE:** Commands that output non-UTF-8 output will likely be garbled!
 
 ### generateFiles(Set\<String\> filesToGenerate) -\> Map\<String, [GeneratedFileFilepaths][generatedfilefilepaths]\>
 Generates files inside the enclave data volume, which is mounted on both the container where this code is running and the service container. This allows the current container to write data to files that are immediately available to the service container, as if they shared a filesystem.
