@@ -145,7 +145,7 @@ message RegisterServiceResponse {
   // The IP address that the service will receive when it starts
   string ip_addr = 1;
 
-  // The relative path from the container vol root to the unique service directory in the enclave data volume
+  // The dirpath where the service's directory exists inside the enclave data volume, relative to the enclave data volume root
   string relative_service_dirpath =2;
 }
 
@@ -253,7 +253,7 @@ message GetServiceInfoResponse {
   // The full path where the enclave data volume is mounted on the service
   string enclave_data_volume_mount_dirpath  = 2;
 
-  // The relative path from the container vol root to the unique service directory in the enclave data volume
+  // The dirpath where the service's directory exists inside the enclave data volume, relative to the enclave data volume root
   string relative_service_dirpath = 3;
 }
 
