@@ -149,10 +149,11 @@ func NewStartServiceResponse(usedPortsHostPortBindings map[string]*kurtosis_core
 	}
 }
 
-func NewPortBinding(interfaceIp string, interfacePort string) *kurtosis_core_rpc_api_bindings.PortBinding {
+func NewPortBinding(interfaceIp string, portNumber uint32, portProtocol kurtosis_core_rpc_api_bindings.PortBinding_PortProtocol) *kurtosis_core_rpc_api_bindings.PortBinding {
 	return &kurtosis_core_rpc_api_bindings.PortBinding{
-		InterfaceIp:   interfaceIp,
-		InterfacePort: interfacePort,
+		InterfaceIp:  interfaceIp,
+		PortNumber:   portNumber,
+		PortProtocol: portProtocol,
 	}
 }
 

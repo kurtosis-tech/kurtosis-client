@@ -399,8 +399,11 @@ export class PortBinding extends jspb.Message {
   getInterfaceIp(): string;
   setInterfaceIp(value: string): void;
 
-  getInterfacePort(): string;
-  setInterfacePort(value: string): void;
+  getPortNumber(): number;
+  setPortNumber(value: number): void;
+
+  getPortProtocol(): PortBinding.PortProtocolMap[keyof PortBinding.PortProtocolMap];
+  setPortProtocol(value: PortBinding.PortProtocolMap[keyof PortBinding.PortProtocolMap]): void;
 
   serializeBinary(): Uint8Array;
   toObject(includeInstance?: boolean): PortBinding.AsObject;
@@ -415,8 +418,16 @@ export class PortBinding extends jspb.Message {
 export namespace PortBinding {
   export type AsObject = {
     interfaceIp: string,
-    interfacePort: string,
+    portNumber: number,
+    portProtocol: PortBinding.PortProtocolMap[keyof PortBinding.PortProtocolMap],
   }
+
+  export interface PortProtocolMap {
+    TCP: 0;
+    UDP: 1;
+  }
+
+  export const PortProtocol: PortProtocolMap;
 }
 
 export class GetServiceInfoArgs extends jspb.Message {

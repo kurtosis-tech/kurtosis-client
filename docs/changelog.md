@@ -1,4 +1,10 @@
 # TBD
+### Features
+* The `PortBinding` object's port (which used to be a string corresponding to Docker's port specification, e.g. `8323/tcp`), has now been structured into port number and port protocol
+
+### Breaking Changes
+* The `PortBinding` object now has three fields - interface IP, interface port number, and interface port protocol (where protocol is defined by an enum)
+    * Users should modify their code that examines these port bindings to consume these new properties
 
 # 0.15.0
 ### Fixes

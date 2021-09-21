@@ -1,4 +1,4 @@
-import { ExecCommandArgs, GenerateFilesArgs, FileGenerationOptions, LoadStaticFilesArgs, LoadLambdaArgs, GetLambdaInfoArgs, RegisterStaticFilesArgs, RegisterFilesArtifactsArgs, GetServiceInfoArgs, PartitionServices, PartitionConnections, PartitionConnectionInfo, RegisterServiceArgs, StartServiceArgs, RemoveServiceArgs, RepartitionArgs, WaitForHttpGetEndpointAvailabilityArgs, WaitForHttpPostEndpointAvailabilityArgs, ExecuteBulkCommandsArgs, ExecuteLambdaArgs } from '../kurtosis_core_rpc_api_bindings/api_container_service_pb';
+import { ExecCommandArgs, GenerateFilesArgs, FileGenerationOptions, LoadStaticFilesArgs, LoadLambdaArgs, GetLambdaInfoArgs, RegisterStaticFilesArgs, RegisterFilesArtifactsArgs, GetServiceInfoArgs, PartitionServices, PartitionConnections, PartitionConnectionInfo, RegisterServiceArgs, StartServiceArgs, RemoveServiceArgs, RepartitionArgs, WaitForHttpGetEndpointAvailabilityArgs, WaitForHttpPostEndpointAvailabilityArgs, ExecuteBulkCommandsArgs, ExecuteLambdaArgs, PortBinding } from '../kurtosis_core_rpc_api_bindings/api_container_service_pb';
 import { ServiceID } from './services/service';
 import { PartitionID } from './networks/network_context';
 import { LambdaID } from "./modules/lambda_context";
@@ -26,7 +26,7 @@ export function newGenerateFilesArgs(serviceId: ServiceID, fileGenerationOpts: M
     return result;
 }
 
-export function newFileGenerationOptions(): FileGenerationOptions {
+export function newFileGenerationOptions(fileTypeToGenerate: FileGenerationOptions.FileTypeToGenerate): FileGenerationOptions {
     const result: FileGenerationOptions = new FileGenerationOptions();
     result.setFileTypeToGenerate(FileGenerationOptions.FileTypeToGenerate.FILE);
 
@@ -121,7 +121,15 @@ export function newStartServiceArgs(
     return result;
 }
 
-export function newGetServiceInfoArgs(serviceId: ServiceID): GetServiceInfoArgs{
+export function newPortBinding(interfaceIp: string, portNumber: number, portProtocol) PortBinding {
+    const result: PortBinding = new PortBinding();
+    result.setInterfaceIp(interfaceIp);
+    result.setPortNumber(portNumber);
+    result.setPortProtocol();
+    return result;
+}
+
+export function newGetServiceInfoArgs(serviceId: ServiceID): GetServiceInfoArgs {
     const result: GetServiceInfoArgs = new GetServiceInfoArgs();
     result.setServiceId(String(serviceId));
 

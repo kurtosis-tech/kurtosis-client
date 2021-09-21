@@ -238,9 +238,18 @@ message StartServiceResponse {
 }
 
 message PortBinding {
+  enum PortProtocol {
+    TCP = 0;
+    UDP = 1;
+  }
+    
+  // E.g. 0.0.0.0
   string interface_ip = 1;
 
-  string interface_port = 2;
+  // E.g. 2553
+  uint32 port_number = 2;
+
+  PortProtocol port_protocol = 3;
 }
 
 // ==============================================================================================

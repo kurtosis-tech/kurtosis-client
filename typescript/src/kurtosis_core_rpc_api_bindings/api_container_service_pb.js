@@ -39,6 +39,7 @@ goog.exportSymbol('proto.api_container_api.PartitionConnectionInfo', null, globa
 goog.exportSymbol('proto.api_container_api.PartitionConnections', null, global);
 goog.exportSymbol('proto.api_container_api.PartitionServices', null, global);
 goog.exportSymbol('proto.api_container_api.PortBinding', null, global);
+goog.exportSymbol('proto.api_container_api.PortBinding.PortProtocol', null, global);
 goog.exportSymbol('proto.api_container_api.RegisterFilesArtifactsArgs', null, global);
 goog.exportSymbol('proto.api_container_api.RegisterServiceArgs', null, global);
 goog.exportSymbol('proto.api_container_api.RegisterServiceResponse', null, global);
@@ -3440,7 +3441,8 @@ proto.api_container_api.PortBinding.prototype.toObject = function(opt_includeIns
 proto.api_container_api.PortBinding.toObject = function(includeInstance, msg) {
   var f, obj = {
     interfaceIp: jspb.Message.getFieldWithDefault(msg, 1, ""),
-    interfacePort: jspb.Message.getFieldWithDefault(msg, 2, "")
+    portNumber: jspb.Message.getFieldWithDefault(msg, 2, 0),
+    portProtocol: jspb.Message.getFieldWithDefault(msg, 3, 0)
   };
 
   if (includeInstance) {
@@ -3482,8 +3484,12 @@ proto.api_container_api.PortBinding.deserializeBinaryFromReader = function(msg, 
       msg.setInterfaceIp(value);
       break;
     case 2:
-      var value = /** @type {string} */ (reader.readString());
-      msg.setInterfacePort(value);
+      var value = /** @type {number} */ (reader.readUint32());
+      msg.setPortNumber(value);
+      break;
+    case 3:
+      var value = /** @type {!proto.api_container_api.PortBinding.PortProtocol} */ (reader.readEnum());
+      msg.setPortProtocol(value);
       break;
     default:
       reader.skipField();
@@ -3521,15 +3527,30 @@ proto.api_container_api.PortBinding.serializeBinaryToWriter = function(message, 
       f
     );
   }
-  f = message.getInterfacePort();
-  if (f.length > 0) {
-    writer.writeString(
+  f = message.getPortNumber();
+  if (f !== 0) {
+    writer.writeUint32(
       2,
+      f
+    );
+  }
+  f = message.getPortProtocol();
+  if (f !== 0.0) {
+    writer.writeEnum(
+      3,
       f
     );
   }
 };
 
+
+/**
+ * @enum {number}
+ */
+proto.api_container_api.PortBinding.PortProtocol = {
+  TCP: 0,
+  UDP: 1
+};
 
 /**
  * optional string interface_ip = 1;
@@ -3550,20 +3571,38 @@ proto.api_container_api.PortBinding.prototype.setInterfaceIp = function(value) {
 
 
 /**
- * optional string interface_port = 2;
- * @return {string}
+ * optional uint32 port_number = 2;
+ * @return {number}
  */
-proto.api_container_api.PortBinding.prototype.getInterfacePort = function() {
-  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 2, ""));
+proto.api_container_api.PortBinding.prototype.getPortNumber = function() {
+  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 2, 0));
 };
 
 
 /**
- * @param {string} value
+ * @param {number} value
  * @return {!proto.api_container_api.PortBinding} returns this
  */
-proto.api_container_api.PortBinding.prototype.setInterfacePort = function(value) {
-  return jspb.Message.setProto3StringField(this, 2, value);
+proto.api_container_api.PortBinding.prototype.setPortNumber = function(value) {
+  return jspb.Message.setProto3IntField(this, 2, value);
+};
+
+
+/**
+ * optional PortProtocol port_protocol = 3;
+ * @return {!proto.api_container_api.PortBinding.PortProtocol}
+ */
+proto.api_container_api.PortBinding.prototype.getPortProtocol = function() {
+  return /** @type {!proto.api_container_api.PortBinding.PortProtocol} */ (jspb.Message.getFieldWithDefault(this, 3, 0));
+};
+
+
+/**
+ * @param {!proto.api_container_api.PortBinding.PortProtocol} value
+ * @return {!proto.api_container_api.PortBinding} returns this
+ */
+proto.api_container_api.PortBinding.prototype.setPortProtocol = function(value) {
+  return jspb.Message.setProto3EnumField(this, 3, value);
 };
 
 
