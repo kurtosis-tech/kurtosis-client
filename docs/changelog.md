@@ -1,4 +1,6 @@
 # TBD
+
+# 0.16.0
 ### Features
 * `ServiceContext.execCommand` now returns log output as a string, parsed via UTF-8
 
