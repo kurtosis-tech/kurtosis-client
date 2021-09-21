@@ -23,9 +23,6 @@ service ApiContainerService {
   // Registers a service with the API container but doesn't start the container for it
   rpc RegisterService(RegisterServiceArgs) returns (RegisterServiceResponse) {};
 
-  // Copies static files that have been registered with the API container into the file namespace of the given service
-  rpc LoadStaticFiles(LoadStaticFilesArgs) returns (LoadStaticFilesResponse) {};
-
   // Starts a previously-registered service by creating a Docker container for it
   rpc StartService(StartServiceArgs) returns (StartServiceResponse) {};
 
@@ -57,7 +54,6 @@ service ApiContainerService {
   rpc GetLambdas(google.protobuf.Empty) returns (GetLambdasResponse) {};
 }
 
-
 // ==============================================================================================
 //                                     Load Lambda
 // ==============================================================================================
@@ -70,8 +66,6 @@ message LoadLambdaArgs {
   // The serialization format is dependent on the Lambda
   string serialized_params = 3;
 }
-
-
 
 // ==============================================================================================
 //                                     Execute Lambda
@@ -90,8 +84,6 @@ message ExecuteLambdaResponse {
   string serialized_result = 1;
 }
 
-
-
 // ==============================================================================================
 //                                     Get Lambda Info
 // ==============================================================================================
@@ -103,24 +95,6 @@ message GetLambdaInfoResponse {
   string ip_addr = 1;
 }
 
-
-// ==============================================================================================
-//                                       Register Static Files
-// ==============================================================================================
-message RegisterStaticFilesArgs {
-  // A set of user_defined_id identifying static files that the client would like the API container to have available, for use in mounting the files to services
-  map<string, bool> static_files_set = 1;
-}
-
-message RegisterStaticFilesResponse {
-  // Map of user_defined_id -> filepath_relative_to_enclave_volume_root, where user_defined_id corresponds to the
-  //  IDs passed in in RegisterStaticFilesArgs
-  // The filepaths returned are where the client should copy the data of the file
-  // The API container guarantees that an empty file will already have been created at the destination
-  map<string, string> static_file_dest_relative_filepaths = 1;
-}
-
-
 // ==============================================================================================
 //                                       Register Files Artifacts
 // ==============================================================================================
@@ -128,7 +102,6 @@ message RegisterFilesArtifactsArgs {
   // A mapping of user_defined_id -> url_of_file_artifact
   map<string, string> files_artifact_urls = 1;
 }
-
 
 // ==============================================================================================
 //                                     Register Service
@@ -147,53 +120,6 @@ message RegisterServiceResponse {
 
   // The dirpath where the service's directory exists inside the enclave data volume, relative to the enclave data volume root
   string relative_service_dirpath =2;
-}
-
-
-// ==============================================================================================
-//                                     Generate Files
-// ==============================================================================================
-message GenerateFilesArgs {
-  // The service ID for which the files will be generated
-  string service_id = 1;
-
-  // Mapping of meaningful-to-user string ID -> options controlling how the file gets generated
-  map<string, FileGenerationOptions> files_to_generate = 2;
-}
-
-message FileGenerationOptions {
-  enum FileTypeToGenerate {
-    FILE = 0;
-    // TODO Uncomment and generate directories too
-    // DIRECTORY = 1;
-  }
-
-  FileTypeToGenerate file_type_to_generate = 1;
-}
-
-message GenerateFilesResponse {
-  // Mapping of meaningful-to-user string ID (as passed in via the request) to the filepath (RELATIVE to the enclave
-  //  data volume root!) where the file was generated
-  map<string, string> generated_file_relative_filepaths = 1;
-}
-
-
-
-// ==============================================================================================
-//                                         Load Static Files
-// ==============================================================================================
-message LoadStaticFilesArgs {
-  // The service ID into whose namespace the static files should be copied
-  string service_id = 1;
-
-  // The "set" of static files, identified by a user-defined ID key, that should be copied into the service's file namespace
-  //  The user-defined ID key should correspond to the keys of the static files declared in the testsuite's getStaticFiles() function
-  map<string, bool> static_files = 2;
-}
-
-message LoadStaticFilesResponse {
-  // A mapping of user_defined_id -> filepath_relative_to_enclave_volume_root where the static files have been copied
-  map<string, string> copied_static_file_relative_filepaths = 1;
 }
 
 // ==============================================================================================
