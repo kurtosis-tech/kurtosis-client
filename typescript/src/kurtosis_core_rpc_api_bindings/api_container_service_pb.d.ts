@@ -201,6 +201,9 @@ export class RegisterServiceResponse extends jspb.Message {
   getIpAddr(): string;
   setIpAddr(value: string): void;
 
+  getRelativeServiceDirpath(): string;
+  setRelativeServiceDirpath(value: string): void;
+
   serializeBinary(): Uint8Array;
   toObject(includeInstance?: boolean): RegisterServiceResponse.AsObject;
   static toObject(includeInstance: boolean, msg: RegisterServiceResponse): RegisterServiceResponse.AsObject;
@@ -214,6 +217,7 @@ export class RegisterServiceResponse extends jspb.Message {
 export namespace RegisterServiceResponse {
   export type AsObject = {
     ipAddr: string,
+    relativeServiceDirpath: string,
   }
 }
 
@@ -446,6 +450,9 @@ export class GetServiceInfoResponse extends jspb.Message {
   getEnclaveDataVolumeMountDirpath(): string;
   setEnclaveDataVolumeMountDirpath(value: string): void;
 
+  getRelativeServiceDirpath(): string;
+  setRelativeServiceDirpath(value: string): void;
+
   serializeBinary(): Uint8Array;
   toObject(includeInstance?: boolean): GetServiceInfoResponse.AsObject;
   static toObject(includeInstance: boolean, msg: GetServiceInfoResponse): GetServiceInfoResponse.AsObject;
@@ -460,6 +467,7 @@ export namespace GetServiceInfoResponse {
   export type AsObject = {
     ipAddr: string,
     enclaveDataVolumeMountDirpath: string,
+    relativeServiceDirpath: string,
   }
 }
 

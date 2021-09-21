@@ -156,18 +156,20 @@ func (networkCtx *NetworkContext) RegisterFilesArtifacts(filesArtifactUrls map[s
 	return nil
 }
 
+
+
 // Docs available at https://docs.kurtosistech.com/kurtosis-client/lib-documentation
 func (networkCtx *NetworkContext) AddService(
-	serviceId services.ServiceID,
-	containerCreationConfig *services.ContainerCreationConfig,
-	generateRunConfigFunc func(ipAddr string, generatedFileFilepaths map[string]string, staticFileFilepaths map[services.StaticFileID]string) (*services.ContainerRunConfig, error),
-) (*services.ServiceContext, map[string]*kurtosis_core_rpc_api_bindings.PortBinding, error) {
+		serviceId services.ServiceID,
+		kurtosisEnclaveDataVolMountpointOnServiceContainer string,
+		containerConfigSupplier func(ipAddr string, sharedDirectory *services.SharedDirectory) (services.ContainerConfig, error),
+	) (*services.ServiceContext, map[string]*kurtosis_core_rpc_api_bindings.PortBinding, error) {
 
 	serviceContext, hostPortBindings, err := networkCtx.AddServiceToPartition(
 		serviceId,
 		defaultPartitionId,
-		containerCreationConfig,
-		generateRunConfigFunc,
+		kurtosisEnclaveDataVolMountpointOnServiceContainer,
+		containerConfigSupplier,
 	)
 	if err != nil {
 		return nil, nil, stacktrace.Propagate(err, "An error occurred adding service '%v' to the network in the default partition", serviceId)
@@ -176,18 +178,18 @@ func (networkCtx *NetworkContext) AddService(
 	return serviceContext, hostPortBindings, nil
 }
 
-// Docs available at https://docs.kurtosistech.com/kurtosis-client/lib-documentation
 func (networkCtx *NetworkContext) AddServiceToPartition(
-	serviceId services.ServiceID,
-	partitionId PartitionID,
-	containerCreationConfig *services.ContainerCreationConfig,
-	generateRunConfigFunc func(ipAddr string, generatedFileFilepaths map[string]string, staticFileFilepaths map[services.StaticFileID]string) (*services.ContainerRunConfig, error),
-) (*services.ServiceContext, map[string]*kurtosis_core_rpc_api_bindings.PortBinding, error) {
+		serviceId services.ServiceID,
+		partitionID PartitionID,
+		kurtosisEnclaveDataVolMountpointOnServiceContainer string,
+		containerConfigSupplier func(ipAddr string, sharedDirectory *services.SharedDirectory) (services.ContainerConfig, error),
+		) (*services.ServiceContext, map[string]*kurtosis_core_rpc_api_bindings.PortBinding, error) {
 
 	ctx := context.Background()
 
 	logrus.Tracef("Registering new service ID with Kurtosis API...")
-	registerServiceArgs := binding_constructors.NewRegisterServiceArgs(string(serviceId), string(partitionId))
+	registerServiceArgs := binding_constructors.NewRegisterServiceArgs(string(serviceId), string(partitionID))
+
 	registerServiceResp, err := networkCtx.client.RegisterService(ctx, registerServiceArgs)
 	if err != nil {
 		return nil, nil, stacktrace.Propagate(
@@ -195,60 +197,26 @@ func (networkCtx *NetworkContext) AddServiceToPartition(
 			"An error occurred registering service with ID '%v' with the Kurtosis API",
 			serviceId)
 	}
-	serviceIpAddr := registerServiceResp.IpAddr
-
-	serviceContext := services.NewServiceContext(
-		networkCtx.client,
-		serviceId,
-		serviceIpAddr,
-		networkCtx.enclaveDataVolMountpoint,
-		containerCreationConfig.GetKurtosisVolumeMountpoint())
 	logrus.Tracef("New service successfully registered with Kurtosis API")
 
-	logrus.Trace("Loading static files into new service namespace...")
-	usedStaticFiles := containerCreationConfig.GetUsedStaticFiles()
-	staticFileAbsFilepathsOnService, err := serviceContext.LoadStaticFiles(usedStaticFiles)
-	if err != nil {
-		return nil, nil, stacktrace.Propagate(err, "An error occurred loading the following static files to service '%v': %+v", serviceId, usedStaticFiles)
-	}
-	logrus.Trace("Successfully loaded static files")
+	serviceIpAddr := registerServiceResp.IpAddr
+	relativeServiceDirpath := registerServiceResp.RelativeServiceDirpath
 
-	logrus.Trace("Initializing generated files...")
-	filesToGenerate := map[string]bool{}
-	for fileId := range containerCreationConfig.GetFileGeneratingFuncs() {
-		filesToGenerate[fileId] = true
-	}
-	generatedFileFilepaths, err := serviceContext.GenerateFiles(filesToGenerate)
-	if err != nil {
-		return nil, nil, stacktrace.Propagate(err, "An error occurred generating the files needed for service startup")
-	}
-	generatedFileAbsFilepathsOnService := map[string]string{}
-	for fileId, initializingFunc := range containerCreationConfig.GetFileGeneratingFuncs() {
-		filepaths, found := generatedFileFilepaths[fileId]
-		if !found {
-			return nil, nil, stacktrace.NewError(
-				"Needed to initialize file for file ID '%v', but no generated file filepaths were found for that file ID; this is a Kurtosis bug",
-				fileId)
-		}
-		fp, err := os.Create(filepaths.GetAbsoluteFilepathHere())
-		if err != nil {
-			return nil, nil, stacktrace.Propagate(err, "An error occurred opening file pointer for file '%v'", fileId)
-		}
-		if err := initializingFunc(fp); err != nil {
-			return nil, nil, stacktrace.Propagate(err, "The function to initialize file with ID '%v' returned an error", fileId)
-		}
-		generatedFileAbsFilepathsOnService[fileId] = filepaths.GetAbsoluteFilepathOnServiceContainer()
-	}
-	logrus.Trace("Successfully initialized generated files in suite execution volume")
+	sharedDirectory := networkCtx.getSharedDirectory(relativeServiceDirpath, kurtosisEnclaveDataVolMountpointOnServiceContainer)
 
-	containerRunConfig, err := generateRunConfigFunc(serviceIpAddr, generatedFileAbsFilepathsOnService, staticFileAbsFilepathsOnService)
+	logrus.Tracef("Generating container config object using the container config supplier...")
+	containerConfig, err := containerConfigSupplier(serviceIpAddr, sharedDirectory)
 	if err != nil {
-		return nil, nil, stacktrace.Propagate(err, "An error occurred getting the container run config")
+		return nil, nil, stacktrace.Propagate(
+			err,
+			"An error occurred executing the container config supplier for service with ID '%v'",
+			serviceId)
 	}
+	logrus.Tracef("Container config object successfully generated")
 
 	logrus.Tracef("Creating files artifact ID str -> mount dirpaths map...")
 	artifactIdStrToMountDirpath := map[string]string{}
-	for filesArtifactId, mountDirpath := range containerCreationConfig.GetFilesArtifactMountpoints() {
+	for filesArtifactId, mountDirpath := range containerConfig.GetFilesArtifactMountpoints() {
 		artifactIdStrToMountDirpath[string(filesArtifactId)] = mountDirpath
 	}
 	logrus.Tracef("Successfully created files artifact ID str -> mount dirpaths map")
@@ -256,12 +224,12 @@ func (networkCtx *NetworkContext) AddServiceToPartition(
 	logrus.Tracef("Starting new service with Kurtosis API...")
 	startServiceArgs := &kurtosis_core_rpc_api_bindings.StartServiceArgs{
 		ServiceId:                  string(serviceId),
-		DockerImage:                containerCreationConfig.GetImage(),
-		UsedPorts:                  containerCreationConfig.GetUsedPortsSet(),
-		EntrypointArgs:             containerRunConfig.GetEntrypointOverrideArgs(),
-		CmdArgs:                    containerRunConfig.GetCmdOverrideArgs(),
-		DockerEnvVars:              containerRunConfig.GetEnvironmentVariableOverrides(),
-		EnclaveDataVolMntDirpath:   containerCreationConfig.GetKurtosisVolumeMountpoint(),
+		DockerImage:                containerConfig.GetImage(),
+		UsedPorts:                  containerConfig.GetUsedPortsSet(),
+		EntrypointArgs:             containerConfig.GetEntrypointOverrideArgs(),
+		CmdArgs:                    containerConfig.GetCmdOverrideArgs(),
+		DockerEnvVars:              containerConfig.GetEnvironmentVariableOverrides(),
+		EnclaveDataVolMntDirpath:   containerConfig.GetKurtosisVolumeMountpoint(),
 		FilesArtifactMountDirpaths: artifactIdStrToMountDirpath,
 	}
 	resp, err := networkCtx.client.StartService(ctx, startServiceArgs)
@@ -269,6 +237,13 @@ func (networkCtx *NetworkContext) AddServiceToPartition(
 		return nil, nil, stacktrace.Propagate(err, "An error occurred starting the service with the Kurtosis API")
 	}
 	logrus.Tracef("Successfully started service with Kurtosis API")
+
+	serviceContext := services.NewServiceContext(
+		networkCtx.client,
+		serviceId,
+		serviceIpAddr,
+		sharedDirectory,
+	)
 
 	return serviceContext, resp.UsedPortsHostPortBindings, nil
 }
@@ -289,6 +264,13 @@ func (networkCtx *NetworkContext) GetServiceContext(serviceId services.ServiceID
 			serviceId)
 	}
 
+	relativeServiceDirpath := serviceResponse.GetRelativeServiceDirpath()
+	if relativeServiceDirpath == "" {
+		return nil, stacktrace.NewError(
+			"Kurtosis API reported an empty relative service directory path for service '%v' - this should never happen, and is a bug with Kurtosis!",
+			serviceId)
+	}
+
 	enclaveDataVolMountDirpathOnSvcContainer := serviceResponse.GetEnclaveDataVolumeMountDirpath()
 	if enclaveDataVolMountDirpathOnSvcContainer == "" {
 		return nil, stacktrace.NewError(
@@ -296,12 +278,13 @@ func (networkCtx *NetworkContext) GetServiceContext(serviceId services.ServiceID
 			serviceId)
 	}
 
+	sharedDirectory := networkCtx.getSharedDirectory(relativeServiceDirpath, enclaveDataVolMountDirpathOnSvcContainer)
+
 	serviceContext := services.NewServiceContext(
 		networkCtx.client,
 		serviceId,
 		serviceResponse.GetIpAddr(),
-		networkCtx.enclaveDataVolMountpoint,
-		enclaveDataVolMountDirpathOnSvcContainer,
+		sharedDirectory,
 	)
 
 	return serviceContext, nil
@@ -443,16 +426,16 @@ func (networkCtx *NetworkContext) GetServices() (map[services.ServiceID]bool, er
 		return nil, stacktrace.Propagate(err, "An error occurred getting the service IDs in the network")
 	}
 
-	serviceIDs := make(map[services.ServiceID]bool, len(response.GetServiceIds()))
+	serviceIds := make(map[services.ServiceID]bool, len(response.GetServiceIds()))
 
 	for key, _ := range response.GetServiceIds() {
-		serviceID := services.ServiceID(key)
-		if _, ok := serviceIDs[serviceID]; !ok{
-			serviceIDs[serviceID] = true
+		serviceId := services.ServiceID(key)
+		if _, ok := serviceIds[serviceId]; !ok{
+			serviceIds[serviceId] = true
 		}
 	}
 
-	return serviceIDs, nil
+	return serviceIds, nil
 }
 
 // Docs available at https://docs.kurtosistech.com/kurtosis-client/lib-documentation
@@ -472,4 +455,17 @@ func (networkCtx *NetworkContext) GetLambdas() (map[modules.LambdaID]bool, error
 	}
 
 	return lambdaIDs, nil
+}
+
+// ====================================================================================================
+// 									   Private helper methods
+// ====================================================================================================
+func (networkCtx *NetworkContext) getSharedDirectory(relativeServiceDirpath string, kurtosisEnclaveDataVolMountpointOnServiceContainer string) *services.SharedDirectory {
+
+	absFilepathOnThisContainer := path.Join(networkCtx.enclaveDataVolMountpoint, relativeServiceDirpath)
+	absFilepathOnServiceContainer := path.Join(kurtosisEnclaveDataVolMountpointOnServiceContainer, relativeServiceDirpath)
+
+	sharedDirectory := services.NewSharedDirectory(absFilepathOnThisContainer, absFilepathOnServiceContainer)
+
+	return sharedDirectory
 }

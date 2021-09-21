@@ -2053,7 +2053,8 @@ proto.api_container_api.RegisterServiceResponse.prototype.toObject = function(op
  */
 proto.api_container_api.RegisterServiceResponse.toObject = function(includeInstance, msg) {
   var f, obj = {
-    ipAddr: jspb.Message.getFieldWithDefault(msg, 1, "")
+    ipAddr: jspb.Message.getFieldWithDefault(msg, 1, ""),
+    relativeServiceDirpath: jspb.Message.getFieldWithDefault(msg, 2, "")
   };
 
   if (includeInstance) {
@@ -2094,6 +2095,10 @@ proto.api_container_api.RegisterServiceResponse.deserializeBinaryFromReader = fu
       var value = /** @type {string} */ (reader.readString());
       msg.setIpAddr(value);
       break;
+    case 2:
+      var value = /** @type {string} */ (reader.readString());
+      msg.setRelativeServiceDirpath(value);
+      break;
     default:
       reader.skipField();
       break;
@@ -2130,6 +2135,13 @@ proto.api_container_api.RegisterServiceResponse.serializeBinaryToWriter = functi
       f
     );
   }
+  f = message.getRelativeServiceDirpath();
+  if (f.length > 0) {
+    writer.writeString(
+      2,
+      f
+    );
+  }
 };
 
 
@@ -2148,6 +2160,24 @@ proto.api_container_api.RegisterServiceResponse.prototype.getIpAddr = function()
  */
 proto.api_container_api.RegisterServiceResponse.prototype.setIpAddr = function(value) {
   return jspb.Message.setProto3StringField(this, 1, value);
+};
+
+
+/**
+ * optional string relative_service_dirpath = 2;
+ * @return {string}
+ */
+proto.api_container_api.RegisterServiceResponse.prototype.getRelativeServiceDirpath = function() {
+  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 2, ""));
+};
+
+
+/**
+ * @param {string} value
+ * @return {!proto.api_container_api.RegisterServiceResponse} returns this
+ */
+proto.api_container_api.RegisterServiceResponse.prototype.setRelativeServiceDirpath = function(value) {
+  return jspb.Message.setProto3StringField(this, 2, value);
 };
 
 
@@ -3730,7 +3760,8 @@ proto.api_container_api.GetServiceInfoResponse.prototype.toObject = function(opt
 proto.api_container_api.GetServiceInfoResponse.toObject = function(includeInstance, msg) {
   var f, obj = {
     ipAddr: jspb.Message.getFieldWithDefault(msg, 1, ""),
-    enclaveDataVolumeMountDirpath: jspb.Message.getFieldWithDefault(msg, 2, "")
+    enclaveDataVolumeMountDirpath: jspb.Message.getFieldWithDefault(msg, 2, ""),
+    relativeServiceDirpath: jspb.Message.getFieldWithDefault(msg, 3, "")
   };
 
   if (includeInstance) {
@@ -3775,6 +3806,10 @@ proto.api_container_api.GetServiceInfoResponse.deserializeBinaryFromReader = fun
       var value = /** @type {string} */ (reader.readString());
       msg.setEnclaveDataVolumeMountDirpath(value);
       break;
+    case 3:
+      var value = /** @type {string} */ (reader.readString());
+      msg.setRelativeServiceDirpath(value);
+      break;
     default:
       reader.skipField();
       break;
@@ -3818,6 +3853,13 @@ proto.api_container_api.GetServiceInfoResponse.serializeBinaryToWriter = functio
       f
     );
   }
+  f = message.getRelativeServiceDirpath();
+  if (f.length > 0) {
+    writer.writeString(
+      3,
+      f
+    );
+  }
 };
 
 
@@ -3854,6 +3896,24 @@ proto.api_container_api.GetServiceInfoResponse.prototype.getEnclaveDataVolumeMou
  */
 proto.api_container_api.GetServiceInfoResponse.prototype.setEnclaveDataVolumeMountDirpath = function(value) {
   return jspb.Message.setProto3StringField(this, 2, value);
+};
+
+
+/**
+ * optional string relative_service_dirpath = 3;
+ * @return {string}
+ */
+proto.api_container_api.GetServiceInfoResponse.prototype.getRelativeServiceDirpath = function() {
+  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 3, ""));
+};
+
+
+/**
+ * @param {string} value
+ * @return {!proto.api_container_api.GetServiceInfoResponse} returns this
+ */
+proto.api_container_api.GetServiceInfoResponse.prototype.setRelativeServiceDirpath = function(value) {
+  return jspb.Message.setProto3StringField(this, 3, value);
 };
 
 
