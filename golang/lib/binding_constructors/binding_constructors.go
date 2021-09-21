@@ -46,21 +46,6 @@ func NewGetLambdaInfoResponse(ipAddr string) *kurtosis_core_rpc_api_bindings.Get
 }
 
 // ==============================================================================================
-//                                       Register Static Files
-// ==============================================================================================
-func NewRegisterStaticFilesArgs(staticFileSet map[string]bool) *kurtosis_core_rpc_api_bindings.RegisterStaticFilesArgs {
-	return &kurtosis_core_rpc_api_bindings.RegisterStaticFilesArgs{
-		StaticFilesSet: staticFileSet,
-	}
-}
-
-func NewRegisterStaticFilesResponse(staticFileDestRelativeFilepaths map[string]string) *kurtosis_core_rpc_api_bindings.RegisterStaticFilesResponse {
-	return &kurtosis_core_rpc_api_bindings.RegisterStaticFilesResponse{
-		StaticFileDestRelativeFilepaths: staticFileDestRelativeFilepaths,
-	}
-}
-
-// ==============================================================================================
 //                                       Register Files Artifacts
 // ==============================================================================================
 func NewRegisterFilesArtifactArgs(filesArtifactUrls map[string]string) *kurtosis_core_rpc_api_bindings.RegisterFilesArtifactsArgs {
@@ -81,42 +66,6 @@ func NewRegisterServiceArgs(serviceId string, partitionId string) *kurtosis_core
 
 func NewRegisterServiceResponse(ipAddr string) *kurtosis_core_rpc_api_bindings.RegisterServiceResponse {
 	return &kurtosis_core_rpc_api_bindings.RegisterServiceResponse{IpAddr: ipAddr}
-}
-
-// ==============================================================================================
-//                                     Generate Files
-// ==============================================================================================
-func NewGenerateFilesArgs(serviceId string, filesToGenerate map[string]*kurtosis_core_rpc_api_bindings.FileGenerationOptions) *kurtosis_core_rpc_api_bindings.GenerateFilesArgs {
-	return &kurtosis_core_rpc_api_bindings.GenerateFilesArgs{
-		ServiceId:       serviceId,
-		FilesToGenerate: filesToGenerate,
-	}
-}
-
-func NewFileGenerationOptions(fileTypeToGenerate kurtosis_core_rpc_api_bindings.FileGenerationOptions_FileTypeToGenerate) *kurtosis_core_rpc_api_bindings.FileGenerationOptions {
-	return &kurtosis_core_rpc_api_bindings.FileGenerationOptions{FileTypeToGenerate: fileTypeToGenerate}
-}
-
-func NewGenerateFilesResponse(generatedFileRelativeFilepaths map[string]string) *kurtosis_core_rpc_api_bindings.GenerateFilesResponse {
-	return &kurtosis_core_rpc_api_bindings.GenerateFilesResponse{
-		GeneratedFileRelativeFilepaths: generatedFileRelativeFilepaths,
-	}
-}
-
-// ==============================================================================================
-//                                         Load Static Files
-// ==============================================================================================
-func NewLoadStaticFilesArgs(serviceId string, staticFilesSet map[string]bool) *kurtosis_core_rpc_api_bindings.LoadStaticFilesArgs {
-	return &kurtosis_core_rpc_api_bindings.LoadStaticFilesArgs{
-		ServiceId:   serviceId,
-		StaticFiles: staticFilesSet,
-	}
-}
-
-func NewLoadStaticFilesResponse(copiedstaticFileRelativeFilepaths map[string]string) *kurtosis_core_rpc_api_bindings.LoadStaticFilesResponse {
-	return &kurtosis_core_rpc_api_bindings.LoadStaticFilesResponse{
-		CopiedStaticFileRelativeFilepaths: copiedstaticFileRelativeFilepaths,
-	}
 }
 
 // ==============================================================================================

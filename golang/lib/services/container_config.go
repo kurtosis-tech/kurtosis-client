@@ -17,10 +17,6 @@
 
 package services
 
-const (
-	defaultKurtosisVolumeMountpoint = "/kurtosis-enclave-data"
-)
-
 type StaticFileID string
 
 // The ID of an artifact containing files that should be mounted into a service container
@@ -33,7 +29,6 @@ type FilesArtifactID string
 type ContainerConfig struct {
 	image                        string
 	usedPortsSet                 map[string]bool
-	kurtosisVolumeMountpoint     string // Technically the enclave data volume, but we call it this for simplicity for the user
 	filesArtifactMountpoints     map[FilesArtifactID]string
 	entrypointOverrideArgs       []string
 	cmdOverrideArgs              []string
@@ -46,10 +41,6 @@ func (config *ContainerConfig) GetImage() string {
 
 func (config *ContainerConfig) GetUsedPortsSet() map[string]bool {
 	return config.usedPortsSet
-}
-
-func (config *ContainerConfig) GetKurtosisVolumeMountpoint() string {
-	return config.kurtosisVolumeMountpoint
 }
 
 func (config *ContainerConfig) GetFilesArtifactMountpoints() map[FilesArtifactID]string {
@@ -76,7 +67,6 @@ func (config *ContainerConfig) GetEnvironmentVariableOverrides() map[string]stri
 type ContainerConfigBuilder struct {
 	image                        string
 	usedPortsSet                 map[string]bool
-	kurtosisVolumeMountpoint     string
 	filesArtifactMountpoints     map[FilesArtifactID]string
 	entrypointOverrideArgs       []string
 	cmdOverrideArgs              []string
@@ -87,7 +77,6 @@ func NewContainerConfigBuilder(image string) *ContainerConfigBuilder {
 	return &ContainerConfigBuilder{
 		image:                        image,
 		usedPortsSet:                 map[string]bool{},
-		kurtosisVolumeMountpoint:     defaultKurtosisVolumeMountpoint,
 		filesArtifactMountpoints:     map[FilesArtifactID]string{},
 		entrypointOverrideArgs:       nil,
 		cmdOverrideArgs:              nil,
@@ -97,11 +86,6 @@ func NewContainerConfigBuilder(image string) *ContainerConfigBuilder {
 
 func (builder *ContainerConfigBuilder) WithUsedPorts(usedPortsSet map[string]bool) *ContainerConfigBuilder {
 	builder.usedPortsSet = usedPortsSet
-	return builder
-}
-
-func (builder *ContainerConfigBuilder) WithKurtosisVolumeMountpoint(kurtosisVolumeMountpoint string) *ContainerConfigBuilder {
-	builder.kurtosisVolumeMountpoint = kurtosisVolumeMountpoint
 	return builder
 }
 
@@ -129,7 +113,6 @@ func (builder *ContainerConfigBuilder) Build() *ContainerConfig {
 	return &ContainerConfig{
 		image:                        builder.image,
 		usedPortsSet:                 builder.usedPortsSet,
-		kurtosisVolumeMountpoint:     builder.kurtosisVolumeMountpoint,
 		filesArtifactMountpoints:     builder.filesArtifactMountpoints,
 		entrypointOverrideArgs:       builder.entrypointOverrideArgs,
 		cmdOverrideArgs:              builder.cmdOverrideArgs,
