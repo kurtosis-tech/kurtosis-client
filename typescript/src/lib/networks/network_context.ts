@@ -13,6 +13,7 @@ import { newLoadLambdaArgs, newGetLambdaInfoArgs, newRegisterFilesArtifactsArgs,
 import { ok, err, Result } from "neverthrow";
 import * as log from "loglevel";
 import * as grpc from "grpc";
+import * as path from "path"
 import * as google_protobuf_empty_pb from "google-protobuf/google/protobuf/empty_pb";
 import { ContainerConfig, FilesArtifactID } from "../services/container_config";
 
@@ -548,12 +549,12 @@ export class NetworkContext {
     //                                       Private helper functions
     // ====================================================================================================
     private getSharedDirectory(relativeServiceDirpath: string): SharedDirectory {
-       
-        const absFilepathOnThisContainer = this.enclaveDataVolMountpoint + "/" + relativeServiceDirpath;
-        const absFilepathOnServiceContainer = DEFAULT_KURTOSIS_VOLUME_MOUNTPOINT  + "/" + relativeServiceDirpath;
 
-        const sharedDirectory = new SharedDirectory(absFilepathOnThisContainer, absFilepathOnServiceContainer)
+        const absFilepathOnThisContainer = path.join(this.enclaveDataVolMountpoint, relativeServiceDirpath);
+        const absFilepathOnServiceContainer = path.join(DEFAULT_KURTOSIS_VOLUME_MOUNTPOINT, relativeServiceDirpath);
 
-        return sharedDirectory
+        const sharedDirectory = new SharedDirectory(absFilepathOnThisContainer, absFilepathOnServiceContainer);
+
+        return sharedDirectory;
     }
 }
