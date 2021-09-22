@@ -26,7 +26,7 @@ import (
 	"github.com/palantir/stacktrace"
 	"github.com/sirupsen/logrus"
 	"google.golang.org/protobuf/types/known/emptypb"
-	"path"
+	"path/filepath"
 )
 
 type PartitionID string
@@ -402,8 +402,8 @@ func (networkCtx *NetworkContext) GetLambdas() (map[modules.LambdaID]bool, error
 // ====================================================================================================
 func (networkCtx *NetworkContext) getSharedDirectory(relativeServiceDirpath string) *services.SharedDirectory {
 
-	absFilepathOnThisContainer := path.Join(networkCtx.enclaveDataVolMountpoint, relativeServiceDirpath)
-	absFilepathOnServiceContainer := path.Join(defaultKurtosisVolumeMountpoint, relativeServiceDirpath)
+	absFilepathOnThisContainer := filepath.Join(networkCtx.enclaveDataVolMountpoint, relativeServiceDirpath)
+	absFilepathOnServiceContainer := filepath.Join(defaultKurtosisVolumeMountpoint, relativeServiceDirpath)
 
 	sharedDirectory := services.NewSharedDirectory(absFilepathOnThisContainer, absFilepathOnServiceContainer)
 

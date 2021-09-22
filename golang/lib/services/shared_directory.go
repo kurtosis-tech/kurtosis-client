@@ -4,7 +4,7 @@ import (
 	"github.com/kurtosis-tech/kurtosis-client/golang/lib/services/shared_file_object"
 	"github.com/palantir/stacktrace"
 	"os"
-	"path"
+	"path/filepath"
 )
 
 //TODO add documentation
@@ -31,7 +31,8 @@ func (s SharedDirectory) GetSharedDirectoryMountpathOnServiceContainer() string 
 
 //TODO add documentation
 func (s SharedDirectory) GetFileObject(fileName string) (*shared_file_object.SharedFileObject, error) {
-	absFilepathOnThisContainer := path.Join(s.sharedDirectoryMountpathOnThisContainer, fileName)
+
+	absFilepathOnThisContainer := filepath.Join(s.sharedDirectoryMountpathOnThisContainer, fileName)
 
 	if _, err := os.Stat(absFilepathOnThisContainer); os.IsNotExist(err) {
 		fp, err := os.Create(absFilepathOnThisContainer)
@@ -41,7 +42,7 @@ func (s SharedDirectory) GetFileObject(fileName string) (*shared_file_object.Sha
 		fp.Close()
 	}
 
-	absFilepathOnServiceContainer := path.Join(s.sharedDirectoryMountpathOnServiceContainer, fileName)
+	absFilepathOnServiceContainer := filepath.Join(s.sharedDirectoryMountpathOnServiceContainer, fileName)
 
 	sharedFileObject := shared_file_object.NewSharedFileObject(absFilepathOnThisContainer, absFilepathOnServiceContainer)
 
