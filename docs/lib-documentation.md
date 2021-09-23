@@ -217,6 +217,7 @@ Gets the IP address of the Docker container that the service is running inside.
 
 The service's IP address.
 
+<<<<<<< HEAD
 ### getSharedDirectory() -\> [SharedPath][sharedpath]
 Get the directory that is mounted on both the current container running this code and the service container, so that files can be passed back and forth. The directory is expressed as a [SharedPath][sharedpath] object, so file inside can be referenced by absolute filepath on either this container or the service contianer.
 
@@ -224,7 +225,8 @@ Get the directory that is mounted on both the current container running this cod
 
 The [SharedPath][sharedpath] object.
 
-### execCommand(List\<String\> command) -\> (int exitCode, List\<byte\> logs)
+
+### execCommand(List\<String\> command) -\> (int exitCode, String logs)
 Uses [Docker exec](https://docs.docker.com/engine/reference/commandline/exec/) functionality to execute a command inside the service's running Docker container.
 
 **Args**
@@ -234,7 +236,7 @@ Uses [Docker exec](https://docs.docker.com/engine/reference/commandline/exec/) f
 **Returns**
 
 * `exitCode`: The exit code of the command.
-* `logs`: The bytes of the command logs. This isn't a string because Kurtosis can't know what text encoding scheme the container uses.
+* `logs`: The output of the run command, assuming a UTF-8 encoding. **NOTE:** Commands that output non-UTF-8 output will likely be garbled!
 
 SharedPath
 ----------

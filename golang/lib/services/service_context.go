@@ -61,16 +61,16 @@ func (self *ServiceContext) GetSharedDirectory() *SharedPath {
 }
 
 // Docs available at https://docs.kurtosistech.com/kurtosis-client/lib-documentation
-func (self *ServiceContext) ExecCommand(command []string) (int32, *[]byte, error) {
+func (self *ServiceContext) ExecCommand(command []string) (int32, string, error) {
 	serviceId := self.serviceId
 	args := binding_constructors.NewExecCommandArgs(string(serviceId), command)
 	resp, err := self.client.ExecCommand(context.Background(), args)
 	if err != nil {
-		return 0, nil, stacktrace.Propagate(
+		return 0, "", stacktrace.Propagate(
 			err,
 			"An error occurred executing command '%v' on service '%v'",
 			command,
 			serviceId)
 	}
-	return resp.ExitCode, &resp.LogOutput, nil
+	return resp.ExitCode, resp.LogOutput, nil
 }

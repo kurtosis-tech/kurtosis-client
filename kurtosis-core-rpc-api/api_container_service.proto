@@ -234,7 +234,9 @@ message ExecCommandArgs {
 
 message ExecCommandResponse {
   int32 exit_code = 1;
-  bytes log_output = 2;
+
+  // Assumes UTF-8 encoding
+  string log_output = 2;
 }
 
 // ==============================================================================================
