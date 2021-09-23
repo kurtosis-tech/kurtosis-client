@@ -7,7 +7,7 @@ import { ApiContainerServiceClient } from "../..//kurtosis_core_rpc_api_bindings
 import { LoadLambdaArgs, GetLambdaInfoArgs, RegisterFilesArtifactsArgs, PortBinding, RegisterServiceArgs, RegisterServiceResponse, StartServiceArgs, GetServiceInfoArgs, GetServiceInfoResponse, RemoveServiceArgs, PartitionConnectionInfo, PartitionServices, PartitionConnections, RepartitionArgs, WaitForHttpGetEndpointAvailabilityArgs, WaitForHttpPostEndpointAvailabilityArgs, ExecuteBulkCommandsArgs, StartServiceResponse, GetLambdaInfoResponse, GetServicesResponse, GetLambdasResponse } from "../..//kurtosis_core_rpc_api_bindings/api_container_service_pb";
 import { LambdaID, LambdaContext } from "../modules/lambda_context";
 import { ServiceID} from "../services/service";
-import { SharedDirectory } from "../services/shared_directory";
+import { SharedPath } from "../services/shared_path";
 import { ServiceContext} from "../services/service_context";
 import { newLoadLambdaArgs, newGetLambdaInfoArgs, newRegisterFilesArtifactsArgs, newRegisterServiceArgs, newStartServiceArgs, newGetServiceInfoArgs, newRemoveServiceArgs, newPartitionServices, newPartitionConnections, newRepartitionArgs, newWaitForHttpGetEndpointAvailabilityArgs, newWaitForHttpPostEndpointAvailabilityArgs, newExecuteBulkCommandsArgs } from "../constructor_calls";
 import { ok, err, Result } from "neverthrow";
@@ -126,7 +126,7 @@ export class NetworkContext {
     // Docs available at https://docs.kurtosistech.com/kurtosis-client/lib-documentation
     public async addService(
             serviceId: ServiceID,
-            containerConfigSupplier: (ipAddr: string, sharedDirectory: SharedDirectory) => Result<ContainerConfig, Error>
+            containerConfigSupplier: (ipAddr: string, sharedDirectory: SharedPath) => Result<ContainerConfig, Error>
         ): Promise<Result<[ServiceContext, Map<string, PortBinding>], Error>> {
 
         const resultAddServiceToPartition: Result<[ServiceContext, Map<string, PortBinding>], Error> = await this.addServiceToPartition(
@@ -146,7 +146,7 @@ export class NetworkContext {
     public async addServiceToPartition(
             serviceId: ServiceID,
             partitionId: PartitionID,
-            containerConfigSupplier: (ipAddr: string, sharedDirectory: SharedDirectory) => Result<ContainerConfig, Error>
+            containerConfigSupplier: (ipAddr: string, sharedDirectory: SharedPath) => Result<ContainerConfig, Error>
         ): Promise<Result<[ServiceContext, Map<string, PortBinding>], Error>> {
 
         log.trace("Registering new service ID with Kurtosis API...");
@@ -285,7 +285,7 @@ export class NetworkContext {
             );
         }
 
-        const sharedDirectory: SharedDirectory = this.getSharedDirectory(relativeServiceDirpath)
+        const sharedDirectory: SharedPath = this.getSharedDirectory(relativeServiceDirpath)
 
         const serviceContext: ServiceContext = new ServiceContext(
             this.client,
@@ -548,12 +548,12 @@ export class NetworkContext {
     // ====================================================================================================
     //                                       Private helper functions
     // ====================================================================================================
-    private getSharedDirectory(relativeServiceDirpath: string): SharedDirectory {
+    private getSharedDirectory(relativeServiceDirpath: string): SharedPath {
 
         const absFilepathOnThisContainer = path.join(this.enclaveDataVolMountpoint, relativeServiceDirpath);
         const absFilepathOnServiceContainer = path.join(DEFAULT_KURTOSIS_VOLUME_MOUNTPOINT, relativeServiceDirpath);
 
-        const sharedDirectory = new SharedDirectory(absFilepathOnThisContainer, absFilepathOnServiceContainer);
+        const sharedDirectory = new SharedPath(absFilepathOnThisContainer, absFilepathOnServiceContainer);
 
         return sharedDirectory;
     }

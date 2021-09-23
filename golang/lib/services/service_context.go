@@ -29,14 +29,14 @@ type ServiceContext struct {
 	client			kurtosis_core_rpc_api_bindings.ApiContainerServiceClient
 	serviceId		ServiceID
 	ipAddress		string
-	sharedDirectory	*SharedDirectory
+	sharedDirectory	*SharedPath
 }
 
 func NewServiceContext(
 		client kurtosis_core_rpc_api_bindings.ApiContainerServiceClient,
 		serviceId ServiceID,
 		ipAddress string,
-	    sharedDirectory *SharedDirectory) *ServiceContext {
+	    sharedDirectory *SharedPath) *ServiceContext {
 	return &ServiceContext{
 		client:				client,
 		serviceId:			serviceId,
@@ -56,7 +56,7 @@ func (self *ServiceContext) GetIPAddress() string {
 }
 
 // Docs available at https://docs.kurtosistech.com/kurtosis-client/lib-documentation
-func (self *ServiceContext) GetSharedDirectory() *SharedDirectory {
+func (self *ServiceContext) GetSharedDirectory() *SharedPath {
 	return self.sharedDirectory
 }
 
