@@ -119,6 +119,7 @@ func (networkCtx *NetworkContext) AddService(
 	return serviceContext, hostPortBindings, nil
 }
 
+// Docs available at https://docs.kurtosistech.com/kurtosis-client/lib-documentation
 func (networkCtx *NetworkContext) AddServiceToPartition(
 		serviceId services.ServiceID,
 		partitionID PartitionID,
