@@ -30,7 +30,7 @@ func (s SharedDirectory) GetSharedDirectoryMountpathOnServiceContainer() string 
 }
 
 //TODO add documentation
-func (s SharedDirectory) GetFileObject(fileName string) (*shared_file_object.SharedFileObject, error) {
+func (s SharedDirectory) GetSharedFileObject(fileName string) (*shared_file_object.SharedFileObject, error) {
 
 	absFilepathOnThisContainer := filepath.Join(s.sharedDirectoryMountpathOnThisContainer, fileName)
 
