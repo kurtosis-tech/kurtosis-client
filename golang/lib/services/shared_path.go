@@ -5,7 +5,9 @@ import (
 )
 
 /*
-Represents and absolute path shared between two containers, it could be a file, a directory or a symlink
+Holds information about a filepath shared between two containers: this container, and a container running a service
+in a testnet. The actual object referenced by this path could be anything - a fire, a directory, a symlink,
+nonexistent, etc.
 */
 type SharedPath struct {
 	//Absolute path in the container where this code is running
