@@ -2,7 +2,7 @@
 ### Features
 * Add `SharedDirectory` object which contains two fields `sharedDirectoryMountpathOnThisContainer` and `sharedDirectoryMountpathOnServiceContainer` that store the values of the service directory absolute path in the container where the code is running and in the service container
 * Add `SharedFileObject` object which contains two fields `absFilepathOnThisContainer` and `absFilepathOnServiceContainer` that store the values of the absolute file path in the container where the code is running and in the service container
-* Add `SharedDirectory.GetFileObject()` which creates, if the file doesn't exist in the service main directory yet, and returns a `SharedFileObject` by a file name
+* Add `SharedDirectory.GetSharedFileObject()` which creates, if the file doesn't exist in service directory yet, and returns a `SharedFileObject` by a file name
 * Update API container service proto definition adding the `relative_service_dirpath` field in `RegisterServiceResponse` and `GetServiceInfoResponse`
 
 ### Changes
