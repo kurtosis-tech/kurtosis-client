@@ -65,7 +65,7 @@ Downloads the given files artifacts to the Kurtosis engine, associating them wit
 
 * `filesArtifactUrls`: A map of files_artifact_id -> url, where the ID is how the artifact will be referenced in [ContainerConfig.filesArtifactMountpoints][containerconfig_filesartifactmountpoints] and the URL is the URL on the web where the files artifact should be downloaded from.
 
-### addServiceToPartition(ServiceID serviceId, PartitionID partitionId, Func(String ipAddr, SharedPath sharedDirectory) -\> [ContainerConfig][containerconfig] containerConfigSupplier) -\> ([ServiceContext][servicecontext] serviceContext, Map\<String, PortBinding\> hostPortBindings)
+### addServiceToPartition(ServiceID serviceId, PartitionID partitionId, Func(String ipAddr, [SharedPath][sharedpath] sharedDirectory) -\> [ContainerConfig][containerconfig] containerConfigSupplier) -\> ([ServiceContext][servicecontext] serviceContext, Map\<String, PortBinding\> hostPortBindings)
 Starts a new service in the network with the given service ID, inside the partition with the given ID, using the given config supplier.
 
 **Args**
@@ -81,7 +81,7 @@ Starts a new service in the network with the given service ID, inside the partit
 * `serviceContext`: The [ServiceContext][servicecontext] representation of a service running in a Docker container.
 * `hostPortBindings`: The port spec strings that the service declared (as defined in [ContainerConfig.usedPorts][containerconfig_usedports]), mapped to the port on the host machine where the port has been bound to. This allows you to make requests to a service running in Kurtosis by making requests to a port on your local machine. If a port was not bound to a host machine port, it will not be present in the map (and if no ports were bound to host machine ports, the map will be empty).
 
-### addService(ServiceID serviceId,  Func(String ipAddr, SharedPath sharedDirectory) -\> [ContainerConfig][containerconfig] containerConfigSupplier) -\> ([ServiceContext][servicecontext] serviceContext, Map\<String, PortBinding\> hostPortBindings)
+### addService(ServiceID serviceId,  Func(String ipAddr, [SharedPath][sharedpath] sharedDirectory) -\> [ContainerConfig][containerconfig] containerConfigSupplier) -\> ([ServiceContext][servicecontext] serviceContext, Map\<String, PortBinding\> hostPortBindings)
 Convenience wrapper around [NetworkContext.addServiceToPartition][networkcontext_addservicetopartition], that adds the service to the default partition. Note that if the network has been repartitioned and the default partition doesn't exist anymore, this method will fail.
 
 ### getServiceContext(ServiceID serviceId) -\> [ServiceContext][servicecontext]
@@ -218,7 +218,7 @@ Gets the IP address of the Docker container that the service is running inside.
 The service's IP address.
 
 ### getSharedDirectory() -\> [SharedPath][sharedpath]
-Gets the shared directory's [SharedPath][sharedpath] object who has been dynamically generated during the service bootstrap process.
+Get the directory that is mounted on both the current container running this code and the service container, so that files can be passed back and forth. The directory is expressed as a [SharedPath][sharedpath] object, so file inside can be referenced by absolute filepath on either this container or the service contianer.
 
 **Returns**
 
@@ -241,13 +241,21 @@ SharedPath
 Simple structure that holds information about a filepath shared between two containers: this container, and a container running a service in a testnet. The actual object referenced by this path could be anything - a fire, a directory, a symlink, nonexistent, etc.
 
 ### getAbsPathOnThisContainer() -\> String
-Gets the absolute path in the container where this code is running
+For the object in the shared directory represented by this `SharedPath` object, gets the absolute filepath on the container where this code is running.
 
 ### getAbsPathOnServiceContainer() -\> String
-Gets the absolute path in the service container
+For the object in the shared directory represented by this `SharedPath` object, gets the absolute filepath on the remote service container where the shared directory is also mounted.
 
-### getChildPath(String pathElement) -\> SharedPath
-Gets a new SharedPath composed by the actual value and adding it a new path element at the end of it
+### getChildPath(String relativePath) -\> [SharedPath][sharedpath]
+Gets a new [SharedPath][sharedpath] object that represents another path inside the shared directory, relative to the current path object. E.g. if the shared directory had a subdirectory called `my-dir` which has `some-file.txt`, `sharedDirRoot.getChildPath("my-dir")` would represent that subdirectory and `sharedDirRoot.getChildPath("my-dir/some-file.txt")` would get the file inside.
+
+**Args**
+
+* `relativePath`: The relative path to add at the end of the [SharedPath][sharedpath].
+
+**Returns**
+
+The new [SharedPath][sharedpath] object.
 
 ---
 
