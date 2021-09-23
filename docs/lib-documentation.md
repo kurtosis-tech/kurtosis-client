@@ -65,7 +65,7 @@ Downloads the given files artifacts to the Kurtosis engine, associating them wit
 
 * `filesArtifactUrls`: A map of files_artifact_id -> url, where the ID is how the artifact will be referenced in [ContainerConfig.filesArtifactMountpoints][containerconfig_filesartifactmountpoints] and the URL is the URL on the web where the files artifact should be downloaded from.
 
-### addServiceToPartition(ServiceID serviceId, PartitionID partitionId, Func(String ipAddr, SharedDirectory sharedDirectory) -\> [ContainerConfig][containerconfig] containerConfigSupplier) -\> ([ServiceContext][servicecontext] serviceContext, Map\<String, PortBinding\> hostPortBindings)
+### addServiceToPartition(ServiceID serviceId, PartitionID partitionId, Func(String ipAddr, SharedPath sharedDirectory) -\> [ContainerConfig][containerconfig] containerConfigSupplier) -\> ([ServiceContext][servicecontext] serviceContext, Map\<String, PortBinding\> hostPortBindings)
 Starts a new service in the network with the given service ID, inside the partition with the given ID, using the given config supplier.
 
 **Args**
@@ -74,14 +74,14 @@ Starts a new service in the network with the given service ID, inside the partit
 * `partitionId`: The ID of the partition that the new service should be started in. This can be left blank to start the service in the default partition if it exists (i.e. if the network hasn't been repartitioned and the default partition removed).
 * `containerConfigSupplier`: An anonymous function, used to produce the [ContainerConfig][containerconfig] for starting the service, which receives two dynamic values as arguments: 
     1. The IP address of the service being started
-    1. A [SharedDirectory][shareddirectory] object which contains two fields `sharedDirectoryMountpathOnThisContainer` and `sharedDirectoryMountpathOnServiceContainer` that store the value of the services's folder absolute path inside the service container and inside the container where the code is running respectively
+    1. A [SharedPath][sharedpath] object which contains two fields that store the value of the services's folder absolute path inside the service container and inside the container where the code is running respectively
 
 **Returns**
 
 * `serviceContext`: The [ServiceContext][servicecontext] representation of a service running in a Docker container.
 * `hostPortBindings`: The port spec strings that the service declared (as defined in [ContainerConfig.usedPorts][containerconfig_usedports]), mapped to the port on the host machine where the port has been bound to. This allows you to make requests to a service running in Kurtosis by making requests to a port on your local machine. If a port was not bound to a host machine port, it will not be present in the map (and if no ports were bound to host machine ports, the map will be empty).
 
-### addService(ServiceID serviceId,  Func(String ipAddr, SharedDirectory sharedDirectory) -\> [ContainerConfig][containerconfig] containerConfigSupplier) -\> ([ServiceContext][servicecontext] serviceContext, Map\<String, PortBinding\> hostPortBindings)
+### addService(ServiceID serviceId,  Func(String ipAddr, SharedPath sharedDirectory) -\> [ContainerConfig][containerconfig] containerConfigSupplier) -\> ([ServiceContext][servicecontext] serviceContext, Map\<String, PortBinding\> hostPortBindings)
 Convenience wrapper around [NetworkContext.addServiceToPartition][networkcontext_addservicetopartition], that adds the service to the default partition. Note that if the network has been repartitioned and the default partition doesn't exist anymore, this method will fail.
 
 ### getServiceContext(ServiceID serviceId) -\> [ServiceContext][servicecontext]
@@ -217,12 +217,12 @@ Gets the IP address of the Docker container that the service is running inside.
 
 The service's IP address.
 
-### getSharedDirectory() -\> [SharedDirectory][shareddirectory]
-Gets the SharedDirectory object who has been dynamically generated during the service bootstrap process.
+### getSharedDirectory() -\> [SharedPath][sharedpath]
+Gets the shared directory's [SharedPath][sharedpath] object who has been dynamically generated during the service bootstrap process.
 
 **Returns**
 
-The [SharedDirectory][shareddirectory] object.
+The [SharedPath][sharedpath] object.
 
 ### execCommand(List\<String\> command) -\> (int exitCode, List\<byte\> logs)
 Uses [Docker exec](https://docs.docker.com/engine/reference/commandline/exec/) functionality to execute a command inside the service's running Docker container.
@@ -236,30 +236,18 @@ Uses [Docker exec](https://docs.docker.com/engine/reference/commandline/exec/) f
 * `exitCode`: The exit code of the command.
 * `logs`: The bytes of the command logs. This isn't a string because Kurtosis can't know what text encoding scheme the container uses.
 
-SharedDirectory
----------------
-Simple structure containing the path to a generated directory on a) the current container and b) on the service container for whom the directory has been generated. These paths are different because the path where the enclave data volume has been mounted on the testsuite container can be different from the path where the volume has been mounted on the service container.
+SharedPath
+----------
+Simple structure that holds information about a filepath shared between two containers: this container, and a container running a service in a testnet. The actual object referenced by this path could be anything - a fire, a directory, a symlink, nonexistent, etc.
 
-### getSharedDirectoryMountpathOnThisContainer() -\> String
-Gets the absolute path where the directory lives on the current container, which would be used if the testsuite code wants to read or write data to the file.
+### getAbsPathOnThisContainer() -\> String
+Gets the absolute path in the container where this code is running
 
-### getSharedDirectoryMountpathOnServiceContainer() -\> String
-Gets the absolute path where the directory lives on the service container, which would be used if the service wants to read or write data to the file.
+### getAbsPathOnServiceContainer() -\> String
+Gets the absolute path in the service container
 
-### getSharedFileObject(String fileName) -\> SharedFileObject
-Gets a shared file object from the service directory by its file name, if the file doesn't exist it will be created
-
-
-
-SharedFileObject
-----------------
-Simple structure containing the filepaths to a generated file on a) the current container and b) on the service container for whom the file has been generated. These filepaths are different because the path where the enclave data volume has been mounted on the testsuite container can be different from the path where the volume has been mounted on the service container.
-
-### getAbsFilepathOnThisContainer() -> String
-Gets the absolute filepath where the file lives on the current container, which would be used if the testsuite code wants to read or write data to the file.
-
-### getAbsFilepathOnServiceContainer() -> String
-Gets the absolute filepath where the file lives on the service container, which would be used if the service wants to read or write data to the file.
+### getChildPath(String pathElement) -\> [SharedPath][sharedpath
+Gets a new [SharedPath][sharedpath] composed by the actual value and adding it a new path element at the end of it
 
 ---
 
@@ -281,16 +269,15 @@ _Found a bug? File it on [the repo](https://github.com/kurtosis-tech/kurtosis-cl
 
 [networkcontext]: #networkcontext
 [networkcontext_registerfilesartifacts]: #registerfilesartifactsmapfilesartifactid-string-filesartifacturls
-[networkcontext_addservice]: #addserviceserviceid-serviceid--funcstring-ipaddr-shareddirectory-shareddirectory---containerconfigcontainerconfig-containerconfigsupplier---servicecontext-servicecontext-mapstring-portbinding-hostportbindings
-[networkcontext_addservicetopartition]: #addservicetopartitionserviceid-serviceid-partitionid-partitionid-funcstring-ipaddr-shareddirectory-shareddirectory---containerconfig-containerconfigsupplier---servicecontext-servicecontext-mapstring-portbinding-hostportbindings
+[networkcontext_addservice]: #addserviceserviceid-serviceid--funcstring-ipaddr-sharedpath-shareddirectory---containerconfig-containerconfigsupplier---servicecontext-servicecontext-mapstring-portbinding-hostportbindings
+[networkcontext_addservicetopartition]: #addservicetopartitionserviceid-serviceid-partitionid-partitionid-funcstring-ipaddr-sharedpath-shareddirectory---containerconfig-containerconfigsupplier---servicecontext-servicecontext-mapstring-portbinding-hostportbindings
 [networkcontext_repartitionnetwork]: #repartitionnetworkmappartitionid-setserviceid-partitionservices-mappartitionid-mappartitionid-partitionconnectioninfo-partitionconnections-partitionconnectioninfo-defaultconnection
 
 [partitionconnectioninfo]: #partitionconnectioninfo
 
 [servicecontext]: #servicecontext
 
-[shareddirectory]: #shareddirectory
-[sharedfileobject]: #sharedfileobject
+[sharedpath]: #sharedpath
 
 [test]: ../kurtosis-testsuite-api-lib/lib-documentation#testn-extends-network
 [test_configure]: ../kurtosis-testsuite-api-lib/lib-documentation#configuretestconfigurationbuilder-builder
