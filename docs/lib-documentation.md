@@ -246,8 +246,8 @@ Gets the absolute path in the container where this code is running
 ### getAbsPathOnServiceContainer() -\> String
 Gets the absolute path in the service container
 
-### getChildPath(String pathElement) -\> [SharedPath][sharedpath
-Gets a new [SharedPath][sharedpath] composed by the actual value and adding it a new path element at the end of it
+### getChildPath(String pathElement) -\> SharedPath
+Gets a new SharedPath composed by the actual value and adding it a new path element at the end of it
 
 ---
 

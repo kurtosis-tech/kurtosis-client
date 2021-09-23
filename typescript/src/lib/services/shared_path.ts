@@ -1,10 +1,6 @@
 import * as path from "path"
 
-/*
-Holds information about a filepath shared between two containers: this container, and a container running a service
-in a testnet. The actual object referenced by this path could be anything - a fire, a directory, a symlink,
-nonexistent, etc.
-*/
+// Docs available at https://docs.kurtosistech.com/kurtosis-client/lib-documentation
 export class SharedPath {
 
     //Absolute path in the container where this code is running
@@ -16,15 +12,15 @@ export class SharedPath {
         this.absPathOnThisContainer = absPathOnThisContainer;
         this.absPathOnServiceContainer = absPathOnServiceContainer;
     }
-    //TODO add documentation
+    // Docs available at https://docs.kurtosistech.com/kurtosis-client/lib-documentation
     public getAbsPathOnThisContainer(): string {
         return this.absPathOnThisContainer;
     }
-    //TODO add documentation
+    // Docs available at https://docs.kurtosistech.com/kurtosis-client/lib-documentation
     public getAbsPathOnServiceContainer(): string {
         return this.absPathOnServiceContainer;
     }
-    //TODO add documentation
+    // Docs available at https://docs.kurtosistech.com/kurtosis-client/lib-documentation
     public GetChildPath(pathElement: string): SharedPath {
         const absPathOnThisContainer = path.join(this.absPathOnThisContainer, pathElement);
 

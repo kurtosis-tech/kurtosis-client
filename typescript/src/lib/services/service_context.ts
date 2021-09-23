@@ -6,6 +6,7 @@ import { newExecCommandArgs} from "../constructor_calls";
 import { ok, err, Result } from 'neverthrow';
 import * as grpc from "grpc";
 
+// Docs available at https://docs.kurtosistech.com/kurtosis-client/lib-documentation
 export class ServiceContext {
     
     private readonly client: ApiContainerServiceClient;
@@ -34,6 +35,7 @@ export class ServiceContext {
         return this.ipAddress;
     }
 
+    // Docs available at https://docs.kurtosistech.com/kurtosis-client/lib-documentation
     public getSharedDirectory(): SharedPath {
         return  this.sharedDirectory
     }
@@ -63,7 +65,5 @@ export class ServiceContext {
         const resp: ExecCommandResponse = resultExecCommand.value;
 
         return ok([resp.getExitCode(), resp.getLogOutput()]);
-        
-
     }
 }
