@@ -58,39 +58,30 @@ Gets the [LambdaContext][lambdacontext] associated with an already-running Lambd
 
 * `lambdaContext`: The [LambdaContext][lambdacontext] representation of the running Lambda container, which allows execution of the Lambda function.
 
-### registerStaticFiles(Map\<StaticFileID, String\> staticFileFilepaths)
-Registers the given files with the Kurtosis engine, so they can be loaded inside a service's filespace via [ContainerCreationConfig.usedStaticFiles][containercreationconfig_usedstaticfiles] and [ServiceContext.loadStaticFiles][servicecontext_loadstaticfiles].
-
-**Args**
-
-* `staticFileFilepaths`: A map of static_file_id -> absolute_filepath containing the files to register and the ID by which they'll be referenced via [ContainerCreationConfig.usedStaticFiles][containercreationconfig_usedstaticfiles] and [ServiceContext.loadStaticFiles][servicecontext_loadstaticfiles].
-
 ### registerFilesArtifacts(Map\<FilesArtifactID, String\> filesArtifactUrls)
-Downloads the given files artifacts to the Kurtosis engine, associating them with the given IDs, so they can be mounted inside a service's filespace at creation time via [ContainerCreationConfig.filesArtifactMountpoints][containercreationconfig_filesartifactmountpoints].
+Downloads the given files artifacts to the Kurtosis engine, associating them with the given IDs, so they can be mounted inside a service's filespace at creation time via [ContainerConfig.filesArtifactMountpoints][containerconfig_filesartifactmountpoints].
 
 **Args**
 
-* `filesArtifactUrls`: A map of files_artifact_id -> url, where the ID is how the artifact will be referenced in [ContainerCreationConfig.filesArtifactMountpoints][containercreationconfig_filesartifactmountpoints] and the URL is the URL on the web where the files artifact should be downloaded from.
+* `filesArtifactUrls`: A map of files_artifact_id -> url, where the ID is how the artifact will be referenced in [ContainerConfig.filesArtifactMountpoints][containerconfig_filesartifactmountpoints] and the URL is the URL on the web where the files artifact should be downloaded from.
 
-### addServiceToPartition(ServiceID serviceId, PartitionID partitionId, [ContainerCreationConfig][containercreationconfig] containerCreationConfig, Func(String ipAddr, Map\<String, String\> generatedFileFilepaths, Map\<String, String\> staticFileFilepaths) -\> [ContainerRunConfig][containerrunconfig] generateRunConfigFunc) -\> ([ServiceContext][servicecontext] serviceContext, Map\<String, PortBinding\> hostPortBindings)
-Starts a new service in the network with the given service ID, inside the partition with the given ID, using the given config factory.
+### addServiceToPartition(ServiceID serviceId, PartitionID partitionId, Func(String ipAddr, SharedDirectory sharedDirectory) -\> [ContainerConfig][containerconfig] containerConfigSupplier) -\> ([ServiceContext][servicecontext] serviceContext, Map\<String, PortBinding\> hostPortBindings)
+Starts a new service in the network with the given service ID, inside the partition with the given ID, using the given config supplier.
 
 **Args**
 
 * `serviceId`: The ID that the new service should have.
 * `partitionId`: The ID of the partition that the new service should be started in. This can be left blank to start the service in the default partition if it exists (i.e. if the network hasn't been repartitioned and the default partition removed).
-* `containerCreationConfig`: The definition of the necessary values that Kurtosis will use to start the container for the new service.
-* `generateRunConfigFunc`: An anonymous function, used to produce the [ContainerRunConfig][containerrunconfig] for starting the service, which receives three dynamic values as arguments: 
+* `containerConfigSupplier`: An anonymous function, used to produce the [ContainerConfig][containerconfig] for starting the service, which receives two dynamic values as arguments: 
     1. The IP address of the service being started
-    1. A map of generated_file_id -> filepath_on_service, where the keys correspond to the keys of the [ContainerCreationConfig.fileGeneratingFuncs][containercreationconfig_filegeneratingfuncs] map and the values are the filepaths _on the service container_ where the generated files can be found
-    1. A map of static_file_id -> filepath_on_service, where the keys correspond to the static file IDs requested in [ContainerCreationConfig.usedStaticFiles][containercreationconfig_usedstaticfiles] and the values are the filepaths _on the service container_ where the static files can be found
+    1. A [SharedDirectory][shareddirectory] object which contains two fields `sharedDirectoryMountpathOnThisContainer` and `sharedDirectoryMountpathOnServiceContainer` that store the value of the services's folder absolute path inside the service container and inside the container where the code is running respectively
 
 **Returns**
 
 * `serviceContext`: The [ServiceContext][servicecontext] representation of a service running in a Docker container.
-* `hostPortBindings`: The port spec strings that the service declared (as defined in [ContainerCreationConfig.usedPorts][containercreationconfig_usedports]), mapped to the port on the host machine where the port has been bound to. This allows you to make requests to a service running in Kurtosis by making requests to a port on your local machine. If a port was not bound to a host machine port, it will not be present in the map (and if no ports were bound to host machine ports, the map will be empty).
+* `hostPortBindings`: The port spec strings that the service declared (as defined in [ContainerConfig.usedPorts][containerconfig_usedports]), mapped to the port on the host machine where the port has been bound to. This allows you to make requests to a service running in Kurtosis by making requests to a port on your local machine. If a port was not bound to a host machine port, it will not be present in the map (and if no ports were bound to host machine ports, the map will be empty).
 
-### addService(ServiceID serviceId, [ContainerCreationConfig][containercreationconfig] containerCreationConfig, Func(String ipAddr, Map\<String, String\> generatedFileFilepaths, Map\<String, String\> staticFileFilepaths) -\> [ContainerRunConfig][containerrunconfig] generateRunConfigFunc ) -\> ([ServiceContext][servicecontext] serviceContext, Map\<String, PortBinding\> hostPortBindings)
+### addService(ServiceID serviceId,  Func(String ipAddr, SharedDirectory sharedDirectory) -\> [ContainerConfig][containerconfig] containerConfigSupplier) -\> ([ServiceContext][servicecontext] serviceContext, Map\<String, PortBinding\> hostPortBindings)
 Convenience wrapper around [NetworkContext.addServiceToPartition][networkcontext_addservicetopartition], that adds the service to the default partition. Note that if the network has been repartitioned and the default partition doesn't exist anymore, this method will fail.
 
 ### getServiceContext(ServiceID serviceId) -\> [ServiceContext][servicecontext]
@@ -174,45 +165,22 @@ This class is a plain old object defining the state between two partitions (e.g.
 
 
 
-ContainerCreationConfig
------------------------
-Object containing information Kurtosis needs to create the container. This config should be created using [ContainerCreationConfigBuilder][containercreationconfigbuilder] instances.
+ContainerConfig
+---------------
+Object containing information Kurtosis needs to create and run the container. This config should be created using [ContainerConfigBuilder][containerconfigbuilder] instances.
 
 ### String image
 The name of the container image that Kurtosis should use when creating the service's container (e.g. `my-repo/my-image:some-tag-name`).
 
-### String kurtosisVolumeMountpoint
-Kurtosis uses a Docker volume to keep track of state, and needs to mount this volume on every container. Kurtosis by default tries to mount this at a location that probably won't be used, but it can't know for certain what paths won't conflict so this property can be used to tell Kurtosis a filepath that doesn't yet exist and is safe for mounting.
-
-### Set\<String\> usedPorts
+### Set\<String\> usedPortsSet
 The set of ports that the container will be listening on, in the format `NUM/PROTOCOL` (e.g. `80/tcp`, `9090/udp`, etc.).
 
-### Map\<String, Func(File)\> fileGeneratingFuncs
-Declares the files that will be generated before your service starts and made available on the container's filesystem, as well as the logic for generating their contents. The file keys declared here (which can be any string you like) will be the same keys used to identify the files in the map arg to [NetworkContext.addServiceToPartition][networkcontext_addservicetopartition].
-
-E.g. if your service needs a config file and a log file, you might return a map with keys `config` and `log` corresponding to logic for generating the config and log files respectively.
-
 ### Map\<String, String\> filesArtifactMountpoints
-Sometimes a service needs files to be available before it starts, but creating those files via [ContainerCreationConfig.fileGeneratingFuncs][containercreationconfig_filegeneratingfuncs] is slow, difficult, or would require committing a very large artifact to the testsuite's Git repo (e.g. starting a service with a 5 GB Postgres database mounted). To ease this pain, Kurtosis allows you to specify URLs of gzipped TAR files that Kurtosis will download, uncompress, and mount inside your service containers. 
+Sometimes a service needs files to be available before it starts, but creating those files manually is slow, difficult, or would require committing a very large artifact to the testsuite's Git repo (e.g. starting a service with a 5 GB Postgres database mounted). To ease this pain, Kurtosis allows you to specify URLs of gzipped TAR files that Kurtosis will download, uncompress, and mount inside your service containers. 
 
 This property is therefore a map of the file artifact ID -> path on the container where the uncompressed artifact contents should be mounted, with the file artifact IDs corresponding to the files artifacts registered via [NetworkContext.registerFilesArtifacts][networkcontext_registerfilesartifacts]. 
 
 E.g. if my test declares an artifact called `5gb-database` that lives at `https://my-site.com/test-artifacts/5gb-database.tgz`, I might return the following map from this function to mount the artifact at the `/database` path inside my container: `{"5gb-database": "/database"}`.
-
-### Set\<StaticFileID\> usedStaticFiles
-Set of IDs of static files that should be mounted inside the service-to-be-created's filespace. These IDs must correspond to the IDs registered via [NetworkContext.registerStaticFiles][networkcontext_registerstaticfiles].
-
-
-
-ContainerCreationConfigBuilder
-------------------------------
-The builder that should be used to create [ContainerCreationConfig][containercreationconfig] instances. The functions on this builder will correspond to the properties on the [ContainerCreationConfig][containercreationconfig] object, in the form `withPropertyName` (e.g. `withUsedPorts` sets the ports used by the container).
-
-
-
-ContainerRunConfig
-------------------
-Object containing information Kurtosis needs to run the container. This config should be created using [ContainerRunConfigBuilder][containerrunconfigbuilder] instances.
 
 ### List\<String\> entrypointOverrideArgs
 You often won't control the container images that you'll be using in your testnet, and the `ENTRYPOINT` statement  hardcoded in their Dockerfiles might not be suitable for what you need. This function allows you to override these statements when necessary.
@@ -225,9 +193,9 @@ Defines environment variables that should be set inside the Docker container run
 
 
 
-ContainerRunConfigBuilder
--------------------------
-The builder that should be used to create [ContainerRunConfig][containerrunconfig] instances. The functions on this builder will correspond to the properties on the [ContainerRunConfig][containerrunconfig] object, in the form `withPropertyName` (e.g. `withCmdOverride` overrides the container's CMD declaration).
+ContainerConfigBuilder
+------------------------------
+The builder that should be used to create [ContainerConfig][containerconfig] instances. The functions on this builder will correspond to the properties on the [ContainerConfig][containerconfig] object, in the form `withPropertyName` (e.g. `withUsedPorts` sets the ports used by the container).
 
 
 
@@ -235,8 +203,7 @@ ServiceContext
 --------------
 This Kurtosis-provided class is the lowest-level representation of a service running inside a Docker container. It is your handle for retrieving container information and manipulating the container.
 
-<!-- TODO make the return type be ServiceID???? -->
-### getServiceId() -\> String
+### getServiceId() -\> ServiceID
 Gets the ID that Kurtosis uses to identify the service.
 
 **Returns**
@@ -250,6 +217,13 @@ Gets the IP address of the Docker container that the service is running inside.
 
 The service's IP address.
 
+### getSharedDirectory() -\> [SharedDirectory][shareddirectory]
+Gets the SharedDirectory object who has been dynamically generated during the service bootstrap process.
+
+**Returns**
+
+The [SharedDirectory][shareddirectory] object.
+
 ### execCommand(List\<String\> command) -\> (int exitCode, List\<byte\> logs)
 Uses [Docker exec](https://docs.docker.com/engine/reference/commandline/exec/) functionality to execute a command inside the service's running Docker container.
 
@@ -262,38 +236,29 @@ Uses [Docker exec](https://docs.docker.com/engine/reference/commandline/exec/) f
 * `exitCode`: The exit code of the command.
 * `logs`: The bytes of the command logs. This isn't a string because Kurtosis can't know what text encoding scheme the container uses.
 
-### generateFiles(Set\<String\> filesToGenerate) -\> Map\<String, [GeneratedFileFilepaths][generatedfilefilepaths]\>
-Generates files inside the enclave data volume, which is mounted on both the container where this code is running and the service container. This allows the current container to write data to files that are immediately available to the service container, as if they shared a filesystem.
+SharedDirectory
+---------------
+Simple structure containing the path to a generated directory on a) the current container and b) on the service container for whom the directory has been generated. These paths are different because the path where the enclave data volume has been mounted on the testsuite container can be different from the path where the volume has been mounted on the service container.
 
-**Args**
+### getSharedDirectoryMountpathOnThisContainer() -\> String
+Gets the absolute path where the directory lives on the current container, which would be used if the testsuite code wants to read or write data to the file.
 
-* `filesToGenerate`: A set of user-defined IDs identifying the files that will be generated.
+### getSharedDirectoryMountpathOnServiceContainer() -\> String
+Gets the absolute path where the directory lives on the service container, which would be used if the service wants to read or write data to the file.
 
-**Returns**
-
-A map of the file IDs (corresponding to the set passed in as input) mapped to a [GeneratedFileFilepaths][generatedfilefilepaths] object containing the filepaths on a) the testsuite container and b) the service container where the generated file was created.
-
-### loadStaticFiles(Set\<String\> usedStaticFiles) -\> Map\<String, String\>
-Loads static files that have been previously registered with the Kurtosis API via [NetworkContext.registerStaticFiles][networkcontext_registerstaticfiles] into the filespace of the service, so that the service can use it. You'd use this function if, e.g., you had a test database file that you wanted to mount on your service.
-
-**Args**
-
-* `usedStaticFiles`: A set of IDs identifying the static files that should be loaded, where the IDs have been registered with the Kurtosis API in advance via [NetworkContext.registerStaticFiles][networkcontext_registerstaticfiles].
-
-**Returns**
-
-A map of the static file IDs (corresponding to the set passed in as input) mapped to the filepath _inside the service container_ where the static file is now available.
+### getSharedFileObject(String fileName) -\> SharedFileObject
+Gets a shared file object from the service directory by its file name, if the file doesn't exist it will be created
 
 
 
-GeneratedFileFilepaths
-----------------------
-Simple structure containing the filepaths to a generated file on a) the current container and b) on the service container for whom the file was generated. These filepaths are different because the path where the enclave data volume is mounted on the testsuite container can be different from the path where the volume is mounted on the service container.
+SharedFileObject
+----------------
+Simple structure containing the filepaths to a generated file on a) the current container and b) on the service container for whom the file has been generated. These filepaths are different because the path where the enclave data volume has been mounted on the testsuite container can be different from the path where the volume has been mounted on the service container.
 
-### getAbsoluteFilepathHere() -\> String
+### getAbsFilepathOnThisContainer() -> String
 Gets the absolute filepath where the file lives on the current container, which would be used if the testsuite code wants to read or write data to the file.
 
-### getAbsoluteFilepathOnServiceContainer() -\> String
+### getAbsFilepathOnServiceContainer() -> String
 Gets the absolute filepath where the file lives on the service container, which would be used if the service wants to read or write data to the file.
 
 ---
@@ -304,35 +269,28 @@ _Found a bug? File it on [the repo](https://github.com/kurtosis-tech/kurtosis-cl
 <!-- TODO Make the function definition not include args or return values, so we don't get these huge ugly links that break if we change the function signature -->
 <!-- TODO make the reference names a) be properly-cased (e.g. "Service.isAvailable" rather than "service_isavailable") and b) have an underscore in front of them, so they're easy to find-replace without accidentally over-replacing -->
 
-[containercreationconfig]: #containercreationconfig
-[containercreationconfig_usedports]: #setstring-usedports
-[containercreationconfig_filegeneratingfuncs]: #mapstring-funcfile-filegeneratingfuncs
-[containercreationconfig_filesartifactmountpoints]: #mapstring-string-filesartifactmountpoints
-[containercreationconfig_usedstaticfiles]: #setstaticfileid-usedstaticfiles
+[containerconfig]: #containerconfig
+[containerconfig_usedports]: #setstring-usedportsset
+[containerconfig_filesartifactmountpoints]: #mapstring-string-filesartifactmountpoints
 
-[containercreationconfigbuilder]: #containercreationconfigbuilder
-
-[containerrunconfig]: #containerrunconfig
-
-[containerrunconfigbuilder]: #containerrunconfigbuilder
-
-[generatedfilefilepaths]: #generatedfilefilepaths
+[containerconfigbuilder]: #containerconfigbuilder
 
 [lambdacontext]: #lambdacontext
 
 [network]: #network
 
 [networkcontext]: #networkcontext
-[networkcontext_registerstaticfiles]: #registerstaticfilesmapstaticfileid-string-staticfilefilepaths
 [networkcontext_registerfilesartifacts]: #registerfilesartifactsmapfilesartifactid-string-filesartifacturls
-[networkcontext_addservice]: #addserviceserviceid-serviceid-containercreationconfig-containercreationconfig-funcstring-ipaddr-mapstring-string-generatedfilefilepaths-mapstaticfileid-string-staticfilefilepaths---containerrunconfig-error-generaterunconfigfunc----servicecontext-servicecontext-mapstring-portbinding-hostportbindings
-[networkcontext_addservicetopartition]: #addservicetopartitionserviceid-serviceid-partitionid-partitionid-containercreationconfig-containercreationconfig-funcstring-ipaddr-mapstring-string-generatedfilefilepaths-mapstring-string-staticfilefilepaths---containerrunconfig-generaterunconfigfunc---servicecontext-servicecontext-mapstring-portbinding-hostportbindings
+[networkcontext_addservice]: #addserviceserviceid-serviceid--funcstring-ipaddr-shareddirectory-shareddirectory---containerconfigcontainerconfig-containerconfigsupplier---servicecontext-servicecontext-mapstring-portbinding-hostportbindings
+[networkcontext_addservicetopartition]: #addservicetopartitionserviceid-serviceid-partitionid-partitionid-funcstring-ipaddr-shareddirectory-shareddirectory---containerconfig-containerconfigsupplier---servicecontext-servicecontext-mapstring-portbinding-hostportbindings
 [networkcontext_repartitionnetwork]: #repartitionnetworkmappartitionid-setserviceid-partitionservices-mappartitionid-mappartitionid-partitionconnectioninfo-partitionconnections-partitionconnectioninfo-defaultconnection
 
 [partitionconnectioninfo]: #partitionconnectioninfo
 
 [servicecontext]: #servicecontext
-[servicecontext_loadstaticfiles]: #loadstaticfilessetstring-usedstaticfiles---mapstring-string
+
+[shareddirectory]: #shareddirectory
+[sharedfileobject]: #sharedfileobject
 
 [test]: ../kurtosis-testsuite-api-lib/lib-documentation#testn-extends-network
 [test_configure]: ../kurtosis-testsuite-api-lib/lib-documentation#configuretestconfigurationbuilder-builder
