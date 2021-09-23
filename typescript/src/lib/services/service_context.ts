@@ -1,7 +1,7 @@
 import { ApiContainerServiceClient } from '../../kurtosis_core_rpc_api_bindings/api_container_service_grpc_pb'; 
 import { ExecCommandArgs, ExecCommandResponse } from '../../kurtosis_core_rpc_api_bindings/api_container_service_pb';
 import { ServiceID} from './service';
-import { SharedDirectory } from './shared_directory';
+import { SharedPath } from './shared_path';
 import { newExecCommandArgs} from "../constructor_calls";
 import { ok, err, Result } from 'neverthrow';
 import * as grpc from "grpc";
@@ -11,13 +11,13 @@ export class ServiceContext {
     private readonly client: ApiContainerServiceClient;
     private readonly serviceId: ServiceID;
     private readonly ipAddress: string;
-    private readonly sharedDirectory: SharedDirectory;
+    private readonly sharedDirectory: SharedPath;
 
     constructor(
             client: ApiContainerServiceClient,
             serviceId: ServiceID,
             ipAddress: string,
-            sharedDirectory: SharedDirectory) {
+            sharedDirectory: SharedPath) {
         this.client = client;
         this.serviceId = serviceId;
         this.ipAddress = ipAddress;
@@ -34,7 +34,7 @@ export class ServiceContext {
         return this.ipAddress;
     }
 
-    public getSharedDirectory(): SharedDirectory {
+    public getSharedDirectory(): SharedPath {
         return  this.sharedDirectory
     }
 
