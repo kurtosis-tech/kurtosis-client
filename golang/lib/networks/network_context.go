@@ -104,7 +104,7 @@ func (networkCtx *NetworkContext) RegisterFilesArtifacts(filesArtifactUrls map[s
 // Docs available at https://docs.kurtosistech.com/kurtosis-client/lib-documentation
 func (networkCtx *NetworkContext) AddService(
 		serviceId services.ServiceID,
-		containerConfigSupplier func(ipAddr string, sharedDirectory *services.SharedDirectory) (*services.ContainerConfig, error),
+		containerConfigSupplier func(ipAddr string, sharedDirectory *services.SharedPath) (*services.ContainerConfig, error),
 	) (*services.ServiceContext, map[string]*kurtosis_core_rpc_api_bindings.PortBinding, error) {
 
 	serviceContext, hostPortBindings, err := networkCtx.AddServiceToPartition(
@@ -122,7 +122,7 @@ func (networkCtx *NetworkContext) AddService(
 func (networkCtx *NetworkContext) AddServiceToPartition(
 		serviceId services.ServiceID,
 		partitionID PartitionID,
-		containerConfigSupplier func(ipAddr string, sharedDirectory *services.SharedDirectory) (*services.ContainerConfig, error),
+		containerConfigSupplier func(ipAddr string, sharedDirectory *services.SharedPath) (*services.ContainerConfig, error),
 		) (*services.ServiceContext, map[string]*kurtosis_core_rpc_api_bindings.PortBinding, error) {
 
 	ctx := context.Background()
@@ -400,12 +400,12 @@ func (networkCtx *NetworkContext) GetLambdas() (map[modules.LambdaID]bool, error
 // ====================================================================================================
 // 									   Private helper methods
 // ====================================================================================================
-func (networkCtx *NetworkContext) getSharedDirectory(relativeServiceDirpath string) *services.SharedDirectory {
+func (networkCtx *NetworkContext) getSharedDirectory(relativeServiceDirpath string) *services.SharedPath {
 
 	absFilepathOnThisContainer := filepath.Join(networkCtx.enclaveDataVolMountpoint, relativeServiceDirpath)
 	absFilepathOnServiceContainer := filepath.Join(defaultKurtosisVolumeMountpoint, relativeServiceDirpath)
 
-	sharedDirectory := services.NewSharedDirectory(absFilepathOnThisContainer, absFilepathOnServiceContainer)
+	sharedDirectory := services.NewSharedPath(absFilepathOnThisContainer, absFilepathOnServiceContainer)
 
 	return sharedDirectory
 }

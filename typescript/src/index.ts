@@ -2,6 +2,7 @@
 export { FilesArtifactID, ContainerConfig, ContainerConfigBuilder } from "./lib/services/container_config";
 export { ServiceID } from "./lib/services/service";
 export { ServiceContext } from "./lib/services/service_context";
+export { SharedPath } from "./lib/services/shared_path"
 
 //Networks
 export { Network } from "./lib/networks/network";
