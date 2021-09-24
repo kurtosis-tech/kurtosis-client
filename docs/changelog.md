@@ -1,4 +1,21 @@
 # TBD
+### Features
+* Add `SharedPath` object which contains two fields `absPathOnThisContainer` and `absPathOnServiceContainer` that store the values of an absolute path in the container where the code is running and in the service container
+* Add `SharedPath.GetChildPath()` which returns a new `SharedPath` composed by the actual value and adding it a new path element at the end of it
+* Update API container service proto definition adding the `relative_service_dirpath` field in `RegisterServiceResponse` and `GetServiceInfoResponse`
+
+### Changes
+* Remove `RegisterStaticFiles()`, `GenerateFiles()` and `LoadStaticFiles()` methods from protobuf `ApiContainerService`
+
+### Breaking Changes
+* Combine `ContainerCreationConfig` and `ContainerRunConfig` in the new `ContainerConfig` which contains all the necessary information used to create and run a service container
+  * Users should replace the creation of `ContainerCreationConfig` and `ContainerRunConfig` objects with an implementation of an anonymous function that dynamically generates the new `ContainerConfig` object
+* Update `NetworkCtx.AddService()` method replacing the `containerCreationConfig` param and the `generateRunConfigFunc` with the `containerConfigSupplier` param
+  * Users should update `NetworkCtx.AddService()` calls passing it now the `containerConfigSupplier` which is an anonymous function that should be created to dynamically generate the `containerConfig` object 
+* Replace `enclaveDataVolMountpointHere` and `enclaveDataVolMountpointOnServiceContainer` in `ServiceContext` fields with a new field called `sharedDirectory` with `SharedPath` type
+  * Users should use the `SharedPath` in the `sharedDirectory` field to get the service directory absolute paths
+* Removed the `ServiceContext.GenerateFiles()` and the `ServiceContext.LoadStaticFiles()` methods
+  * Users should manually create, generate and copy static and dynamic files into the service container with the help of the new `SharedDirectory` object
 
 # 0.16.0
 ### Features

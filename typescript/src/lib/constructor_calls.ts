@@ -1,4 +1,4 @@
-import { ExecCommandArgs, GenerateFilesArgs, FileGenerationOptions, LoadStaticFilesArgs, LoadLambdaArgs, GetLambdaInfoArgs, RegisterStaticFilesArgs, RegisterFilesArtifactsArgs, GetServiceInfoArgs, PartitionServices, PartitionConnections, PartitionConnectionInfo, RegisterServiceArgs, StartServiceArgs, RemoveServiceArgs, RepartitionArgs, WaitForHttpGetEndpointAvailabilityArgs, WaitForHttpPostEndpointAvailabilityArgs, ExecuteBulkCommandsArgs, ExecuteLambdaArgs } from '../kurtosis_core_rpc_api_bindings/api_container_service_pb';
+import { ExecCommandArgs, LoadLambdaArgs, GetLambdaInfoArgs, RegisterFilesArtifactsArgs, GetServiceInfoArgs, PartitionServices, PartitionConnections, PartitionConnectionInfo, RegisterServiceArgs, StartServiceArgs, RemoveServiceArgs, RepartitionArgs, WaitForHttpGetEndpointAvailabilityArgs, WaitForHttpPostEndpointAvailabilityArgs, ExecuteBulkCommandsArgs, ExecuteLambdaArgs } from '../kurtosis_core_rpc_api_bindings/api_container_service_pb';
 import { ServiceID } from './services/service';
 import { PartitionID } from './networks/network_context';
 import { LambdaID } from "./modules/lambda_context";
@@ -16,34 +16,6 @@ export function newExecCommandArgs(serviceId: ServiceID, command: string[]): Exe
     return result;
 }
 
-export function newGenerateFilesArgs(serviceId: ServiceID, fileGenerationOpts: Map<string, FileGenerationOptions>): GenerateFilesArgs {
-    const result: GenerateFilesArgs = new GenerateFilesArgs();
-    result.setServiceId(String(serviceId)); 
-    for (const [fileID, fileGenerationsOptions] of fileGenerationOpts.entries()) {
-        result.getFilesToGenerateMap().set(fileID, fileGenerationsOptions);
-    }
-    
-    return result;
-}
-
-export function newFileGenerationOptions(): FileGenerationOptions {
-    const result: FileGenerationOptions = new FileGenerationOptions();
-    result.setFileTypeToGenerate(FileGenerationOptions.FileTypeToGenerate.FILE);
-
-    return result;
-}
-
-export function newLoadStaticFilesArgs(serviceId: ServiceID, staticFilesToCopyStringSet: Map<string, boolean>): LoadStaticFilesArgs {
-    const result: LoadStaticFilesArgs = new LoadStaticFilesArgs();
-    result.setServiceId(String(serviceId));
-    const staticFilesMap: jspb.Map<string, boolean> = result.getStaticFilesMap();
-    for (const staticFileID of staticFilesToCopyStringSet.keys()) {
-        staticFilesMap.set(staticFileID, true);
-    }
-
-    return result;
-}
-
 // // ====================================================================================================
 // //                                    Network Context
 // // ====================================================================================================
@@ -53,16 +25,6 @@ export function newLoadLambdaArgs(lambdaId: LambdaID, image: string, serializedP
     result.setLambdaId(String(lambdaId));
     result.setContainerImage(image);
     result.setSerializedParams(serializedParams);
-
-    return result;
-}
-
-export function newRegisterStaticFilesArgs(strSet: Map<string, boolean>): RegisterStaticFilesArgs {
-    const result: RegisterStaticFilesArgs = new RegisterStaticFilesArgs();
-    const staticFilesSetMap: jspb.Map<string, boolean> = result.getStaticFilesSetMap();
-    for (const staticFileID of strSet.keys()) {
-        staticFilesSetMap.set(staticFileID, true);
-    }
 
     return result;
 }

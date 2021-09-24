@@ -26,8 +26,6 @@ type V0CommandTypeVisitor interface {
 	VisitLoadLambda() error
 	VisitExecuteLambda() error
 	VisitRegisterService() error
-	VisitGenerateFiles() error
-	VisitLoadStaticFiles() error
 	VisitStartService() error
 	VisitRemoveService() error
 	VisitRepartition() error
@@ -46,8 +44,6 @@ const (
 	LoadLambdaCommandType                          V0CommandType = "LOAD_LAMBDA"
 	ExecuteLambdaCommandType                       V0CommandType = "EXECUTE_LAMBDA"
 	RegisterServiceCommandType                     V0CommandType = "REGISTER_SERVICE"
-	GenerateFilesCommandType                       V0CommandType = "GENERATE_FILES"
-	LoadStaticFilesCommandType                     V0CommandType = "LOAD_STATIC_FILES"
 	StartServiceCommandType                        V0CommandType = "START_SERVICE"
 	RemoveServiceCommandType                       V0CommandType = "REMOVE_SERVICE"
 	RepartitionCommandType                         V0CommandType = "REPARTITION"
@@ -69,10 +65,6 @@ func (commandType V0CommandType) AcceptVisitor(visitor V0CommandTypeVisitor) err
 		err = visitor.VisitExecuteLambda()
 	case RegisterServiceCommandType:
 		err = visitor.VisitRegisterService()
-	case GenerateFilesCommandType:
-		err = visitor.VisitGenerateFiles()
-	case LoadStaticFilesCommandType:
-		err = visitor.VisitLoadStaticFiles()
 	case StartServiceCommandType:
 		err = visitor.VisitStartService()
 	case RemoveServiceCommandType:

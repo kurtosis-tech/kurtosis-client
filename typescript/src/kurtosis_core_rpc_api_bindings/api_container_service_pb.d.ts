@@ -116,44 +116,6 @@ export namespace GetLambdaInfoResponse {
   }
 }
 
-export class RegisterStaticFilesArgs extends jspb.Message {
-  getStaticFilesSetMap(): jspb.Map<string, boolean>;
-  clearStaticFilesSetMap(): void;
-  serializeBinary(): Uint8Array;
-  toObject(includeInstance?: boolean): RegisterStaticFilesArgs.AsObject;
-  static toObject(includeInstance: boolean, msg: RegisterStaticFilesArgs): RegisterStaticFilesArgs.AsObject;
-  static extensions: {[key: number]: jspb.ExtensionFieldInfo<jspb.Message>};
-  static extensionsBinary: {[key: number]: jspb.ExtensionFieldBinaryInfo<jspb.Message>};
-  static serializeBinaryToWriter(message: RegisterStaticFilesArgs, writer: jspb.BinaryWriter): void;
-  static deserializeBinary(bytes: Uint8Array): RegisterStaticFilesArgs;
-  static deserializeBinaryFromReader(message: RegisterStaticFilesArgs, reader: jspb.BinaryReader): RegisterStaticFilesArgs;
-}
-
-export namespace RegisterStaticFilesArgs {
-  export type AsObject = {
-    staticFilesSetMap: Array<[string, boolean]>,
-  }
-}
-
-export class RegisterStaticFilesResponse extends jspb.Message {
-  getStaticFileDestRelativeFilepathsMap(): jspb.Map<string, string>;
-  clearStaticFileDestRelativeFilepathsMap(): void;
-  serializeBinary(): Uint8Array;
-  toObject(includeInstance?: boolean): RegisterStaticFilesResponse.AsObject;
-  static toObject(includeInstance: boolean, msg: RegisterStaticFilesResponse): RegisterStaticFilesResponse.AsObject;
-  static extensions: {[key: number]: jspb.ExtensionFieldInfo<jspb.Message>};
-  static extensionsBinary: {[key: number]: jspb.ExtensionFieldBinaryInfo<jspb.Message>};
-  static serializeBinaryToWriter(message: RegisterStaticFilesResponse, writer: jspb.BinaryWriter): void;
-  static deserializeBinary(bytes: Uint8Array): RegisterStaticFilesResponse;
-  static deserializeBinaryFromReader(message: RegisterStaticFilesResponse, reader: jspb.BinaryReader): RegisterStaticFilesResponse;
-}
-
-export namespace RegisterStaticFilesResponse {
-  export type AsObject = {
-    staticFileDestRelativeFilepathsMap: Array<[string, string]>,
-  }
-}
-
 export class RegisterFilesArtifactsArgs extends jspb.Message {
   getFilesArtifactUrlsMap(): jspb.Map<string, string>;
   clearFilesArtifactUrlsMap(): void;
@@ -201,6 +163,9 @@ export class RegisterServiceResponse extends jspb.Message {
   getIpAddr(): string;
   setIpAddr(value: string): void;
 
+  getRelativeServiceDirpath(): string;
+  setRelativeServiceDirpath(value: string): void;
+
   serializeBinary(): Uint8Array;
   toObject(includeInstance?: boolean): RegisterServiceResponse.AsObject;
   static toObject(includeInstance: boolean, msg: RegisterServiceResponse): RegisterServiceResponse.AsObject;
@@ -214,116 +179,7 @@ export class RegisterServiceResponse extends jspb.Message {
 export namespace RegisterServiceResponse {
   export type AsObject = {
     ipAddr: string,
-  }
-}
-
-export class GenerateFilesArgs extends jspb.Message {
-  getServiceId(): string;
-  setServiceId(value: string): void;
-
-  getFilesToGenerateMap(): jspb.Map<string, FileGenerationOptions>;
-  clearFilesToGenerateMap(): void;
-  serializeBinary(): Uint8Array;
-  toObject(includeInstance?: boolean): GenerateFilesArgs.AsObject;
-  static toObject(includeInstance: boolean, msg: GenerateFilesArgs): GenerateFilesArgs.AsObject;
-  static extensions: {[key: number]: jspb.ExtensionFieldInfo<jspb.Message>};
-  static extensionsBinary: {[key: number]: jspb.ExtensionFieldBinaryInfo<jspb.Message>};
-  static serializeBinaryToWriter(message: GenerateFilesArgs, writer: jspb.BinaryWriter): void;
-  static deserializeBinary(bytes: Uint8Array): GenerateFilesArgs;
-  static deserializeBinaryFromReader(message: GenerateFilesArgs, reader: jspb.BinaryReader): GenerateFilesArgs;
-}
-
-export namespace GenerateFilesArgs {
-  export type AsObject = {
-    serviceId: string,
-    filesToGenerateMap: Array<[string, FileGenerationOptions.AsObject]>,
-  }
-}
-
-export class FileGenerationOptions extends jspb.Message {
-  getFileTypeToGenerate(): FileGenerationOptions.FileTypeToGenerateMap[keyof FileGenerationOptions.FileTypeToGenerateMap];
-  setFileTypeToGenerate(value: FileGenerationOptions.FileTypeToGenerateMap[keyof FileGenerationOptions.FileTypeToGenerateMap]): void;
-
-  serializeBinary(): Uint8Array;
-  toObject(includeInstance?: boolean): FileGenerationOptions.AsObject;
-  static toObject(includeInstance: boolean, msg: FileGenerationOptions): FileGenerationOptions.AsObject;
-  static extensions: {[key: number]: jspb.ExtensionFieldInfo<jspb.Message>};
-  static extensionsBinary: {[key: number]: jspb.ExtensionFieldBinaryInfo<jspb.Message>};
-  static serializeBinaryToWriter(message: FileGenerationOptions, writer: jspb.BinaryWriter): void;
-  static deserializeBinary(bytes: Uint8Array): FileGenerationOptions;
-  static deserializeBinaryFromReader(message: FileGenerationOptions, reader: jspb.BinaryReader): FileGenerationOptions;
-}
-
-export namespace FileGenerationOptions {
-  export type AsObject = {
-    fileTypeToGenerate: FileGenerationOptions.FileTypeToGenerateMap[keyof FileGenerationOptions.FileTypeToGenerateMap],
-  }
-
-  export interface FileTypeToGenerateMap {
-    FILE: 0;
-  }
-
-  export const FileTypeToGenerate: FileTypeToGenerateMap;
-}
-
-export class GenerateFilesResponse extends jspb.Message {
-  getGeneratedFileRelativeFilepathsMap(): jspb.Map<string, string>;
-  clearGeneratedFileRelativeFilepathsMap(): void;
-  serializeBinary(): Uint8Array;
-  toObject(includeInstance?: boolean): GenerateFilesResponse.AsObject;
-  static toObject(includeInstance: boolean, msg: GenerateFilesResponse): GenerateFilesResponse.AsObject;
-  static extensions: {[key: number]: jspb.ExtensionFieldInfo<jspb.Message>};
-  static extensionsBinary: {[key: number]: jspb.ExtensionFieldBinaryInfo<jspb.Message>};
-  static serializeBinaryToWriter(message: GenerateFilesResponse, writer: jspb.BinaryWriter): void;
-  static deserializeBinary(bytes: Uint8Array): GenerateFilesResponse;
-  static deserializeBinaryFromReader(message: GenerateFilesResponse, reader: jspb.BinaryReader): GenerateFilesResponse;
-}
-
-export namespace GenerateFilesResponse {
-  export type AsObject = {
-    generatedFileRelativeFilepathsMap: Array<[string, string]>,
-  }
-}
-
-export class LoadStaticFilesArgs extends jspb.Message {
-  getServiceId(): string;
-  setServiceId(value: string): void;
-
-  getStaticFilesMap(): jspb.Map<string, boolean>;
-  clearStaticFilesMap(): void;
-  serializeBinary(): Uint8Array;
-  toObject(includeInstance?: boolean): LoadStaticFilesArgs.AsObject;
-  static toObject(includeInstance: boolean, msg: LoadStaticFilesArgs): LoadStaticFilesArgs.AsObject;
-  static extensions: {[key: number]: jspb.ExtensionFieldInfo<jspb.Message>};
-  static extensionsBinary: {[key: number]: jspb.ExtensionFieldBinaryInfo<jspb.Message>};
-  static serializeBinaryToWriter(message: LoadStaticFilesArgs, writer: jspb.BinaryWriter): void;
-  static deserializeBinary(bytes: Uint8Array): LoadStaticFilesArgs;
-  static deserializeBinaryFromReader(message: LoadStaticFilesArgs, reader: jspb.BinaryReader): LoadStaticFilesArgs;
-}
-
-export namespace LoadStaticFilesArgs {
-  export type AsObject = {
-    serviceId: string,
-    staticFilesMap: Array<[string, boolean]>,
-  }
-}
-
-export class LoadStaticFilesResponse extends jspb.Message {
-  getCopiedStaticFileRelativeFilepathsMap(): jspb.Map<string, string>;
-  clearCopiedStaticFileRelativeFilepathsMap(): void;
-  serializeBinary(): Uint8Array;
-  toObject(includeInstance?: boolean): LoadStaticFilesResponse.AsObject;
-  static toObject(includeInstance: boolean, msg: LoadStaticFilesResponse): LoadStaticFilesResponse.AsObject;
-  static extensions: {[key: number]: jspb.ExtensionFieldInfo<jspb.Message>};
-  static extensionsBinary: {[key: number]: jspb.ExtensionFieldBinaryInfo<jspb.Message>};
-  static serializeBinaryToWriter(message: LoadStaticFilesResponse, writer: jspb.BinaryWriter): void;
-  static deserializeBinary(bytes: Uint8Array): LoadStaticFilesResponse;
-  static deserializeBinaryFromReader(message: LoadStaticFilesResponse, reader: jspb.BinaryReader): LoadStaticFilesResponse;
-}
-
-export namespace LoadStaticFilesResponse {
-  export type AsObject = {
-    copiedStaticFileRelativeFilepathsMap: Array<[string, string]>,
+    relativeServiceDirpath: string,
   }
 }
 
@@ -446,6 +302,9 @@ export class GetServiceInfoResponse extends jspb.Message {
   getEnclaveDataVolumeMountDirpath(): string;
   setEnclaveDataVolumeMountDirpath(value: string): void;
 
+  getRelativeServiceDirpath(): string;
+  setRelativeServiceDirpath(value: string): void;
+
   serializeBinary(): Uint8Array;
   toObject(includeInstance?: boolean): GetServiceInfoResponse.AsObject;
   static toObject(includeInstance: boolean, msg: GetServiceInfoResponse): GetServiceInfoResponse.AsObject;
@@ -460,6 +319,7 @@ export namespace GetServiceInfoResponse {
   export type AsObject = {
     ipAddr: string,
     enclaveDataVolumeMountDirpath: string,
+    relativeServiceDirpath: string,
   }
 }
 
