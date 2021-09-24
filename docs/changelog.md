@@ -1,5 +1,9 @@
 # TBD
 
+# 0.17.1
+### Fixes
+* Update `SharedPath.GetChildPath()` method remove the error type from the returning values
+
 # 0.17.0
 ### Features
 * Add `SharedPath` object which contains two fields `absPathOnThisContainer` and `absPathOnServiceContainer` that store the values of an absolute path in the container where the code is running and in the service container
