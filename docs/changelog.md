@@ -1,4 +1,6 @@
 # TBD
+
+# 0.17.0
 ### Features
 * Add `SharedPath` object which contains two fields `absPathOnThisContainer` and `absPathOnServiceContainer` that store the values of an absolute path in the container where the code is running and in the service container
 * Add `SharedPath.GetChildPath()` which returns a new `SharedPath` composed by the actual value and adding it a new path element at the end of it
