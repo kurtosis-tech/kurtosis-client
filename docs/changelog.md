@@ -8,12 +8,12 @@
 * Remove `RegisterStaticFiles()`, `GenerateFiles()` and `LoadStaticFiles()` methods from protobuf `ApiContainerService`
 
 ### Breaking Changes
-* Mix `ContainerCreationConfig` and `ContainerRunConfig` in the new `ContainerConfig` which contains all the necessary information used to create and run a service container
+* Combine `ContainerCreationConfig` and `ContainerRunConfig` in the new `ContainerConfig` which contains all the necessary information used to create and run a service container
   * Users should replace the creation of `ContainerCreationConfig` and `ContainerRunConfig` objects with an implementation of an anonymous function that dynamically generates the new `ContainerConfig` object
 * Update `NetworkCtx.AddService()` method replacing the `containerCreationConfig` param and the `generateRunConfigFunc` with the `containerConfigSupplier` param
   * Users should update `NetworkCtx.AddService()` calls passing it now the `containerConfigSupplier` which is an anonymous function that should be created to dynamically generate the `containerConfig` object 
 * Replace `enclaveDataVolMountpointHere` and `enclaveDataVolMountpointOnServiceContainer` in `ServiceContext` fields with a new field called `sharedDirectory` with `SharedPath` type
-  * Users should use the `SharedPath` object store id the `sharedDirectory` field to get the service directory absolute paths
+  * Users should use the `SharedPath` in the `sharedDirectory` field to get the service directory absolute paths
 * Removed the `ServiceContext.GenerateFiles()` and the `ServiceContext.LoadStaticFiles()` methods
   * Users should manually create, generate and copy static and dynamic files into the service container with the help of the new `SharedDirectory` object
 

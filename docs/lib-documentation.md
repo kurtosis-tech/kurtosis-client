@@ -74,7 +74,8 @@ Starts a new service in the network with the given service ID, inside the partit
 * `partitionId`: The ID of the partition that the new service should be started in. This can be left blank to start the service in the default partition if it exists (i.e. if the network hasn't been repartitioned and the default partition removed).
 * `containerConfigSupplier`: An anonymous function, used to produce the [ContainerConfig][containerconfig] for starting the service, which receives two dynamic values as arguments: 
     1. The IP address of the service being started
-    1. A [SharedPath][sharedpath] object which contains two fields that store the value of the services's folder absolute path inside the service container and inside the container where the code is running respectively
+    1. A [SharedPath][sharedpath] object which represents a shared directory that is mounted on both a) the container where this code is running and b) the service container being started, so that files can be made available to the service container by creating them with this container. E.g. calling `sharedDirectory.getChildPath("newfile.txt")` will get the path to an object that can be a) written by this container via [SharedPath.getAbsPathOnThisContainer][sharedpath_getabspathonthiscontainer] and b) used by the service container via [SharedPath.getAbsPathOnServiceContainer][sharedpath_getabspathonservicecontainer].
+
 
 **Returns**
 
@@ -217,7 +218,6 @@ Gets the IP address of the Docker container that the service is running inside.
 
 The service's IP address.
 
-<<<<<<< HEAD
 ### getSharedDirectory() -\> [SharedPath][sharedpath]
 Get the directory that is mounted on both the current container running this code and the service container, so that files can be passed back and forth. The directory is expressed as a [SharedPath][sharedpath] object, so file inside can be referenced by absolute filepath on either this container or the service contianer.
 
@@ -240,7 +240,7 @@ Uses [Docker exec](https://docs.docker.com/engine/reference/commandline/exec/) f
 
 SharedPath
 ----------
-Simple structure that holds information about a filepath shared between two containers: this container, and a container running a service in a testnet. The actual object referenced by this path could be anything - a fire, a directory, a symlink, nonexistent, etc.
+Simple structure that holds information about a filepath shared between two containers: this container, and a container running a service in a testnet. The actual object referenced by this path could be anything - a file, a directory, a symlink, nonexistent, etc.
 
 ### getAbsPathOnThisContainer() -\> String
 For the object in the shared directory represented by this `SharedPath` object, gets the absolute filepath on the container where this code is running.
@@ -288,6 +288,8 @@ _Found a bug? File it on [the repo](https://github.com/kurtosis-tech/kurtosis-cl
 [servicecontext]: #servicecontext
 
 [sharedpath]: #sharedpath
+[sharedpath_getabspathonthiscontainer]: #getabspathonthiscontainer---string
+[sharedpath_getabspathonservicecontainer]: #getabspathonservicecontainer---string
 
 [test]: ../kurtosis-testsuite-api-lib/lib-documentation#testn-extends-network
 [test_configure]: ../kurtosis-testsuite-api-lib/lib-documentation#configuretestconfigurationbuilder-builder
