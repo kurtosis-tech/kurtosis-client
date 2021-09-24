@@ -4,26 +4,26 @@
  */
 
 import { ApiContainerServiceClient } from "../..//kurtosis_core_rpc_api_bindings/api_container_service_grpc_pb";
-import { LoadLambdaArgs, GetLambdaInfoArgs, RegisterStaticFilesArgs, RegisterStaticFilesResponse, RegisterFilesArtifactsArgs, PortBinding, RegisterServiceArgs, RegisterServiceResponse, StartServiceArgs, GetServiceInfoArgs, GetServiceInfoResponse, RemoveServiceArgs, PartitionConnectionInfo, PartitionServices, PartitionConnections, RepartitionArgs, WaitForHttpGetEndpointAvailabilityArgs, WaitForHttpPostEndpointAvailabilityArgs, ExecuteBulkCommandsArgs, StartServiceResponse, GetLambdaInfoResponse, GetServicesResponse, GetLambdasResponse } from "../..//kurtosis_core_rpc_api_bindings/api_container_service_pb";
+import { LoadLambdaArgs, GetLambdaInfoArgs, RegisterFilesArtifactsArgs, PortBinding, RegisterServiceArgs, RegisterServiceResponse, StartServiceArgs, GetServiceInfoArgs, GetServiceInfoResponse, RemoveServiceArgs, PartitionConnectionInfo, PartitionServices, PartitionConnections, RepartitionArgs, WaitForHttpGetEndpointAvailabilityArgs, WaitForHttpPostEndpointAvailabilityArgs, ExecuteBulkCommandsArgs, StartServiceResponse, GetLambdaInfoResponse, GetServicesResponse, GetLambdasResponse } from "../..//kurtosis_core_rpc_api_bindings/api_container_service_pb";
 import { LambdaID, LambdaContext } from "../modules/lambda_context";
-import { ServiceID } from "../services/service";
-import { ServiceContext, GeneratedFileFilepaths } from "../services/service_context";
-import { StaticFileID, FilesArtifactID, ContainerCreationConfig } from "../services/container_creation_config"; 
-import { ContainerRunConfig } from "../services/container_run_config";
-import { newLoadLambdaArgs, newGetLambdaInfoArgs, newRegisterStaticFilesArgs, newRegisterFilesArtifactsArgs, newRegisterServiceArgs, newStartServiceArgs, newGetServiceInfoArgs, newRemoveServiceArgs, newPartitionServices, newPartitionConnections, newRepartitionArgs, newWaitForHttpGetEndpointAvailabilityArgs, newWaitForHttpPostEndpointAvailabilityArgs, newExecuteBulkCommandsArgs } from "../constructor_calls";
+import { ServiceID} from "../services/service";
+import { SharedPath } from "../services/shared_path";
+import { ServiceContext} from "../services/service_context";
+import { newLoadLambdaArgs, newGetLambdaInfoArgs, newRegisterFilesArtifactsArgs, newRegisterServiceArgs, newStartServiceArgs, newGetServiceInfoArgs, newRemoveServiceArgs, newPartitionServices, newPartitionConnections, newRepartitionArgs, newWaitForHttpGetEndpointAvailabilityArgs, newWaitForHttpPostEndpointAvailabilityArgs, newExecuteBulkCommandsArgs } from "../constructor_calls";
 import { ok, err, Result } from "neverthrow";
 import * as log from "loglevel";
-import * as path from "path";
-import * as fs from 'fs';
 import * as grpc from "grpc";
+import * as path from "path"
 import * as google_protobuf_empty_pb from "google-protobuf/google/protobuf/empty_pb";
-import * as jspb from "google-protobuf";
+import { ContainerConfig, FilesArtifactID } from "../services/container_config";
 
 export type PartitionID = string;
 
 // This will always resolve to the default partition ID (regardless of whether such a partition exists in the network,
 //  or it was repartitioned away)
 const DEFAULT_PARTITION_ID: PartitionID = "";
+// The default enclave data volume name
+const DEFAULT_KURTOSIS_VOLUME_MOUNTPOINT: string = "/kurtosis-enclave-data";
 
 // Docs available at https://docs.kurtosistech.com/kurtosis-client/lib-documentation
 export class NetworkContext {
@@ -95,136 +95,6 @@ export class NetworkContext {
     }
 
     // Docs available at https://docs.kurtosistech.com/kurtosis-client/lib-documentation
-    public async registerStaticFiles(staticFileFilepaths: Map<StaticFileID, string>): Promise<Result<null, Error>> {
-        const strSet: Map<string, boolean> = new Map();
-        for (const [staticFileId, srcAbsFilepath] of staticFileFilepaths.entries()) {
-            
-            // Sanity-check that the source filepath exists
-            const promiseStatSrcAbsFilepath: Promise<Result<fs.Stats, Error>> = new Promise((resolve, _unusedReject) => {
-                fs.stat(srcAbsFilepath, (error: Error | null, response: fs.Stats) => {
-                    if (error === null) {
-                        resolve(ok(response));
-                    } else {
-                        resolve(err(error));
-                    }
-                })
-            });
-            const resultStatSrcAbsFilepath: Result<fs.Stats, Error> = await promiseStatSrcAbsFilepath;
-            if (!resultStatSrcAbsFilepath.isOk()) {
-                return err(new Error("Source filepath " + srcAbsFilepath + " associated with static file " + staticFileId + " doesn't exist"));
-            }
-            
-            strSet.set(String(staticFileId), true);
-        }
-
-        const args: RegisterStaticFilesArgs = newRegisterStaticFilesArgs(strSet);
-        
-        const promiseRegisterStaticFiles: Promise<Result<RegisterStaticFilesResponse, Error>> = new Promise((resolve, _unusedReject) => {
-            this.client.registerStaticFiles(args, (error: grpc.ServiceError | null, response?: RegisterStaticFilesResponse) => {
-                if (error === null) {
-                    if (!response) {
-                        resolve(err(new Error("No error was encountered but the response was still falsy; this should never happen")));
-                    } else {
-                        resolve(ok(response!));
-                    }
-                } else {
-                    resolve(err(error));
-                }
-            })
-        });
-        const resultRegisterStaticFiles: Result<RegisterStaticFilesResponse, Error> = await promiseRegisterStaticFiles;
-        if (!resultRegisterStaticFiles.isOk()) {
-            return err(resultRegisterStaticFiles.error);
-        }
-        const resp: RegisterStaticFilesResponse = resultRegisterStaticFiles.value;
-
-        const staticFileDestRelativeFilepathsMap: jspb.Map<string, string> = resp.getStaticFileDestRelativeFilepathsMap();
-        for (const [staticFileIdStr, destFilepathRelativeToEnclaveVolRoot] of staticFileDestRelativeFilepathsMap.entries()) {
-
-            const staticFileId: StaticFileID = <StaticFileID>(staticFileIdStr);
-
-            if (!staticFileFilepaths.has(staticFileId)) {
-                return err(new Error("No source filepath found for static file " + staticFileId + "; this is a bug in Kurtosis"));
-            }
-            const srcAbsFilepath: string = staticFileFilepaths.get(staticFileId)!;
-
-            const destAbsFilepath: string = path.join(this.enclaveDataVolMountpoint, destFilepathRelativeToEnclaveVolRoot);
-            
-            const promiseStatDestAbsFilepath: Promise<Result<fs.Stats, Error>> = new Promise((resolve, _unusedReject) => {
-                fs.stat(destAbsFilepath, (error: Error | null, response: fs.Stats) => {
-                    if (error === null) {
-                        resolve(ok(response));
-                    } else {
-                        resolve(err(error));
-                    }
-                })
-            });
-            const resultStatDestAbsFilepath: Result<fs.Stats, Error> = await promiseStatDestAbsFilepath;
-            if (!resultStatDestAbsFilepath.isOk()) {
-                return err(new Error("The Kurtosis API asked us to copy static file " + staticFileId + " to path " + destFilepathRelativeToEnclaveVolRoot + 
-                " in the enclave volume which means that an empty file should exist there, " + "but no file exists at that path - this is a bug in Kurtosis!"));
-            }
-    
-            const promiseOpenSrcFp: Promise<Result<number, Error>> = new Promise((resolve, _unusedReject) => {
-                fs.open(srcAbsFilepath, 'r', (error: Error | null, fd: number) => {
-                    if (error === null) {
-                        resolve(ok(fd));
-                    } else {
-                        resolve(err(error));
-                    }
-                })
-            });
-            const resultOpenSrcFp: Result<number, Error> = await promiseOpenSrcFp;
-            if (!resultOpenSrcFp.isOk()) {
-                return err(resultOpenSrcFp.error);
-            }
-            const srcFp: number = resultOpenSrcFp.value;
-            
-            try {
-
-                const promiseOpenDestFp: Promise<Result<number, Error>> = new Promise((resolve, _unusedReject) => {
-                    fs.open(destAbsFilepath, 'w', (error: Error | null, response: number) => {
-                        if (error === null) {
-                            resolve(ok(response));
-                        } else {
-                            resolve(err(error));
-                        }
-                    })
-                });
-                const resultOpenDestFp: Result<number, Error> = await promiseOpenDestFp;
-                if (!resultOpenDestFp.isOk()) {
-                    return err(resultOpenDestFp.error);
-                }
-                const destFp: number = resultOpenDestFp.value;
-
-                try {
-
-                    const promiseCopyFile: Promise<Result<null, Error>> = new Promise((resolve, _unusedReject) => {
-                        fs.copyFile(srcAbsFilepath, destAbsFilepath, (error: Error | null) => {
-                            if (error === null) {
-                                resolve(ok(null));
-                            } else {
-                                resolve(err(error));
-                            }
-                        })
-                    });
-                    const resultCopyFile: Result<null, Error> = await promiseCopyFile;
-                    if (!resultCopyFile.isOk()) {
-                        return err(resultCopyFile.error);
-                    }
-                } finally {
-                    fs.close(destFp);
-                }
-
-            } finally {
-                fs.close(srcFp);
-            }
-
-        }
-        return ok(null);
-    }
-
-    // Docs available at https://docs.kurtosistech.com/kurtosis-client/lib-documentation
     public async registerFilesArtifacts(filesArtifactUrls: Map<FilesArtifactID, string>): Promise<Result<null,Error>> {
         const filesArtifactIdStrsToUrls: Map<string, string> = new Map();
         for (const [artifactId, url] of filesArtifactUrls.entries()) {
@@ -255,16 +125,14 @@ export class NetworkContext {
 
     // Docs available at https://docs.kurtosistech.com/kurtosis-client/lib-documentation
     public async addService(
-        serviceId: ServiceID,
-        containerCreationConfig: ContainerCreationConfig,
-        generateRunConfigFunc: (ipAddr: string, generatedFileFilepaths: Map<string, string>, staticFileFilepaths: Map<StaticFileID, string>) => Result<ContainerRunConfig, Error>
-    ): Promise<Result<[ServiceContext, Map<string, PortBinding>], Error>> {
+            serviceId: ServiceID,
+            containerConfigSupplier: (ipAddr: string, sharedDirectory: SharedPath) => Result<ContainerConfig, Error>
+        ): Promise<Result<[ServiceContext, Map<string, PortBinding>], Error>> {
 
         const resultAddServiceToPartition: Result<[ServiceContext, Map<string, PortBinding>], Error> = await this.addServiceToPartition(
             serviceId,
             DEFAULT_PARTITION_ID,
-            containerCreationConfig,
-            generateRunConfigFunc,
+            containerConfigSupplier,
         );
 
         if (!resultAddServiceToPartition.isOk()) {
@@ -278,9 +146,8 @@ export class NetworkContext {
     public async addServiceToPartition(
             serviceId: ServiceID,
             partitionId: PartitionID,
-            containerCreationConfig: ContainerCreationConfig,
-            generateRunConfigFunc: (ipAddr: string, generatedFileFilepaths: Map<string, string>, staticFileFilepaths: Map<StaticFileID, string>) => Result<ContainerRunConfig, Error>,
-            ): Promise<Result<[ServiceContext, Map<string, PortBinding>], Error>> {
+            containerConfigSupplier: (ipAddr: string, sharedDirectory: SharedPath) => Result<ContainerConfig, Error>
+        ): Promise<Result<[ServiceContext, Map<string, PortBinding>], Error>> {
 
         log.trace("Registering new service ID with Kurtosis API...");
         const registerServiceArgs: RegisterServiceArgs = newRegisterServiceArgs(serviceId, partitionId);
@@ -304,83 +171,24 @@ export class NetworkContext {
         }
         const registerServiceResp: RegisterServiceResponse = resultRegisterService.value;
 
-        const serviceIpAddr: string = registerServiceResp.getIpAddr();
-
-        const serviceContext: ServiceContext = new ServiceContext(
-            this.client,
-            serviceId,
-            serviceIpAddr,
-            this.enclaveDataVolMountpoint,
-            containerCreationConfig.getKurtosisVolumeMountpoint());
         log.trace("New service successfully registered with Kurtosis API");
 
-        log.trace("Loading static files into new service namespace...");
-        const usedStaticFilesMap: Set<string> = containerCreationConfig.getUsedStaticFiles();
+        const serviceIpAddr: string = registerServiceResp.getIpAddr();
+        const relativeServiceDirpath: string = registerServiceResp.getRelativeServiceDirpath();
 
-        const usedStaticFiles: Set<string> = new Set();
-        for (const usedStaticFilesId of usedStaticFilesMap) {
-            usedStaticFiles.add(usedStaticFilesId);
+        const sharedDirectory = this.getSharedDirectory(relativeServiceDirpath)
+
+        log.trace("Generating container config object using the container config supplier...")
+        const containerConfigSupplierResult: Result<ContainerConfig, Error> = containerConfigSupplier(serviceIpAddr, sharedDirectory);
+        if (!containerConfigSupplierResult.isOk()){
+            return err(containerConfigSupplierResult.error);
         }
-
-        const resultLoadStaticFiles: Result<Map<string, string>, Error> = await serviceContext.loadStaticFiles(usedStaticFiles); 
-        if (!resultLoadStaticFiles.isOk()) {
-            return err(resultLoadStaticFiles.error);
-        }
-        const staticFileAbsFilepathsOnService: Map<string, string> = resultLoadStaticFiles.value;
-        log.trace("Successfully loaded static files");
-
-        log.trace("Initializing generated files...");
-        const filesToGenerate: Set<string> = new Set();
-        for (const fileId of containerCreationConfig.getFileGeneratingFuncs().keys()) {
-            filesToGenerate.add(fileId);
-        }
-        const resultGenerateFiles: Result<Map<string, GeneratedFileFilepaths>, Error> = await serviceContext.generateFiles(filesToGenerate);
-        if (!resultGenerateFiles.isOk()) {
-            return err(resultGenerateFiles.error);
-        }
-        const generatedFileFilepaths: Map<string, GeneratedFileFilepaths> = resultGenerateFiles.value;
-        const generatedFileAbsFilepathsOnService: Map<string, string> = new Map();
-        for (const [fileId, initializingFunc] of containerCreationConfig.getFileGeneratingFuncs().entries()) {
-
-            if (!generatedFileFilepaths.has(fileId)) {
-                return err(new Error("Needed to initialize file for file ID " + fileId +  ", but no generated file filepaths were " +
-                "found for that file ID; this is a Kurtosis bug"));
-            }
-            const filepaths: GeneratedFileFilepaths = generatedFileFilepaths.get(fileId)!;
-
-            const promiseOpenFp: Promise<Result<number, Error>> = new Promise((resolve, _unusedReject) => {
-                fs.open(filepaths.getAbsoluteFilepathHere(), 'w', (error: Error | null, fd: number) => {
-                    if (error === null) {
-                        resolve(ok(fd));
-                    } else {
-                        resolve(err(error));
-                    }
-                })
-            });
-            const resultOpenFp: Result<number, Error> = await promiseOpenFp;
-            if (!resultOpenFp.isOk()) {
-                return err(resultOpenFp.error);
-            }
-            const fp: number = resultOpenFp.value;
-
-            const initalizingFuncResult: Result<null, Error> = await initializingFunc(fp);
-            if (!initalizingFuncResult.isOk()){
-                return err(initalizingFuncResult.error);
-            }
-
-            generatedFileAbsFilepathsOnService.set(fileId, filepaths.getAbsoluteFilepathOnServiceContainer());
-        }
-        log.trace("Successfully initialized generated files in suite execution volume");
-
-        const generateRunConfigFuncResult: Result<ContainerRunConfig, Error> = generateRunConfigFunc(serviceIpAddr, generatedFileAbsFilepathsOnService, staticFileAbsFilepathsOnService);
-        if (!generateRunConfigFuncResult.isOk()) {
-            return err(generateRunConfigFuncResult.error);
-        }
-        const containerRunConfig: ContainerRunConfig = generateRunConfigFuncResult.value;
+        const containerConfig: ContainerConfig = containerConfigSupplierResult.value;
+        log.trace("Container config object successfully generated")
 
         log.trace("Creating files artifact ID str -> mount dirpaths map...");
         const artifactIdStrToMountDirpath: Map<string, string> = new Map();
-        for (const [filesArtifactId, mountDirpath] of containerCreationConfig.getFilesArtifactMountpoints().entries()) {
+        for (const [filesArtifactId, mountDirpath] of containerConfig.getFilesArtifactMountpoints().entries()) {
 
             artifactIdStrToMountDirpath.set(String(filesArtifactId), mountDirpath);
         }
@@ -389,12 +197,12 @@ export class NetworkContext {
         log.trace("Starting new service with Kurtosis API...");
         const startServiceArgs: StartServiceArgs = newStartServiceArgs(
             serviceId, 
-            containerCreationConfig.getImage(), 
-            containerCreationConfig.getUsedPortsSet(),
-            containerRunConfig.getEntrypointOverrideArgs(),
-            containerRunConfig.getCmdOverrideArgs(),
-            containerRunConfig.getEnvironmentVariableOverrides(),
-            containerCreationConfig.getKurtosisVolumeMountpoint(),
+            containerConfig.getImage(), 
+            containerConfig.getUsedPortsSet(),
+            containerConfig.getEntrypointOverrideArgs(),
+            containerConfig.getCmdOverrideArgs(),
+            containerConfig.getEnvironmentVariableOverrides(),
+            DEFAULT_KURTOSIS_VOLUME_MOUNTPOINT,
             artifactIdStrToMountDirpath);
 
         const promiseStartService: Promise<Result<StartServiceResponse, Error>> = new Promise((resolve, _unusedReject) => {
@@ -416,6 +224,12 @@ export class NetworkContext {
         }
 
         log.trace("Successfully started service with Kurtosis API");
+
+        const serviceContext: ServiceContext = new ServiceContext(
+            this.client,
+            serviceId,
+            serviceIpAddr,
+            sharedDirectory);
 
         const resp: StartServiceResponse = resultStartService.value;
         const resultMap: Map<string, PortBinding> = new Map();
@@ -455,6 +269,14 @@ export class NetworkContext {
             );
         }
 
+        const relativeServiceDirpath: string = serviceResponse.getRelativeServiceDirpath();
+        if (relativeServiceDirpath === "") {
+            return err(new Error(
+                "Kurtosis API reported an empty relative service directory path for service " + serviceId + " - this should never happen, and is a bug with Kurtosis!",
+                )
+            );
+        }
+
         const enclaveDataVolMountDirpathOnSvcContainer: string = serviceResponse.getEnclaveDataVolumeMountDirpath();
         if (enclaveDataVolMountDirpathOnSvcContainer === "") {
             return err(new Error(
@@ -463,12 +285,13 @@ export class NetworkContext {
             );
         }
 
+        const sharedDirectory: SharedPath = this.getSharedDirectory(relativeServiceDirpath)
+
         const serviceContext: ServiceContext = new ServiceContext(
             this.client,
             serviceId,
             serviceResponse.getIpAddr(),
-            this.enclaveDataVolMountpoint,
-            enclaveDataVolMountDirpathOnSvcContainer,
+            sharedDirectory,
         );
 
         return ok(serviceContext);
@@ -720,5 +543,18 @@ export class NetworkContext {
         })
 
         return ok(lambdaIDs)
+    }
+
+    // ====================================================================================================
+    //                                       Private helper functions
+    // ====================================================================================================
+    private getSharedDirectory(relativeServiceDirpath: string): SharedPath {
+
+        const absFilepathOnThisContainer = path.join(this.enclaveDataVolMountpoint, relativeServiceDirpath);
+        const absFilepathOnServiceContainer = path.join(DEFAULT_KURTOSIS_VOLUME_MOUNTPOINT, relativeServiceDirpath);
+
+        const sharedDirectory = new SharedPath(absFilepathOnThisContainer, absFilepathOnServiceContainer);
+
+        return sharedDirectory;
     }
 }

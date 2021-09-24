@@ -60,28 +60,6 @@ function deserialize_api_container_api_ExecuteLambdaResponse(buffer_arg) {
   return api_container_service_pb.ExecuteLambdaResponse.deserializeBinary(new Uint8Array(buffer_arg));
 }
 
-function serialize_api_container_api_GenerateFilesArgs(arg) {
-  if (!(arg instanceof api_container_service_pb.GenerateFilesArgs)) {
-    throw new Error('Expected argument of type api_container_api.GenerateFilesArgs');
-  }
-  return Buffer.from(arg.serializeBinary());
-}
-
-function deserialize_api_container_api_GenerateFilesArgs(buffer_arg) {
-  return api_container_service_pb.GenerateFilesArgs.deserializeBinary(new Uint8Array(buffer_arg));
-}
-
-function serialize_api_container_api_GenerateFilesResponse(arg) {
-  if (!(arg instanceof api_container_service_pb.GenerateFilesResponse)) {
-    throw new Error('Expected argument of type api_container_api.GenerateFilesResponse');
-  }
-  return Buffer.from(arg.serializeBinary());
-}
-
-function deserialize_api_container_api_GenerateFilesResponse(buffer_arg) {
-  return api_container_service_pb.GenerateFilesResponse.deserializeBinary(new Uint8Array(buffer_arg));
-}
-
 function serialize_api_container_api_GetLambdaInfoArgs(arg) {
   if (!(arg instanceof api_container_service_pb.GetLambdaInfoArgs)) {
     throw new Error('Expected argument of type api_container_api.GetLambdaInfoArgs');
@@ -159,28 +137,6 @@ function deserialize_api_container_api_LoadLambdaArgs(buffer_arg) {
   return api_container_service_pb.LoadLambdaArgs.deserializeBinary(new Uint8Array(buffer_arg));
 }
 
-function serialize_api_container_api_LoadStaticFilesArgs(arg) {
-  if (!(arg instanceof api_container_service_pb.LoadStaticFilesArgs)) {
-    throw new Error('Expected argument of type api_container_api.LoadStaticFilesArgs');
-  }
-  return Buffer.from(arg.serializeBinary());
-}
-
-function deserialize_api_container_api_LoadStaticFilesArgs(buffer_arg) {
-  return api_container_service_pb.LoadStaticFilesArgs.deserializeBinary(new Uint8Array(buffer_arg));
-}
-
-function serialize_api_container_api_LoadStaticFilesResponse(arg) {
-  if (!(arg instanceof api_container_service_pb.LoadStaticFilesResponse)) {
-    throw new Error('Expected argument of type api_container_api.LoadStaticFilesResponse');
-  }
-  return Buffer.from(arg.serializeBinary());
-}
-
-function deserialize_api_container_api_LoadStaticFilesResponse(buffer_arg) {
-  return api_container_service_pb.LoadStaticFilesResponse.deserializeBinary(new Uint8Array(buffer_arg));
-}
-
 function serialize_api_container_api_RegisterFilesArtifactsArgs(arg) {
   if (!(arg instanceof api_container_service_pb.RegisterFilesArtifactsArgs)) {
     throw new Error('Expected argument of type api_container_api.RegisterFilesArtifactsArgs');
@@ -212,28 +168,6 @@ function serialize_api_container_api_RegisterServiceResponse(arg) {
 
 function deserialize_api_container_api_RegisterServiceResponse(buffer_arg) {
   return api_container_service_pb.RegisterServiceResponse.deserializeBinary(new Uint8Array(buffer_arg));
-}
-
-function serialize_api_container_api_RegisterStaticFilesArgs(arg) {
-  if (!(arg instanceof api_container_service_pb.RegisterStaticFilesArgs)) {
-    throw new Error('Expected argument of type api_container_api.RegisterStaticFilesArgs');
-  }
-  return Buffer.from(arg.serializeBinary());
-}
-
-function deserialize_api_container_api_RegisterStaticFilesArgs(buffer_arg) {
-  return api_container_service_pb.RegisterStaticFilesArgs.deserializeBinary(new Uint8Array(buffer_arg));
-}
-
-function serialize_api_container_api_RegisterStaticFilesResponse(arg) {
-  if (!(arg instanceof api_container_service_pb.RegisterStaticFilesResponse)) {
-    throw new Error('Expected argument of type api_container_api.RegisterStaticFilesResponse');
-  }
-  return Buffer.from(arg.serializeBinary());
-}
-
-function deserialize_api_container_api_RegisterStaticFilesResponse(buffer_arg) {
-  return api_container_service_pb.RegisterStaticFilesResponse.deserializeBinary(new Uint8Array(buffer_arg));
 }
 
 function serialize_api_container_api_RemoveServiceArgs(arg) {
@@ -351,20 +285,6 @@ getLambdaInfo: {
     responseSerialize: serialize_api_container_api_GetLambdaInfoResponse,
     responseDeserialize: deserialize_api_container_api_GetLambdaInfoResponse,
   },
-  // Tells the API container that the client has static files it would like the API container to know about
-// The API container will respond with paths inside the enclave directory; the client is then responsible for copying their
-//  files there
-registerStaticFiles: {
-    path: '/api_container_api.ApiContainerService/RegisterStaticFiles',
-    requestStream: false,
-    responseStream: false,
-    requestType: api_container_service_pb.RegisterStaticFilesArgs,
-    responseType: api_container_service_pb.RegisterStaticFilesResponse,
-    requestSerialize: serialize_api_container_api_RegisterStaticFilesArgs,
-    requestDeserialize: deserialize_api_container_api_RegisterStaticFilesArgs,
-    responseSerialize: serialize_api_container_api_RegisterStaticFilesResponse,
-    responseDeserialize: deserialize_api_container_api_RegisterStaticFilesResponse,
-  },
   // Tells the API container that the client has files artifacts from the web that it would like the API container to know about
 // The API container will download these artifacts locally, so they're available when launching services
 registerFilesArtifacts: {
@@ -389,30 +309,6 @@ registerService: {
     requestDeserialize: deserialize_api_container_api_RegisterServiceArgs,
     responseSerialize: serialize_api_container_api_RegisterServiceResponse,
     responseDeserialize: deserialize_api_container_api_RegisterServiceResponse,
-  },
-  // Generates files inside the enclave data volume on the filesystem for a container
-generateFiles: {
-    path: '/api_container_api.ApiContainerService/GenerateFiles',
-    requestStream: false,
-    responseStream: false,
-    requestType: api_container_service_pb.GenerateFilesArgs,
-    responseType: api_container_service_pb.GenerateFilesResponse,
-    requestSerialize: serialize_api_container_api_GenerateFilesArgs,
-    requestDeserialize: deserialize_api_container_api_GenerateFilesArgs,
-    responseSerialize: serialize_api_container_api_GenerateFilesResponse,
-    responseDeserialize: deserialize_api_container_api_GenerateFilesResponse,
-  },
-  // Copies static files that have been registered with the API container into the file namespace of the given service
-loadStaticFiles: {
-    path: '/api_container_api.ApiContainerService/LoadStaticFiles',
-    requestStream: false,
-    responseStream: false,
-    requestType: api_container_service_pb.LoadStaticFilesArgs,
-    responseType: api_container_service_pb.LoadStaticFilesResponse,
-    requestSerialize: serialize_api_container_api_LoadStaticFilesArgs,
-    requestDeserialize: deserialize_api_container_api_LoadStaticFilesArgs,
-    responseSerialize: serialize_api_container_api_LoadStaticFilesResponse,
-    responseDeserialize: deserialize_api_container_api_LoadStaticFilesResponse,
   },
   // Starts a previously-registered service by creating a Docker container for it
 startService: {

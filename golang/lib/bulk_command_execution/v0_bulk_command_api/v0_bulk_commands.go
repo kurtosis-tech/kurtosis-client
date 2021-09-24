@@ -66,24 +66,6 @@ func (visitor *cmdArgDeserializingVisitor) VisitRegisterService() error {
 	return nil
 }
 
-func (visitor *cmdArgDeserializingVisitor) VisitGenerateFiles() error {
-	args := &kurtosis_core_rpc_api_bindings.GenerateFilesArgs{}
-	if err := json.Unmarshal(visitor.bytesToDeserialize, args); err != nil {
-		return stacktrace.Propagate(err, "An error occurred deserializing the generate files args")
-	}
-	visitor.deserializedCommandArgsPtr = args
-	return nil
-}
-
-func (visitor *cmdArgDeserializingVisitor) VisitLoadStaticFiles() error {
-	args := &kurtosis_core_rpc_api_bindings.LoadStaticFilesArgs{}
-	if err := json.Unmarshal(visitor.bytesToDeserialize, args); err != nil {
-		return stacktrace.Propagate(err, "An error occurred deserializing the load static files args")
-	}
-	visitor.deserializedCommandArgsPtr = args
-	return nil
-}
-
 func (visitor *cmdArgDeserializingVisitor) VisitStartService() error {
 	args := &kurtosis_core_rpc_api_bindings.StartServiceArgs{}
 	if err := json.Unmarshal(visitor.bytesToDeserialize, args); err != nil {
