@@ -25,7 +25,7 @@ func (s SharedPath) GetAbsPathOnServiceContainer() string {
 }
 
 // Docs available at https://docs.kurtosistech.com/kurtosis-client/lib-documentation
-func (s SharedPath) GetChildPath(pathElement string) (*SharedPath, error) {
+func (s SharedPath) GetChildPath(pathElement string) *SharedPath {
 
 	absPathOnThisContainer := filepath.Join(s.absPathOnThisContainer, pathElement)
 
@@ -33,5 +33,5 @@ func (s SharedPath) GetChildPath(pathElement string) (*SharedPath, error) {
 
 	sharedPath := NewSharedPath(absPathOnThisContainer, absPathOnServiceContainer)
 
-	return sharedPath, nil
+	return sharedPath
 }

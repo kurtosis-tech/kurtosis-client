@@ -1,4 +1,6 @@
 # TBD
+### Fixes
+* Update `SharedPath.GetChildPath()` method remove the error type from the returning values
 
 # 0.17.0
 ### Features
