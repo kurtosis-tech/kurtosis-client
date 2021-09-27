@@ -1632,8 +1632,7 @@ proto.api_container_api.RegisterServiceResponse.prototype.toObject = function(op
  */
 proto.api_container_api.RegisterServiceResponse.toObject = function(includeInstance, msg) {
   var f, obj = {
-    ipAddr: jspb.Message.getFieldWithDefault(msg, 1, ""),
-    relativeServiceDirpath: jspb.Message.getFieldWithDefault(msg, 2, "")
+    relativeServiceDirpath: jspb.Message.getFieldWithDefault(msg, 1, "")
   };
 
   if (includeInstance) {
@@ -1672,10 +1671,6 @@ proto.api_container_api.RegisterServiceResponse.deserializeBinaryFromReader = fu
     switch (field) {
     case 1:
       var value = /** @type {string} */ (reader.readString());
-      msg.setIpAddr(value);
-      break;
-    case 2:
-      var value = /** @type {string} */ (reader.readString());
       msg.setRelativeServiceDirpath(value);
       break;
     default:
@@ -1707,17 +1702,10 @@ proto.api_container_api.RegisterServiceResponse.prototype.serializeBinary = func
  */
 proto.api_container_api.RegisterServiceResponse.serializeBinaryToWriter = function(message, writer) {
   var f = undefined;
-  f = message.getIpAddr();
-  if (f.length > 0) {
-    writer.writeString(
-      1,
-      f
-    );
-  }
   f = message.getRelativeServiceDirpath();
   if (f.length > 0) {
     writer.writeString(
-      2,
+      1,
       f
     );
   }
@@ -1725,10 +1713,10 @@ proto.api_container_api.RegisterServiceResponse.serializeBinaryToWriter = functi
 
 
 /**
- * optional string ip_addr = 1;
+ * optional string relative_service_dirpath = 1;
  * @return {string}
  */
-proto.api_container_api.RegisterServiceResponse.prototype.getIpAddr = function() {
+proto.api_container_api.RegisterServiceResponse.prototype.getRelativeServiceDirpath = function() {
   return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 1, ""));
 };
 
@@ -1737,26 +1725,8 @@ proto.api_container_api.RegisterServiceResponse.prototype.getIpAddr = function()
  * @param {string} value
  * @return {!proto.api_container_api.RegisterServiceResponse} returns this
  */
-proto.api_container_api.RegisterServiceResponse.prototype.setIpAddr = function(value) {
-  return jspb.Message.setProto3StringField(this, 1, value);
-};
-
-
-/**
- * optional string relative_service_dirpath = 2;
- * @return {string}
- */
-proto.api_container_api.RegisterServiceResponse.prototype.getRelativeServiceDirpath = function() {
-  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 2, ""));
-};
-
-
-/**
- * @param {string} value
- * @return {!proto.api_container_api.RegisterServiceResponse} returns this
- */
 proto.api_container_api.RegisterServiceResponse.prototype.setRelativeServiceDirpath = function(value) {
-  return jspb.Message.setProto3StringField(this, 2, value);
+  return jspb.Message.setProto3StringField(this, 1, value);
 };
 
 
@@ -2186,6 +2156,7 @@ proto.api_container_api.StartServiceResponse.prototype.toObject = function(opt_i
  */
 proto.api_container_api.StartServiceResponse.toObject = function(includeInstance, msg) {
   var f, obj = {
+    ipAddress: jspb.Message.getFieldWithDefault(msg, 1, ""),
     usedPortsHostPortBindingsMap: (f = msg.getUsedPortsHostPortBindingsMap()) ? f.toObject(includeInstance, proto.api_container_api.PortBinding.toObject) : []
   };
 
@@ -2224,6 +2195,10 @@ proto.api_container_api.StartServiceResponse.deserializeBinaryFromReader = funct
     var field = reader.getFieldNumber();
     switch (field) {
     case 1:
+      var value = /** @type {string} */ (reader.readString());
+      msg.setIpAddress(value);
+      break;
+    case 2:
       var value = msg.getUsedPortsHostPortBindingsMap();
       reader.readMessage(value, function(message, reader) {
         jspb.Map.deserializeBinary(message, reader, jspb.BinaryReader.prototype.readString, jspb.BinaryReader.prototype.readMessage, proto.api_container_api.PortBinding.deserializeBinaryFromReader, "", new proto.api_container_api.PortBinding());
@@ -2258,22 +2233,47 @@ proto.api_container_api.StartServiceResponse.prototype.serializeBinary = functio
  */
 proto.api_container_api.StartServiceResponse.serializeBinaryToWriter = function(message, writer) {
   var f = undefined;
+  f = message.getIpAddress();
+  if (f.length > 0) {
+    writer.writeString(
+      1,
+      f
+    );
+  }
   f = message.getUsedPortsHostPortBindingsMap(true);
   if (f && f.getLength() > 0) {
-    f.serializeBinary(1, writer, jspb.BinaryWriter.prototype.writeString, jspb.BinaryWriter.prototype.writeMessage, proto.api_container_api.PortBinding.serializeBinaryToWriter);
+    f.serializeBinary(2, writer, jspb.BinaryWriter.prototype.writeString, jspb.BinaryWriter.prototype.writeMessage, proto.api_container_api.PortBinding.serializeBinaryToWriter);
   }
 };
 
 
 /**
- * map<string, PortBinding> used_ports_host_port_bindings = 1;
+ * optional string ip_address = 1;
+ * @return {string}
+ */
+proto.api_container_api.StartServiceResponse.prototype.getIpAddress = function() {
+  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 1, ""));
+};
+
+
+/**
+ * @param {string} value
+ * @return {!proto.api_container_api.StartServiceResponse} returns this
+ */
+proto.api_container_api.StartServiceResponse.prototype.setIpAddress = function(value) {
+  return jspb.Message.setProto3StringField(this, 1, value);
+};
+
+
+/**
+ * map<string, PortBinding> used_ports_host_port_bindings = 2;
  * @param {boolean=} opt_noLazyCreate Do not create the map if
  * empty, instead returning `undefined`
  * @return {!jspb.Map<string,!proto.api_container_api.PortBinding>}
  */
 proto.api_container_api.StartServiceResponse.prototype.getUsedPortsHostPortBindingsMap = function(opt_noLazyCreate) {
   return /** @type {!jspb.Map<string,!proto.api_container_api.PortBinding>} */ (
-      jspb.Message.getMapField(this, 1, opt_noLazyCreate,
+      jspb.Message.getMapField(this, 2, opt_noLazyCreate,
       proto.api_container_api.PortBinding));
 };
 

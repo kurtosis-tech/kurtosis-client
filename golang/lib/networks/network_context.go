@@ -104,7 +104,7 @@ func (networkCtx *NetworkContext) RegisterFilesArtifacts(filesArtifactUrls map[s
 // Docs available at https://docs.kurtosistech.com/kurtosis-client/lib-documentation
 func (networkCtx *NetworkContext) AddService(
 		serviceId services.ServiceID,
-		containerConfigSupplier func(ipAddr string, sharedDirectory *services.SharedPath) (*services.ContainerConfig, error),
+		containerConfigSupplier func(sharedDirectory *services.SharedPath) (*services.ContainerConfig, error),
 	) (*services.ServiceContext, map[string]*kurtosis_core_rpc_api_bindings.PortBinding, error) {
 
 	serviceContext, hostPortBindings, err := networkCtx.AddServiceToPartition(
@@ -123,8 +123,8 @@ func (networkCtx *NetworkContext) AddService(
 func (networkCtx *NetworkContext) AddServiceToPartition(
 		serviceId services.ServiceID,
 		partitionID PartitionID,
-		containerConfigSupplier func(ipAddr string, sharedDirectory *services.SharedPath) (*services.ContainerConfig, error),
-		) (*services.ServiceContext, map[string]*kurtosis_core_rpc_api_bindings.PortBinding, error) {
+		containerConfigSupplier func(sharedDirectory *services.SharedPath) (*services.ContainerConfig, error),
+	) (*services.ServiceContext, map[string]*kurtosis_core_rpc_api_bindings.PortBinding, error) {
 
 	ctx := context.Background()
 
@@ -140,13 +140,12 @@ func (networkCtx *NetworkContext) AddServiceToPartition(
 	}
 	logrus.Trace("New service successfully registered with Kurtosis API")
 
-	serviceIpAddr := registerServiceResp.IpAddr
 	relativeServiceDirpath := registerServiceResp.RelativeServiceDirpath
 
 	sharedDirectory := networkCtx.getSharedDirectory(relativeServiceDirpath)
 
 	logrus.Trace("Generating container config object using the container config supplier...")
-	containerConfig, err := containerConfigSupplier(serviceIpAddr, sharedDirectory)
+	containerConfig, err := containerConfigSupplier(sharedDirectory)
 	if err != nil {
 		return nil, nil, stacktrace.Propagate(
 			err,
@@ -182,7 +181,7 @@ func (networkCtx *NetworkContext) AddServiceToPartition(
 	serviceContext := services.NewServiceContext(
 		networkCtx.client,
 		serviceId,
-		serviceIpAddr,
+		resp.IpAddress,
 		sharedDirectory,
 	)
 

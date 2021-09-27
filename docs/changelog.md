@@ -1,4 +1,10 @@
 # TBD
+### Removals
+* Removed the IP address from the `RegisterService` response
+
+### Breaking Changes
+* `RegisterService` no longer returns an IP address
+* Services will no longer have access to their IP address in their `containerConfigSupplier` method
 
 # 0.17.1
 ### Fixes

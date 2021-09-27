@@ -115,11 +115,8 @@ message RegisterServiceArgs {
 }
 
 message RegisterServiceResponse {
-  // The IP address that the service will receive when it starts
-  string ip_addr = 1;
-
   // The dirpath where the service's directory exists inside the enclave data volume, relative to the enclave data volume root
-  string relative_service_dirpath =2;
+  string relative_service_dirpath = 1;
 }
 
 // ==============================================================================================
@@ -152,10 +149,12 @@ message StartServiceArgs {
 }
 
 message StartServiceResponse {
+  string ip_address = 1;
+
   // Mapping of used_ports_provided_in_input_args -> ip_and_port_on_host_where_port_is_bound (in ip:port form)
   // Ports will only be in this map if they were successfully bound to a host port; if no ports were bound, then
   // this map will be empty
-  map<string, PortBinding> used_ports_host_port_bindings = 1;
+  map<string, PortBinding> used_ports_host_port_bindings = 2;
 }
 
 message PortBinding {

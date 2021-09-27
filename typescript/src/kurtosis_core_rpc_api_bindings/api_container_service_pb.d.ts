@@ -160,9 +160,6 @@ export namespace RegisterServiceArgs {
 }
 
 export class RegisterServiceResponse extends jspb.Message {
-  getIpAddr(): string;
-  setIpAddr(value: string): void;
-
   getRelativeServiceDirpath(): string;
   setRelativeServiceDirpath(value: string): void;
 
@@ -178,7 +175,6 @@ export class RegisterServiceResponse extends jspb.Message {
 
 export namespace RegisterServiceResponse {
   export type AsObject = {
-    ipAddr: string,
     relativeServiceDirpath: string,
   }
 }
@@ -233,6 +229,9 @@ export namespace StartServiceArgs {
 }
 
 export class StartServiceResponse extends jspb.Message {
+  getIpAddress(): string;
+  setIpAddress(value: string): void;
+
   getUsedPortsHostPortBindingsMap(): jspb.Map<string, PortBinding>;
   clearUsedPortsHostPortBindingsMap(): void;
   serializeBinary(): Uint8Array;
@@ -247,6 +246,7 @@ export class StartServiceResponse extends jspb.Message {
 
 export namespace StartServiceResponse {
   export type AsObject = {
+    ipAddress: string,
     usedPortsHostPortBindingsMap: Array<[string, PortBinding.AsObject]>,
   }
 }

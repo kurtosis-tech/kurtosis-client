@@ -126,7 +126,7 @@ export class NetworkContext {
     // Docs available at https://docs.kurtosistech.com/kurtosis-client/lib-documentation
     public async addService(
             serviceId: ServiceID,
-            containerConfigSupplier: (ipAddr: string, sharedDirectory: SharedPath) => Result<ContainerConfig, Error>
+            containerConfigSupplier: (sharedDirectory: SharedPath) => Result<ContainerConfig, Error>
         ): Promise<Result<[ServiceContext, Map<string, PortBinding>], Error>> {
 
         const resultAddServiceToPartition: Result<[ServiceContext, Map<string, PortBinding>], Error> = await this.addServiceToPartition(
@@ -146,7 +146,7 @@ export class NetworkContext {
     public async addServiceToPartition(
             serviceId: ServiceID,
             partitionId: PartitionID,
-            containerConfigSupplier: (ipAddr: string, sharedDirectory: SharedPath) => Result<ContainerConfig, Error>
+            containerConfigSupplier: (sharedDirectory: SharedPath) => Result<ContainerConfig, Error>
         ): Promise<Result<[ServiceContext, Map<string, PortBinding>], Error>> {
 
         log.trace("Registering new service ID with Kurtosis API...");
@@ -173,13 +173,12 @@ export class NetworkContext {
 
         log.trace("New service successfully registered with Kurtosis API");
 
-        const serviceIpAddr: string = registerServiceResp.getIpAddr();
         const relativeServiceDirpath: string = registerServiceResp.getRelativeServiceDirpath();
 
         const sharedDirectory = this.getSharedDirectory(relativeServiceDirpath)
 
         log.trace("Generating container config object using the container config supplier...")
-        const containerConfigSupplierResult: Result<ContainerConfig, Error> = containerConfigSupplier(serviceIpAddr, sharedDirectory);
+        const containerConfigSupplierResult: Result<ContainerConfig, Error> = containerConfigSupplier(sharedDirectory);
         if (!containerConfigSupplierResult.isOk()){
             return err(containerConfigSupplierResult.error);
         }
@@ -222,18 +221,17 @@ export class NetworkContext {
         if (!resultStartService.isOk()) {
             return err(resultStartService.error);
         }
-
+        const startServiceResponse: StartServiceResponse = resultStartService.value;
         log.trace("Successfully started service with Kurtosis API");
 
         const serviceContext: ServiceContext = new ServiceContext(
             this.client,
             serviceId,
-            serviceIpAddr,
+            startServiceResponse.getIpAddress(),
             sharedDirectory);
 
-        const resp: StartServiceResponse = resultStartService.value;
         const resultMap: Map<string, PortBinding> = new Map();
-        for (const [key, value] of resp.getUsedPortsHostPortBindingsMap().entries()) {
+        for (const [key, value] of startServiceResponse.getUsedPortsHostPortBindingsMap().entries()) {
             resultMap.set(key, value);
         }
         return ok<[ServiceContext, Map<string, PortBinding>], Error>([serviceContext, resultMap]);
