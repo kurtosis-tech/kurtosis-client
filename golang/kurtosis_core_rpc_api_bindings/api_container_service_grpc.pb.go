@@ -19,6 +19,11 @@ const _ = grpc.SupportPackageIsVersion7
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type ApiContainerServiceClient interface {
+	// Starts the registration of an external container (started by a third-party source, not the API container)
+	StartExternalContainerRegistration(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*StartExternalContainerRegistrationResponse, error)
+	// Finishes the registration of an container (started by a third-party source, not the API contianer) that was started previously
+	// NOTE: It's important not to forget to finish this registration, else the external container won't be recognized by the API container!
+	FinishExternalContainerRegistration(ctx context.Context, in *FinishExternalContainerRegistrationArgs, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	// Starts a lambda container into the network
 	LoadLambda(ctx context.Context, in *LoadLambdaArgs, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	// Executes a Kurtosis Lambda function on behalf of the user
@@ -58,6 +63,24 @@ type apiContainerServiceClient struct {
 
 func NewApiContainerServiceClient(cc grpc.ClientConnInterface) ApiContainerServiceClient {
 	return &apiContainerServiceClient{cc}
+}
+
+func (c *apiContainerServiceClient) StartExternalContainerRegistration(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*StartExternalContainerRegistrationResponse, error) {
+	out := new(StartExternalContainerRegistrationResponse)
+	err := c.cc.Invoke(ctx, "/api_container_api.ApiContainerService/StartExternalContainerRegistration", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *apiContainerServiceClient) FinishExternalContainerRegistration(ctx context.Context, in *FinishExternalContainerRegistrationArgs, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, "/api_container_api.ApiContainerService/FinishExternalContainerRegistration", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
 }
 
 func (c *apiContainerServiceClient) LoadLambda(ctx context.Context, in *LoadLambdaArgs, opts ...grpc.CallOption) (*emptypb.Empty, error) {
@@ -199,6 +222,11 @@ func (c *apiContainerServiceClient) GetLambdas(ctx context.Context, in *emptypb.
 // All implementations must embed UnimplementedApiContainerServiceServer
 // for forward compatibility
 type ApiContainerServiceServer interface {
+	// Starts the registration of an external container (started by a third-party source, not the API container)
+	StartExternalContainerRegistration(context.Context, *emptypb.Empty) (*StartExternalContainerRegistrationResponse, error)
+	// Finishes the registration of an container (started by a third-party source, not the API contianer) that was started previously
+	// NOTE: It's important not to forget to finish this registration, else the external container won't be recognized by the API container!
+	FinishExternalContainerRegistration(context.Context, *FinishExternalContainerRegistrationArgs) (*emptypb.Empty, error)
 	// Starts a lambda container into the network
 	LoadLambda(context.Context, *LoadLambdaArgs) (*emptypb.Empty, error)
 	// Executes a Kurtosis Lambda function on behalf of the user
@@ -237,6 +265,12 @@ type ApiContainerServiceServer interface {
 type UnimplementedApiContainerServiceServer struct {
 }
 
+func (UnimplementedApiContainerServiceServer) StartExternalContainerRegistration(context.Context, *emptypb.Empty) (*StartExternalContainerRegistrationResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method StartExternalContainerRegistration not implemented")
+}
+func (UnimplementedApiContainerServiceServer) FinishExternalContainerRegistration(context.Context, *FinishExternalContainerRegistrationArgs) (*emptypb.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method FinishExternalContainerRegistration not implemented")
+}
 func (UnimplementedApiContainerServiceServer) LoadLambda(context.Context, *LoadLambdaArgs) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method LoadLambda not implemented")
 }
@@ -293,6 +327,42 @@ type UnsafeApiContainerServiceServer interface {
 
 func RegisterApiContainerServiceServer(s grpc.ServiceRegistrar, srv ApiContainerServiceServer) {
 	s.RegisterService(&ApiContainerService_ServiceDesc, srv)
+}
+
+func _ApiContainerService_StartExternalContainerRegistration_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(emptypb.Empty)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ApiContainerServiceServer).StartExternalContainerRegistration(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/api_container_api.ApiContainerService/StartExternalContainerRegistration",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ApiContainerServiceServer).StartExternalContainerRegistration(ctx, req.(*emptypb.Empty))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ApiContainerService_FinishExternalContainerRegistration_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(FinishExternalContainerRegistrationArgs)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ApiContainerServiceServer).FinishExternalContainerRegistration(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/api_container_api.ApiContainerService/FinishExternalContainerRegistration",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ApiContainerServiceServer).FinishExternalContainerRegistration(ctx, req.(*FinishExternalContainerRegistrationArgs))
+	}
+	return interceptor(ctx, in, info, handler)
 }
 
 func _ApiContainerService_LoadLambda_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
@@ -572,6 +642,14 @@ var ApiContainerService_ServiceDesc = grpc.ServiceDesc{
 	ServiceName: "api_container_api.ApiContainerService",
 	HandlerType: (*ApiContainerServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "StartExternalContainerRegistration",
+			Handler:    _ApiContainerService_StartExternalContainerRegistration_Handler,
+		},
+		{
+			MethodName: "FinishExternalContainerRegistration",
+			Handler:    _ApiContainerService_FinishExternalContainerRegistration_Handler,
+		},
 		{
 			MethodName: "LoadLambda",
 			Handler:    _ApiContainerService_LoadLambda_Handler,

@@ -1,4 +1,6 @@
 # TBD
+### Features
+* Added `StartExternalContainerRegistration` and `FinishExternalContainerRegistration` endpoints, for registering containers started by external sources into the enclave
 
 # 0.17.1
 ### Fixes
