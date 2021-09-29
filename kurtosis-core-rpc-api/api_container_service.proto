@@ -77,7 +77,7 @@ message StartExternalContainerRegistrationResponse {
 //                           Finish External Container Registration 
 // ==============================================================================================
 message FinishExternalContainerRegistrationArgs {
-  // The key that was returned from teh call to start external container registration
+  // The key that was returned from the call to start external container registration
   string registration_key = 1;
 
   // The container ID of the container that is now inside the network
