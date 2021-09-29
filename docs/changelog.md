@@ -1,5 +1,9 @@
 # TBD
 
+# 0.17.2
+### Features
+* Added `StartExternalContainerRegistration` and `FinishExternalContainerRegistration` endpoints, for registering containers started by external sources into the enclave
+
 # 0.17.1
 ### Fixes
 * Update `SharedPath.GetChildPath()` method remove the error type from the returning values

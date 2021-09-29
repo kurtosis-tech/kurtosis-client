@@ -4,6 +4,54 @@
 import * as jspb from "google-protobuf";
 import * as google_protobuf_empty_pb from "google-protobuf/google/protobuf/empty_pb";
 
+export class StartExternalContainerRegistrationResponse extends jspb.Message {
+  getRegistrationKey(): string;
+  setRegistrationKey(value: string): void;
+
+  getIpAddr(): string;
+  setIpAddr(value: string): void;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): StartExternalContainerRegistrationResponse.AsObject;
+  static toObject(includeInstance: boolean, msg: StartExternalContainerRegistrationResponse): StartExternalContainerRegistrationResponse.AsObject;
+  static extensions: {[key: number]: jspb.ExtensionFieldInfo<jspb.Message>};
+  static extensionsBinary: {[key: number]: jspb.ExtensionFieldBinaryInfo<jspb.Message>};
+  static serializeBinaryToWriter(message: StartExternalContainerRegistrationResponse, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): StartExternalContainerRegistrationResponse;
+  static deserializeBinaryFromReader(message: StartExternalContainerRegistrationResponse, reader: jspb.BinaryReader): StartExternalContainerRegistrationResponse;
+}
+
+export namespace StartExternalContainerRegistrationResponse {
+  export type AsObject = {
+    registrationKey: string,
+    ipAddr: string,
+  }
+}
+
+export class FinishExternalContainerRegistrationArgs extends jspb.Message {
+  getRegistrationKey(): string;
+  setRegistrationKey(value: string): void;
+
+  getContainerId(): string;
+  setContainerId(value: string): void;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): FinishExternalContainerRegistrationArgs.AsObject;
+  static toObject(includeInstance: boolean, msg: FinishExternalContainerRegistrationArgs): FinishExternalContainerRegistrationArgs.AsObject;
+  static extensions: {[key: number]: jspb.ExtensionFieldInfo<jspb.Message>};
+  static extensionsBinary: {[key: number]: jspb.ExtensionFieldBinaryInfo<jspb.Message>};
+  static serializeBinaryToWriter(message: FinishExternalContainerRegistrationArgs, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): FinishExternalContainerRegistrationArgs;
+  static deserializeBinaryFromReader(message: FinishExternalContainerRegistrationArgs, reader: jspb.BinaryReader): FinishExternalContainerRegistrationArgs;
+}
+
+export namespace FinishExternalContainerRegistrationArgs {
+  export type AsObject = {
+    registrationKey: string,
+    containerId: string,
+  }
+}
+
 export class LoadLambdaArgs extends jspb.Message {
   getLambdaId(): string;
   setLambdaId(value: string): void;
