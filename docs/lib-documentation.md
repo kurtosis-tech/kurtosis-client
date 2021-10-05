@@ -52,7 +52,7 @@ Stops and removes a Kurtosis Lambda module from a network
 
 **Args**
 
-* `lambdaId`: The ID that the new module should receive (must not exist).
+* `lambdaId`: The ID of the Lambda to remove.
 
 ### getLambdaContext(String lambdaId) -\> [LambdaContext][lambdacontext] lambdaContext
 Gets the [LambdaContext][lambdacontext] associated with an already-running Lambda container identified by the given ID.
