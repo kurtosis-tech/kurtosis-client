@@ -1,4 +1,6 @@
 # TBD
+
+# 0.17.3
 ### Features
 * Add `UnloadLambda` endpoint to remove a Kurtosis Lambda from the network
 
