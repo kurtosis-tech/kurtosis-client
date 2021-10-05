@@ -17,6 +17,15 @@ func NewLoadLambdaArgs(lambdaId string, containerImage string, serializedParams 
 }
 
 // ==============================================================================================
+//                                     Unload Lambda
+// ==============================================================================================
+func NewUnloadLambdaArgs(lambdaId string) *kurtosis_core_rpc_api_bindings.UnloadLambdaArgs {
+	return &kurtosis_core_rpc_api_bindings.UnloadLambdaArgs{
+		LambdaId:         lambdaId,
+	}
+}
+
+// ==============================================================================================
 //                                     Execute Lambda
 // ==============================================================================================
 func NewExecuteLambdaArgs(lambdaId string, serializedParams string) *kurtosis_core_rpc_api_bindings.ExecuteLambdaArgs {

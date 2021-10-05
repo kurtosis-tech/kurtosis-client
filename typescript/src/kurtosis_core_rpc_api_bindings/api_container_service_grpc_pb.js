@@ -236,6 +236,17 @@ function deserialize_api_container_api_StartServiceResponse(buffer_arg) {
   return api_container_service_pb.StartServiceResponse.deserializeBinary(new Uint8Array(buffer_arg));
 }
 
+function serialize_api_container_api_UnloadLambdaArgs(arg) {
+  if (!(arg instanceof api_container_service_pb.UnloadLambdaArgs)) {
+    throw new Error('Expected argument of type api_container_api.UnloadLambdaArgs');
+  }
+  return Buffer.from(arg.serializeBinary());
+}
+
+function deserialize_api_container_api_UnloadLambdaArgs(buffer_arg) {
+  return api_container_service_pb.UnloadLambdaArgs.deserializeBinary(new Uint8Array(buffer_arg));
+}
+
 function serialize_api_container_api_WaitForHttpGetEndpointAvailabilityArgs(arg) {
   if (!(arg instanceof api_container_service_pb.WaitForHttpGetEndpointAvailabilityArgs)) {
     throw new Error('Expected argument of type api_container_api.WaitForHttpGetEndpointAvailabilityArgs');
@@ -305,6 +316,18 @@ loadLambda: {
     responseType: google_protobuf_empty_pb.Empty,
     requestSerialize: serialize_api_container_api_LoadLambdaArgs,
     requestDeserialize: deserialize_api_container_api_LoadLambdaArgs,
+    responseSerialize: serialize_google_protobuf_Empty,
+    responseDeserialize: deserialize_google_protobuf_Empty,
+  },
+  // Stop and remove a Lambda from the network
+unloadLambda: {
+    path: '/api_container_api.ApiContainerService/UnloadLambda',
+    requestStream: false,
+    responseStream: false,
+    requestType: api_container_service_pb.UnloadLambdaArgs,
+    responseType: google_protobuf_empty_pb.Empty,
+    requestSerialize: serialize_api_container_api_UnloadLambdaArgs,
+    requestDeserialize: deserialize_api_container_api_UnloadLambdaArgs,
     responseSerialize: serialize_google_protobuf_Empty,
     responseDeserialize: deserialize_google_protobuf_Empty,
   },

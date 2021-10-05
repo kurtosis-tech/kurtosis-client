@@ -26,6 +26,8 @@ type ApiContainerServiceClient interface {
 	FinishExternalContainerRegistration(ctx context.Context, in *FinishExternalContainerRegistrationArgs, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	// Starts a lambda container into the network
 	LoadLambda(ctx context.Context, in *LoadLambdaArgs, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	// Stop and remove a Lambda from the network
+	UnloadLambda(ctx context.Context, in *UnloadLambdaArgs, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	// Executes a Kurtosis Lambda function on behalf of the user
 	ExecuteLambda(ctx context.Context, in *ExecuteLambdaArgs, opts ...grpc.CallOption) (*ExecuteLambdaResponse, error)
 	// Gets information about a loaded Lambda module
@@ -86,6 +88,15 @@ func (c *apiContainerServiceClient) FinishExternalContainerRegistration(ctx cont
 func (c *apiContainerServiceClient) LoadLambda(ctx context.Context, in *LoadLambdaArgs, opts ...grpc.CallOption) (*emptypb.Empty, error) {
 	out := new(emptypb.Empty)
 	err := c.cc.Invoke(ctx, "/api_container_api.ApiContainerService/LoadLambda", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *apiContainerServiceClient) UnloadLambda(ctx context.Context, in *UnloadLambdaArgs, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, "/api_container_api.ApiContainerService/UnloadLambda", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -229,6 +240,8 @@ type ApiContainerServiceServer interface {
 	FinishExternalContainerRegistration(context.Context, *FinishExternalContainerRegistrationArgs) (*emptypb.Empty, error)
 	// Starts a lambda container into the network
 	LoadLambda(context.Context, *LoadLambdaArgs) (*emptypb.Empty, error)
+	// Stop and remove a Lambda from the network
+	UnloadLambda(context.Context, *UnloadLambdaArgs) (*emptypb.Empty, error)
 	// Executes a Kurtosis Lambda function on behalf of the user
 	ExecuteLambda(context.Context, *ExecuteLambdaArgs) (*ExecuteLambdaResponse, error)
 	// Gets information about a loaded Lambda module
@@ -273,6 +286,9 @@ func (UnimplementedApiContainerServiceServer) FinishExternalContainerRegistratio
 }
 func (UnimplementedApiContainerServiceServer) LoadLambda(context.Context, *LoadLambdaArgs) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method LoadLambda not implemented")
+}
+func (UnimplementedApiContainerServiceServer) UnloadLambda(context.Context, *UnloadLambdaArgs) (*emptypb.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UnloadLambda not implemented")
 }
 func (UnimplementedApiContainerServiceServer) ExecuteLambda(context.Context, *ExecuteLambdaArgs) (*ExecuteLambdaResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ExecuteLambda not implemented")
@@ -379,6 +395,24 @@ func _ApiContainerService_LoadLambda_Handler(srv interface{}, ctx context.Contex
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(ApiContainerServiceServer).LoadLambda(ctx, req.(*LoadLambdaArgs))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ApiContainerService_UnloadLambda_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UnloadLambdaArgs)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ApiContainerServiceServer).UnloadLambda(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/api_container_api.ApiContainerService/UnloadLambda",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ApiContainerServiceServer).UnloadLambda(ctx, req.(*UnloadLambdaArgs))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -653,6 +687,10 @@ var ApiContainerService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "LoadLambda",
 			Handler:    _ApiContainerService_LoadLambda_Handler,
+		},
+		{
+			MethodName: "UnloadLambda",
+			Handler:    _ApiContainerService_UnloadLambda_Handler,
 		},
 		{
 			MethodName: "ExecuteLambda",
