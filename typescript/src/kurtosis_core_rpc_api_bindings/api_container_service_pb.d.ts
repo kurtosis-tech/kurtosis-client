@@ -80,6 +80,26 @@ export namespace LoadLambdaArgs {
   }
 }
 
+export class UnloadLambdaArgs extends jspb.Message {
+  getLambdaId(): string;
+  setLambdaId(value: string): void;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): UnloadLambdaArgs.AsObject;
+  static toObject(includeInstance: boolean, msg: UnloadLambdaArgs): UnloadLambdaArgs.AsObject;
+  static extensions: {[key: number]: jspb.ExtensionFieldInfo<jspb.Message>};
+  static extensionsBinary: {[key: number]: jspb.ExtensionFieldBinaryInfo<jspb.Message>};
+  static serializeBinaryToWriter(message: UnloadLambdaArgs, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): UnloadLambdaArgs;
+  static deserializeBinaryFromReader(message: UnloadLambdaArgs, reader: jspb.BinaryReader): UnloadLambdaArgs;
+}
+
+export namespace UnloadLambdaArgs {
+  export type AsObject = {
+    lambdaId: string,
+  }
+}
+
 export class ExecuteLambdaArgs extends jspb.Message {
   getLambdaId(): string;
   setLambdaId(value: string): void;

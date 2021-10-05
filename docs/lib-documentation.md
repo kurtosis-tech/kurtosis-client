@@ -47,6 +47,13 @@ Starts a new Kurtosis Lambda module (configured using the serialized params) ins
 
 * `lambdaContext`: The [LambdaContext][lambdacontext] representation of the running Lambda container, which allows execution of the Lambda function.
 
+### unloadLambda(String lambdaId) 
+Stops and removes a Kurtosis Lambda module from a network
+
+**Args**
+
+* `lambdaId`: The ID of the Lambda to remove.
+
 ### getLambdaContext(String lambdaId) -\> [LambdaContext][lambdacontext] lambdaContext
 Gets the [LambdaContext][lambdacontext] associated with an already-running Lambda container identified by the given ID.
 

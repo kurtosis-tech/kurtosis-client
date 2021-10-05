@@ -1,4 +1,22 @@
-import { ExecCommandArgs, LoadLambdaArgs, GetLambdaInfoArgs, RegisterFilesArtifactsArgs, GetServiceInfoArgs, PartitionServices, PartitionConnections, PartitionConnectionInfo, RegisterServiceArgs, StartServiceArgs, RemoveServiceArgs, RepartitionArgs, WaitForHttpGetEndpointAvailabilityArgs, WaitForHttpPostEndpointAvailabilityArgs, ExecuteBulkCommandsArgs, ExecuteLambdaArgs } from '../kurtosis_core_rpc_api_bindings/api_container_service_pb';
+import {
+    ExecCommandArgs,
+    LoadLambdaArgs,
+    GetLambdaInfoArgs,
+    RegisterFilesArtifactsArgs,
+    GetServiceInfoArgs,
+    PartitionServices,
+    PartitionConnections,
+    PartitionConnectionInfo,
+    RegisterServiceArgs,
+    StartServiceArgs,
+    RemoveServiceArgs,
+    RepartitionArgs,
+    WaitForHttpGetEndpointAvailabilityArgs,
+    WaitForHttpPostEndpointAvailabilityArgs,
+    ExecuteBulkCommandsArgs,
+    ExecuteLambdaArgs,
+    UnloadLambdaArgs
+} from '../kurtosis_core_rpc_api_bindings/api_container_service_pb';
 import { ServiceID } from './services/service';
 import { PartitionID } from './networks/network_context';
 import { LambdaID } from "./modules/lambda_context";
@@ -25,6 +43,13 @@ export function newLoadLambdaArgs(lambdaId: LambdaID, image: string, serializedP
     result.setLambdaId(String(lambdaId));
     result.setContainerImage(image);
     result.setSerializedParams(serializedParams);
+
+    return result;
+}
+
+export function newUnloadLambdaArgs(lambdaId: LambdaID): UnloadLambdaArgs {
+    const result: UnloadLambdaArgs = new UnloadLambdaArgs();
+    result.setLambdaId(String(lambdaId));
 
     return result;
 }

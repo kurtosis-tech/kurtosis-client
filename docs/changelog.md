@@ -1,5 +1,9 @@
 # TBD
 
+# 0.17.3
+### Features
+* Add `UnloadLambda` endpoint to remove a Kurtosis Lambda from the network
+
 # 0.17.2
 ### Features
 * Added `StartExternalContainerRegistration` and `FinishExternalContainerRegistration` endpoints, for registering containers started by external sources into the enclave

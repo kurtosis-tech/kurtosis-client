@@ -76,6 +76,17 @@ func (networkCtx *NetworkContext) LoadLambda(
 }
 
 // Docs available at https://docs.kurtosistech.com/kurtosis-client/lib-documentation
+func (networkCtx *NetworkContext) UnloadLambda(lambdaId modules.LambdaID) error {
+	args := binding_constructors.NewUnloadLambdaArgs(string(lambdaId))
+
+	_, err := networkCtx.client.UnloadLambda(context.Background(), args)
+	if err != nil {
+		return stacktrace.Propagate(err, "An error occurred unloading module '%v'", lambdaId)
+	}
+	return nil
+}
+
+// Docs available at https://docs.kurtosistech.com/kurtosis-client/lib-documentation
 func (networkCtx *NetworkContext) GetLambdaContext(lambdaId modules.LambdaID) (*modules.LambdaContext, error) {
 	args := binding_constructors.NewGetLambdaInfoArgs(string(lambdaId))
 
