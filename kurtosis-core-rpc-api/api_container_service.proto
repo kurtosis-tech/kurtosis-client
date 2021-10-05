@@ -17,6 +17,9 @@ service ApiContainerService {
   // Starts a lambda container into the network
   rpc LoadLambda(LoadLambdaArgs) returns (google.protobuf.Empty) {};
 
+  // Stop and remove a Lambda from the network
+  rpc UnloadLambda(UnloadLambdaArgs) returns (google.protobuf.Empty) {};
+
   // Executes a Kurtosis Lambda function on behalf of the user 
   rpc ExecuteLambda(ExecuteLambdaArgs) returns (ExecuteLambdaResponse) {};
 
@@ -95,6 +98,13 @@ message LoadLambdaArgs {
   // The serialized params object that will be passed, as-is, to the Lambda for starting
   // The serialization format is dependent on the Lambda
   string serialized_params = 3;
+}
+
+// ==============================================================================================
+//                                     Unload Lambda
+// ==============================================================================================
+message UnloadLambdaArgs {
+  string lambda_id = 1;
 }
 
 // ==============================================================================================

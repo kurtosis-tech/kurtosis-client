@@ -4,12 +4,50 @@
  */
 
 import { ApiContainerServiceClient } from "../..//kurtosis_core_rpc_api_bindings/api_container_service_grpc_pb";
-import { LoadLambdaArgs, GetLambdaInfoArgs, RegisterFilesArtifactsArgs, PortBinding, RegisterServiceArgs, RegisterServiceResponse, StartServiceArgs, GetServiceInfoArgs, GetServiceInfoResponse, RemoveServiceArgs, PartitionConnectionInfo, PartitionServices, PartitionConnections, RepartitionArgs, WaitForHttpGetEndpointAvailabilityArgs, WaitForHttpPostEndpointAvailabilityArgs, ExecuteBulkCommandsArgs, StartServiceResponse, GetLambdaInfoResponse, GetServicesResponse, GetLambdasResponse } from "../..//kurtosis_core_rpc_api_bindings/api_container_service_pb";
+import {
+    LoadLambdaArgs,
+    GetLambdaInfoArgs,
+    RegisterFilesArtifactsArgs,
+    PortBinding,
+    RegisterServiceArgs,
+    RegisterServiceResponse,
+    StartServiceArgs,
+    GetServiceInfoArgs,
+    GetServiceInfoResponse,
+    RemoveServiceArgs,
+    PartitionConnectionInfo,
+    PartitionServices,
+    PartitionConnections,
+    RepartitionArgs,
+    WaitForHttpGetEndpointAvailabilityArgs,
+    WaitForHttpPostEndpointAvailabilityArgs,
+    ExecuteBulkCommandsArgs,
+    StartServiceResponse,
+    GetLambdaInfoResponse,
+    GetServicesResponse,
+    GetLambdasResponse,
+    UnloadLambdaArgs
+} from "../..//kurtosis_core_rpc_api_bindings/api_container_service_pb";
 import { LambdaID, LambdaContext } from "../modules/lambda_context";
 import { ServiceID} from "../services/service";
 import { SharedPath } from "../services/shared_path";
 import { ServiceContext} from "../services/service_context";
-import { newLoadLambdaArgs, newGetLambdaInfoArgs, newRegisterFilesArtifactsArgs, newRegisterServiceArgs, newStartServiceArgs, newGetServiceInfoArgs, newRemoveServiceArgs, newPartitionServices, newPartitionConnections, newRepartitionArgs, newWaitForHttpGetEndpointAvailabilityArgs, newWaitForHttpPostEndpointAvailabilityArgs, newExecuteBulkCommandsArgs } from "../constructor_calls";
+import {
+    newLoadLambdaArgs,
+    newGetLambdaInfoArgs,
+    newRegisterFilesArtifactsArgs,
+    newRegisterServiceArgs,
+    newStartServiceArgs,
+    newGetServiceInfoArgs,
+    newRemoveServiceArgs,
+    newPartitionServices,
+    newPartitionConnections,
+    newRepartitionArgs,
+    newWaitForHttpGetEndpointAvailabilityArgs,
+    newWaitForHttpPostEndpointAvailabilityArgs,
+    newExecuteBulkCommandsArgs,
+    newUnloadLambdaArgs
+} from "../constructor_calls";
 import { ok, err, Result } from "neverthrow";
 import * as log from "loglevel";
 import * as grpc from "grpc";
@@ -46,7 +84,7 @@ export class NetworkContext {
             image: string,
             serializedParams: string): Promise<Result<LambdaContext, Error>> {
         const args: LoadLambdaArgs = newLoadLambdaArgs(lambdaId, image, serializedParams);
-        
+
         const promiseLoadLambda: Promise<Result<google_protobuf_empty_pb.Empty, Error>> = new Promise((resolve, _unusedReject) => {
             this.client.loadLambda(args, (error: grpc.ServiceError | null, response?: google_protobuf_empty_pb.Empty) => {
                 if (error === null) {
@@ -67,6 +105,31 @@ export class NetworkContext {
 
         const moduleCtx: LambdaContext = new LambdaContext(this.client, lambdaId);
         return ok(moduleCtx);
+    }
+
+    // Docs available at https://docs.kurtosistech.com/kurtosis-client/lib-documentation
+    public async UnloadLambda(lambdaId: LambdaID): Promise<Result<null,Error>> {
+        const args: UnloadLambdaArgs = newUnloadLambdaArgs(lambdaId);
+
+        const promiseUnloadLambda: Promise<Result<google_protobuf_empty_pb.Empty, Error>> = new Promise((resolve, _unusedReject) => {
+            this.client.unloadLambda(args, (error: grpc.ServiceError | null, response?: google_protobuf_empty_pb.Empty) => {
+                if (error === null) {
+                    if (!response) {
+                        resolve(err(new Error("No error was encountered but the response was still falsy; this should never happen")));
+                    } else {
+                        resolve(ok(response!));
+                    }
+                } else {
+                    resolve(err(error));
+                }
+            })
+        })
+
+        const resultUnloadLambda: Result<google_protobuf_empty_pb.Empty, Error> = await promiseUnloadLambda;
+        if (!resultUnloadLambda.isOk()) {
+            return err(resultUnloadLambda.error);
+        }
+        return ok(null);
     }
 
     // Docs available at https://docs.kurtosistech.com/kurtosis-client/lib-documentation
