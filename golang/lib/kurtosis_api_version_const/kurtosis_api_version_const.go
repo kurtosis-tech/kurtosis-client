@@ -2,5 +2,5 @@ package kurtosis_api_version_const
 
 const (
 	// DO NOT UPDATE THIS VALUE! It will get updated automatically during the release process
-	KurtosisApiVersion = "0.17.3"
+	KurtosisApiVersion = "0.18.0"
 )
