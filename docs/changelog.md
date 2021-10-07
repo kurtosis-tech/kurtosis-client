@@ -1,4 +1,9 @@
 # TBD
+### Fixes
+* Fixed `SharedPath.GetChildPath` being accidentally uppercased
+
+### Breaking Changes
+* Typescript `SharedPath.GetChildPath` renamed to `SharedPath.getChildPath` 
 
 # 0.17.3
 ### Features
