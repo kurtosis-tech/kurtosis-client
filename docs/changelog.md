@@ -1,5 +1,12 @@
 # TBD
 
+# 0.18.0
+### Fixes
+* Fixed `SharedPath.GetChildPath` being accidentally uppercased
+
+### Breaking Changes
+* Typescript `SharedPath.GetChildPath` renamed to `SharedPath.getChildPath` 
+
 # 0.17.3
 ### Features
 * Add `UnloadLambda` endpoint to remove a Kurtosis Lambda from the network

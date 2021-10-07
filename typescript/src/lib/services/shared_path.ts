@@ -21,7 +21,7 @@ export class SharedPath {
         return this.absPathOnServiceContainer;
     }
     // Docs available at https://docs.kurtosistech.com/kurtosis-client/lib-documentation
-    public GetChildPath(pathElement: string): SharedPath {
+    public getChildPath(pathElement: string): SharedPath {
         const absPathOnThisContainer = path.join(this.absPathOnThisContainer, pathElement);
 
         const absPathOnServiceContainer = path.join(this.absPathOnServiceContainer, pathElement);
