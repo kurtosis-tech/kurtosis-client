@@ -1,4 +1,6 @@
 # TBD
+
+# 0.18.0
 ### Fixes
 * Fixed `SharedPath.GetChildPath` being accidentally uppercased
 
