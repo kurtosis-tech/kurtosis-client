@@ -1,4 +1,6 @@
 # TBD
+### Fixes
+* Fix Kurtosis email account on `package.json` file
 
 # 0.18.0
 ### Fixes
