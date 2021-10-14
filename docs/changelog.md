@@ -1,6 +1,6 @@
 # TBD
 ### Changes
-* TODO
+* Renamed all instances of `Lambda` to `Module`, to prevent confusion with AWS Lambda or in-code lambda functions
 
 ### Breaking Changes
 * The low-level API has been renamed to reflect the Lambda -> module transition (users should make the following renames in their code):
