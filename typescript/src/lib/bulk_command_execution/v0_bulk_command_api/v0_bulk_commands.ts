@@ -1,4 +1,4 @@
-import { LoadLambdaArgs, ExecCommandArgs, ExecuteBulkCommandsArgs, ExecuteLambdaArgs, RegisterServiceArgs, RemoveServiceArgs, RepartitionArgs, StartServiceArgs, WaitForHttpGetEndpointAvailabilityArgs, WaitForHttpPostEndpointAvailabilityArgs } from "../../../kurtosis_core_rpc_api_bindings/api_container_service_pb";
+import { ExecCommandArgs, ExecuteBulkCommandsArgs, ExecuteModuleArgs, LoadModuleArgs, RegisterServiceArgs, RemoveServiceArgs, RepartitionArgs, StartServiceArgs, WaitForHttpGetEndpointAvailabilityArgs, WaitForHttpPostEndpointAvailabilityArgs } from "../../../kurtosis_core_rpc_api_bindings/api_container_service_pb";
 import { V0CommandTypeVisitor, V0CommandType } from "./v0_command_types";
 import { ok, err, Result } from "neverthrow";
 import * as protobuf from "google-protobuf";
@@ -19,23 +19,23 @@ class CmdArgDeserializingVisitor implements V0CommandTypeVisitor {
         this.bytesToDeserialize = bytesToDeserialize;
     }
 
-    public visitLoadLambda(): Result<null, Error> {
+    public visitLoadModule(): Result<null, Error> {
         const deserializationResult: Result<any, Error> = CmdArgDeserializingVisitor.safeJsonParse(this.bytesToDeserialize);
         if (deserializationResult.isErr()) {
             return err(deserializationResult.error);
         }
-        const args: LoadLambdaArgs = Object.assign(new LoadLambdaArgs(), deserializationResult.value);
+        const args: LoadModuleArgs = Object.assign(new LoadModuleArgs(), deserializationResult.value);
 
         this.deserializedCommandArgsPtr = args;
         return ok(null);
     }
 
-    public visitExecuteLambda(): Result<null, Error> {
+    public visitExecuteModule(): Result<null, Error> {
         const deserializationResult: Result<any, Error> = CmdArgDeserializingVisitor.safeJsonParse(this.bytesToDeserialize);
         if (deserializationResult.isErr()) {
             return err(deserializationResult.error);
         }
-        const args: ExecuteLambdaArgs = Object.assign(new ExecuteLambdaArgs(), deserializationResult.value);
+        const args: ExecuteModuleArgs = Object.assign(new ExecuteModuleArgs(), deserializationResult.value);
 
     	this.deserializedCommandArgsPtr = args;
     	return ok(null);
@@ -134,7 +134,7 @@ class CmdArgDeserializingVisitor implements V0CommandTypeVisitor {
         return ok(null);
     }
 
-    public visitGetLambdas(): Result<null, Error> {
+    public visitGetModules(): Result<null, Error> {
         this.deserializedCommandArgsPtr = new google_protobuf_empty_pb.Empty()
         return ok(null);
     }

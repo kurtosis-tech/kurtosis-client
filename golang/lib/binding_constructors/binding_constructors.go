@@ -6,50 +6,52 @@ import "github.com/kurtosis-tech/kurtosis-client/golang/kurtosis_core_rpc_api_bi
 // add them so that our code is safer
 
 // ==============================================================================================
-//                                     Load Lambda
+//                                     Load Module
 // ==============================================================================================
-func NewLoadLambdaArgs(lambdaId string, containerImage string, serializedParams string) *kurtosis_core_rpc_api_bindings.LoadLambdaArgs {
-	return &kurtosis_core_rpc_api_bindings.LoadLambdaArgs{
-		LambdaId:         lambdaId,
+func NewLoadModuleArgs(moduleId string, containerImage string, serializedParams string) *kurtosis_core_rpc_api_bindings.LoadModuleArgs {
+	return &kurtosis_core_rpc_api_bindings.LoadModuleArgs{
+		ModuleId:         moduleId,
 		ContainerImage:   containerImage,
 		SerializedParams: serializedParams,
 	}
 }
 
 // ==============================================================================================
-//                                     Unload Lambda
+//                                     Unload Module
 // ==============================================================================================
-func NewUnloadLambdaArgs(lambdaId string) *kurtosis_core_rpc_api_bindings.UnloadLambdaArgs {
-	return &kurtosis_core_rpc_api_bindings.UnloadLambdaArgs{
-		LambdaId:         lambdaId,
+func NewUnloadModuleArgs(moduleId string) *kurtosis_core_rpc_api_bindings.UnloadModuleArgs {
+	return &kurtosis_core_rpc_api_bindings.UnloadModuleArgs{
+		ModuleId: moduleId,
 	}
 }
 
 // ==============================================================================================
-//                                     Execute Lambda
+//                                     Execute Module
 // ==============================================================================================
-func NewExecuteLambdaArgs(lambdaId string, serializedParams string) *kurtosis_core_rpc_api_bindings.ExecuteLambdaArgs {
-	return &kurtosis_core_rpc_api_bindings.ExecuteLambdaArgs{
-		LambdaId:         lambdaId,
+func NewExecuteModuleArgs(moduleId string, serializedParams string) *kurtosis_core_rpc_api_bindings.ExecuteModuleArgs {
+	return &kurtosis_core_rpc_api_bindings.ExecuteModuleArgs{
+		ModuleId:         moduleId,
 		SerializedParams: serializedParams,
 	}
 }
 
-func NewExecuteLambdaResponse(serializedResult string) *kurtosis_core_rpc_api_bindings.ExecuteLambdaResponse {
-	return &kurtosis_core_rpc_api_bindings.ExecuteLambdaResponse{
+func NewExecuteModuleResponse(serializedResult string) *kurtosis_core_rpc_api_bindings.ExecuteModuleResponse {
+	return &kurtosis_core_rpc_api_bindings.ExecuteModuleResponse{
 		SerializedResult: serializedResult,
 	}
 }
 
 // ==============================================================================================
-//                                     Get Lambda Info
+//                                     Get Module Info
 // ==============================================================================================
-func NewGetLambdaInfoArgs(lambdaId string) *kurtosis_core_rpc_api_bindings.GetLambdaInfoArgs {
-	return &kurtosis_core_rpc_api_bindings.GetLambdaInfoArgs{LambdaId: lambdaId}
+func NewGetModuleInfoArgs(moduleId string) *kurtosis_core_rpc_api_bindings.GetModuleInfoArgs {
+	return &kurtosis_core_rpc_api_bindings.GetModuleInfoArgs{
+		ModuleId: moduleId,
+	}
 }
 
-func NewGetLambdaInfoResponse(ipAddr string) *kurtosis_core_rpc_api_bindings.GetLambdaInfoResponse {
-	return &kurtosis_core_rpc_api_bindings.GetLambdaInfoResponse{
+func NewGetModuleInfoResponse(ipAddr string) *kurtosis_core_rpc_api_bindings.GetModuleInfoResponse {
+	return &kurtosis_core_rpc_api_bindings.GetModuleInfoResponse{
 		IpAddr: ipAddr,
 	}
 }

@@ -1,7 +1,5 @@
 import {
     ExecCommandArgs,
-    LoadLambdaArgs,
-    GetLambdaInfoArgs,
     RegisterFilesArtifactsArgs,
     GetServiceInfoArgs,
     PartitionServices,
@@ -14,46 +12,65 @@ import {
     WaitForHttpGetEndpointAvailabilityArgs,
     WaitForHttpPostEndpointAvailabilityArgs,
     ExecuteBulkCommandsArgs,
-    ExecuteLambdaArgs,
-    UnloadLambdaArgs
+    LoadModuleArgs,
+    UnloadModuleArgs,
+    ExecuteModuleArgs,
+    GetModuleInfoArgs
 } from '../kurtosis_core_rpc_api_bindings/api_container_service_pb';
 import { ServiceID } from './services/service';
 import { PartitionID } from './networks/network_context';
-import { LambdaID } from "./modules/lambda_context";
+import { ModuleID } from "./modules/module_context";
 import * as jspb from "google-protobuf";
 
-// // ====================================================================================================
-// //                                    Service Context
-// // ====================================================================================================
-
-export function newExecCommandArgs(serviceId: ServiceID, command: string[]): ExecCommandArgs {
-    const result: ExecCommandArgs = new ExecCommandArgs();
-    result.setServiceId(serviceId);
-    result.setCommandArgsList(command);
-
-    return result;
-}
-
-// // ====================================================================================================
-// //                                    Network Context
-// // ====================================================================================================
-
-export function newLoadLambdaArgs(lambdaId: LambdaID, image: string, serializedParams: string): LoadLambdaArgs {
-    const result: LoadLambdaArgs = new LoadLambdaArgs();
-    result.setLambdaId(String(lambdaId));
+// ==============================================================================================
+//                                     Load Module
+// ==============================================================================================
+export function newLoadModuleArgs(moduleId: ModuleID, image: string, serializedParams: string): LoadModuleArgs {
+    const result: LoadModuleArgs = new LoadModuleArgs();
+    result.setModuleId(String(moduleId));
     result.setContainerImage(image);
     result.setSerializedParams(serializedParams);
 
     return result;
 }
 
-export function newUnloadLambdaArgs(lambdaId: LambdaID): UnloadLambdaArgs {
-    const result: UnloadLambdaArgs = new UnloadLambdaArgs();
-    result.setLambdaId(String(lambdaId));
+// ==============================================================================================
+//                                     Unload Module
+// ==============================================================================================
+export function newUnloadModuleArgs(moduleId: ModuleID): UnloadModuleArgs {
+    const result: UnloadModuleArgs = new UnloadModuleArgs();
+    result.setModuleId(String(moduleId));
 
     return result;
 }
 
+
+// ==============================================================================================
+//                                     Execute Module
+// ==============================================================================================
+export function newExecuteModuleArgs(moduleId: ModuleID, serializedParams: string): ExecuteModuleArgs {
+    const result: ExecuteModuleArgs = new ExecuteModuleArgs();
+    result.setModuleId(String(moduleId));
+    result.setSerializedParams(serializedParams);
+
+    return result;
+}
+
+
+// ==============================================================================================
+//                                     Get Module Info
+// ==============================================================================================
+export function newGetModuleInfoArgs(moduleId: ModuleID): GetModuleInfoArgs {
+    const result: GetModuleInfoArgs = new GetModuleInfoArgs();
+    result.setModuleId(String(moduleId));
+
+    return result;
+}
+
+
+// ==============================================================================================
+//                                       Register Files Artifacts
+// ==============================================================================================
 export function newRegisterFilesArtifactsArgs(filesArtifactIdStrsToUrls: Map<string, string>): RegisterFilesArtifactsArgs {
     const result: RegisterFilesArtifactsArgs = new RegisterFilesArtifactsArgs();
     const filesArtifactUrlsMap: jspb.Map<string, string> = result.getFilesArtifactUrlsMap();
@@ -63,6 +80,10 @@ export function newRegisterFilesArtifactsArgs(filesArtifactIdStrsToUrls: Map<str
     return result;
 }
 
+
+// ==============================================================================================
+//                                     Register Service
+// ==============================================================================================
 export function newRegisterServiceArgs(serviceId: ServiceID, partitionId: PartitionID): RegisterServiceArgs {
     const result: RegisterServiceArgs = new RegisterServiceArgs();
     result.setServiceId(String(serviceId));
@@ -71,6 +92,10 @@ export function newRegisterServiceArgs(serviceId: ServiceID, partitionId: Partit
     return result;
 }
 
+
+// ==============================================================================================
+//                                        Start Service
+// ==============================================================================================
 export function newStartServiceArgs(
         serviceId: ServiceID, 
         dockerImage: string,
@@ -108,6 +133,9 @@ export function newStartServiceArgs(
     return result;
 }
 
+// ==============================================================================================
+//                                       Get Service Info
+// ==============================================================================================
 export function newGetServiceInfoArgs(serviceId: ServiceID): GetServiceInfoArgs{
     const result: GetServiceInfoArgs = new GetServiceInfoArgs();
     result.setServiceId(String(serviceId));
@@ -115,6 +143,10 @@ export function newGetServiceInfoArgs(serviceId: ServiceID): GetServiceInfoArgs{
     return result;
 }
 
+
+// ==============================================================================================
+//                                        Remove Service
+// ==============================================================================================
 export function newRemoveServiceArgs(serviceId: ServiceID, containerStopTimeoutSeconds: number): RemoveServiceArgs {
     const result: RemoveServiceArgs = new RemoveServiceArgs();
     result.setServiceId(serviceId);
@@ -123,16 +155,10 @@ export function newRemoveServiceArgs(serviceId: ServiceID, containerStopTimeoutS
     return result;
 }
 
-export function newPartitionServices(serviceIdStrSet: Set<string>): PartitionServices{
-    const result: PartitionServices = new PartitionServices();
-    const partitionServicesMap: jspb.Map<string, boolean> = result.getServiceIdSetMap();
-    for (const serviceIdStr of serviceIdStrSet) {
-        partitionServicesMap.set(serviceIdStr, true);
-    }
 
-    return result;
-}
-
+// ==============================================================================================
+//                                          Repartition
+// ==============================================================================================
 export function newRepartitionArgs(
         partitionServices: Map<string, PartitionServices>, 
         partitionConns: Map<string, PartitionConnections>,
@@ -151,6 +177,17 @@ export function newRepartitionArgs(
     return result;
 }
 
+export function newPartitionServices(serviceIdStrSet: Set<string>): PartitionServices{
+    const result: PartitionServices = new PartitionServices();
+    const partitionServicesMap: jspb.Map<string, boolean> = result.getServiceIdSetMap();
+    for (const serviceIdStr of serviceIdStrSet) {
+        partitionServicesMap.set(serviceIdStr, true);
+    }
+
+    return result;
+}
+
+
 export function newPartitionConnections(allConnectionInfo: Map<string, PartitionConnectionInfo>): PartitionConnections {
     const result: PartitionConnections = new PartitionConnections();
     const partitionsMap: jspb.Map<string, PartitionConnectionInfo> = result.getConnectionInfoMap();
@@ -161,6 +198,21 @@ export function newPartitionConnections(allConnectionInfo: Map<string, Partition
     return result;
 }
 
+// ==============================================================================================
+//                                          Exec Command
+// ==============================================================================================
+export function newExecCommandArgs(serviceId: ServiceID, command: string[]): ExecCommandArgs {
+    const result: ExecCommandArgs = new ExecCommandArgs();
+    result.setServiceId(serviceId);
+    result.setCommandArgsList(command);
+
+    return result;
+}
+
+
+// ==============================================================================================
+//                           Wait For Http Get Endpoint Availability
+// ==============================================================================================
 export function newWaitForHttpGetEndpointAvailabilityArgs(
         serviceId: ServiceID,
         port: number, 
@@ -181,6 +233,9 @@ export function newWaitForHttpGetEndpointAvailabilityArgs(
     return result;
 }
 
+// ==============================================================================================
+//                           Wait For Http Post Endpoint Availability
+// ==============================================================================================
 export function newWaitForHttpPostEndpointAvailabilityArgs(
         serviceId: ServiceID,
         port: number, 
@@ -203,6 +258,9 @@ export function newWaitForHttpPostEndpointAvailabilityArgs(
     return result;
 }
 
+// ==============================================================================================
+//                                      Execute Bulk Commands
+// ==============================================================================================
 export function newExecuteBulkCommandsArgs(serializedCommands: string): ExecuteBulkCommandsArgs {
     const result: ExecuteBulkCommandsArgs = new ExecuteBulkCommandsArgs();
     result.setSerializedCommands(serializedCommands);
@@ -210,17 +268,3 @@ export function newExecuteBulkCommandsArgs(serializedCommands: string): ExecuteB
     return result;
 }
 
-export function newExecuteLambdaArgs(lamdaId: LambdaID, serializedParams: string): ExecuteLambdaArgs {
-    const result: ExecuteLambdaArgs = new ExecuteLambdaArgs();
-    result.setLambdaId(String(lamdaId));
-    result.setSerializedParams(serializedParams);
-
-    return result;
-}
-
-export function newGetLambdaInfoArgs(lambdaId: LambdaID): GetLambdaInfoArgs {
-    const result: GetLambdaInfoArgs = new GetLambdaInfoArgs();
-    result.setLambdaId(String(lambdaId));
-
-    return result;
-}

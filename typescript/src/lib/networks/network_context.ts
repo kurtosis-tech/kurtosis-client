@@ -5,8 +5,6 @@
 
 import { ApiContainerServiceClient } from "../..//kurtosis_core_rpc_api_bindings/api_container_service_grpc_pb";
 import {
-    LoadLambdaArgs,
-    GetLambdaInfoArgs,
     RegisterFilesArtifactsArgs,
     PortBinding,
     RegisterServiceArgs,
@@ -23,18 +21,20 @@ import {
     WaitForHttpPostEndpointAvailabilityArgs,
     ExecuteBulkCommandsArgs,
     StartServiceResponse,
-    GetLambdaInfoResponse,
     GetServicesResponse,
-    GetLambdasResponse,
-    UnloadLambdaArgs
+    LoadModuleArgs,
+    UnloadModuleArgs,
+    GetModuleInfoArgs,
+    GetModuleInfoResponse,
+    GetModulesResponse,
 } from "../..//kurtosis_core_rpc_api_bindings/api_container_service_pb";
-import { LambdaID, LambdaContext } from "../modules/lambda_context";
+import { ModuleID, ModuleContext } from "../modules/module_context";
 import { ServiceID} from "../services/service";
 import { SharedPath } from "../services/shared_path";
 import { ServiceContext} from "../services/service_context";
 import {
-    newLoadLambdaArgs,
-    newGetLambdaInfoArgs,
+    newLoadModuleArgs,
+    newGetModuleInfoArgs,
     newRegisterFilesArtifactsArgs,
     newRegisterServiceArgs,
     newStartServiceArgs,
@@ -46,7 +46,7 @@ import {
     newWaitForHttpGetEndpointAvailabilityArgs,
     newWaitForHttpPostEndpointAvailabilityArgs,
     newExecuteBulkCommandsArgs,
-    newUnloadLambdaArgs
+    newUnloadModuleArgs
 } from "../constructor_calls";
 import { ok, err, Result } from "neverthrow";
 import * as log from "loglevel";
@@ -79,14 +79,14 @@ export class NetworkContext {
     }
 
     // Docs available at https://docs.kurtosistech.com/kurtosis-client/lib-documentation
-    public async loadLambda(
-            lambdaId: LambdaID,
+    public async loadModule(
+            moduleId: ModuleID,
             image: string,
-            serializedParams: string): Promise<Result<LambdaContext, Error>> {
-        const args: LoadLambdaArgs = newLoadLambdaArgs(lambdaId, image, serializedParams);
+            serializedParams: string): Promise<Result<ModuleContext, Error>> {
+        const args: LoadModuleArgs = newLoadModuleArgs(moduleId, image, serializedParams);
 
-        const promiseLoadLambda: Promise<Result<google_protobuf_empty_pb.Empty, Error>> = new Promise((resolve, _unusedReject) => {
-            this.client.loadLambda(args, (error: grpc.ServiceError | null, response?: google_protobuf_empty_pb.Empty) => {
+        const loadModulePromise: Promise<Result<google_protobuf_empty_pb.Empty, Error>> = new Promise((resolve, _unusedReject) => {
+            this.client.loadModule(args, (error: grpc.ServiceError | null, response?: google_protobuf_empty_pb.Empty) => {
                 if (error === null) {
                     if (!response) {
                         resolve(err(new Error("No error was encountered but the response was still falsy; this should never happen")));
@@ -98,21 +98,21 @@ export class NetworkContext {
                 }
             })
         });
-        const resultLoadLambda: Result<google_protobuf_empty_pb.Empty, Error> = await promiseLoadLambda;
-        if (!resultLoadLambda.isOk()) {
-            return err(resultLoadLambda.error);
+        const loadModuleResult: Result<google_protobuf_empty_pb.Empty, Error> = await loadModulePromise;
+        if (!loadModuleResult.isOk()) {
+            return err(loadModuleResult.error);
         }
 
-        const moduleCtx: LambdaContext = new LambdaContext(this.client, lambdaId);
+        const moduleCtx: ModuleContext = new ModuleContext(this.client, moduleId);
         return ok(moduleCtx);
     }
 
     // Docs available at https://docs.kurtosistech.com/kurtosis-client/lib-documentation
-    public async UnloadLambda(lambdaId: LambdaID): Promise<Result<null,Error>> {
-        const args: UnloadLambdaArgs = newUnloadLambdaArgs(lambdaId);
+    public async unloadModule(moduleId: ModuleID): Promise<Result<null,Error>> {
+        const args: UnloadModuleArgs = newUnloadModuleArgs(moduleId);
 
-        const promiseUnloadLambda: Promise<Result<google_protobuf_empty_pb.Empty, Error>> = new Promise((resolve, _unusedReject) => {
-            this.client.unloadLambda(args, (error: grpc.ServiceError | null, response?: google_protobuf_empty_pb.Empty) => {
+        const unloadModulePromise: Promise<Result<google_protobuf_empty_pb.Empty, Error>> = new Promise((resolve, _unusedReject) => {
+            this.client.unloadModule(args, (error: grpc.ServiceError | null, response?: google_protobuf_empty_pb.Empty) => {
                 if (error === null) {
                     if (!response) {
                         resolve(err(new Error("No error was encountered but the response was still falsy; this should never happen")));
@@ -125,19 +125,19 @@ export class NetworkContext {
             })
         })
 
-        const resultUnloadLambda: Result<google_protobuf_empty_pb.Empty, Error> = await promiseUnloadLambda;
-        if (!resultUnloadLambda.isOk()) {
-            return err(resultUnloadLambda.error);
+        const unloadModuleResult: Result<google_protobuf_empty_pb.Empty, Error> = await unloadModulePromise;
+        if (!unloadModuleResult.isOk()) {
+            return err(unloadModuleResult.error);
         }
         return ok(null);
     }
 
     // Docs available at https://docs.kurtosistech.com/kurtosis-client/lib-documentation
-    public async getLambdaContext(lambdaId: LambdaID): Promise<Result<LambdaContext, Error>> {
-        const args: GetLambdaInfoArgs = newGetLambdaInfoArgs(lambdaId);
+    public async getModuleContext(moduleId: ModuleID): Promise<Result<ModuleContext, Error>> {
+        const args: GetModuleInfoArgs = newGetModuleInfoArgs(moduleId);
         
-        const promiseGetLambdaInfo: Promise<Result<GetLambdaInfoResponse, Error>> = new Promise((resolve, _unusedReject) => {
-            this.client.getLambdaInfo(args, (error: grpc.ServiceError | null, response?: GetLambdaInfoResponse) => {
+        const getModuleInfoPromise: Promise<Result<GetModuleInfoResponse, Error>> = new Promise((resolve, _unusedReject) => {
+            this.client.getModuleInfo(args, (error: grpc.ServiceError | null, response?: GetModuleInfoResponse) => {
                 if (error === null) {
                     if (!response) {
                         resolve(err(new Error("No error was encountered but the response was still falsy; this should never happen")));
@@ -148,13 +148,13 @@ export class NetworkContext {
                 }
             })
         });
-        const resultGetLambdaInfo: Result<GetLambdaInfoResponse, Error> = await promiseGetLambdaInfo;
-        if (!resultGetLambdaInfo.isOk()) {
-            return err(resultGetLambdaInfo.error);
+        const getModuleInfoResult: Result<GetModuleInfoResponse, Error> = await getModuleInfoPromise;
+        if (!getModuleInfoResult.isOk()) {
+            return err(getModuleInfoResult.error);
         }
 
-        const lambdaCtx: LambdaContext = new LambdaContext(this.client, lambdaId);
-        return ok(lambdaCtx);
+        const moduleCtx: ModuleContext = new ModuleContext(this.client, moduleId);
+        return ok(moduleCtx);
     }
 
     // Docs available at https://docs.kurtosistech.com/kurtosis-client/lib-documentation
@@ -575,11 +575,11 @@ export class NetworkContext {
     }
 
     // Docs available at https://docs.kurtosistech.com/kurtosis-client/lib-documentation
-    public async getLambdas(): Promise<Result<Set<LambdaID>, Error>> {
+    public async getModules(): Promise<Result<Set<ModuleID>, Error>> {
         const emptyArg: google_protobuf_empty_pb.Empty = new google_protobuf_empty_pb.Empty()
         
-        const promiseGetLambdas: Promise<Result<GetLambdasResponse, Error>> = new Promise((resolve, _unusedReject) => {
-            this.client.getLambdas(emptyArg, (error: Error | null, response?: GetLambdasResponse) => {
+        const getModulesPromise: Promise<Result<GetModulesResponse, Error>> = new Promise((resolve, _unusedReject) => {
+            this.client.getModules(emptyArg, (error: Error | null, response?: GetModulesResponse) => {
                 if (error === null) {
                     if (!response) {
                         resolve(err(new Error("No error was encountered but the response was still falsy; this should never happen")));
@@ -592,20 +592,20 @@ export class NetworkContext {
             })
         });
 
-        const resultGetLambdas: Result<GetLambdasResponse, Error> = await promiseGetLambdas;
-        if (!resultGetLambdas.isOk()) {
-            return err(resultGetLambdas.error);
+        const getModulesResult: Result<GetModulesResponse, Error> = await getModulesPromise;
+        if (!getModulesResult.isOk()) {
+            return err(getModulesResult.error);
         }
 
-        const getLambdasResponse: GetLambdasResponse = resultGetLambdas.value;
+        const getModulesResponse: GetModulesResponse = getModulesResult.value;
 
-        const lambdaIDs: Set<LambdaID> = new Set<LambdaID>()
+        const moduleIds: Set<ModuleID> = new Set<ModuleID>()
 
-        getLambdasResponse.getLambdaIdsMap().forEach((value: boolean, key: string) => {
-            lambdaIDs.add(key)
+        getModulesResponse.getModuleIdsMap().forEach((value: boolean, key: string) => {
+            moduleIds.add(key)
         })
 
-        return ok(lambdaIDs)
+        return ok(moduleIds)
     }
 
     // ====================================================================================================

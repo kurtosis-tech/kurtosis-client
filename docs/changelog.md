@@ -1,6 +1,26 @@
 # TBD
+### Changes
+* Renamed all instances of `Lambda` to `Module`, to prevent confusion with AWS Lambda or in-code lambda functions
+
 ### Fixes
 * Fix Kurtosis email account on `package.json` file
+
+### Breaking Changes
+* The low-level API has been renamed to reflect the Lambda -> module transition (users should make the following renames in their code):
+    * Renamed `LoadLambda` to `LoadModule`
+    * Renamed `ExecuteLambda` to `ExecuteModule`
+    * Renamed `UnloadLambda` to `UnloadModule`
+    * Renamed `GetLambdaInfo` to `GetModuleInfo`
+    * Renamed `GetLambdas` to `GetModules`
+    * All instances of `lambda_id` have been renamed to `module_id`
+* The high-level API has been renamed to reflect the Lambda -> module transition (users should make the following renames in their code):
+    * The `LambdaID` type has been renamed `ModuleID`
+    * The `LambdaContext` class has been renamed `ModuleContext`
+    * In `NetworkContext`, the following functions have been renamed:
+        * `loadLambda` -> `loadModule`
+        * `unloadLambda` -> `unloadModule`
+        * `getLambdaContext` -> `getModuleContext`
+        * `getLambdas` -> `getModules`
 
 # 0.18.0
 ### Fixes

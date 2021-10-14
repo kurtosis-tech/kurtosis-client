@@ -4,8 +4,8 @@ import { ok, err, Result } from "neverthrow";
 //  1) all enum cases can be exhaustively handled
 //  2) any changes in the enum will result in a compile break
 export interface V0CommandTypeVisitor {
-	visitLoadLambda: () => Result<null, Error>;
-	visitExecuteLambda: () => Result<null, Error>;
+	visitLoadModule: () => Result<null, Error>;
+	visitExecuteModule: () => Result<null, Error>;
 	visitRegisterService: () => Result<null, Error>;
 	visitStartService: () => Result<null, Error>;
 	visitRemoveService: () => Result<null, Error>;
@@ -15,13 +15,13 @@ export interface V0CommandTypeVisitor {
 	visitWaitForHttpPostEndpointAvailability: () => Result<null, Error>;
 	visitExecuteBulkCommands: () => Result<null, Error>;
 	visitGetServices: () => Result<null, Error>;
-	visitGetLambdas: () => Result<null, Error>;
+	visitGetModules: () => Result<null, Error>;
 }
 
 // vvvvvvvvvvvvvvvvvvvv Update the visitor whenever you add an enum value!!! vvvvvvvvvvvvvvvvvvvvvvvvvvv
 export enum V0CommandType {
-	LoadLambda = "LOAD_LAMBDA",
-	ExecuteLambda = "EXECUTE_LAMBDA",
+	LoadModule = "LOAD_MODULE",
+	ExecuteModule = "EXECUTE_MODULE",
 	RegisterService = "REGISTER_SERVICE",
 	StartService = "START_SERVICE",
 	RemoveService = "REMOVE_SERVICE",
@@ -31,7 +31,7 @@ export enum V0CommandType {
 	WaitForHttpPostEndpointAvailability = "WAIT_FOR_HTTP_POST_ENDPOINT_AVAILABILITY",
 	ExecuteBulkCommands = "EXECUTE_BULK_COMMANDS",
 	GetServices = "GET_SERVICES",
-	GetLambdas = "GET_LAMBDAS"
+	GetModules = "GET_MODULES"
 }
 // ^^^^^^^^^^^^^^^^^^^^ Update the visitor whenever you add an enum value!!! ^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
@@ -39,11 +39,11 @@ export namespace V0CommandType {
 	export function acceptVisitor(commandType: V0CommandType, visitor: V0CommandTypeVisitor): Result<null, Error> {
 		let result: Result<null, Error>;
 		switch (commandType) {
-			case V0CommandType.LoadLambda:
-				result = visitor.visitLoadLambda();
+			case V0CommandType.LoadModule:
+				result = visitor.visitLoadModule();
 				break;
-			case V0CommandType.ExecuteLambda:
-				result = visitor.visitExecuteLambda();
+			case V0CommandType.ExecuteModule:
+				result = visitor.visitExecuteModule();
 				break;
 			case V0CommandType.RegisterService:
 				result = visitor.visitRegisterService();
@@ -72,8 +72,8 @@ export namespace V0CommandType {
 			case V0CommandType.GetServices:
 				result = visitor.visitGetServices();
 				break;
-			case V0CommandType.GetLambdas:
-				result = visitor.visitGetLambdas();
+			case V0CommandType.GetModules:
+				result = visitor.visitGetModules();
 				break;
 			default:
 				return err(new Error("Unrecognized command type " + commandType));
