@@ -2,6 +2,9 @@
 ### Changes
 * Renamed all instances of `Lambda` to `Module`, to prevent confusion with AWS Lambda or in-code lambda functions
 
+### Fixes
+* Fix Kurtosis email account on `package.json` file
+
 ### Breaking Changes
 * The low-level API has been renamed to reflect the Lambda -> module transition (users should make the following renames in their code):
     * Renamed `LoadLambda` to `LoadModule`
