@@ -24,24 +24,24 @@ import (
 	"github.com/palantir/stacktrace"
 )
 
-type LambdaID string
+type ModuleID string
 
 // Docs available at https://docs.kurtosistech.com/kurtosis-client/lib-documentation
-type LambdaContext struct {
+type ModuleContext struct {
 	client   kurtosis_core_rpc_api_bindings.ApiContainerServiceClient
-	lambdaId LambdaID
+	moduleId ModuleID
 }
 
-func NewLambdaContext(client kurtosis_core_rpc_api_bindings.ApiContainerServiceClient, lambdaId LambdaID) *LambdaContext {
-	return &LambdaContext{client: client, lambdaId: lambdaId}
+func NewModuleContext(client kurtosis_core_rpc_api_bindings.ApiContainerServiceClient, moduleId ModuleID) *ModuleContext {
+	return &ModuleContext{client: client, moduleId: moduleId}
 }
 
 // Docs available at https://docs.kurtosistech.com/kurtosis-client/lib-documentation
-func (moduleCtx *LambdaContext) Execute(serializedParams string) (serializedResult string, resultErr error) {
-	args := binding_constructors.NewExecuteLambdaArgs(string(moduleCtx.lambdaId), serializedParams)
-	resp, err := moduleCtx.client.ExecuteLambda(context.Background(), args)
+func (moduleCtx *ModuleContext) Execute(serializedParams string) (serializedResult string, resultErr error) {
+	args := binding_constructors.NewExecuteModuleArgs(string(moduleCtx.moduleId), serializedParams)
+	resp, err := moduleCtx.client.ExecuteModule(context.Background(), args)
 	if err != nil {
-		return "", stacktrace.Propagate(err, "An error occurred executing Lambda '%v'", moduleCtx.lambdaId)
+		return "", stacktrace.Propagate(err, "An error occurred executing module '%v'", moduleCtx.moduleId)
 	}
 	return resp.SerializedResult, nil
 }

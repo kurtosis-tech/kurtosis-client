@@ -6,21 +6,20 @@ _Found a bug? File it on [the repo](https://github.com/kurtosis-tech/kurtosis-cl
 
 
 
-LambdaContext
+ModuleContext
 -------------
-<!-- TODO need to add docs for what Kurtosis modules are -->
-This Kurtosis-provided class is the lowest-level representation of a Lambda Kurtosis module - a Kurtosis module that has exactly one function.
+This Kurtosis-provided class is the lowest-level representation of a Kurtosis module - a Docker container with a connection to the Kurtosis engine that responds to commands.
 
 ### execute(String serializedParams) -\> String serializedResult
-Executes the function packaged inside the Kurtosis Lambda module with the given serialized args, returning the serialized result. The serialization format will depend on the Lambda.
+Some modules are considered executable, meaning they respond to an "execute" command. This function will send the execute command to the module with the given serialized args, returning the serialized result. The serialization format of args & response will depend on the module. If the module isn't executable (i.e. doesn't respond to an "execute" command) then an error will be thrown.
 
 **Args**
 
-* `serializedParams`: Serialized data containing args to the Lambda function. Consult the documentation for the module you're using to determine what this should contain.
+* `serializedParams`: Serialized data containing args to the module's execute function. Consult the documentation for the module you're using to determine what this should contain.
 
 **Returns**
 
-* `serializedResult`: Serialized data containing the results of executing the Lambda function. Consult the documentation for the module you're using to determine what this will contain.
+* `serializedResult`: Serialized data containing the results of executing the module. Consult the documentation for the module you're using to determine what this will contain.
 
 
 
@@ -34,36 +33,36 @@ NetworkContext
 --------------
 This Kurtosis-provided class is the lowest-level representation of a test network, and provides methods for inspecting and manipulating the network. All [Network][network] implementations will encapsulate an instance of this class.
 
-### loadLambda(String lambdaId, String image, String serializedParams) -\> [LambdaContext][lambdacontext] lambdaContext
-Starts a new Kurtosis Lambda module (configured using the serialized params) inside the test network, which makes its function available for use.
+### loadModule(String moduleId, String image, String serializedParams) -\> [ModuleContext][modulecontext] moduleContext
+Starts a new Kurtosis module (configured using the serialized params) inside the test network, which makes it available for use.
 
 **Args**
 
-* `lambdaId`: The ID that the new module should receive (must not exist).
-* `image`: The container image of the Lambda module to be loaded.
+* `moduleId`: The ID that the new module should receive (must not exist).
+* `image`: The container image of the module to be loaded.
 * `serializedParams`: Serialized parameter data that will be passed to the module as it starts, to control overall module behaviour.
 
 **Returns**
 
-* `lambdaContext`: The [LambdaContext][lambdacontext] representation of the running Lambda container, which allows execution of the Lambda function.
+* `moduleContext`: The [ModuleContext][modulecontext] representation of the running module container, which allows execution of the execute function (if it exists).
 
-### unloadLambda(String lambdaId) 
-Stops and removes a Kurtosis Lambda module from a network
-
-**Args**
-
-* `lambdaId`: The ID of the Lambda to remove.
-
-### getLambdaContext(String lambdaId) -\> [LambdaContext][lambdacontext] lambdaContext
-Gets the [LambdaContext][lambdacontext] associated with an already-running Lambda container identified by the given ID.
+### unloadModule(String moduleId) 
+Stops and removes a Kurtosis module from the enclave.
 
 **Args**
 
-* `lambdaId`: The ID of the Lambda to retrieve the context for.
+* `moduleId`: The ID of the module to remove.
+
+### getModuleContext(String moduleId) -\> [ModuleContext][modulecontext] moduleContext
+Gets the [ModuleContext][modulecontext] associated with an already-running module container identified by the given ID.
+
+**Args**
+
+* `moduleId`: The ID of the module to retrieve the context for.
 
 **Returns**
 
-* `lambdaContext`: The [LambdaContext][lambdacontext] representation of the running Lambda container, which allows execution of the Lambda function.
+* `moduleContext`: The [ModuleContext][modulecontext] representation of the running module container, which allows execution of the module's execute function (if it exists).
 
 ### registerFilesArtifacts(Map\<FilesArtifactID, String\> filesArtifactUrls)
 Downloads the given files artifacts to the Kurtosis engine, associating them with the given IDs, so they can be mounted inside a service's filespace at creation time via [ContainerConfig.filesArtifactMountpoints][containerconfig_filesartifactmountpoints].
@@ -156,12 +155,12 @@ Gets the IDs of the current services in the test network
 
 * `serviceIDs`: A set of service IDs
 
-### getLambdas() -\> Set\<LambdaID\> lambdaIDs
-Gets the IDs of the Kurtosis Lambdas that have been loaded into the test network.
+### getModules() -\> Set\<ModuleID\> moduleIds
+Gets the IDs of the Kurtosis modules that have been loaded into the enclave.
 
 **Returns**
 
-* `lambdaIDs`: A set of Kurtosis Lambda IDs
+* `moduleIds`: A set of Kurtosis module IDs that are running in the enclave
 
 
 
@@ -280,7 +279,8 @@ _Found a bug? File it on [the repo](https://github.com/kurtosis-tech/kurtosis-cl
 
 [containerconfigbuilder]: #containerconfigbuilder
 
-[lambdacontext]: #lambdacontext
+TODO MODIFY
+[modulecontext]: #modulecontext
 
 [network]: #network
 

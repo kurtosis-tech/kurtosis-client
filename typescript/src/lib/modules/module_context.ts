@@ -1,27 +1,27 @@
 import { ApiContainerServiceClient } from "../../kurtosis_core_rpc_api_bindings/api_container_service_grpc_pb";
-import { ExecuteLambdaArgs, ExecuteLambdaResponse } from "../../kurtosis_core_rpc_api_bindings/api_container_service_pb";
-import { newExecuteLambdaArgs } from "../constructor_calls";
+import { ExecuteModuleArgs, ExecuteModuleResponse } from "../../kurtosis_core_rpc_api_bindings/api_container_service_pb";
+import { newExecuteModuleArgs as newExecuteModuleArgs } from "../constructor_calls";
 import { ok, err, Result } from "neverthrow";
 import * as grpc from "grpc";
 
-export type LambdaID = string;
+export type ModuleID = string;
 
 // Docs available at https://docs.kurtosistech.com/kurtosis-client/lib-documentation
-export class LambdaContext {
+export class ModuleContext {
     private readonly client: ApiContainerServiceClient;
-    private readonly lambdaId: LambdaID;
+    private readonly moduleId: ModuleID;
     
-    constructor (client: ApiContainerServiceClient, lambdaId: LambdaID) {
+    constructor (client: ApiContainerServiceClient, moduleId: ModuleID) {
         this.client = client;
-        this.lambdaId = lambdaId;
+        this.moduleId = moduleId;
     }
 
     // Docs available at https://docs.kurtosistech.com/kurtosis-client/lib-documentation
     public async execute(serializedParams: string): Promise<Result<string, Error>> {
-        const args: ExecuteLambdaArgs = newExecuteLambdaArgs(this.lambdaId, serializedParams);
+        const args: ExecuteModuleArgs = newExecuteModuleArgs(this.moduleId, serializedParams);
 
-        const promiseExecuteLambda: Promise<Result<ExecuteLambdaResponse, Error>> = new Promise((resolve, _unusedReject) => {
-            this.client.executeLambda(args, (error: grpc.ServiceError | null, response?: ExecuteLambdaResponse) => {
+        const executeModulePromise: Promise<Result<ExecuteModuleResponse, Error>> = new Promise((resolve, _unusedReject) => {
+            this.client.executeModule(args, (error: grpc.ServiceError | null, response?: ExecuteModuleResponse) => {
                 if (error === null) {
                     if (!response) {
                         resolve(err(new Error("No error was encountered but the response was still falsy; this should never happen")));
@@ -33,11 +33,11 @@ export class LambdaContext {
                 }
             })
         });
-        const resultExecuteLambda: Result<ExecuteLambdaResponse, Error> = await promiseExecuteLambda;
-        if (!resultExecuteLambda.isOk()) {
-            return err(resultExecuteLambda.error);
+        const executeModuleResult: Result<ExecuteModuleResponse, Error> = await executeModulePromise;
+        if (!executeModuleResult.isOk()) {
+            return err(executeModuleResult.error);
         }
-        const resp: ExecuteLambdaResponse = resultExecuteLambda.value;
+        const resp: ExecuteModuleResponse = executeModuleResult.value;
 
         return ok(resp.getSerializedResult());
     }

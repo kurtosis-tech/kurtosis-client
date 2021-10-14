@@ -10,10 +10,10 @@ import * as grpc from "grpc";
 interface IApiContainerServiceService extends grpc.ServiceDefinition<grpc.UntypedServiceImplementation> {
   startExternalContainerRegistration: grpc.MethodDefinition<google_protobuf_empty_pb.Empty, api_container_service_pb.StartExternalContainerRegistrationResponse>;
   finishExternalContainerRegistration: grpc.MethodDefinition<api_container_service_pb.FinishExternalContainerRegistrationArgs, google_protobuf_empty_pb.Empty>;
-  loadLambda: grpc.MethodDefinition<api_container_service_pb.LoadLambdaArgs, google_protobuf_empty_pb.Empty>;
-  unloadLambda: grpc.MethodDefinition<api_container_service_pb.UnloadLambdaArgs, google_protobuf_empty_pb.Empty>;
-  executeLambda: grpc.MethodDefinition<api_container_service_pb.ExecuteLambdaArgs, api_container_service_pb.ExecuteLambdaResponse>;
-  getLambdaInfo: grpc.MethodDefinition<api_container_service_pb.GetLambdaInfoArgs, api_container_service_pb.GetLambdaInfoResponse>;
+  loadModule: grpc.MethodDefinition<api_container_service_pb.LoadModuleArgs, google_protobuf_empty_pb.Empty>;
+  unloadModule: grpc.MethodDefinition<api_container_service_pb.UnloadModuleArgs, google_protobuf_empty_pb.Empty>;
+  executeModule: grpc.MethodDefinition<api_container_service_pb.ExecuteModuleArgs, api_container_service_pb.ExecuteModuleResponse>;
+  getModuleInfo: grpc.MethodDefinition<api_container_service_pb.GetModuleInfoArgs, api_container_service_pb.GetModuleInfoResponse>;
   registerFilesArtifacts: grpc.MethodDefinition<api_container_service_pb.RegisterFilesArtifactsArgs, google_protobuf_empty_pb.Empty>;
   registerService: grpc.MethodDefinition<api_container_service_pb.RegisterServiceArgs, api_container_service_pb.RegisterServiceResponse>;
   startService: grpc.MethodDefinition<api_container_service_pb.StartServiceArgs, api_container_service_pb.StartServiceResponse>;
@@ -25,7 +25,7 @@ interface IApiContainerServiceService extends grpc.ServiceDefinition<grpc.Untype
   waitForHttpPostEndpointAvailability: grpc.MethodDefinition<api_container_service_pb.WaitForHttpPostEndpointAvailabilityArgs, google_protobuf_empty_pb.Empty>;
   executeBulkCommands: grpc.MethodDefinition<api_container_service_pb.ExecuteBulkCommandsArgs, google_protobuf_empty_pb.Empty>;
   getServices: grpc.MethodDefinition<google_protobuf_empty_pb.Empty, api_container_service_pb.GetServicesResponse>;
-  getLambdas: grpc.MethodDefinition<google_protobuf_empty_pb.Empty, api_container_service_pb.GetLambdasResponse>;
+  getModules: grpc.MethodDefinition<google_protobuf_empty_pb.Empty, api_container_service_pb.GetModulesResponse>;
 }
 
 export const ApiContainerServiceService: IApiContainerServiceService;
@@ -33,10 +33,10 @@ export const ApiContainerServiceService: IApiContainerServiceService;
 export interface IApiContainerServiceServer extends grpc.UntypedServiceImplementation {
   startExternalContainerRegistration: grpc.handleUnaryCall<google_protobuf_empty_pb.Empty, api_container_service_pb.StartExternalContainerRegistrationResponse>;
   finishExternalContainerRegistration: grpc.handleUnaryCall<api_container_service_pb.FinishExternalContainerRegistrationArgs, google_protobuf_empty_pb.Empty>;
-  loadLambda: grpc.handleUnaryCall<api_container_service_pb.LoadLambdaArgs, google_protobuf_empty_pb.Empty>;
-  unloadLambda: grpc.handleUnaryCall<api_container_service_pb.UnloadLambdaArgs, google_protobuf_empty_pb.Empty>;
-  executeLambda: grpc.handleUnaryCall<api_container_service_pb.ExecuteLambdaArgs, api_container_service_pb.ExecuteLambdaResponse>;
-  getLambdaInfo: grpc.handleUnaryCall<api_container_service_pb.GetLambdaInfoArgs, api_container_service_pb.GetLambdaInfoResponse>;
+  loadModule: grpc.handleUnaryCall<api_container_service_pb.LoadModuleArgs, google_protobuf_empty_pb.Empty>;
+  unloadModule: grpc.handleUnaryCall<api_container_service_pb.UnloadModuleArgs, google_protobuf_empty_pb.Empty>;
+  executeModule: grpc.handleUnaryCall<api_container_service_pb.ExecuteModuleArgs, api_container_service_pb.ExecuteModuleResponse>;
+  getModuleInfo: grpc.handleUnaryCall<api_container_service_pb.GetModuleInfoArgs, api_container_service_pb.GetModuleInfoResponse>;
   registerFilesArtifacts: grpc.handleUnaryCall<api_container_service_pb.RegisterFilesArtifactsArgs, google_protobuf_empty_pb.Empty>;
   registerService: grpc.handleUnaryCall<api_container_service_pb.RegisterServiceArgs, api_container_service_pb.RegisterServiceResponse>;
   startService: grpc.handleUnaryCall<api_container_service_pb.StartServiceArgs, api_container_service_pb.StartServiceResponse>;
@@ -48,7 +48,7 @@ export interface IApiContainerServiceServer extends grpc.UntypedServiceImplement
   waitForHttpPostEndpointAvailability: grpc.handleUnaryCall<api_container_service_pb.WaitForHttpPostEndpointAvailabilityArgs, google_protobuf_empty_pb.Empty>;
   executeBulkCommands: grpc.handleUnaryCall<api_container_service_pb.ExecuteBulkCommandsArgs, google_protobuf_empty_pb.Empty>;
   getServices: grpc.handleUnaryCall<google_protobuf_empty_pb.Empty, api_container_service_pb.GetServicesResponse>;
-  getLambdas: grpc.handleUnaryCall<google_protobuf_empty_pb.Empty, api_container_service_pb.GetLambdasResponse>;
+  getModules: grpc.handleUnaryCall<google_protobuf_empty_pb.Empty, api_container_service_pb.GetModulesResponse>;
 }
 
 export class ApiContainerServiceClient extends grpc.Client {
@@ -59,18 +59,18 @@ export class ApiContainerServiceClient extends grpc.Client {
   finishExternalContainerRegistration(argument: api_container_service_pb.FinishExternalContainerRegistrationArgs, callback: grpc.requestCallback<google_protobuf_empty_pb.Empty>): grpc.ClientUnaryCall;
   finishExternalContainerRegistration(argument: api_container_service_pb.FinishExternalContainerRegistrationArgs, metadataOrOptions: grpc.Metadata | grpc.CallOptions | null, callback: grpc.requestCallback<google_protobuf_empty_pb.Empty>): grpc.ClientUnaryCall;
   finishExternalContainerRegistration(argument: api_container_service_pb.FinishExternalContainerRegistrationArgs, metadata: grpc.Metadata | null, options: grpc.CallOptions | null, callback: grpc.requestCallback<google_protobuf_empty_pb.Empty>): grpc.ClientUnaryCall;
-  loadLambda(argument: api_container_service_pb.LoadLambdaArgs, callback: grpc.requestCallback<google_protobuf_empty_pb.Empty>): grpc.ClientUnaryCall;
-  loadLambda(argument: api_container_service_pb.LoadLambdaArgs, metadataOrOptions: grpc.Metadata | grpc.CallOptions | null, callback: grpc.requestCallback<google_protobuf_empty_pb.Empty>): grpc.ClientUnaryCall;
-  loadLambda(argument: api_container_service_pb.LoadLambdaArgs, metadata: grpc.Metadata | null, options: grpc.CallOptions | null, callback: grpc.requestCallback<google_protobuf_empty_pb.Empty>): grpc.ClientUnaryCall;
-  unloadLambda(argument: api_container_service_pb.UnloadLambdaArgs, callback: grpc.requestCallback<google_protobuf_empty_pb.Empty>): grpc.ClientUnaryCall;
-  unloadLambda(argument: api_container_service_pb.UnloadLambdaArgs, metadataOrOptions: grpc.Metadata | grpc.CallOptions | null, callback: grpc.requestCallback<google_protobuf_empty_pb.Empty>): grpc.ClientUnaryCall;
-  unloadLambda(argument: api_container_service_pb.UnloadLambdaArgs, metadata: grpc.Metadata | null, options: grpc.CallOptions | null, callback: grpc.requestCallback<google_protobuf_empty_pb.Empty>): grpc.ClientUnaryCall;
-  executeLambda(argument: api_container_service_pb.ExecuteLambdaArgs, callback: grpc.requestCallback<api_container_service_pb.ExecuteLambdaResponse>): grpc.ClientUnaryCall;
-  executeLambda(argument: api_container_service_pb.ExecuteLambdaArgs, metadataOrOptions: grpc.Metadata | grpc.CallOptions | null, callback: grpc.requestCallback<api_container_service_pb.ExecuteLambdaResponse>): grpc.ClientUnaryCall;
-  executeLambda(argument: api_container_service_pb.ExecuteLambdaArgs, metadata: grpc.Metadata | null, options: grpc.CallOptions | null, callback: grpc.requestCallback<api_container_service_pb.ExecuteLambdaResponse>): grpc.ClientUnaryCall;
-  getLambdaInfo(argument: api_container_service_pb.GetLambdaInfoArgs, callback: grpc.requestCallback<api_container_service_pb.GetLambdaInfoResponse>): grpc.ClientUnaryCall;
-  getLambdaInfo(argument: api_container_service_pb.GetLambdaInfoArgs, metadataOrOptions: grpc.Metadata | grpc.CallOptions | null, callback: grpc.requestCallback<api_container_service_pb.GetLambdaInfoResponse>): grpc.ClientUnaryCall;
-  getLambdaInfo(argument: api_container_service_pb.GetLambdaInfoArgs, metadata: grpc.Metadata | null, options: grpc.CallOptions | null, callback: grpc.requestCallback<api_container_service_pb.GetLambdaInfoResponse>): grpc.ClientUnaryCall;
+  loadModule(argument: api_container_service_pb.LoadModuleArgs, callback: grpc.requestCallback<google_protobuf_empty_pb.Empty>): grpc.ClientUnaryCall;
+  loadModule(argument: api_container_service_pb.LoadModuleArgs, metadataOrOptions: grpc.Metadata | grpc.CallOptions | null, callback: grpc.requestCallback<google_protobuf_empty_pb.Empty>): grpc.ClientUnaryCall;
+  loadModule(argument: api_container_service_pb.LoadModuleArgs, metadata: grpc.Metadata | null, options: grpc.CallOptions | null, callback: grpc.requestCallback<google_protobuf_empty_pb.Empty>): grpc.ClientUnaryCall;
+  unloadModule(argument: api_container_service_pb.UnloadModuleArgs, callback: grpc.requestCallback<google_protobuf_empty_pb.Empty>): grpc.ClientUnaryCall;
+  unloadModule(argument: api_container_service_pb.UnloadModuleArgs, metadataOrOptions: grpc.Metadata | grpc.CallOptions | null, callback: grpc.requestCallback<google_protobuf_empty_pb.Empty>): grpc.ClientUnaryCall;
+  unloadModule(argument: api_container_service_pb.UnloadModuleArgs, metadata: grpc.Metadata | null, options: grpc.CallOptions | null, callback: grpc.requestCallback<google_protobuf_empty_pb.Empty>): grpc.ClientUnaryCall;
+  executeModule(argument: api_container_service_pb.ExecuteModuleArgs, callback: grpc.requestCallback<api_container_service_pb.ExecuteModuleResponse>): grpc.ClientUnaryCall;
+  executeModule(argument: api_container_service_pb.ExecuteModuleArgs, metadataOrOptions: grpc.Metadata | grpc.CallOptions | null, callback: grpc.requestCallback<api_container_service_pb.ExecuteModuleResponse>): grpc.ClientUnaryCall;
+  executeModule(argument: api_container_service_pb.ExecuteModuleArgs, metadata: grpc.Metadata | null, options: grpc.CallOptions | null, callback: grpc.requestCallback<api_container_service_pb.ExecuteModuleResponse>): grpc.ClientUnaryCall;
+  getModuleInfo(argument: api_container_service_pb.GetModuleInfoArgs, callback: grpc.requestCallback<api_container_service_pb.GetModuleInfoResponse>): grpc.ClientUnaryCall;
+  getModuleInfo(argument: api_container_service_pb.GetModuleInfoArgs, metadataOrOptions: grpc.Metadata | grpc.CallOptions | null, callback: grpc.requestCallback<api_container_service_pb.GetModuleInfoResponse>): grpc.ClientUnaryCall;
+  getModuleInfo(argument: api_container_service_pb.GetModuleInfoArgs, metadata: grpc.Metadata | null, options: grpc.CallOptions | null, callback: grpc.requestCallback<api_container_service_pb.GetModuleInfoResponse>): grpc.ClientUnaryCall;
   registerFilesArtifacts(argument: api_container_service_pb.RegisterFilesArtifactsArgs, callback: grpc.requestCallback<google_protobuf_empty_pb.Empty>): grpc.ClientUnaryCall;
   registerFilesArtifacts(argument: api_container_service_pb.RegisterFilesArtifactsArgs, metadataOrOptions: grpc.Metadata | grpc.CallOptions | null, callback: grpc.requestCallback<google_protobuf_empty_pb.Empty>): grpc.ClientUnaryCall;
   registerFilesArtifacts(argument: api_container_service_pb.RegisterFilesArtifactsArgs, metadata: grpc.Metadata | null, options: grpc.CallOptions | null, callback: grpc.requestCallback<google_protobuf_empty_pb.Empty>): grpc.ClientUnaryCall;
@@ -104,7 +104,7 @@ export class ApiContainerServiceClient extends grpc.Client {
   getServices(argument: google_protobuf_empty_pb.Empty, callback: grpc.requestCallback<api_container_service_pb.GetServicesResponse>): grpc.ClientUnaryCall;
   getServices(argument: google_protobuf_empty_pb.Empty, metadataOrOptions: grpc.Metadata | grpc.CallOptions | null, callback: grpc.requestCallback<api_container_service_pb.GetServicesResponse>): grpc.ClientUnaryCall;
   getServices(argument: google_protobuf_empty_pb.Empty, metadata: grpc.Metadata | null, options: grpc.CallOptions | null, callback: grpc.requestCallback<api_container_service_pb.GetServicesResponse>): grpc.ClientUnaryCall;
-  getLambdas(argument: google_protobuf_empty_pb.Empty, callback: grpc.requestCallback<api_container_service_pb.GetLambdasResponse>): grpc.ClientUnaryCall;
-  getLambdas(argument: google_protobuf_empty_pb.Empty, metadataOrOptions: grpc.Metadata | grpc.CallOptions | null, callback: grpc.requestCallback<api_container_service_pb.GetLambdasResponse>): grpc.ClientUnaryCall;
-  getLambdas(argument: google_protobuf_empty_pb.Empty, metadata: grpc.Metadata | null, options: grpc.CallOptions | null, callback: grpc.requestCallback<api_container_service_pb.GetLambdasResponse>): grpc.ClientUnaryCall;
+  getModules(argument: google_protobuf_empty_pb.Empty, callback: grpc.requestCallback<api_container_service_pb.GetModulesResponse>): grpc.ClientUnaryCall;
+  getModules(argument: google_protobuf_empty_pb.Empty, metadataOrOptions: grpc.Metadata | grpc.CallOptions | null, callback: grpc.requestCallback<api_container_service_pb.GetModulesResponse>): grpc.ClientUnaryCall;
+  getModules(argument: google_protobuf_empty_pb.Empty, metadata: grpc.Metadata | null, options: grpc.CallOptions | null, callback: grpc.requestCallback<api_container_service_pb.GetModulesResponse>): grpc.ClientUnaryCall;
 }

@@ -14,17 +14,17 @@ service ApiContainerService {
   // NOTE: It's important not to forget to finish this registration, else the external container won't be recognized by the API container!
   rpc FinishExternalContainerRegistration(FinishExternalContainerRegistrationArgs) returns (google.protobuf.Empty) {};
 
-  // Starts a lambda container into the network
-  rpc LoadLambda(LoadLambdaArgs) returns (google.protobuf.Empty) {};
+  // Starts a module container in the enclave
+  rpc LoadModule(LoadModuleArgs) returns (google.protobuf.Empty) {};
 
-  // Stop and remove a Lambda from the network
-  rpc UnloadLambda(UnloadLambdaArgs) returns (google.protobuf.Empty) {};
+  // Stop and remove a module from the enclave
+  rpc UnloadModule(UnloadModuleArgs) returns (google.protobuf.Empty) {};
 
-  // Executes a Kurtosis Lambda function on behalf of the user 
-  rpc ExecuteLambda(ExecuteLambdaArgs) returns (ExecuteLambdaResponse) {};
+  // Executes an executable module on the user's behalf
+  rpc ExecuteModule(ExecuteModuleArgs) returns (ExecuteModuleResponse) {};
 
-  // Gets information about a loaded Lambda module
-  rpc GetLambdaInfo(GetLambdaInfoArgs) returns (GetLambdaInfoResponse) {};
+  // Gets information about a loaded module
+  rpc GetModuleInfo(GetModuleInfoArgs) returns (GetModuleInfoResponse) {};
 
   // Tells the API container that the client has files artifacts from the web that it would like the API container to know about
   // The API container will download these artifacts locally, so they're available when launching services
@@ -60,8 +60,8 @@ service ApiContainerService {
   // Returns the IDs of the current services in the test network
   rpc GetServices(google.protobuf.Empty) returns (GetServicesResponse) {};
 
-  // Returns the IDs of the Kurtosis Lambdas that have been loaded into the test network.
-  rpc GetLambdas(google.protobuf.Empty) returns (GetLambdasResponse) {};
+  // Returns the IDs of the Kurtosis modules that have been loaded into the enclave
+  rpc GetModules(google.protobuf.Empty) returns (GetModulesResponse) {};
 }
 
 // ==============================================================================================
@@ -88,50 +88,50 @@ message FinishExternalContainerRegistrationArgs {
 }
 
 // ==============================================================================================
-//                                     Load Lambda
+//                                     Load Module
 // ==============================================================================================
-message LoadLambdaArgs {
-  string lambda_id = 1;
+message LoadModuleArgs {
+  string module_id = 1;
 
   string container_image = 2;
 
-  // The serialized params object that will be passed, as-is, to the Lambda for starting
-  // The serialization format is dependent on the Lambda
+  // The serialized params object that will be passed, as-is, to the module for starting
+  // The serialization format is dependent on the module
   string serialized_params = 3;
 }
 
 // ==============================================================================================
-//                                     Unload Lambda
+//                                     Unload Module
 // ==============================================================================================
-message UnloadLambdaArgs {
-  string lambda_id = 1;
+message UnloadModuleArgs {
+  string module_id = 1;
 }
 
 // ==============================================================================================
-//                                     Execute Lambda
+//                                     Execute Module
 // ==============================================================================================
-message ExecuteLambdaArgs {
-  string lambda_id = 1;
+message ExecuteModuleArgs {
+  string module_id = 1;
 
-  // Serialized parameters data for the Lambda function
-  // The serialization format is dependent on the Lambda
+  // Serialized parameters data for the module's execute function
+  // The serialization format is dependent on the Module
   string serialized_params = 2;
 }
 
-message ExecuteLambdaResponse {
-  // Serialized result data from the Lambda function
-  // The serialization format is dependent on the Lambda
+message ExecuteModuleResponse {
+  // Serialized result data from the module's execute function
+  // The serialization format is dependent on the Module
   string serialized_result = 1;
 }
 
 // ==============================================================================================
-//                                     Get Lambda Info
+//                                     Get Module Info
 // ==============================================================================================
-message GetLambdaInfoArgs {
-  string lambda_id = 1;
+message GetModuleInfoArgs {
+  string module_id = 1;
 }
 
-message GetLambdaInfoResponse {
+message GetModuleInfoResponse {
   string ip_addr = 1;
 }
 
@@ -338,9 +338,9 @@ message GetServicesResponse {
 }
 
 // ==============================================================================================
-//                                          Get Lambdas
+//                                          Get Modules
 // ==============================================================================================
-message GetLambdasResponse {
-  // "Set" of current Kurtosis Lambda IDs loaded in the test network
-  map<string, bool> lambda_ids = 1;
+message GetModulesResponse {
+  // "Set" of current Kurtosis module IDs loaded in the test network
+  map<string, bool> module_ids = 1;
 }
