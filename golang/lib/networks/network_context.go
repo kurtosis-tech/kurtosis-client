@@ -60,43 +60,43 @@ func NewNetworkContext(
 }
 
 // Docs available at https://docs.kurtosistech.com/kurtosis-client/lib-documentation
-func (networkCtx *NetworkContext) LoadLambda(
-		lambdaId modules.ModuleID,
+func (networkCtx *NetworkContext) LoadModule(
+		moduleId modules.ModuleID,
 		image string,
 		serializedParams string) (*modules.ModuleContext, error) {
-	args := binding_constructors.NewLoadModuleArgs(string(lambdaId), image, serializedParams)
+	args := binding_constructors.NewLoadModuleArgs(string(moduleId), image, serializedParams)
 
-	// We proxy calls to Lambda modules via the API container, so actually no need to use the response here
-	_, err := networkCtx.client.LoadLambda(context.Background(), args)
+	// We proxy calls to execute modules via the API container, so actually no need to use the response here
+	_, err := networkCtx.client.LoadModule(context.Background(), args)
 	if err != nil {
-		return nil, stacktrace.Propagate(err, "An error occurred loading new module '%v' with image '%v' and serialized params '%v'", lambdaId, image, serializedParams)
+		return nil, stacktrace.Propagate(err, "An error occurred loading new module '%v' with image '%v' and serialized params '%v'", moduleId, image, serializedParams)
 	}
-	moduleCtx := modules.NewModuleContext(networkCtx.client, lambdaId)
+	moduleCtx := modules.NewModuleContext(networkCtx.client, moduleId)
 	return moduleCtx, nil
 }
 
 // Docs available at https://docs.kurtosistech.com/kurtosis-client/lib-documentation
-func (networkCtx *NetworkContext) UnloadLambda(lambdaId modules.ModuleID) error {
-	args := binding_constructors.NewUnloadModuleArgs(string(lambdaId))
+func (networkCtx *NetworkContext) UnloadModule(moduleId modules.ModuleID) error {
+	args := binding_constructors.NewUnloadModuleArgs(string(moduleId))
 
-	_, err := networkCtx.client.UnloadLambda(context.Background(), args)
+	_, err := networkCtx.client.UnloadModule(context.Background(), args)
 	if err != nil {
-		return stacktrace.Propagate(err, "An error occurred unloading module '%v'", lambdaId)
+		return stacktrace.Propagate(err, "An error occurred unloading module '%v'", moduleId)
 	}
 	return nil
 }
 
 // Docs available at https://docs.kurtosistech.com/kurtosis-client/lib-documentation
-func (networkCtx *NetworkContext) GetLambdaContext(lambdaId modules.ModuleID) (*modules.ModuleContext, error) {
-	args := binding_constructors.NewGetModuleInfoArgs(string(lambdaId))
+func (networkCtx *NetworkContext) GetModuleContext(moduleId modules.ModuleID) (*modules.ModuleContext, error) {
+	args := binding_constructors.NewGetModuleInfoArgs(string(moduleId))
 
 	// NOTE: As of 2021-07-18, we actually don't use any of the info that comes back because the ModuleContext doesn't require it!
-	_, err := networkCtx.client.GetLambdaInfo(context.Background(), args)
+	_, err := networkCtx.client.GetModuleInfo(context.Background(), args)
 	if err != nil {
-		return nil, stacktrace.Propagate(err, "An error occurred getting info for Lambda '%v'", lambdaId)
+		return nil, stacktrace.Propagate(err, "An error occurred getting info for module '%v'", moduleId)
 	}
-	lambdaCtx := modules.NewModuleContext(networkCtx.client, lambdaId)
-	return lambdaCtx, nil
+	moduleCtx := modules.NewModuleContext(networkCtx.client, moduleId)
+	return moduleCtx, nil
 }
 
 // Docs available at https://docs.kurtosistech.com/kurtosis-client/lib-documentation
@@ -391,22 +391,22 @@ func (networkCtx *NetworkContext) GetServices() (map[services.ServiceID]bool, er
 }
 
 // Docs available at https://docs.kurtosistech.com/kurtosis-client/lib-documentation
-func (networkCtx *NetworkContext) GetLambdas() (map[modules.ModuleID]bool, error){
-	response, err := networkCtx.client.GetLambdas(context.Background(), &emptypb.Empty{})
+func (networkCtx *NetworkContext) GetModules() (map[modules.ModuleID]bool, error){
+	response, err := networkCtx.client.GetModules(context.Background(), &emptypb.Empty{})
 	if err != nil {
-		return nil, stacktrace.Propagate(err, "An error occurred getting the Lambda IDs in the network")
+		return nil, stacktrace.Propagate(err, "An error occurred getting the IDs of the modules in the network")
 	}
 
-	lambdaIDs := make(map[modules.ModuleID]bool, len(response.GetLambdaIds()))
+	moduleIDs := make(map[modules.ModuleID]bool, len(response.GetModuleIds()))
 
-	for key, _ := range response.GetLambdaIds() {
-		lambdaID := modules.ModuleID(key)
-		if _, ok := lambdaIDs[lambdaID]; !ok {
-			lambdaIDs[lambdaID] = true
+	for key, _ := range response.GetModuleIds() {
+		moduleID := modules.ModuleID(key)
+		if _, ok := moduleIDs[moduleID]; !ok {
+			moduleIDs[moduleID] = true
 		}
 	}
 
-	return lambdaIDs, nil
+	return moduleIDs, nil
 }
 
 // ====================================================================================================

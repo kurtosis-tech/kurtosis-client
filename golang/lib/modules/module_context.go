@@ -41,7 +41,7 @@ func (moduleCtx *ModuleContext) Execute(serializedParams string) (serializedResu
 	args := binding_constructors.NewExecuteModuleArgs(string(moduleCtx.moduleId), serializedParams)
 	resp, err := moduleCtx.client.ExecuteModule(context.Background(), args)
 	if err != nil {
-		return "", stacktrace.Propagate(err, "An error occurred executing Lambda '%v'", moduleCtx.moduleId)
+		return "", stacktrace.Propagate(err, "An error occurred executing module '%v'", moduleCtx.moduleId)
 	}
 	return resp.SerializedResult, nil
 }

@@ -39,19 +39,19 @@ func newCmdArgDeserializingVisitor(bytesToDeserialize []byte) *cmdArgDeserializi
 	return &cmdArgDeserializingVisitor{bytesToDeserialize: bytesToDeserialize}
 }
 
-func (visitor *cmdArgDeserializingVisitor) VisitLoadLambda() error {
-	args := &kurtosis_core_rpc_api_bindings.LoadLambdaArgs{}
+func (visitor *cmdArgDeserializingVisitor) VisitLoadModule() error {
+	args := &kurtosis_core_rpc_api_bindings.LoadModuleArgs{}
 	if err := json.Unmarshal(visitor.bytesToDeserialize, args); err != nil {
-		return stacktrace.Propagate(err, "An error occurred deserializing the Lambda-loading args")
+		return stacktrace.Propagate(err, "An error occurred deserializing the module-loading args")
 	}
 	visitor.deserializedCommandArgsPtr = args
 	return nil
 }
 
-func (visitor *cmdArgDeserializingVisitor) VisitExecuteLambda() error {
-	args := &kurtosis_core_rpc_api_bindings.ExecuteLambdaArgs{}
+func (visitor *cmdArgDeserializingVisitor) VisitExecuteModule() error {
+	args := &kurtosis_core_rpc_api_bindings.ExecuteModuleArgs{}
 	if err := json.Unmarshal(visitor.bytesToDeserialize, args); err != nil {
-		return stacktrace.Propagate(err, "An error occurred deserializing the Lambda-executing args")
+		return stacktrace.Propagate(err, "An error occurred deserializing the module-executing args")
 	}
 	visitor.deserializedCommandArgsPtr = args
 	return nil
@@ -134,7 +134,7 @@ func (visitor *cmdArgDeserializingVisitor) VisitGetServices() error {
 	return nil
 }
 
-func (visitor *cmdArgDeserializingVisitor) VisitGetLambdas() error {
+func (visitor *cmdArgDeserializingVisitor) VisitGetModules() error {
 	visitor.deserializedCommandArgsPtr = &emptypb.Empty{}
 	return nil
 }
