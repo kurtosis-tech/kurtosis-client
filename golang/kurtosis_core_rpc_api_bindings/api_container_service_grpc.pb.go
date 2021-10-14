@@ -24,14 +24,14 @@ type ApiContainerServiceClient interface {
 	// Finishes the registration of an container (started by a third-party source, not the API contianer) that was started previously
 	// NOTE: It's important not to forget to finish this registration, else the external container won't be recognized by the API container!
 	FinishExternalContainerRegistration(ctx context.Context, in *FinishExternalContainerRegistrationArgs, opts ...grpc.CallOption) (*emptypb.Empty, error)
-	// Starts a lambda container into the network
-	LoadLambda(ctx context.Context, in *LoadLambdaArgs, opts ...grpc.CallOption) (*emptypb.Empty, error)
-	// Stop and remove a Lambda from the network
-	UnloadLambda(ctx context.Context, in *UnloadLambdaArgs, opts ...grpc.CallOption) (*emptypb.Empty, error)
-	// Executes a Kurtosis Lambda function on behalf of the user
-	ExecuteLambda(ctx context.Context, in *ExecuteLambdaArgs, opts ...grpc.CallOption) (*ExecuteLambdaResponse, error)
-	// Gets information about a loaded Lambda module
-	GetLambdaInfo(ctx context.Context, in *GetLambdaInfoArgs, opts ...grpc.CallOption) (*GetLambdaInfoResponse, error)
+	// Starts a module container in the enclave
+	LoadModule(ctx context.Context, in *LoadModuleArgs, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	// Stop and remove a module from the enclave
+	UnloadModule(ctx context.Context, in *UnloadModuleArgs, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	// Executes an executable module on the user's behalf
+	ExecuteModule(ctx context.Context, in *ExecuteModuleArgs, opts ...grpc.CallOption) (*ExecuteModuleResponse, error)
+	// Gets information about a loaded module
+	GetModuleInfo(ctx context.Context, in *GetModuleInfoArgs, opts ...grpc.CallOption) (*GetModuleInfoResponse, error)
 	// Tells the API container that the client has files artifacts from the web that it would like the API container to know about
 	// The API container will download these artifacts locally, so they're available when launching services
 	RegisterFilesArtifacts(ctx context.Context, in *RegisterFilesArtifactsArgs, opts ...grpc.CallOption) (*emptypb.Empty, error)
@@ -55,8 +55,8 @@ type ApiContainerServiceClient interface {
 	ExecuteBulkCommands(ctx context.Context, in *ExecuteBulkCommandsArgs, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	// Returns the IDs of the current services in the test network
 	GetServices(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*GetServicesResponse, error)
-	// Returns the IDs of the Kurtosis Lambdas that have been loaded into the test network.
-	GetLambdas(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*GetLambdasResponse, error)
+	// Returns the IDs of the Kurtosis modules that have been loaded into the enclave
+	GetModules(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*GetModulesResponse, error)
 }
 
 type apiContainerServiceClient struct {
@@ -85,36 +85,36 @@ func (c *apiContainerServiceClient) FinishExternalContainerRegistration(ctx cont
 	return out, nil
 }
 
-func (c *apiContainerServiceClient) LoadLambda(ctx context.Context, in *LoadLambdaArgs, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+func (c *apiContainerServiceClient) LoadModule(ctx context.Context, in *LoadModuleArgs, opts ...grpc.CallOption) (*emptypb.Empty, error) {
 	out := new(emptypb.Empty)
-	err := c.cc.Invoke(ctx, "/api_container_api.ApiContainerService/LoadLambda", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/api_container_api.ApiContainerService/LoadModule", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *apiContainerServiceClient) UnloadLambda(ctx context.Context, in *UnloadLambdaArgs, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+func (c *apiContainerServiceClient) UnloadModule(ctx context.Context, in *UnloadModuleArgs, opts ...grpc.CallOption) (*emptypb.Empty, error) {
 	out := new(emptypb.Empty)
-	err := c.cc.Invoke(ctx, "/api_container_api.ApiContainerService/UnloadLambda", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/api_container_api.ApiContainerService/UnloadModule", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *apiContainerServiceClient) ExecuteLambda(ctx context.Context, in *ExecuteLambdaArgs, opts ...grpc.CallOption) (*ExecuteLambdaResponse, error) {
-	out := new(ExecuteLambdaResponse)
-	err := c.cc.Invoke(ctx, "/api_container_api.ApiContainerService/ExecuteLambda", in, out, opts...)
+func (c *apiContainerServiceClient) ExecuteModule(ctx context.Context, in *ExecuteModuleArgs, opts ...grpc.CallOption) (*ExecuteModuleResponse, error) {
+	out := new(ExecuteModuleResponse)
+	err := c.cc.Invoke(ctx, "/api_container_api.ApiContainerService/ExecuteModule", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *apiContainerServiceClient) GetLambdaInfo(ctx context.Context, in *GetLambdaInfoArgs, opts ...grpc.CallOption) (*GetLambdaInfoResponse, error) {
-	out := new(GetLambdaInfoResponse)
-	err := c.cc.Invoke(ctx, "/api_container_api.ApiContainerService/GetLambdaInfo", in, out, opts...)
+func (c *apiContainerServiceClient) GetModuleInfo(ctx context.Context, in *GetModuleInfoArgs, opts ...grpc.CallOption) (*GetModuleInfoResponse, error) {
+	out := new(GetModuleInfoResponse)
+	err := c.cc.Invoke(ctx, "/api_container_api.ApiContainerService/GetModuleInfo", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -220,9 +220,9 @@ func (c *apiContainerServiceClient) GetServices(ctx context.Context, in *emptypb
 	return out, nil
 }
 
-func (c *apiContainerServiceClient) GetLambdas(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*GetLambdasResponse, error) {
-	out := new(GetLambdasResponse)
-	err := c.cc.Invoke(ctx, "/api_container_api.ApiContainerService/GetLambdas", in, out, opts...)
+func (c *apiContainerServiceClient) GetModules(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*GetModulesResponse, error) {
+	out := new(GetModulesResponse)
+	err := c.cc.Invoke(ctx, "/api_container_api.ApiContainerService/GetModules", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -238,14 +238,14 @@ type ApiContainerServiceServer interface {
 	// Finishes the registration of an container (started by a third-party source, not the API contianer) that was started previously
 	// NOTE: It's important not to forget to finish this registration, else the external container won't be recognized by the API container!
 	FinishExternalContainerRegistration(context.Context, *FinishExternalContainerRegistrationArgs) (*emptypb.Empty, error)
-	// Starts a lambda container into the network
-	LoadLambda(context.Context, *LoadLambdaArgs) (*emptypb.Empty, error)
-	// Stop and remove a Lambda from the network
-	UnloadLambda(context.Context, *UnloadLambdaArgs) (*emptypb.Empty, error)
-	// Executes a Kurtosis Lambda function on behalf of the user
-	ExecuteLambda(context.Context, *ExecuteLambdaArgs) (*ExecuteLambdaResponse, error)
-	// Gets information about a loaded Lambda module
-	GetLambdaInfo(context.Context, *GetLambdaInfoArgs) (*GetLambdaInfoResponse, error)
+	// Starts a module container in the enclave
+	LoadModule(context.Context, *LoadModuleArgs) (*emptypb.Empty, error)
+	// Stop and remove a module from the enclave
+	UnloadModule(context.Context, *UnloadModuleArgs) (*emptypb.Empty, error)
+	// Executes an executable module on the user's behalf
+	ExecuteModule(context.Context, *ExecuteModuleArgs) (*ExecuteModuleResponse, error)
+	// Gets information about a loaded module
+	GetModuleInfo(context.Context, *GetModuleInfoArgs) (*GetModuleInfoResponse, error)
 	// Tells the API container that the client has files artifacts from the web that it would like the API container to know about
 	// The API container will download these artifacts locally, so they're available when launching services
 	RegisterFilesArtifacts(context.Context, *RegisterFilesArtifactsArgs) (*emptypb.Empty, error)
@@ -269,8 +269,8 @@ type ApiContainerServiceServer interface {
 	ExecuteBulkCommands(context.Context, *ExecuteBulkCommandsArgs) (*emptypb.Empty, error)
 	// Returns the IDs of the current services in the test network
 	GetServices(context.Context, *emptypb.Empty) (*GetServicesResponse, error)
-	// Returns the IDs of the Kurtosis Lambdas that have been loaded into the test network.
-	GetLambdas(context.Context, *emptypb.Empty) (*GetLambdasResponse, error)
+	// Returns the IDs of the Kurtosis modules that have been loaded into the enclave
+	GetModules(context.Context, *emptypb.Empty) (*GetModulesResponse, error)
 	mustEmbedUnimplementedApiContainerServiceServer()
 }
 
@@ -284,17 +284,17 @@ func (UnimplementedApiContainerServiceServer) StartExternalContainerRegistration
 func (UnimplementedApiContainerServiceServer) FinishExternalContainerRegistration(context.Context, *FinishExternalContainerRegistrationArgs) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method FinishExternalContainerRegistration not implemented")
 }
-func (UnimplementedApiContainerServiceServer) LoadLambda(context.Context, *LoadLambdaArgs) (*emptypb.Empty, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method LoadLambda not implemented")
+func (UnimplementedApiContainerServiceServer) LoadModule(context.Context, *LoadModuleArgs) (*emptypb.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method LoadModule not implemented")
 }
-func (UnimplementedApiContainerServiceServer) UnloadLambda(context.Context, *UnloadLambdaArgs) (*emptypb.Empty, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method UnloadLambda not implemented")
+func (UnimplementedApiContainerServiceServer) UnloadModule(context.Context, *UnloadModuleArgs) (*emptypb.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UnloadModule not implemented")
 }
-func (UnimplementedApiContainerServiceServer) ExecuteLambda(context.Context, *ExecuteLambdaArgs) (*ExecuteLambdaResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method ExecuteLambda not implemented")
+func (UnimplementedApiContainerServiceServer) ExecuteModule(context.Context, *ExecuteModuleArgs) (*ExecuteModuleResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ExecuteModule not implemented")
 }
-func (UnimplementedApiContainerServiceServer) GetLambdaInfo(context.Context, *GetLambdaInfoArgs) (*GetLambdaInfoResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetLambdaInfo not implemented")
+func (UnimplementedApiContainerServiceServer) GetModuleInfo(context.Context, *GetModuleInfoArgs) (*GetModuleInfoResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetModuleInfo not implemented")
 }
 func (UnimplementedApiContainerServiceServer) RegisterFilesArtifacts(context.Context, *RegisterFilesArtifactsArgs) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method RegisterFilesArtifacts not implemented")
@@ -329,8 +329,8 @@ func (UnimplementedApiContainerServiceServer) ExecuteBulkCommands(context.Contex
 func (UnimplementedApiContainerServiceServer) GetServices(context.Context, *emptypb.Empty) (*GetServicesResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetServices not implemented")
 }
-func (UnimplementedApiContainerServiceServer) GetLambdas(context.Context, *emptypb.Empty) (*GetLambdasResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetLambdas not implemented")
+func (UnimplementedApiContainerServiceServer) GetModules(context.Context, *emptypb.Empty) (*GetModulesResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetModules not implemented")
 }
 func (UnimplementedApiContainerServiceServer) mustEmbedUnimplementedApiContainerServiceServer() {}
 
@@ -381,74 +381,74 @@ func _ApiContainerService_FinishExternalContainerRegistration_Handler(srv interf
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ApiContainerService_LoadLambda_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(LoadLambdaArgs)
+func _ApiContainerService_LoadModule_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(LoadModuleArgs)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(ApiContainerServiceServer).LoadLambda(ctx, in)
+		return srv.(ApiContainerServiceServer).LoadModule(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/api_container_api.ApiContainerService/LoadLambda",
+		FullMethod: "/api_container_api.ApiContainerService/LoadModule",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ApiContainerServiceServer).LoadLambda(ctx, req.(*LoadLambdaArgs))
+		return srv.(ApiContainerServiceServer).LoadModule(ctx, req.(*LoadModuleArgs))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ApiContainerService_UnloadLambda_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(UnloadLambdaArgs)
+func _ApiContainerService_UnloadModule_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UnloadModuleArgs)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(ApiContainerServiceServer).UnloadLambda(ctx, in)
+		return srv.(ApiContainerServiceServer).UnloadModule(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/api_container_api.ApiContainerService/UnloadLambda",
+		FullMethod: "/api_container_api.ApiContainerService/UnloadModule",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ApiContainerServiceServer).UnloadLambda(ctx, req.(*UnloadLambdaArgs))
+		return srv.(ApiContainerServiceServer).UnloadModule(ctx, req.(*UnloadModuleArgs))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ApiContainerService_ExecuteLambda_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(ExecuteLambdaArgs)
+func _ApiContainerService_ExecuteModule_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ExecuteModuleArgs)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(ApiContainerServiceServer).ExecuteLambda(ctx, in)
+		return srv.(ApiContainerServiceServer).ExecuteModule(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/api_container_api.ApiContainerService/ExecuteLambda",
+		FullMethod: "/api_container_api.ApiContainerService/ExecuteModule",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ApiContainerServiceServer).ExecuteLambda(ctx, req.(*ExecuteLambdaArgs))
+		return srv.(ApiContainerServiceServer).ExecuteModule(ctx, req.(*ExecuteModuleArgs))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ApiContainerService_GetLambdaInfo_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GetLambdaInfoArgs)
+func _ApiContainerService_GetModuleInfo_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetModuleInfoArgs)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(ApiContainerServiceServer).GetLambdaInfo(ctx, in)
+		return srv.(ApiContainerServiceServer).GetModuleInfo(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/api_container_api.ApiContainerService/GetLambdaInfo",
+		FullMethod: "/api_container_api.ApiContainerService/GetModuleInfo",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ApiContainerServiceServer).GetLambdaInfo(ctx, req.(*GetLambdaInfoArgs))
+		return srv.(ApiContainerServiceServer).GetModuleInfo(ctx, req.(*GetModuleInfoArgs))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -651,20 +651,20 @@ func _ApiContainerService_GetServices_Handler(srv interface{}, ctx context.Conte
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ApiContainerService_GetLambdas_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _ApiContainerService_GetModules_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(emptypb.Empty)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(ApiContainerServiceServer).GetLambdas(ctx, in)
+		return srv.(ApiContainerServiceServer).GetModules(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/api_container_api.ApiContainerService/GetLambdas",
+		FullMethod: "/api_container_api.ApiContainerService/GetModules",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ApiContainerServiceServer).GetLambdas(ctx, req.(*emptypb.Empty))
+		return srv.(ApiContainerServiceServer).GetModules(ctx, req.(*emptypb.Empty))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -685,20 +685,20 @@ var ApiContainerService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _ApiContainerService_FinishExternalContainerRegistration_Handler,
 		},
 		{
-			MethodName: "LoadLambda",
-			Handler:    _ApiContainerService_LoadLambda_Handler,
+			MethodName: "LoadModule",
+			Handler:    _ApiContainerService_LoadModule_Handler,
 		},
 		{
-			MethodName: "UnloadLambda",
-			Handler:    _ApiContainerService_UnloadLambda_Handler,
+			MethodName: "UnloadModule",
+			Handler:    _ApiContainerService_UnloadModule_Handler,
 		},
 		{
-			MethodName: "ExecuteLambda",
-			Handler:    _ApiContainerService_ExecuteLambda_Handler,
+			MethodName: "ExecuteModule",
+			Handler:    _ApiContainerService_ExecuteModule_Handler,
 		},
 		{
-			MethodName: "GetLambdaInfo",
-			Handler:    _ApiContainerService_GetLambdaInfo_Handler,
+			MethodName: "GetModuleInfo",
+			Handler:    _ApiContainerService_GetModuleInfo_Handler,
 		},
 		{
 			MethodName: "RegisterFilesArtifacts",
@@ -745,8 +745,8 @@ var ApiContainerService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _ApiContainerService_GetServices_Handler,
 		},
 		{
-			MethodName: "GetLambdas",
-			Handler:    _ApiContainerService_GetLambdas_Handler,
+			MethodName: "GetModules",
+			Handler:    _ApiContainerService_GetModules_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

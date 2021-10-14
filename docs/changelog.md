@@ -1,4 +1,16 @@
 # TBD
+### Changes
+* TODO
+
+### Breaking Changes
+* The low-level API has been renamed to reflect the Lambda -> module transition:
+    * Renamed `LoadLambda` to `LoadModule`
+    * Renamed `ExecuteLambda` to `ExecuteModule`
+    * Renamed `UnloadLambda` to `UnloadModule`
+    * Renamed `GetLambdaInfo` to `GetModuleInfo`
+    * Renamed `GetLambdas` to `GetModules`
+    * All instances of `lambda_id` have been renamed to `module_id`
+* The high-level API has been renamed to reflect the Lambda -> module transition:
 
 # 0.18.0
 ### Fixes

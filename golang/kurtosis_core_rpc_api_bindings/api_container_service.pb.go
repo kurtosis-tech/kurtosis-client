@@ -142,22 +142,22 @@ func (x *FinishExternalContainerRegistrationArgs) GetContainerId() string {
 }
 
 // ==============================================================================================
-//                                     Load Lambda
+//                                     Load Module
 // ==============================================================================================
-type LoadLambdaArgs struct {
+type LoadModuleArgs struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	LambdaId       string `protobuf:"bytes,1,opt,name=lambda_id,json=lambdaId,proto3" json:"lambda_id,omitempty"`
+	ModuleId       string `protobuf:"bytes,1,opt,name=module_id,json=moduleId,proto3" json:"module_id,omitempty"`
 	ContainerImage string `protobuf:"bytes,2,opt,name=container_image,json=containerImage,proto3" json:"container_image,omitempty"`
-	// The serialized params object that will be passed, as-is, to the Lambda for starting
-	// The serialization format is dependent on the Lambda
+	// The serialized params object that will be passed, as-is, to the module for starting
+	// The serialization format is dependent on the module
 	SerializedParams string `protobuf:"bytes,3,opt,name=serialized_params,json=serializedParams,proto3" json:"serialized_params,omitempty"`
 }
 
-func (x *LoadLambdaArgs) Reset() {
-	*x = LoadLambdaArgs{}
+func (x *LoadModuleArgs) Reset() {
+	*x = LoadModuleArgs{}
 	if protoimpl.UnsafeEnabled {
 		mi := &file_api_container_service_proto_msgTypes[2]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -165,13 +165,13 @@ func (x *LoadLambdaArgs) Reset() {
 	}
 }
 
-func (x *LoadLambdaArgs) String() string {
+func (x *LoadModuleArgs) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*LoadLambdaArgs) ProtoMessage() {}
+func (*LoadModuleArgs) ProtoMessage() {}
 
-func (x *LoadLambdaArgs) ProtoReflect() protoreflect.Message {
+func (x *LoadModuleArgs) ProtoReflect() protoreflect.Message {
 	mi := &file_api_container_service_proto_msgTypes[2]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -183,26 +183,26 @@ func (x *LoadLambdaArgs) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use LoadLambdaArgs.ProtoReflect.Descriptor instead.
-func (*LoadLambdaArgs) Descriptor() ([]byte, []int) {
+// Deprecated: Use LoadModuleArgs.ProtoReflect.Descriptor instead.
+func (*LoadModuleArgs) Descriptor() ([]byte, []int) {
 	return file_api_container_service_proto_rawDescGZIP(), []int{2}
 }
 
-func (x *LoadLambdaArgs) GetLambdaId() string {
+func (x *LoadModuleArgs) GetModuleId() string {
 	if x != nil {
-		return x.LambdaId
+		return x.ModuleId
 	}
 	return ""
 }
 
-func (x *LoadLambdaArgs) GetContainerImage() string {
+func (x *LoadModuleArgs) GetContainerImage() string {
 	if x != nil {
 		return x.ContainerImage
 	}
 	return ""
 }
 
-func (x *LoadLambdaArgs) GetSerializedParams() string {
+func (x *LoadModuleArgs) GetSerializedParams() string {
 	if x != nil {
 		return x.SerializedParams
 	}
@@ -210,18 +210,18 @@ func (x *LoadLambdaArgs) GetSerializedParams() string {
 }
 
 // ==============================================================================================
-//                                     Unload Lambda
+//                                     Unload Module
 // ==============================================================================================
-type UnloadLambdaArgs struct {
+type UnloadModuleArgs struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	LambdaId string `protobuf:"bytes,1,opt,name=lambda_id,json=lambdaId,proto3" json:"lambda_id,omitempty"`
+	ModuleId string `protobuf:"bytes,1,opt,name=module_id,json=moduleId,proto3" json:"module_id,omitempty"`
 }
 
-func (x *UnloadLambdaArgs) Reset() {
-	*x = UnloadLambdaArgs{}
+func (x *UnloadModuleArgs) Reset() {
+	*x = UnloadModuleArgs{}
 	if protoimpl.UnsafeEnabled {
 		mi := &file_api_container_service_proto_msgTypes[3]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -229,13 +229,13 @@ func (x *UnloadLambdaArgs) Reset() {
 	}
 }
 
-func (x *UnloadLambdaArgs) String() string {
+func (x *UnloadModuleArgs) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*UnloadLambdaArgs) ProtoMessage() {}
+func (*UnloadModuleArgs) ProtoMessage() {}
 
-func (x *UnloadLambdaArgs) ProtoReflect() protoreflect.Message {
+func (x *UnloadModuleArgs) ProtoReflect() protoreflect.Message {
 	mi := &file_api_container_service_proto_msgTypes[3]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -247,34 +247,34 @@ func (x *UnloadLambdaArgs) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use UnloadLambdaArgs.ProtoReflect.Descriptor instead.
-func (*UnloadLambdaArgs) Descriptor() ([]byte, []int) {
+// Deprecated: Use UnloadModuleArgs.ProtoReflect.Descriptor instead.
+func (*UnloadModuleArgs) Descriptor() ([]byte, []int) {
 	return file_api_container_service_proto_rawDescGZIP(), []int{3}
 }
 
-func (x *UnloadLambdaArgs) GetLambdaId() string {
+func (x *UnloadModuleArgs) GetModuleId() string {
 	if x != nil {
-		return x.LambdaId
+		return x.ModuleId
 	}
 	return ""
 }
 
 // ==============================================================================================
-//                                     Execute Lambda
+//                                     Execute Module
 // ==============================================================================================
-type ExecuteLambdaArgs struct {
+type ExecuteModuleArgs struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	LambdaId string `protobuf:"bytes,1,opt,name=lambda_id,json=lambdaId,proto3" json:"lambda_id,omitempty"`
-	// Serialized parameters data for the Lambda function
-	// The serialization format is dependent on the Lambda
+	ModuleId string `protobuf:"bytes,1,opt,name=module_id,json=moduleId,proto3" json:"module_id,omitempty"`
+	// Serialized parameters data for the module's execute function
+	// The serialization format is dependent on the Module
 	SerializedParams string `protobuf:"bytes,2,opt,name=serialized_params,json=serializedParams,proto3" json:"serialized_params,omitempty"`
 }
 
-func (x *ExecuteLambdaArgs) Reset() {
-	*x = ExecuteLambdaArgs{}
+func (x *ExecuteModuleArgs) Reset() {
+	*x = ExecuteModuleArgs{}
 	if protoimpl.UnsafeEnabled {
 		mi := &file_api_container_service_proto_msgTypes[4]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -282,13 +282,13 @@ func (x *ExecuteLambdaArgs) Reset() {
 	}
 }
 
-func (x *ExecuteLambdaArgs) String() string {
+func (x *ExecuteModuleArgs) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*ExecuteLambdaArgs) ProtoMessage() {}
+func (*ExecuteModuleArgs) ProtoMessage() {}
 
-func (x *ExecuteLambdaArgs) ProtoReflect() protoreflect.Message {
+func (x *ExecuteModuleArgs) ProtoReflect() protoreflect.Message {
 	mi := &file_api_container_service_proto_msgTypes[4]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -300,37 +300,37 @@ func (x *ExecuteLambdaArgs) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use ExecuteLambdaArgs.ProtoReflect.Descriptor instead.
-func (*ExecuteLambdaArgs) Descriptor() ([]byte, []int) {
+// Deprecated: Use ExecuteModuleArgs.ProtoReflect.Descriptor instead.
+func (*ExecuteModuleArgs) Descriptor() ([]byte, []int) {
 	return file_api_container_service_proto_rawDescGZIP(), []int{4}
 }
 
-func (x *ExecuteLambdaArgs) GetLambdaId() string {
+func (x *ExecuteModuleArgs) GetModuleId() string {
 	if x != nil {
-		return x.LambdaId
+		return x.ModuleId
 	}
 	return ""
 }
 
-func (x *ExecuteLambdaArgs) GetSerializedParams() string {
+func (x *ExecuteModuleArgs) GetSerializedParams() string {
 	if x != nil {
 		return x.SerializedParams
 	}
 	return ""
 }
 
-type ExecuteLambdaResponse struct {
+type ExecuteModuleResponse struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	// Serialized result data from the Lambda function
-	// The serialization format is dependent on the Lambda
+	// Serialized result data from the module's execute function
+	// The serialization format is dependent on the Module
 	SerializedResult string `protobuf:"bytes,1,opt,name=serialized_result,json=serializedResult,proto3" json:"serialized_result,omitempty"`
 }
 
-func (x *ExecuteLambdaResponse) Reset() {
-	*x = ExecuteLambdaResponse{}
+func (x *ExecuteModuleResponse) Reset() {
+	*x = ExecuteModuleResponse{}
 	if protoimpl.UnsafeEnabled {
 		mi := &file_api_container_service_proto_msgTypes[5]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -338,13 +338,13 @@ func (x *ExecuteLambdaResponse) Reset() {
 	}
 }
 
-func (x *ExecuteLambdaResponse) String() string {
+func (x *ExecuteModuleResponse) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*ExecuteLambdaResponse) ProtoMessage() {}
+func (*ExecuteModuleResponse) ProtoMessage() {}
 
-func (x *ExecuteLambdaResponse) ProtoReflect() protoreflect.Message {
+func (x *ExecuteModuleResponse) ProtoReflect() protoreflect.Message {
 	mi := &file_api_container_service_proto_msgTypes[5]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -356,12 +356,12 @@ func (x *ExecuteLambdaResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use ExecuteLambdaResponse.ProtoReflect.Descriptor instead.
-func (*ExecuteLambdaResponse) Descriptor() ([]byte, []int) {
+// Deprecated: Use ExecuteModuleResponse.ProtoReflect.Descriptor instead.
+func (*ExecuteModuleResponse) Descriptor() ([]byte, []int) {
 	return file_api_container_service_proto_rawDescGZIP(), []int{5}
 }
 
-func (x *ExecuteLambdaResponse) GetSerializedResult() string {
+func (x *ExecuteModuleResponse) GetSerializedResult() string {
 	if x != nil {
 		return x.SerializedResult
 	}
@@ -369,18 +369,18 @@ func (x *ExecuteLambdaResponse) GetSerializedResult() string {
 }
 
 // ==============================================================================================
-//                                     Get Lambda Info
+//                                     Get Module Info
 // ==============================================================================================
-type GetLambdaInfoArgs struct {
+type GetModuleInfoArgs struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	LambdaId string `protobuf:"bytes,1,opt,name=lambda_id,json=lambdaId,proto3" json:"lambda_id,omitempty"`
+	ModuleId string `protobuf:"bytes,1,opt,name=module_id,json=moduleId,proto3" json:"module_id,omitempty"`
 }
 
-func (x *GetLambdaInfoArgs) Reset() {
-	*x = GetLambdaInfoArgs{}
+func (x *GetModuleInfoArgs) Reset() {
+	*x = GetModuleInfoArgs{}
 	if protoimpl.UnsafeEnabled {
 		mi := &file_api_container_service_proto_msgTypes[6]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -388,13 +388,13 @@ func (x *GetLambdaInfoArgs) Reset() {
 	}
 }
 
-func (x *GetLambdaInfoArgs) String() string {
+func (x *GetModuleInfoArgs) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*GetLambdaInfoArgs) ProtoMessage() {}
+func (*GetModuleInfoArgs) ProtoMessage() {}
 
-func (x *GetLambdaInfoArgs) ProtoReflect() protoreflect.Message {
+func (x *GetModuleInfoArgs) ProtoReflect() protoreflect.Message {
 	mi := &file_api_container_service_proto_msgTypes[6]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -406,19 +406,19 @@ func (x *GetLambdaInfoArgs) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use GetLambdaInfoArgs.ProtoReflect.Descriptor instead.
-func (*GetLambdaInfoArgs) Descriptor() ([]byte, []int) {
+// Deprecated: Use GetModuleInfoArgs.ProtoReflect.Descriptor instead.
+func (*GetModuleInfoArgs) Descriptor() ([]byte, []int) {
 	return file_api_container_service_proto_rawDescGZIP(), []int{6}
 }
 
-func (x *GetLambdaInfoArgs) GetLambdaId() string {
+func (x *GetModuleInfoArgs) GetModuleId() string {
 	if x != nil {
-		return x.LambdaId
+		return x.ModuleId
 	}
 	return ""
 }
 
-type GetLambdaInfoResponse struct {
+type GetModuleInfoResponse struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
@@ -426,8 +426,8 @@ type GetLambdaInfoResponse struct {
 	IpAddr string `protobuf:"bytes,1,opt,name=ip_addr,json=ipAddr,proto3" json:"ip_addr,omitempty"`
 }
 
-func (x *GetLambdaInfoResponse) Reset() {
-	*x = GetLambdaInfoResponse{}
+func (x *GetModuleInfoResponse) Reset() {
+	*x = GetModuleInfoResponse{}
 	if protoimpl.UnsafeEnabled {
 		mi := &file_api_container_service_proto_msgTypes[7]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -435,13 +435,13 @@ func (x *GetLambdaInfoResponse) Reset() {
 	}
 }
 
-func (x *GetLambdaInfoResponse) String() string {
+func (x *GetModuleInfoResponse) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*GetLambdaInfoResponse) ProtoMessage() {}
+func (*GetModuleInfoResponse) ProtoMessage() {}
 
-func (x *GetLambdaInfoResponse) ProtoReflect() protoreflect.Message {
+func (x *GetModuleInfoResponse) ProtoReflect() protoreflect.Message {
 	mi := &file_api_container_service_proto_msgTypes[7]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -453,12 +453,12 @@ func (x *GetLambdaInfoResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use GetLambdaInfoResponse.ProtoReflect.Descriptor instead.
-func (*GetLambdaInfoResponse) Descriptor() ([]byte, []int) {
+// Deprecated: Use GetModuleInfoResponse.ProtoReflect.Descriptor instead.
+func (*GetModuleInfoResponse) Descriptor() ([]byte, []int) {
 	return file_api_container_service_proto_rawDescGZIP(), []int{7}
 }
 
-func (x *GetLambdaInfoResponse) GetIpAddr() string {
+func (x *GetModuleInfoResponse) GetIpAddr() string {
 	if x != nil {
 		return x.IpAddr
 	}
@@ -1678,19 +1678,19 @@ func (x *GetServicesResponse) GetServiceIds() map[string]bool {
 }
 
 // ==============================================================================================
-//                                          Get Lambdas
+//                                          Get Modules
 // ==============================================================================================
-type GetLambdasResponse struct {
+type GetModulesResponse struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	// "Set" of current Kurtosis Lambda IDs loaded in the test network
-	LambdaIds map[string]bool `protobuf:"bytes,1,rep,name=lambda_ids,json=lambdaIds,proto3" json:"lambda_ids,omitempty" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"varint,2,opt,name=value,proto3"`
+	// "Set" of current Kurtosis module IDs loaded in the test network
+	ModuleIds map[string]bool `protobuf:"bytes,1,rep,name=module_ids,json=moduleIds,proto3" json:"module_ids,omitempty" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"varint,2,opt,name=value,proto3"`
 }
 
-func (x *GetLambdasResponse) Reset() {
-	*x = GetLambdasResponse{}
+func (x *GetModulesResponse) Reset() {
+	*x = GetModulesResponse{}
 	if protoimpl.UnsafeEnabled {
 		mi := &file_api_container_service_proto_msgTypes[27]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -1698,13 +1698,13 @@ func (x *GetLambdasResponse) Reset() {
 	}
 }
 
-func (x *GetLambdasResponse) String() string {
+func (x *GetModulesResponse) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*GetLambdasResponse) ProtoMessage() {}
+func (*GetModulesResponse) ProtoMessage() {}
 
-func (x *GetLambdasResponse) ProtoReflect() protoreflect.Message {
+func (x *GetModulesResponse) ProtoReflect() protoreflect.Message {
 	mi := &file_api_container_service_proto_msgTypes[27]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -1716,14 +1716,14 @@ func (x *GetLambdasResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use GetLambdasResponse.ProtoReflect.Descriptor instead.
-func (*GetLambdasResponse) Descriptor() ([]byte, []int) {
+// Deprecated: Use GetModulesResponse.ProtoReflect.Descriptor instead.
+func (*GetModulesResponse) Descriptor() ([]byte, []int) {
 	return file_api_container_service_proto_rawDescGZIP(), []int{27}
 }
 
-func (x *GetLambdasResponse) GetLambdaIds() map[string]bool {
+func (x *GetModulesResponse) GetModuleIds() map[string]bool {
 	if x != nil {
-		return x.LambdaIds
+		return x.ModuleIds
 	}
 	return nil
 }
@@ -1751,32 +1751,32 @@ var file_api_container_service_proto_rawDesc = []byte{
 	0x6f, 0x6e, 0x4b, 0x65, 0x79, 0x12, 0x21, 0x0a, 0x0c, 0x63, 0x6f, 0x6e, 0x74, 0x61, 0x69, 0x6e,
 	0x65, 0x72, 0x5f, 0x69, 0x64, 0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x52, 0x0b, 0x63, 0x6f, 0x6e,
 	0x74, 0x61, 0x69, 0x6e, 0x65, 0x72, 0x49, 0x64, 0x22, 0x83, 0x01, 0x0a, 0x0e, 0x4c, 0x6f, 0x61,
-	0x64, 0x4c, 0x61, 0x6d, 0x62, 0x64, 0x61, 0x41, 0x72, 0x67, 0x73, 0x12, 0x1b, 0x0a, 0x09, 0x6c,
-	0x61, 0x6d, 0x62, 0x64, 0x61, 0x5f, 0x69, 0x64, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x08,
-	0x6c, 0x61, 0x6d, 0x62, 0x64, 0x61, 0x49, 0x64, 0x12, 0x27, 0x0a, 0x0f, 0x63, 0x6f, 0x6e, 0x74,
+	0x64, 0x4d, 0x6f, 0x64, 0x75, 0x6c, 0x65, 0x41, 0x72, 0x67, 0x73, 0x12, 0x1b, 0x0a, 0x09, 0x6d,
+	0x6f, 0x64, 0x75, 0x6c, 0x65, 0x5f, 0x69, 0x64, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x08,
+	0x6d, 0x6f, 0x64, 0x75, 0x6c, 0x65, 0x49, 0x64, 0x12, 0x27, 0x0a, 0x0f, 0x63, 0x6f, 0x6e, 0x74,
 	0x61, 0x69, 0x6e, 0x65, 0x72, 0x5f, 0x69, 0x6d, 0x61, 0x67, 0x65, 0x18, 0x02, 0x20, 0x01, 0x28,
 	0x09, 0x52, 0x0e, 0x63, 0x6f, 0x6e, 0x74, 0x61, 0x69, 0x6e, 0x65, 0x72, 0x49, 0x6d, 0x61, 0x67,
 	0x65, 0x12, 0x2b, 0x0a, 0x11, 0x73, 0x65, 0x72, 0x69, 0x61, 0x6c, 0x69, 0x7a, 0x65, 0x64, 0x5f,
 	0x70, 0x61, 0x72, 0x61, 0x6d, 0x73, 0x18, 0x03, 0x20, 0x01, 0x28, 0x09, 0x52, 0x10, 0x73, 0x65,
 	0x72, 0x69, 0x61, 0x6c, 0x69, 0x7a, 0x65, 0x64, 0x50, 0x61, 0x72, 0x61, 0x6d, 0x73, 0x22, 0x2f,
-	0x0a, 0x10, 0x55, 0x6e, 0x6c, 0x6f, 0x61, 0x64, 0x4c, 0x61, 0x6d, 0x62, 0x64, 0x61, 0x41, 0x72,
-	0x67, 0x73, 0x12, 0x1b, 0x0a, 0x09, 0x6c, 0x61, 0x6d, 0x62, 0x64, 0x61, 0x5f, 0x69, 0x64, 0x18,
-	0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x08, 0x6c, 0x61, 0x6d, 0x62, 0x64, 0x61, 0x49, 0x64, 0x22,
-	0x5d, 0x0a, 0x11, 0x45, 0x78, 0x65, 0x63, 0x75, 0x74, 0x65, 0x4c, 0x61, 0x6d, 0x62, 0x64, 0x61,
-	0x41, 0x72, 0x67, 0x73, 0x12, 0x1b, 0x0a, 0x09, 0x6c, 0x61, 0x6d, 0x62, 0x64, 0x61, 0x5f, 0x69,
-	0x64, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x08, 0x6c, 0x61, 0x6d, 0x62, 0x64, 0x61, 0x49,
+	0x0a, 0x10, 0x55, 0x6e, 0x6c, 0x6f, 0x61, 0x64, 0x4d, 0x6f, 0x64, 0x75, 0x6c, 0x65, 0x41, 0x72,
+	0x67, 0x73, 0x12, 0x1b, 0x0a, 0x09, 0x6d, 0x6f, 0x64, 0x75, 0x6c, 0x65, 0x5f, 0x69, 0x64, 0x18,
+	0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x08, 0x6d, 0x6f, 0x64, 0x75, 0x6c, 0x65, 0x49, 0x64, 0x22,
+	0x5d, 0x0a, 0x11, 0x45, 0x78, 0x65, 0x63, 0x75, 0x74, 0x65, 0x4d, 0x6f, 0x64, 0x75, 0x6c, 0x65,
+	0x41, 0x72, 0x67, 0x73, 0x12, 0x1b, 0x0a, 0x09, 0x6d, 0x6f, 0x64, 0x75, 0x6c, 0x65, 0x5f, 0x69,
+	0x64, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x08, 0x6d, 0x6f, 0x64, 0x75, 0x6c, 0x65, 0x49,
 	0x64, 0x12, 0x2b, 0x0a, 0x11, 0x73, 0x65, 0x72, 0x69, 0x61, 0x6c, 0x69, 0x7a, 0x65, 0x64, 0x5f,
 	0x70, 0x61, 0x72, 0x61, 0x6d, 0x73, 0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x52, 0x10, 0x73, 0x65,
 	0x72, 0x69, 0x61, 0x6c, 0x69, 0x7a, 0x65, 0x64, 0x50, 0x61, 0x72, 0x61, 0x6d, 0x73, 0x22, 0x44,
-	0x0a, 0x15, 0x45, 0x78, 0x65, 0x63, 0x75, 0x74, 0x65, 0x4c, 0x61, 0x6d, 0x62, 0x64, 0x61, 0x52,
+	0x0a, 0x15, 0x45, 0x78, 0x65, 0x63, 0x75, 0x74, 0x65, 0x4d, 0x6f, 0x64, 0x75, 0x6c, 0x65, 0x52,
 	0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x2b, 0x0a, 0x11, 0x73, 0x65, 0x72, 0x69, 0x61,
 	0x6c, 0x69, 0x7a, 0x65, 0x64, 0x5f, 0x72, 0x65, 0x73, 0x75, 0x6c, 0x74, 0x18, 0x01, 0x20, 0x01,
 	0x28, 0x09, 0x52, 0x10, 0x73, 0x65, 0x72, 0x69, 0x61, 0x6c, 0x69, 0x7a, 0x65, 0x64, 0x52, 0x65,
-	0x73, 0x75, 0x6c, 0x74, 0x22, 0x30, 0x0a, 0x11, 0x47, 0x65, 0x74, 0x4c, 0x61, 0x6d, 0x62, 0x64,
-	0x61, 0x49, 0x6e, 0x66, 0x6f, 0x41, 0x72, 0x67, 0x73, 0x12, 0x1b, 0x0a, 0x09, 0x6c, 0x61, 0x6d,
-	0x62, 0x64, 0x61, 0x5f, 0x69, 0x64, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x08, 0x6c, 0x61,
-	0x6d, 0x62, 0x64, 0x61, 0x49, 0x64, 0x22, 0x30, 0x0a, 0x15, 0x47, 0x65, 0x74, 0x4c, 0x61, 0x6d,
-	0x62, 0x64, 0x61, 0x49, 0x6e, 0x66, 0x6f, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12,
+	0x73, 0x75, 0x6c, 0x74, 0x22, 0x30, 0x0a, 0x11, 0x47, 0x65, 0x74, 0x4d, 0x6f, 0x64, 0x75, 0x6c,
+	0x65, 0x49, 0x6e, 0x66, 0x6f, 0x41, 0x72, 0x67, 0x73, 0x12, 0x1b, 0x0a, 0x09, 0x6d, 0x6f, 0x64,
+	0x75, 0x6c, 0x65, 0x5f, 0x69, 0x64, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x08, 0x6d, 0x6f,
+	0x64, 0x75, 0x6c, 0x65, 0x49, 0x64, 0x22, 0x30, 0x0a, 0x15, 0x47, 0x65, 0x74, 0x4d, 0x6f, 0x64,
+	0x75, 0x6c, 0x65, 0x49, 0x6e, 0x66, 0x6f, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12,
 	0x17, 0x0a, 0x07, 0x69, 0x70, 0x5f, 0x61, 0x64, 0x64, 0x72, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09,
 	0x52, 0x06, 0x69, 0x70, 0x41, 0x64, 0x64, 0x72, 0x22, 0xd8, 0x01, 0x0a, 0x1a, 0x52, 0x65, 0x67,
 	0x69, 0x73, 0x74, 0x65, 0x72, 0x46, 0x69, 0x6c, 0x65, 0x73, 0x41, 0x72, 0x74, 0x69, 0x66, 0x61,
@@ -2026,13 +2026,13 @@ var file_api_container_service_proto_rawDesc = []byte{
 	0x0a, 0x03, 0x6b, 0x65, 0x79, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x03, 0x6b, 0x65, 0x79,
 	0x12, 0x14, 0x0a, 0x05, 0x76, 0x61, 0x6c, 0x75, 0x65, 0x18, 0x02, 0x20, 0x01, 0x28, 0x08, 0x52,
 	0x05, 0x76, 0x61, 0x6c, 0x75, 0x65, 0x3a, 0x02, 0x38, 0x01, 0x22, 0xa7, 0x01, 0x0a, 0x12, 0x47,
-	0x65, 0x74, 0x4c, 0x61, 0x6d, 0x62, 0x64, 0x61, 0x73, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73,
-	0x65, 0x12, 0x53, 0x0a, 0x0a, 0x6c, 0x61, 0x6d, 0x62, 0x64, 0x61, 0x5f, 0x69, 0x64, 0x73, 0x18,
+	0x65, 0x74, 0x4d, 0x6f, 0x64, 0x75, 0x6c, 0x65, 0x73, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73,
+	0x65, 0x12, 0x53, 0x0a, 0x0a, 0x6d, 0x6f, 0x64, 0x75, 0x6c, 0x65, 0x5f, 0x69, 0x64, 0x73, 0x18,
 	0x01, 0x20, 0x03, 0x28, 0x0b, 0x32, 0x34, 0x2e, 0x61, 0x70, 0x69, 0x5f, 0x63, 0x6f, 0x6e, 0x74,
-	0x61, 0x69, 0x6e, 0x65, 0x72, 0x5f, 0x61, 0x70, 0x69, 0x2e, 0x47, 0x65, 0x74, 0x4c, 0x61, 0x6d,
-	0x62, 0x64, 0x61, 0x73, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x2e, 0x4c, 0x61, 0x6d,
-	0x62, 0x64, 0x61, 0x49, 0x64, 0x73, 0x45, 0x6e, 0x74, 0x72, 0x79, 0x52, 0x09, 0x6c, 0x61, 0x6d,
-	0x62, 0x64, 0x61, 0x49, 0x64, 0x73, 0x1a, 0x3c, 0x0a, 0x0e, 0x4c, 0x61, 0x6d, 0x62, 0x64, 0x61,
+	0x61, 0x69, 0x6e, 0x65, 0x72, 0x5f, 0x61, 0x70, 0x69, 0x2e, 0x47, 0x65, 0x74, 0x4d, 0x6f, 0x64,
+	0x75, 0x6c, 0x65, 0x73, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x2e, 0x4d, 0x6f, 0x64,
+	0x75, 0x6c, 0x65, 0x49, 0x64, 0x73, 0x45, 0x6e, 0x74, 0x72, 0x79, 0x52, 0x09, 0x6d, 0x6f, 0x64,
+	0x75, 0x6c, 0x65, 0x49, 0x64, 0x73, 0x1a, 0x3c, 0x0a, 0x0e, 0x4d, 0x6f, 0x64, 0x75, 0x6c, 0x65,
 	0x49, 0x64, 0x73, 0x45, 0x6e, 0x74, 0x72, 0x79, 0x12, 0x10, 0x0a, 0x03, 0x6b, 0x65, 0x79, 0x18,
 	0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x03, 0x6b, 0x65, 0x79, 0x12, 0x14, 0x0a, 0x05, 0x76, 0x61,
 	0x6c, 0x75, 0x65, 0x18, 0x02, 0x20, 0x01, 0x28, 0x08, 0x52, 0x05, 0x76, 0x61, 0x6c, 0x75, 0x65,
@@ -2054,27 +2054,27 @@ var file_api_container_service_proto_rawDesc = []byte{
 	0x67, 0x69, 0x73, 0x74, 0x72, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x41, 0x72, 0x67, 0x73, 0x1a, 0x16,
 	0x2e, 0x67, 0x6f, 0x6f, 0x67, 0x6c, 0x65, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x62, 0x75, 0x66,
 	0x2e, 0x45, 0x6d, 0x70, 0x74, 0x79, 0x22, 0x00, 0x12, 0x49, 0x0a, 0x0a, 0x4c, 0x6f, 0x61, 0x64,
-	0x4c, 0x61, 0x6d, 0x62, 0x64, 0x61, 0x12, 0x21, 0x2e, 0x61, 0x70, 0x69, 0x5f, 0x63, 0x6f, 0x6e,
-	0x74, 0x61, 0x69, 0x6e, 0x65, 0x72, 0x5f, 0x61, 0x70, 0x69, 0x2e, 0x4c, 0x6f, 0x61, 0x64, 0x4c,
-	0x61, 0x6d, 0x62, 0x64, 0x61, 0x41, 0x72, 0x67, 0x73, 0x1a, 0x16, 0x2e, 0x67, 0x6f, 0x6f, 0x67,
+	0x4d, 0x6f, 0x64, 0x75, 0x6c, 0x65, 0x12, 0x21, 0x2e, 0x61, 0x70, 0x69, 0x5f, 0x63, 0x6f, 0x6e,
+	0x74, 0x61, 0x69, 0x6e, 0x65, 0x72, 0x5f, 0x61, 0x70, 0x69, 0x2e, 0x4c, 0x6f, 0x61, 0x64, 0x4d,
+	0x6f, 0x64, 0x75, 0x6c, 0x65, 0x41, 0x72, 0x67, 0x73, 0x1a, 0x16, 0x2e, 0x67, 0x6f, 0x6f, 0x67,
 	0x6c, 0x65, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x62, 0x75, 0x66, 0x2e, 0x45, 0x6d, 0x70, 0x74,
-	0x79, 0x22, 0x00, 0x12, 0x4d, 0x0a, 0x0c, 0x55, 0x6e, 0x6c, 0x6f, 0x61, 0x64, 0x4c, 0x61, 0x6d,
-	0x62, 0x64, 0x61, 0x12, 0x23, 0x2e, 0x61, 0x70, 0x69, 0x5f, 0x63, 0x6f, 0x6e, 0x74, 0x61, 0x69,
-	0x6e, 0x65, 0x72, 0x5f, 0x61, 0x70, 0x69, 0x2e, 0x55, 0x6e, 0x6c, 0x6f, 0x61, 0x64, 0x4c, 0x61,
-	0x6d, 0x62, 0x64, 0x61, 0x41, 0x72, 0x67, 0x73, 0x1a, 0x16, 0x2e, 0x67, 0x6f, 0x6f, 0x67, 0x6c,
+	0x79, 0x22, 0x00, 0x12, 0x4d, 0x0a, 0x0c, 0x55, 0x6e, 0x6c, 0x6f, 0x61, 0x64, 0x4d, 0x6f, 0x64,
+	0x75, 0x6c, 0x65, 0x12, 0x23, 0x2e, 0x61, 0x70, 0x69, 0x5f, 0x63, 0x6f, 0x6e, 0x74, 0x61, 0x69,
+	0x6e, 0x65, 0x72, 0x5f, 0x61, 0x70, 0x69, 0x2e, 0x55, 0x6e, 0x6c, 0x6f, 0x61, 0x64, 0x4d, 0x6f,
+	0x64, 0x75, 0x6c, 0x65, 0x41, 0x72, 0x67, 0x73, 0x1a, 0x16, 0x2e, 0x67, 0x6f, 0x6f, 0x67, 0x6c,
 	0x65, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x62, 0x75, 0x66, 0x2e, 0x45, 0x6d, 0x70, 0x74, 0x79,
-	0x22, 0x00, 0x12, 0x61, 0x0a, 0x0d, 0x45, 0x78, 0x65, 0x63, 0x75, 0x74, 0x65, 0x4c, 0x61, 0x6d,
-	0x62, 0x64, 0x61, 0x12, 0x24, 0x2e, 0x61, 0x70, 0x69, 0x5f, 0x63, 0x6f, 0x6e, 0x74, 0x61, 0x69,
-	0x6e, 0x65, 0x72, 0x5f, 0x61, 0x70, 0x69, 0x2e, 0x45, 0x78, 0x65, 0x63, 0x75, 0x74, 0x65, 0x4c,
-	0x61, 0x6d, 0x62, 0x64, 0x61, 0x41, 0x72, 0x67, 0x73, 0x1a, 0x28, 0x2e, 0x61, 0x70, 0x69, 0x5f,
+	0x22, 0x00, 0x12, 0x61, 0x0a, 0x0d, 0x45, 0x78, 0x65, 0x63, 0x75, 0x74, 0x65, 0x4d, 0x6f, 0x64,
+	0x75, 0x6c, 0x65, 0x12, 0x24, 0x2e, 0x61, 0x70, 0x69, 0x5f, 0x63, 0x6f, 0x6e, 0x74, 0x61, 0x69,
+	0x6e, 0x65, 0x72, 0x5f, 0x61, 0x70, 0x69, 0x2e, 0x45, 0x78, 0x65, 0x63, 0x75, 0x74, 0x65, 0x4d,
+	0x6f, 0x64, 0x75, 0x6c, 0x65, 0x41, 0x72, 0x67, 0x73, 0x1a, 0x28, 0x2e, 0x61, 0x70, 0x69, 0x5f,
 	0x63, 0x6f, 0x6e, 0x74, 0x61, 0x69, 0x6e, 0x65, 0x72, 0x5f, 0x61, 0x70, 0x69, 0x2e, 0x45, 0x78,
-	0x65, 0x63, 0x75, 0x74, 0x65, 0x4c, 0x61, 0x6d, 0x62, 0x64, 0x61, 0x52, 0x65, 0x73, 0x70, 0x6f,
-	0x6e, 0x73, 0x65, 0x22, 0x00, 0x12, 0x61, 0x0a, 0x0d, 0x47, 0x65, 0x74, 0x4c, 0x61, 0x6d, 0x62,
-	0x64, 0x61, 0x49, 0x6e, 0x66, 0x6f, 0x12, 0x24, 0x2e, 0x61, 0x70, 0x69, 0x5f, 0x63, 0x6f, 0x6e,
-	0x74, 0x61, 0x69, 0x6e, 0x65, 0x72, 0x5f, 0x61, 0x70, 0x69, 0x2e, 0x47, 0x65, 0x74, 0x4c, 0x61,
-	0x6d, 0x62, 0x64, 0x61, 0x49, 0x6e, 0x66, 0x6f, 0x41, 0x72, 0x67, 0x73, 0x1a, 0x28, 0x2e, 0x61,
+	0x65, 0x63, 0x75, 0x74, 0x65, 0x4d, 0x6f, 0x64, 0x75, 0x6c, 0x65, 0x52, 0x65, 0x73, 0x70, 0x6f,
+	0x6e, 0x73, 0x65, 0x22, 0x00, 0x12, 0x61, 0x0a, 0x0d, 0x47, 0x65, 0x74, 0x4d, 0x6f, 0x64, 0x75,
+	0x6c, 0x65, 0x49, 0x6e, 0x66, 0x6f, 0x12, 0x24, 0x2e, 0x61, 0x70, 0x69, 0x5f, 0x63, 0x6f, 0x6e,
+	0x74, 0x61, 0x69, 0x6e, 0x65, 0x72, 0x5f, 0x61, 0x70, 0x69, 0x2e, 0x47, 0x65, 0x74, 0x4d, 0x6f,
+	0x64, 0x75, 0x6c, 0x65, 0x49, 0x6e, 0x66, 0x6f, 0x41, 0x72, 0x67, 0x73, 0x1a, 0x28, 0x2e, 0x61,
 	0x70, 0x69, 0x5f, 0x63, 0x6f, 0x6e, 0x74, 0x61, 0x69, 0x6e, 0x65, 0x72, 0x5f, 0x61, 0x70, 0x69,
-	0x2e, 0x47, 0x65, 0x74, 0x4c, 0x61, 0x6d, 0x62, 0x64, 0x61, 0x49, 0x6e, 0x66, 0x6f, 0x52, 0x65,
+	0x2e, 0x47, 0x65, 0x74, 0x4d, 0x6f, 0x64, 0x75, 0x6c, 0x65, 0x49, 0x6e, 0x66, 0x6f, 0x52, 0x65,
 	0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22, 0x00, 0x12, 0x61, 0x0a, 0x16, 0x52, 0x65, 0x67, 0x69,
 	0x73, 0x74, 0x65, 0x72, 0x46, 0x69, 0x6c, 0x65, 0x73, 0x41, 0x72, 0x74, 0x69, 0x66, 0x61, 0x63,
 	0x74, 0x73, 0x12, 0x2d, 0x2e, 0x61, 0x70, 0x69, 0x5f, 0x63, 0x6f, 0x6e, 0x74, 0x61, 0x69, 0x6e,
@@ -2143,10 +2143,10 @@ var file_api_container_service_proto_rawDesc = []byte{
 	0x79, 0x1a, 0x26, 0x2e, 0x61, 0x70, 0x69, 0x5f, 0x63, 0x6f, 0x6e, 0x74, 0x61, 0x69, 0x6e, 0x65,
 	0x72, 0x5f, 0x61, 0x70, 0x69, 0x2e, 0x47, 0x65, 0x74, 0x53, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65,
 	0x73, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22, 0x00, 0x12, 0x4d, 0x0a, 0x0a, 0x47,
-	0x65, 0x74, 0x4c, 0x61, 0x6d, 0x62, 0x64, 0x61, 0x73, 0x12, 0x16, 0x2e, 0x67, 0x6f, 0x6f, 0x67,
+	0x65, 0x74, 0x4d, 0x6f, 0x64, 0x75, 0x6c, 0x65, 0x73, 0x12, 0x16, 0x2e, 0x67, 0x6f, 0x6f, 0x67,
 	0x6c, 0x65, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x62, 0x75, 0x66, 0x2e, 0x45, 0x6d, 0x70, 0x74,
 	0x79, 0x1a, 0x25, 0x2e, 0x61, 0x70, 0x69, 0x5f, 0x63, 0x6f, 0x6e, 0x74, 0x61, 0x69, 0x6e, 0x65,
-	0x72, 0x5f, 0x61, 0x70, 0x69, 0x2e, 0x47, 0x65, 0x74, 0x4c, 0x61, 0x6d, 0x62, 0x64, 0x61, 0x73,
+	0x72, 0x5f, 0x61, 0x70, 0x69, 0x2e, 0x47, 0x65, 0x74, 0x4d, 0x6f, 0x64, 0x75, 0x6c, 0x65, 0x73,
 	0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22, 0x00, 0x42, 0x50, 0x5a, 0x4e, 0x67, 0x69,
 	0x74, 0x68, 0x75, 0x62, 0x2e, 0x63, 0x6f, 0x6d, 0x2f, 0x6b, 0x75, 0x72, 0x74, 0x6f, 0x73, 0x69,
 	0x73, 0x2d, 0x74, 0x65, 0x63, 0x68, 0x2f, 0x6b, 0x75, 0x72, 0x74, 0x6f, 0x73, 0x69, 0x73, 0x2d,
@@ -2172,12 +2172,12 @@ var file_api_container_service_proto_msgTypes = make([]protoimpl.MessageInfo, 39
 var file_api_container_service_proto_goTypes = []interface{}{
 	(*StartExternalContainerRegistrationResponse)(nil), // 0: api_container_api.StartExternalContainerRegistrationResponse
 	(*FinishExternalContainerRegistrationArgs)(nil),    // 1: api_container_api.FinishExternalContainerRegistrationArgs
-	(*LoadLambdaArgs)(nil),                             // 2: api_container_api.LoadLambdaArgs
-	(*UnloadLambdaArgs)(nil),                           // 3: api_container_api.UnloadLambdaArgs
-	(*ExecuteLambdaArgs)(nil),                          // 4: api_container_api.ExecuteLambdaArgs
-	(*ExecuteLambdaResponse)(nil),                      // 5: api_container_api.ExecuteLambdaResponse
-	(*GetLambdaInfoArgs)(nil),                          // 6: api_container_api.GetLambdaInfoArgs
-	(*GetLambdaInfoResponse)(nil),                      // 7: api_container_api.GetLambdaInfoResponse
+	(*LoadModuleArgs)(nil),                             // 2: api_container_api.LoadModuleArgs
+	(*UnloadModuleArgs)(nil),                           // 3: api_container_api.UnloadModuleArgs
+	(*ExecuteModuleArgs)(nil),                          // 4: api_container_api.ExecuteModuleArgs
+	(*ExecuteModuleResponse)(nil),                      // 5: api_container_api.ExecuteModuleResponse
+	(*GetModuleInfoArgs)(nil),                          // 6: api_container_api.GetModuleInfoArgs
+	(*GetModuleInfoResponse)(nil),                      // 7: api_container_api.GetModuleInfoResponse
 	(*RegisterFilesArtifactsArgs)(nil),                 // 8: api_container_api.RegisterFilesArtifactsArgs
 	(*RegisterServiceArgs)(nil),                        // 9: api_container_api.RegisterServiceArgs
 	(*RegisterServiceResponse)(nil),                    // 10: api_container_api.RegisterServiceResponse
@@ -2197,7 +2197,7 @@ var file_api_container_service_proto_goTypes = []interface{}{
 	(*WaitForHttpPostEndpointAvailabilityArgs)(nil),    // 24: api_container_api.WaitForHttpPostEndpointAvailabilityArgs
 	(*ExecuteBulkCommandsArgs)(nil),                    // 25: api_container_api.ExecuteBulkCommandsArgs
 	(*GetServicesResponse)(nil),                        // 26: api_container_api.GetServicesResponse
-	(*GetLambdasResponse)(nil),                         // 27: api_container_api.GetLambdasResponse
+	(*GetModulesResponse)(nil),                         // 27: api_container_api.GetModulesResponse
 	nil,                                                // 28: api_container_api.RegisterFilesArtifactsArgs.FilesArtifactUrlsEntry
 	nil,                                                // 29: api_container_api.StartServiceArgs.UsedPortsEntry
 	nil,                                                // 30: api_container_api.StartServiceArgs.DockerEnvVarsEntry
@@ -2208,7 +2208,7 @@ var file_api_container_service_proto_goTypes = []interface{}{
 	nil,                                                // 35: api_container_api.PartitionServices.ServiceIdSetEntry
 	nil,                                                // 36: api_container_api.PartitionConnections.ConnectionInfoEntry
 	nil,                                                // 37: api_container_api.GetServicesResponse.ServiceIdsEntry
-	nil,                                                // 38: api_container_api.GetLambdasResponse.LambdaIdsEntry
+	nil,                                                // 38: api_container_api.GetModulesResponse.ModuleIdsEntry
 	(*emptypb.Empty)(nil),                              // 39: google.protobuf.Empty
 }
 var file_api_container_service_proto_depIdxs = []int32{
@@ -2223,17 +2223,17 @@ var file_api_container_service_proto_depIdxs = []int32{
 	35, // 8: api_container_api.PartitionServices.service_id_set:type_name -> api_container_api.PartitionServices.ServiceIdSetEntry
 	36, // 9: api_container_api.PartitionConnections.connection_info:type_name -> api_container_api.PartitionConnections.ConnectionInfoEntry
 	37, // 10: api_container_api.GetServicesResponse.service_ids:type_name -> api_container_api.GetServicesResponse.ServiceIdsEntry
-	38, // 11: api_container_api.GetLambdasResponse.lambda_ids:type_name -> api_container_api.GetLambdasResponse.LambdaIdsEntry
+	38, // 11: api_container_api.GetModulesResponse.module_ids:type_name -> api_container_api.GetModulesResponse.ModuleIdsEntry
 	13, // 12: api_container_api.StartServiceResponse.UsedPortsHostPortBindingsEntry.value:type_name -> api_container_api.PortBinding
 	18, // 13: api_container_api.RepartitionArgs.PartitionServicesEntry.value:type_name -> api_container_api.PartitionServices
 	19, // 14: api_container_api.RepartitionArgs.PartitionConnectionsEntry.value:type_name -> api_container_api.PartitionConnections
 	20, // 15: api_container_api.PartitionConnections.ConnectionInfoEntry.value:type_name -> api_container_api.PartitionConnectionInfo
 	39, // 16: api_container_api.ApiContainerService.StartExternalContainerRegistration:input_type -> google.protobuf.Empty
 	1,  // 17: api_container_api.ApiContainerService.FinishExternalContainerRegistration:input_type -> api_container_api.FinishExternalContainerRegistrationArgs
-	2,  // 18: api_container_api.ApiContainerService.LoadLambda:input_type -> api_container_api.LoadLambdaArgs
-	3,  // 19: api_container_api.ApiContainerService.UnloadLambda:input_type -> api_container_api.UnloadLambdaArgs
-	4,  // 20: api_container_api.ApiContainerService.ExecuteLambda:input_type -> api_container_api.ExecuteLambdaArgs
-	6,  // 21: api_container_api.ApiContainerService.GetLambdaInfo:input_type -> api_container_api.GetLambdaInfoArgs
+	2,  // 18: api_container_api.ApiContainerService.LoadModule:input_type -> api_container_api.LoadModuleArgs
+	3,  // 19: api_container_api.ApiContainerService.UnloadModule:input_type -> api_container_api.UnloadModuleArgs
+	4,  // 20: api_container_api.ApiContainerService.ExecuteModule:input_type -> api_container_api.ExecuteModuleArgs
+	6,  // 21: api_container_api.ApiContainerService.GetModuleInfo:input_type -> api_container_api.GetModuleInfoArgs
 	8,  // 22: api_container_api.ApiContainerService.RegisterFilesArtifacts:input_type -> api_container_api.RegisterFilesArtifactsArgs
 	9,  // 23: api_container_api.ApiContainerService.RegisterService:input_type -> api_container_api.RegisterServiceArgs
 	11, // 24: api_container_api.ApiContainerService.StartService:input_type -> api_container_api.StartServiceArgs
@@ -2245,13 +2245,13 @@ var file_api_container_service_proto_depIdxs = []int32{
 	24, // 30: api_container_api.ApiContainerService.WaitForHttpPostEndpointAvailability:input_type -> api_container_api.WaitForHttpPostEndpointAvailabilityArgs
 	25, // 31: api_container_api.ApiContainerService.ExecuteBulkCommands:input_type -> api_container_api.ExecuteBulkCommandsArgs
 	39, // 32: api_container_api.ApiContainerService.GetServices:input_type -> google.protobuf.Empty
-	39, // 33: api_container_api.ApiContainerService.GetLambdas:input_type -> google.protobuf.Empty
+	39, // 33: api_container_api.ApiContainerService.GetModules:input_type -> google.protobuf.Empty
 	0,  // 34: api_container_api.ApiContainerService.StartExternalContainerRegistration:output_type -> api_container_api.StartExternalContainerRegistrationResponse
 	39, // 35: api_container_api.ApiContainerService.FinishExternalContainerRegistration:output_type -> google.protobuf.Empty
-	39, // 36: api_container_api.ApiContainerService.LoadLambda:output_type -> google.protobuf.Empty
-	39, // 37: api_container_api.ApiContainerService.UnloadLambda:output_type -> google.protobuf.Empty
-	5,  // 38: api_container_api.ApiContainerService.ExecuteLambda:output_type -> api_container_api.ExecuteLambdaResponse
-	7,  // 39: api_container_api.ApiContainerService.GetLambdaInfo:output_type -> api_container_api.GetLambdaInfoResponse
+	39, // 36: api_container_api.ApiContainerService.LoadModule:output_type -> google.protobuf.Empty
+	39, // 37: api_container_api.ApiContainerService.UnloadModule:output_type -> google.protobuf.Empty
+	5,  // 38: api_container_api.ApiContainerService.ExecuteModule:output_type -> api_container_api.ExecuteModuleResponse
+	7,  // 39: api_container_api.ApiContainerService.GetModuleInfo:output_type -> api_container_api.GetModuleInfoResponse
 	39, // 40: api_container_api.ApiContainerService.RegisterFilesArtifacts:output_type -> google.protobuf.Empty
 	10, // 41: api_container_api.ApiContainerService.RegisterService:output_type -> api_container_api.RegisterServiceResponse
 	12, // 42: api_container_api.ApiContainerService.StartService:output_type -> api_container_api.StartServiceResponse
@@ -2263,7 +2263,7 @@ var file_api_container_service_proto_depIdxs = []int32{
 	39, // 48: api_container_api.ApiContainerService.WaitForHttpPostEndpointAvailability:output_type -> google.protobuf.Empty
 	39, // 49: api_container_api.ApiContainerService.ExecuteBulkCommands:output_type -> google.protobuf.Empty
 	26, // 50: api_container_api.ApiContainerService.GetServices:output_type -> api_container_api.GetServicesResponse
-	27, // 51: api_container_api.ApiContainerService.GetLambdas:output_type -> api_container_api.GetLambdasResponse
+	27, // 51: api_container_api.ApiContainerService.GetModules:output_type -> api_container_api.GetModulesResponse
 	34, // [34:52] is the sub-list for method output_type
 	16, // [16:34] is the sub-list for method input_type
 	16, // [16:16] is the sub-list for extension type_name
@@ -2302,7 +2302,7 @@ func file_api_container_service_proto_init() {
 			}
 		}
 		file_api_container_service_proto_msgTypes[2].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*LoadLambdaArgs); i {
+			switch v := v.(*LoadModuleArgs); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -2314,7 +2314,7 @@ func file_api_container_service_proto_init() {
 			}
 		}
 		file_api_container_service_proto_msgTypes[3].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*UnloadLambdaArgs); i {
+			switch v := v.(*UnloadModuleArgs); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -2326,7 +2326,7 @@ func file_api_container_service_proto_init() {
 			}
 		}
 		file_api_container_service_proto_msgTypes[4].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*ExecuteLambdaArgs); i {
+			switch v := v.(*ExecuteModuleArgs); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -2338,7 +2338,7 @@ func file_api_container_service_proto_init() {
 			}
 		}
 		file_api_container_service_proto_msgTypes[5].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*ExecuteLambdaResponse); i {
+			switch v := v.(*ExecuteModuleResponse); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -2350,7 +2350,7 @@ func file_api_container_service_proto_init() {
 			}
 		}
 		file_api_container_service_proto_msgTypes[6].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*GetLambdaInfoArgs); i {
+			switch v := v.(*GetModuleInfoArgs); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -2362,7 +2362,7 @@ func file_api_container_service_proto_init() {
 			}
 		}
 		file_api_container_service_proto_msgTypes[7].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*GetLambdaInfoResponse); i {
+			switch v := v.(*GetModuleInfoResponse); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -2602,7 +2602,7 @@ func file_api_container_service_proto_init() {
 			}
 		}
 		file_api_container_service_proto_msgTypes[27].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*GetLambdasResponse); i {
+			switch v := v.(*GetModulesResponse); i {
 			case 0:
 				return &v.state
 			case 1:

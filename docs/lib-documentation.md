@@ -6,21 +6,20 @@ _Found a bug? File it on [the repo](https://github.com/kurtosis-tech/kurtosis-cl
 
 
 
-LambdaContext
+ModuleContext
 -------------
-<!-- TODO need to add docs for what Kurtosis modules are -->
-This Kurtosis-provided class is the lowest-level representation of a Lambda Kurtosis module - a Kurtosis module that has exactly one function.
+This Kurtosis-provided class is the lowest-level representation of a Kurtosis module - a Docker container with a connection to the Kurtosis engine that responds to commands.
 
 ### execute(String serializedParams) -\> String serializedResult
-Executes the function packaged inside the Kurtosis Lambda module with the given serialized args, returning the serialized result. The serialization format will depend on the Lambda.
+Some modules are considered executable, meaning they respond to an "execute" command. This function will send the execute command to the module with the given serialized args, returning the serialized result. The serialization format of args & response will depend on the module. If the module isn't executable (i.e. doesn't respond to an "execute" command) then an error will be thrown.
 
 **Args**
 
-* `serializedParams`: Serialized data containing args to the Lambda function. Consult the documentation for the module you're using to determine what this should contain.
+* `serializedParams`: Serialized data containing args to the module's execute function. Consult the documentation for the module you're using to determine what this should contain.
 
 **Returns**
 
-* `serializedResult`: Serialized data containing the results of executing the Lambda function. Consult the documentation for the module you're using to determine what this will contain.
+* `serializedResult`: Serialized data containing the results of executing the module. Consult the documentation for the module you're using to determine what this will contain.
 
 
 
@@ -34,6 +33,7 @@ NetworkContext
 --------------
 This Kurtosis-provided class is the lowest-level representation of a test network, and provides methods for inspecting and manipulating the network. All [Network][network] implementations will encapsulate an instance of this class.
 
+TODO TODO TODO
 ### loadLambda(String lambdaId, String image, String serializedParams) -\> [LambdaContext][lambdacontext] lambdaContext
 Starts a new Kurtosis Lambda module (configured using the serialized params) inside the test network, which makes its function available for use.
 
@@ -47,6 +47,7 @@ Starts a new Kurtosis Lambda module (configured using the serialized params) ins
 
 * `lambdaContext`: The [LambdaContext][lambdacontext] representation of the running Lambda container, which allows execution of the Lambda function.
 
+TODO TODO TODO
 ### unloadLambda(String lambdaId) 
 Stops and removes a Kurtosis Lambda module from a network
 
@@ -54,6 +55,7 @@ Stops and removes a Kurtosis Lambda module from a network
 
 * `lambdaId`: The ID of the Lambda to remove.
 
+TODO TODO TODO
 ### getLambdaContext(String lambdaId) -\> [LambdaContext][lambdacontext] lambdaContext
 Gets the [LambdaContext][lambdacontext] associated with an already-running Lambda container identified by the given ID.
 
@@ -156,8 +158,9 @@ Gets the IDs of the current services in the test network
 
 * `serviceIDs`: A set of service IDs
 
+TODO TODO TDOO
 ### getLambdas() -\> Set\<LambdaID\> lambdaIDs
-Gets the IDs of the Kurtosis Lambdas that have been loaded into the test network.
+Gets the IDs of the Kurtosis Lambdas that have been loaded into the enclave.
 
 **Returns**
 
@@ -280,6 +283,7 @@ _Found a bug? File it on [the repo](https://github.com/kurtosis-tech/kurtosis-cl
 
 [containerconfigbuilder]: #containerconfigbuilder
 
+TODO MODIFY
 [lambdacontext]: #lambdacontext
 
 [network]: #network

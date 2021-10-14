@@ -61,23 +61,23 @@ func NewNetworkContext(
 
 // Docs available at https://docs.kurtosistech.com/kurtosis-client/lib-documentation
 func (networkCtx *NetworkContext) LoadLambda(
-		lambdaId modules.LambdaID,
+		lambdaId modules.ModuleID,
 		image string,
-		serializedParams string) (*modules.LambdaContext, error) {
-	args := binding_constructors.NewLoadLambdaArgs(string(lambdaId), image, serializedParams)
+		serializedParams string) (*modules.ModuleContext, error) {
+	args := binding_constructors.NewLoadModuleArgs(string(lambdaId), image, serializedParams)
 
 	// We proxy calls to Lambda modules via the API container, so actually no need to use the response here
 	_, err := networkCtx.client.LoadLambda(context.Background(), args)
 	if err != nil {
 		return nil, stacktrace.Propagate(err, "An error occurred loading new module '%v' with image '%v' and serialized params '%v'", lambdaId, image, serializedParams)
 	}
-	moduleCtx := modules.NewLambdaContext(networkCtx.client, lambdaId)
+	moduleCtx := modules.NewModuleContext(networkCtx.client, lambdaId)
 	return moduleCtx, nil
 }
 
 // Docs available at https://docs.kurtosistech.com/kurtosis-client/lib-documentation
-func (networkCtx *NetworkContext) UnloadLambda(lambdaId modules.LambdaID) error {
-	args := binding_constructors.NewUnloadLambdaArgs(string(lambdaId))
+func (networkCtx *NetworkContext) UnloadLambda(lambdaId modules.ModuleID) error {
+	args := binding_constructors.NewUnloadModuleArgs(string(lambdaId))
 
 	_, err := networkCtx.client.UnloadLambda(context.Background(), args)
 	if err != nil {
@@ -87,15 +87,15 @@ func (networkCtx *NetworkContext) UnloadLambda(lambdaId modules.LambdaID) error 
 }
 
 // Docs available at https://docs.kurtosistech.com/kurtosis-client/lib-documentation
-func (networkCtx *NetworkContext) GetLambdaContext(lambdaId modules.LambdaID) (*modules.LambdaContext, error) {
-	args := binding_constructors.NewGetLambdaInfoArgs(string(lambdaId))
+func (networkCtx *NetworkContext) GetLambdaContext(lambdaId modules.ModuleID) (*modules.ModuleContext, error) {
+	args := binding_constructors.NewGetModuleInfoArgs(string(lambdaId))
 
-	// NOTE: As of 2021-07-18, we actually don't use any of the info that comes back because the LambdaContext doesn't require it!
+	// NOTE: As of 2021-07-18, we actually don't use any of the info that comes back because the ModuleContext doesn't require it!
 	_, err := networkCtx.client.GetLambdaInfo(context.Background(), args)
 	if err != nil {
 		return nil, stacktrace.Propagate(err, "An error occurred getting info for Lambda '%v'", lambdaId)
 	}
-	lambdaCtx := modules.NewLambdaContext(networkCtx.client, lambdaId)
+	lambdaCtx := modules.NewModuleContext(networkCtx.client, lambdaId)
 	return lambdaCtx, nil
 }
 
@@ -391,16 +391,16 @@ func (networkCtx *NetworkContext) GetServices() (map[services.ServiceID]bool, er
 }
 
 // Docs available at https://docs.kurtosistech.com/kurtosis-client/lib-documentation
-func (networkCtx *NetworkContext) GetLambdas() (map[modules.LambdaID]bool, error){
+func (networkCtx *NetworkContext) GetLambdas() (map[modules.ModuleID]bool, error){
 	response, err := networkCtx.client.GetLambdas(context.Background(), &emptypb.Empty{})
 	if err != nil {
 		return nil, stacktrace.Propagate(err, "An error occurred getting the Lambda IDs in the network")
 	}
 
-	lambdaIDs := make(map[modules.LambdaID]bool, len(response.GetLambdaIds()))
+	lambdaIDs := make(map[modules.ModuleID]bool, len(response.GetLambdaIds()))
 
 	for key, _ := range response.GetLambdaIds() {
-		lambdaID := modules.LambdaID(key)
+		lambdaID := modules.ModuleID(key)
 		if _, ok := lambdaIDs[lambdaID]; !ok {
 			lambdaIDs[lambdaID] = true
 		}

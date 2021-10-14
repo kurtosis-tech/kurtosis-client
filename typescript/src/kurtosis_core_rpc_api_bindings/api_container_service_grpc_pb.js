@@ -38,26 +38,26 @@ function deserialize_api_container_api_ExecuteBulkCommandsArgs(buffer_arg) {
   return api_container_service_pb.ExecuteBulkCommandsArgs.deserializeBinary(new Uint8Array(buffer_arg));
 }
 
-function serialize_api_container_api_ExecuteLambdaArgs(arg) {
-  if (!(arg instanceof api_container_service_pb.ExecuteLambdaArgs)) {
-    throw new Error('Expected argument of type api_container_api.ExecuteLambdaArgs');
+function serialize_api_container_api_ExecuteModuleArgs(arg) {
+  if (!(arg instanceof api_container_service_pb.ExecuteModuleArgs)) {
+    throw new Error('Expected argument of type api_container_api.ExecuteModuleArgs');
   }
   return Buffer.from(arg.serializeBinary());
 }
 
-function deserialize_api_container_api_ExecuteLambdaArgs(buffer_arg) {
-  return api_container_service_pb.ExecuteLambdaArgs.deserializeBinary(new Uint8Array(buffer_arg));
+function deserialize_api_container_api_ExecuteModuleArgs(buffer_arg) {
+  return api_container_service_pb.ExecuteModuleArgs.deserializeBinary(new Uint8Array(buffer_arg));
 }
 
-function serialize_api_container_api_ExecuteLambdaResponse(arg) {
-  if (!(arg instanceof api_container_service_pb.ExecuteLambdaResponse)) {
-    throw new Error('Expected argument of type api_container_api.ExecuteLambdaResponse');
+function serialize_api_container_api_ExecuteModuleResponse(arg) {
+  if (!(arg instanceof api_container_service_pb.ExecuteModuleResponse)) {
+    throw new Error('Expected argument of type api_container_api.ExecuteModuleResponse');
   }
   return Buffer.from(arg.serializeBinary());
 }
 
-function deserialize_api_container_api_ExecuteLambdaResponse(buffer_arg) {
-  return api_container_service_pb.ExecuteLambdaResponse.deserializeBinary(new Uint8Array(buffer_arg));
+function deserialize_api_container_api_ExecuteModuleResponse(buffer_arg) {
+  return api_container_service_pb.ExecuteModuleResponse.deserializeBinary(new Uint8Array(buffer_arg));
 }
 
 function serialize_api_container_api_FinishExternalContainerRegistrationArgs(arg) {
@@ -71,37 +71,37 @@ function deserialize_api_container_api_FinishExternalContainerRegistrationArgs(b
   return api_container_service_pb.FinishExternalContainerRegistrationArgs.deserializeBinary(new Uint8Array(buffer_arg));
 }
 
-function serialize_api_container_api_GetLambdaInfoArgs(arg) {
-  if (!(arg instanceof api_container_service_pb.GetLambdaInfoArgs)) {
-    throw new Error('Expected argument of type api_container_api.GetLambdaInfoArgs');
+function serialize_api_container_api_GetModuleInfoArgs(arg) {
+  if (!(arg instanceof api_container_service_pb.GetModuleInfoArgs)) {
+    throw new Error('Expected argument of type api_container_api.GetModuleInfoArgs');
   }
   return Buffer.from(arg.serializeBinary());
 }
 
-function deserialize_api_container_api_GetLambdaInfoArgs(buffer_arg) {
-  return api_container_service_pb.GetLambdaInfoArgs.deserializeBinary(new Uint8Array(buffer_arg));
+function deserialize_api_container_api_GetModuleInfoArgs(buffer_arg) {
+  return api_container_service_pb.GetModuleInfoArgs.deserializeBinary(new Uint8Array(buffer_arg));
 }
 
-function serialize_api_container_api_GetLambdaInfoResponse(arg) {
-  if (!(arg instanceof api_container_service_pb.GetLambdaInfoResponse)) {
-    throw new Error('Expected argument of type api_container_api.GetLambdaInfoResponse');
+function serialize_api_container_api_GetModuleInfoResponse(arg) {
+  if (!(arg instanceof api_container_service_pb.GetModuleInfoResponse)) {
+    throw new Error('Expected argument of type api_container_api.GetModuleInfoResponse');
   }
   return Buffer.from(arg.serializeBinary());
 }
 
-function deserialize_api_container_api_GetLambdaInfoResponse(buffer_arg) {
-  return api_container_service_pb.GetLambdaInfoResponse.deserializeBinary(new Uint8Array(buffer_arg));
+function deserialize_api_container_api_GetModuleInfoResponse(buffer_arg) {
+  return api_container_service_pb.GetModuleInfoResponse.deserializeBinary(new Uint8Array(buffer_arg));
 }
 
-function serialize_api_container_api_GetLambdasResponse(arg) {
-  if (!(arg instanceof api_container_service_pb.GetLambdasResponse)) {
-    throw new Error('Expected argument of type api_container_api.GetLambdasResponse');
+function serialize_api_container_api_GetModulesResponse(arg) {
+  if (!(arg instanceof api_container_service_pb.GetModulesResponse)) {
+    throw new Error('Expected argument of type api_container_api.GetModulesResponse');
   }
   return Buffer.from(arg.serializeBinary());
 }
 
-function deserialize_api_container_api_GetLambdasResponse(buffer_arg) {
-  return api_container_service_pb.GetLambdasResponse.deserializeBinary(new Uint8Array(buffer_arg));
+function deserialize_api_container_api_GetModulesResponse(buffer_arg) {
+  return api_container_service_pb.GetModulesResponse.deserializeBinary(new Uint8Array(buffer_arg));
 }
 
 function serialize_api_container_api_GetServiceInfoArgs(arg) {
@@ -137,15 +137,15 @@ function deserialize_api_container_api_GetServicesResponse(buffer_arg) {
   return api_container_service_pb.GetServicesResponse.deserializeBinary(new Uint8Array(buffer_arg));
 }
 
-function serialize_api_container_api_LoadLambdaArgs(arg) {
-  if (!(arg instanceof api_container_service_pb.LoadLambdaArgs)) {
-    throw new Error('Expected argument of type api_container_api.LoadLambdaArgs');
+function serialize_api_container_api_LoadModuleArgs(arg) {
+  if (!(arg instanceof api_container_service_pb.LoadModuleArgs)) {
+    throw new Error('Expected argument of type api_container_api.LoadModuleArgs');
   }
   return Buffer.from(arg.serializeBinary());
 }
 
-function deserialize_api_container_api_LoadLambdaArgs(buffer_arg) {
-  return api_container_service_pb.LoadLambdaArgs.deserializeBinary(new Uint8Array(buffer_arg));
+function deserialize_api_container_api_LoadModuleArgs(buffer_arg) {
+  return api_container_service_pb.LoadModuleArgs.deserializeBinary(new Uint8Array(buffer_arg));
 }
 
 function serialize_api_container_api_RegisterFilesArtifactsArgs(arg) {
@@ -236,15 +236,15 @@ function deserialize_api_container_api_StartServiceResponse(buffer_arg) {
   return api_container_service_pb.StartServiceResponse.deserializeBinary(new Uint8Array(buffer_arg));
 }
 
-function serialize_api_container_api_UnloadLambdaArgs(arg) {
-  if (!(arg instanceof api_container_service_pb.UnloadLambdaArgs)) {
-    throw new Error('Expected argument of type api_container_api.UnloadLambdaArgs');
+function serialize_api_container_api_UnloadModuleArgs(arg) {
+  if (!(arg instanceof api_container_service_pb.UnloadModuleArgs)) {
+    throw new Error('Expected argument of type api_container_api.UnloadModuleArgs');
   }
   return Buffer.from(arg.serializeBinary());
 }
 
-function deserialize_api_container_api_UnloadLambdaArgs(buffer_arg) {
-  return api_container_service_pb.UnloadLambdaArgs.deserializeBinary(new Uint8Array(buffer_arg));
+function deserialize_api_container_api_UnloadModuleArgs(buffer_arg) {
+  return api_container_service_pb.UnloadModuleArgs.deserializeBinary(new Uint8Array(buffer_arg));
 }
 
 function serialize_api_container_api_WaitForHttpGetEndpointAvailabilityArgs(arg) {
@@ -307,53 +307,53 @@ finishExternalContainerRegistration: {
     responseSerialize: serialize_google_protobuf_Empty,
     responseDeserialize: deserialize_google_protobuf_Empty,
   },
-  // Starts a lambda container into the network
-loadLambda: {
-    path: '/api_container_api.ApiContainerService/LoadLambda',
+  // Starts a module container in the enclave
+loadModule: {
+    path: '/api_container_api.ApiContainerService/LoadModule',
     requestStream: false,
     responseStream: false,
-    requestType: api_container_service_pb.LoadLambdaArgs,
+    requestType: api_container_service_pb.LoadModuleArgs,
     responseType: google_protobuf_empty_pb.Empty,
-    requestSerialize: serialize_api_container_api_LoadLambdaArgs,
-    requestDeserialize: deserialize_api_container_api_LoadLambdaArgs,
+    requestSerialize: serialize_api_container_api_LoadModuleArgs,
+    requestDeserialize: deserialize_api_container_api_LoadModuleArgs,
     responseSerialize: serialize_google_protobuf_Empty,
     responseDeserialize: deserialize_google_protobuf_Empty,
   },
-  // Stop and remove a Lambda from the network
-unloadLambda: {
-    path: '/api_container_api.ApiContainerService/UnloadLambda',
+  // Stop and remove a module from the enclave
+unloadModule: {
+    path: '/api_container_api.ApiContainerService/UnloadModule',
     requestStream: false,
     responseStream: false,
-    requestType: api_container_service_pb.UnloadLambdaArgs,
+    requestType: api_container_service_pb.UnloadModuleArgs,
     responseType: google_protobuf_empty_pb.Empty,
-    requestSerialize: serialize_api_container_api_UnloadLambdaArgs,
-    requestDeserialize: deserialize_api_container_api_UnloadLambdaArgs,
+    requestSerialize: serialize_api_container_api_UnloadModuleArgs,
+    requestDeserialize: deserialize_api_container_api_UnloadModuleArgs,
     responseSerialize: serialize_google_protobuf_Empty,
     responseDeserialize: deserialize_google_protobuf_Empty,
   },
-  // Executes a Kurtosis Lambda function on behalf of the user 
-executeLambda: {
-    path: '/api_container_api.ApiContainerService/ExecuteLambda',
+  // Executes an executable module on the user's behalf
+executeModule: {
+    path: '/api_container_api.ApiContainerService/ExecuteModule',
     requestStream: false,
     responseStream: false,
-    requestType: api_container_service_pb.ExecuteLambdaArgs,
-    responseType: api_container_service_pb.ExecuteLambdaResponse,
-    requestSerialize: serialize_api_container_api_ExecuteLambdaArgs,
-    requestDeserialize: deserialize_api_container_api_ExecuteLambdaArgs,
-    responseSerialize: serialize_api_container_api_ExecuteLambdaResponse,
-    responseDeserialize: deserialize_api_container_api_ExecuteLambdaResponse,
+    requestType: api_container_service_pb.ExecuteModuleArgs,
+    responseType: api_container_service_pb.ExecuteModuleResponse,
+    requestSerialize: serialize_api_container_api_ExecuteModuleArgs,
+    requestDeserialize: deserialize_api_container_api_ExecuteModuleArgs,
+    responseSerialize: serialize_api_container_api_ExecuteModuleResponse,
+    responseDeserialize: deserialize_api_container_api_ExecuteModuleResponse,
   },
-  // Gets information about a loaded Lambda module
-getLambdaInfo: {
-    path: '/api_container_api.ApiContainerService/GetLambdaInfo',
+  // Gets information about a loaded module
+getModuleInfo: {
+    path: '/api_container_api.ApiContainerService/GetModuleInfo',
     requestStream: false,
     responseStream: false,
-    requestType: api_container_service_pb.GetLambdaInfoArgs,
-    responseType: api_container_service_pb.GetLambdaInfoResponse,
-    requestSerialize: serialize_api_container_api_GetLambdaInfoArgs,
-    requestDeserialize: deserialize_api_container_api_GetLambdaInfoArgs,
-    responseSerialize: serialize_api_container_api_GetLambdaInfoResponse,
-    responseDeserialize: deserialize_api_container_api_GetLambdaInfoResponse,
+    requestType: api_container_service_pb.GetModuleInfoArgs,
+    responseType: api_container_service_pb.GetModuleInfoResponse,
+    requestSerialize: serialize_api_container_api_GetModuleInfoArgs,
+    requestDeserialize: deserialize_api_container_api_GetModuleInfoArgs,
+    responseSerialize: serialize_api_container_api_GetModuleInfoResponse,
+    responseDeserialize: deserialize_api_container_api_GetModuleInfoResponse,
   },
   // Tells the API container that the client has files artifacts from the web that it would like the API container to know about
 // The API container will download these artifacts locally, so they're available when launching services
@@ -488,17 +488,17 @@ getServices: {
     responseSerialize: serialize_api_container_api_GetServicesResponse,
     responseDeserialize: deserialize_api_container_api_GetServicesResponse,
   },
-  // Returns the IDs of the Kurtosis Lambdas that have been loaded into the test network.
-getLambdas: {
-    path: '/api_container_api.ApiContainerService/GetLambdas',
+  // Returns the IDs of the Kurtosis modules that have been loaded into the enclave
+getModules: {
+    path: '/api_container_api.ApiContainerService/GetModules',
     requestStream: false,
     responseStream: false,
     requestType: google_protobuf_empty_pb.Empty,
-    responseType: api_container_service_pb.GetLambdasResponse,
+    responseType: api_container_service_pb.GetModulesResponse,
     requestSerialize: serialize_google_protobuf_Empty,
     requestDeserialize: deserialize_google_protobuf_Empty,
-    responseSerialize: serialize_api_container_api_GetLambdasResponse,
-    responseDeserialize: deserialize_api_container_api_GetLambdasResponse,
+    responseSerialize: serialize_api_container_api_GetModulesResponse,
+    responseDeserialize: deserialize_api_container_api_GetModulesResponse,
   },
 };
 
