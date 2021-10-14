@@ -1,4 +1,6 @@
 # TBD
+
+# 0.19.0
 ### Changes
 * Renamed all instances of `Lambda` to `Module`, to prevent confusion with AWS Lambda or in-code lambda functions
 
