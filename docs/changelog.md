@@ -1,4 +1,6 @@
 # TBD
+
+# 0.20.0
 ### Changes
 * Renamed several API variables to reflect the fact that enclave data is now stored on the host machine and bind-mounted in, rather than being a volume
 
