@@ -60,22 +60,23 @@ export type PartitionID = string;
 // This will always resolve to the default partition ID (regardless of whether such a partition exists in the network,
 //  or it was repartitioned away)
 const DEFAULT_PARTITION_ID: PartitionID = "";
-// The default enclave data volume name
-const DEFAULT_KURTOSIS_VOLUME_MOUNTPOINT: string = "/kurtosis-enclave-data";
+
+// The path on the user service container where the enclave data dir will be bind-mounted
+const SERVICE_ENCLAVE_DATA_DIR_MOUNTPOINT: string = "/kurtosis-enclave-data";
 
 // Docs available at https://docs.kurtosistech.com/kurtosis-client/lib-documentation
 export class NetworkContext {
     private readonly client: ApiContainerServiceClient;
     
-    // The location on the filesystem where this code is running where the enclave data volume is mounted
-    private readonly enclaveDataVolMountpoint: string;
+    // The location on the filesystem where this code is running where the enclave data dir exists
+    private readonly enclaveDataDirpath: string;
 
     /*
     Creates a new NetworkContext object with the given parameters.
     */
-    constructor(client: ApiContainerServiceClient, enclaveDataVolMountpoint: string) {
+    constructor(client: ApiContainerServiceClient, enclaveDataDirpath: string) {
         this.client = client;
-        this.enclaveDataVolMountpoint = enclaveDataVolMountpoint;
+        this.enclaveDataDirpath = enclaveDataDirpath;
     }
 
     // Docs available at https://docs.kurtosistech.com/kurtosis-client/lib-documentation
@@ -265,7 +266,7 @@ export class NetworkContext {
             containerConfig.getEntrypointOverrideArgs(),
             containerConfig.getCmdOverrideArgs(),
             containerConfig.getEnvironmentVariableOverrides(),
-            DEFAULT_KURTOSIS_VOLUME_MOUNTPOINT,
+            SERVICE_ENCLAVE_DATA_DIR_MOUNTPOINT,
             artifactIdStrToMountDirpath);
 
         const promiseStartService: Promise<Result<StartServiceResponse, Error>> = new Promise((resolve, _unusedReject) => {
@@ -340,10 +341,10 @@ export class NetworkContext {
             );
         }
 
-        const enclaveDataVolMountDirpathOnSvcContainer: string = serviceResponse.getEnclaveDataVolumeMountDirpath();
-        if (enclaveDataVolMountDirpathOnSvcContainer === "") {
+        const enclaveDataDirMountDirpathOnSvcContainer: string = serviceResponse.getEnclaveDataDirMountDirpath();
+        if (enclaveDataDirMountDirpathOnSvcContainer === "") {
             return err(new Error(
-                "Kurtosis API reported an empty enclave data volume directory path for service " + serviceId + " - this should never happen, and is a bug with Kurtosis!",
+                "Kurtosis API reported an empty enclave data dir mount dirpath for service " + serviceId + " - this should never happen, and is a bug with Kurtosis!",
                 )
             );
         }
@@ -613,8 +614,8 @@ export class NetworkContext {
     // ====================================================================================================
     private getSharedDirectory(relativeServiceDirpath: string): SharedPath {
 
-        const absFilepathOnThisContainer = path.join(this.enclaveDataVolMountpoint, relativeServiceDirpath);
-        const absFilepathOnServiceContainer = path.join(DEFAULT_KURTOSIS_VOLUME_MOUNTPOINT, relativeServiceDirpath);
+        const absFilepathOnThisContainer = path.join(this.enclaveDataDirpath, relativeServiceDirpath);
+        const absFilepathOnServiceContainer = path.join(SERVICE_ENCLAVE_DATA_DIR_MOUNTPOINT, relativeServiceDirpath);
 
         const sharedDirectory = new SharedPath(absFilepathOnThisContainer, absFilepathOnServiceContainer);
 

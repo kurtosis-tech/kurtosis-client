@@ -158,7 +158,7 @@ message RegisterServiceResponse {
   // The IP address that the service will receive when it starts
   string ip_addr = 1;
 
-  // The dirpath where the service's directory exists inside the enclave data volume, relative to the enclave data volume root
+  // The dirpath where the service's directory exists inside the enclave data directory, relative to the enclave data dir root
   string relative_service_dirpath =2;
 }
 
@@ -184,8 +184,8 @@ message StartServiceArgs {
   // Docker environment variables that should be set in the service's container
   map<string, string> docker_env_vars = 6;
 
-  // The full path where the API container should mount the enclave data volume on the service container
-  string enclave_data_vol_mnt_dirpath = 7;
+  // The full path where the API container should mount the enclave data directory on the service container
+  string enclave_data_dir_mnt_dirpath = 7;
 
   // Mapping of files_artifact_id -> filepath_on_container_to_mount_artifact_contents
   map<string, string> files_artifact_mount_dirpaths = 8;
@@ -216,10 +216,10 @@ message GetServiceInfoResponse {
   // The IP address of the service
   string ip_addr = 1;
 
-  // The full path where the enclave data volume is mounted on the service
-  string enclave_data_volume_mount_dirpath  = 2;
+  // The full path where the enclave data dir is mounted on the service
+  string enclave_data_dir_mount_dirpath = 2;
 
-  // The dirpath where the service's directory exists inside the enclave data volume, relative to the enclave data volume root
+  // The dirpath where the service's directory exists inside the enclave data directory, relative to the enclave data directory root
   string relative_service_dirpath = 3;
 }
 
