@@ -1,5 +1,15 @@
 # TBD
 
+# 0.20.0
+### Changes
+* Renamed several API variables to reflect the fact that enclave data is now stored on the host machine and bind-mounted in, rather than being a volume
+
+### Breaking Changes
+* The `enclave_data_vol_mnt_dirpath` property to `StartServiceArgs` has been renamed to `enclave_data_dir_mnt_dirpath` to reflect the fact that the enclave data dir is now bind-mounted on to the services (rather than being volume-mounted)
+    * Users should make the appropriate renames in their code
+* The `enclave_data_volume_mount_dirpath` property to `GetServiceInfoResponse` has been renamed to `enclave_data_dir_mount_dirpath` to reflect the fact that the enclave data dir is now bind-mounted on to the services (rather than being volume-mounted)
+    * Users should make the appropriate renames in their code
+
 # 0.19.0
 ### Changes
 * Renamed all instances of `Lambda` to `Module`, to prevent confusion with AWS Lambda or in-code lambda functions

@@ -272,8 +272,8 @@ export class StartServiceArgs extends jspb.Message {
 
   getDockerEnvVarsMap(): jspb.Map<string, string>;
   clearDockerEnvVarsMap(): void;
-  getEnclaveDataVolMntDirpath(): string;
-  setEnclaveDataVolMntDirpath(value: string): void;
+  getEnclaveDataDirMntDirpath(): string;
+  setEnclaveDataDirMntDirpath(value: string): void;
 
   getFilesArtifactMountDirpathsMap(): jspb.Map<string, string>;
   clearFilesArtifactMountDirpathsMap(): void;
@@ -295,7 +295,7 @@ export namespace StartServiceArgs {
     entrypointArgsList: Array<string>,
     cmdArgsList: Array<string>,
     dockerEnvVarsMap: Array<[string, string]>,
-    enclaveDataVolMntDirpath: string,
+    enclaveDataDirMntDirpath: string,
     filesArtifactMountDirpathsMap: Array<[string, string]>,
   }
 }
@@ -367,8 +367,8 @@ export class GetServiceInfoResponse extends jspb.Message {
   getIpAddr(): string;
   setIpAddr(value: string): void;
 
-  getEnclaveDataVolumeMountDirpath(): string;
-  setEnclaveDataVolumeMountDirpath(value: string): void;
+  getEnclaveDataDirMountDirpath(): string;
+  setEnclaveDataDirMountDirpath(value: string): void;
 
   getRelativeServiceDirpath(): string;
   setRelativeServiceDirpath(value: string): void;
@@ -386,7 +386,7 @@ export class GetServiceInfoResponse extends jspb.Message {
 export namespace GetServiceInfoResponse {
   export type AsObject = {
     ipAddr: string,
-    enclaveDataVolumeMountDirpath: string,
+    enclaveDataDirMountDirpath: string,
     relativeServiceDirpath: string,
   }
 }

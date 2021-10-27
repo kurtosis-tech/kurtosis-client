@@ -35,16 +35,17 @@ const (
 	// This will always resolve to the default partition ID (regardless of whether such a partition exists in the network,
 	//  or it was repartitioned away)
 	defaultPartitionId PartitionID = ""
-	// The default enclave data volume name
-	defaultKurtosisVolumeMountpoint = "/kurtosis-enclave-data"
+
+	// The path on the user service container where the enclave data dir will be bind-mounted
+	serviceEnclaveDataDirMountpoint = "/kurtosis-enclave-data"
 )
 
 // Docs available at https://docs.kurtosistech.com/kurtosis-client/lib-documentation
 type NetworkContext struct {
 	client kurtosis_core_rpc_api_bindings.ApiContainerServiceClient
 
-	// The location on the filesystem where this code is running where the enclave data volume is mounted
-	enclaveDataVolMountpoint string
+	// The location on the filesystem where this code is running where the enclave data dir exists
+	enclaveDataDirpath string
 }
 
 /*
@@ -52,10 +53,10 @@ Creates a new NetworkContext object with the given parameters.
 */
 func NewNetworkContext(
 		client kurtosis_core_rpc_api_bindings.ApiContainerServiceClient,
-		enclaveDataVolMountpoint string) *NetworkContext {
+		enclaveDataDirpath string) *NetworkContext {
 	return &NetworkContext{
-		client:                   client,
-		enclaveDataVolMountpoint: enclaveDataVolMountpoint,
+		client:             client,
+		enclaveDataDirpath: enclaveDataDirpath,
 	}
 }
 
@@ -181,7 +182,7 @@ func (networkCtx *NetworkContext) AddServiceToPartition(
 		EntrypointArgs:             containerConfig.GetEntrypointOverrideArgs(),
 		CmdArgs:                    containerConfig.GetCmdOverrideArgs(),
 		DockerEnvVars:              containerConfig.GetEnvironmentVariableOverrides(),
-		EnclaveDataVolMntDirpath:   defaultKurtosisVolumeMountpoint,
+		EnclaveDataDirMntDirpath:   serviceEnclaveDataDirMountpoint,
 		FilesArtifactMountDirpaths: artifactIdStrToMountDirpath,
 	}
 	resp, err := networkCtx.client.StartService(ctx, startServiceArgs)
@@ -223,10 +224,10 @@ func (networkCtx *NetworkContext) GetServiceContext(serviceId services.ServiceID
 			serviceId)
 	}
 
-	enclaveDataVolMountDirpathOnSvcContainer := serviceResponse.GetEnclaveDataVolumeMountDirpath()
-	if enclaveDataVolMountDirpathOnSvcContainer == "" {
+	enclaveDataDirMountDirpathOnSvcContainer := serviceResponse.GetEnclaveDataDirMountDirpath()
+	if enclaveDataDirMountDirpathOnSvcContainer == "" {
 		return nil, stacktrace.NewError(
-			"Kurtosis API reported an empty enclave data volume directory path for service '%v' - this should never happen, and is a bug with Kurtosis!",
+			"Kurtosis API reported an empty enclave data dir mount dirpath for service '%v' - this should never happen, and is a bug with Kurtosis!",
 			serviceId)
 	}
 
@@ -414,8 +415,8 @@ func (networkCtx *NetworkContext) GetModules() (map[modules.ModuleID]bool, error
 // ====================================================================================================
 func (networkCtx *NetworkContext) getSharedDirectory(relativeServiceDirpath string) *services.SharedPath {
 
-	absFilepathOnThisContainer := filepath.Join(networkCtx.enclaveDataVolMountpoint, relativeServiceDirpath)
-	absFilepathOnServiceContainer := filepath.Join(defaultKurtosisVolumeMountpoint, relativeServiceDirpath)
+	absFilepathOnThisContainer := filepath.Join(networkCtx.enclaveDataDirpath, relativeServiceDirpath)
+	absFilepathOnServiceContainer := filepath.Join(serviceEnclaveDataDirMountpoint, relativeServiceDirpath)
 
 	sharedDirectory := services.NewSharedPath(absFilepathOnThisContainer, absFilepathOnServiceContainer)
 

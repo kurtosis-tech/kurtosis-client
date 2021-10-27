@@ -2321,7 +2321,7 @@ proto.api_container_api.StartServiceArgs.toObject = function(includeInstance, ms
     entrypointArgsList: (f = jspb.Message.getRepeatedField(msg, 4)) == null ? undefined : f,
     cmdArgsList: (f = jspb.Message.getRepeatedField(msg, 5)) == null ? undefined : f,
     dockerEnvVarsMap: (f = msg.getDockerEnvVarsMap()) ? f.toObject(includeInstance, undefined) : [],
-    enclaveDataVolMntDirpath: jspb.Message.getFieldWithDefault(msg, 7, ""),
+    enclaveDataDirMntDirpath: jspb.Message.getFieldWithDefault(msg, 7, ""),
     filesArtifactMountDirpathsMap: (f = msg.getFilesArtifactMountDirpathsMap()) ? f.toObject(includeInstance, undefined) : []
   };
 
@@ -2389,7 +2389,7 @@ proto.api_container_api.StartServiceArgs.deserializeBinaryFromReader = function(
       break;
     case 7:
       var value = /** @type {string} */ (reader.readString());
-      msg.setEnclaveDataVolMntDirpath(value);
+      msg.setEnclaveDataDirMntDirpath(value);
       break;
     case 8:
       var value = msg.getFilesArtifactMountDirpathsMap();
@@ -2462,7 +2462,7 @@ proto.api_container_api.StartServiceArgs.serializeBinaryToWriter = function(mess
   if (f && f.getLength() > 0) {
     f.serializeBinary(6, writer, jspb.BinaryWriter.prototype.writeString, jspb.BinaryWriter.prototype.writeString);
   }
-  f = message.getEnclaveDataVolMntDirpath();
+  f = message.getEnclaveDataDirMntDirpath();
   if (f.length > 0) {
     writer.writeString(
       7,
@@ -2631,10 +2631,10 @@ proto.api_container_api.StartServiceArgs.prototype.clearDockerEnvVarsMap = funct
 
 
 /**
- * optional string enclave_data_vol_mnt_dirpath = 7;
+ * optional string enclave_data_dir_mnt_dirpath = 7;
  * @return {string}
  */
-proto.api_container_api.StartServiceArgs.prototype.getEnclaveDataVolMntDirpath = function() {
+proto.api_container_api.StartServiceArgs.prototype.getEnclaveDataDirMntDirpath = function() {
   return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 7, ""));
 };
 
@@ -2643,7 +2643,7 @@ proto.api_container_api.StartServiceArgs.prototype.getEnclaveDataVolMntDirpath =
  * @param {string} value
  * @return {!proto.api_container_api.StartServiceArgs} returns this
  */
-proto.api_container_api.StartServiceArgs.prototype.setEnclaveDataVolMntDirpath = function(value) {
+proto.api_container_api.StartServiceArgs.prototype.setEnclaveDataDirMntDirpath = function(value) {
   return jspb.Message.setProto3StringField(this, 7, value);
 };
 
@@ -3126,7 +3126,7 @@ proto.api_container_api.GetServiceInfoResponse.prototype.toObject = function(opt
 proto.api_container_api.GetServiceInfoResponse.toObject = function(includeInstance, msg) {
   var f, obj = {
     ipAddr: jspb.Message.getFieldWithDefault(msg, 1, ""),
-    enclaveDataVolumeMountDirpath: jspb.Message.getFieldWithDefault(msg, 2, ""),
+    enclaveDataDirMountDirpath: jspb.Message.getFieldWithDefault(msg, 2, ""),
     relativeServiceDirpath: jspb.Message.getFieldWithDefault(msg, 3, "")
   };
 
@@ -3170,7 +3170,7 @@ proto.api_container_api.GetServiceInfoResponse.deserializeBinaryFromReader = fun
       break;
     case 2:
       var value = /** @type {string} */ (reader.readString());
-      msg.setEnclaveDataVolumeMountDirpath(value);
+      msg.setEnclaveDataDirMountDirpath(value);
       break;
     case 3:
       var value = /** @type {string} */ (reader.readString());
@@ -3212,7 +3212,7 @@ proto.api_container_api.GetServiceInfoResponse.serializeBinaryToWriter = functio
       f
     );
   }
-  f = message.getEnclaveDataVolumeMountDirpath();
+  f = message.getEnclaveDataDirMountDirpath();
   if (f.length > 0) {
     writer.writeString(
       2,
@@ -3248,10 +3248,10 @@ proto.api_container_api.GetServiceInfoResponse.prototype.setIpAddr = function(va
 
 
 /**
- * optional string enclave_data_volume_mount_dirpath = 2;
+ * optional string enclave_data_dir_mount_dirpath = 2;
  * @return {string}
  */
-proto.api_container_api.GetServiceInfoResponse.prototype.getEnclaveDataVolumeMountDirpath = function() {
+proto.api_container_api.GetServiceInfoResponse.prototype.getEnclaveDataDirMountDirpath = function() {
   return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 2, ""));
 };
 
@@ -3260,7 +3260,7 @@ proto.api_container_api.GetServiceInfoResponse.prototype.getEnclaveDataVolumeMou
  * @param {string} value
  * @return {!proto.api_container_api.GetServiceInfoResponse} returns this
  */
-proto.api_container_api.GetServiceInfoResponse.prototype.setEnclaveDataVolumeMountDirpath = function(value) {
+proto.api_container_api.GetServiceInfoResponse.prototype.setEnclaveDataDirMountDirpath = function(value) {
   return jspb.Message.setProto3StringField(this, 2, value);
 };
 
