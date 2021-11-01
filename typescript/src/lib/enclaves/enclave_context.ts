@@ -3,7 +3,7 @@
  * All Rights Reserved.
  */
 
-import { ApiContainerServiceClient } from "../..//kurtosis_core_rpc_api_bindings/api_container_service_grpc_pb";
+import { ApiContainerServiceClient } from "../../kurtosis_core_rpc_api_bindings/api_container_service_grpc_pb";
 import {
     RegisterFilesArtifactsArgs,
     PortBinding,
@@ -27,7 +27,7 @@ import {
     GetModuleInfoArgs,
     GetModuleInfoResponse,
     GetModulesResponse,
-} from "../..//kurtosis_core_rpc_api_bindings/api_container_service_pb";
+} from "../../kurtosis_core_rpc_api_bindings/api_container_service_pb";
 import { ModuleID, ModuleContext } from "../modules/module_context";
 import { ServiceID} from "../services/service";
 import { SharedPath } from "../services/shared_path";
@@ -57,7 +57,7 @@ import { ContainerConfig, FilesArtifactID } from "../services/container_config";
 
 export type PartitionID = string;
 
-// This will always resolve to the default partition ID (regardless of whether such a partition exists in the network,
+// This will always resolve to the default partition ID (regardless of whether such a partition exists in the enclave,
 //  or it was repartitioned away)
 const DEFAULT_PARTITION_ID: PartitionID = "";
 
@@ -65,14 +65,14 @@ const DEFAULT_PARTITION_ID: PartitionID = "";
 const SERVICE_ENCLAVE_DATA_DIR_MOUNTPOINT: string = "/kurtosis-enclave-data";
 
 // Docs available at https://docs.kurtosistech.com/kurtosis-client/lib-documentation
-export class NetworkContext {
+export class EnclaveContext {
     private readonly client: ApiContainerServiceClient;
     
     // The location on the filesystem where this code is running where the enclave data dir exists
     private readonly enclaveDataDirpath: string;
 
     /*
-    Creates a new NetworkContext object with the given parameters.
+    Creates a new EnclaveContext object with the given parameters.
     */
     constructor(client: ApiContainerServiceClient, enclaveDataDirpath: string) {
         this.client = client;
@@ -367,7 +367,7 @@ export class NetworkContext {
         log.debug("Removing service '" + serviceId + "'...");
         // NOTE: This is kinda weird - when we remove a service we can never get it back so having a container
         //  stop timeout doesn't make much sense. It will make more sense when we can stop/start containers
-        // Independent of adding/removing them from the network
+        // Independent of adding/removing them from the enclave
         const args: RemoveServiceArgs = newRemoveServiceArgs(serviceId, containerStopTimeoutSeconds);
         
         const removeServicePromise: Promise<Result<null, Error>> = new Promise((resolve, _unusedReject) => {

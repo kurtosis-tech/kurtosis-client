@@ -91,7 +91,7 @@ type FinishExternalContainerRegistrationArgs struct {
 
 	// The key that was returned from the call to start external container registration
 	RegistrationKey string `protobuf:"bytes,1,opt,name=registration_key,json=registrationKey,proto3" json:"registration_key,omitempty"`
-	// The container ID of the container that is now inside the network
+	// The container ID of the container that is now inside the enclave
 	ContainerId string `protobuf:"bytes,2,opt,name=container_id,json=containerId,proto3" json:"container_id,omitempty"`
 }
 
@@ -1634,7 +1634,7 @@ type GetServicesResponse struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	// "Set" of current service IDs in the test network
+	// "Set" of current service IDs in the enclave
 	ServiceIds map[string]bool `protobuf:"bytes,1,rep,name=service_ids,json=serviceIds,proto3" json:"service_ids,omitempty" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"varint,2,opt,name=value,proto3"`
 }
 
@@ -1685,7 +1685,7 @@ type GetModulesResponse struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	// "Set" of current Kurtosis module IDs loaded in the test network
+	// "Set" of current Kurtosis module IDs loaded in the enclave
 	ModuleIds map[string]bool `protobuf:"bytes,1,rep,name=module_ids,json=moduleIds,proto3" json:"module_ids,omitempty" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"varint,2,opt,name=value,proto3"`
 }
 

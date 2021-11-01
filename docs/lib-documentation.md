@@ -23,18 +23,12 @@ Some modules are considered executable, meaning they respond to an "execute" com
 
 
 
-Network
--------
-This interface provides the option to define a higher level of abstraction for manipulating your test network than is provided by [NetworkContext][networkcontext], so that test-writing is easier. This commonly looks like wrapping several [NetworkContext][networkcontext] methods into a single one - e.g. if you're running a Cassandra cluster that must bootstrap off three nodes, you might define a `CassandraNetwork` implementation with a `startBootstrappers` method that does the gruntwork so each test doesn't need to add the services manually. Each of your tests will then receive this custom implementation in their [Test.run][test_run] method.
-
-
-
-NetworkContext
+EnclaveContext
 --------------
-This Kurtosis-provided class is the lowest-level representation of a test network, and provides methods for inspecting and manipulating the network. All [Network][network] implementations will encapsulate an instance of this class.
+This Kurtosis-provided class is the lowest-level representation of a Kurtosis enclave, and provides methods for inspecting and manipulating the contents of the enclave. 
 
 ### loadModule(String moduleId, String image, String serializedParams) -\> [ModuleContext][modulecontext] moduleContext
-Starts a new Kurtosis module (configured using the serialized params) inside the test network, which makes it available for use.
+Starts a new Kurtosis module (configured using the serialized params) inside the enclave, which makes it available for use.
 
 **Args**
 
@@ -72,12 +66,12 @@ Downloads the given files artifacts to the Kurtosis engine, associating them wit
 * `filesArtifactUrls`: A map of files_artifact_id -> url, where the ID is how the artifact will be referenced in [ContainerConfig.filesArtifactMountpoints][containerconfig_filesartifactmountpoints] and the URL is the URL on the web where the files artifact should be downloaded from.
 
 ### addServiceToPartition(ServiceID serviceId, PartitionID partitionId, Func(String ipAddr, [SharedPath][sharedpath] sharedDirectory) -\> [ContainerConfig][containerconfig] containerConfigSupplier) -\> ([ServiceContext][servicecontext] serviceContext, Map\<String, PortBinding\> hostPortBindings)
-Starts a new service in the network with the given service ID, inside the partition with the given ID, using the given config supplier.
+Starts a new service in the enclave with the given service ID, inside the partition with the given ID, using the given config supplier.
 
 **Args**
 
 * `serviceId`: The ID that the new service should have.
-* `partitionId`: The ID of the partition that the new service should be started in. This can be left blank to start the service in the default partition if it exists (i.e. if the network hasn't been repartitioned and the default partition removed).
+* `partitionId`: The ID of the partition that the new service should be started in. This can be left blank to start the service in the default partition if it exists (i.e. if the enclave hasn't been repartitioned and the default partition removed).
 * `containerConfigSupplier`: An anonymous function, used to produce the [ContainerConfig][containerconfig] for starting the service, which receives two dynamic values as arguments: 
     1. The IP address of the service being started
     1. A [SharedPath][sharedpath] object which represents a shared directory that is mounted on both a) the container where this code is running and b) the service container being started, so that files can be made available to the service container by creating them with this container. E.g. calling `sharedDirectory.getChildPath("newfile.txt")` will get the path to an object that can be a) written by this container via [SharedPath.getAbsPathOnThisContainer][sharedpath_getabspathonthiscontainer] and b) used by the service container via [SharedPath.getAbsPathOnServiceContainer][sharedpath_getabspathonservicecontainer].
@@ -89,10 +83,10 @@ Starts a new service in the network with the given service ID, inside the partit
 * `hostPortBindings`: The port spec strings that the service declared (as defined in [ContainerConfig.usedPorts][containerconfig_usedports]), mapped to the port on the host machine where the port has been bound to. This allows you to make requests to a service running in Kurtosis by making requests to a port on your local machine. If a port was not bound to a host machine port, it will not be present in the map (and if no ports were bound to host machine ports, the map will be empty).
 
 ### addService(ServiceID serviceId,  Func(String ipAddr, [SharedPath][sharedpath] sharedDirectory) -\> [ContainerConfig][containerconfig] containerConfigSupplier) -\> ([ServiceContext][servicecontext] serviceContext, Map\<String, PortBinding\> hostPortBindings)
-Convenience wrapper around [NetworkContext.addServiceToPartition][networkcontext_addservicetopartition], that adds the service to the default partition. Note that if the network has been repartitioned and the default partition doesn't exist anymore, this method will fail.
+Convenience wrapper around [EnclaveContext.addServiceToPartition][enclavecontext_addservicetopartition], that adds the service to the default partition. Note that if the enclave has been repartitioned and the default partition doesn't exist anymore, this method will fail.
 
 ### getServiceContext(ServiceID serviceId) -\> [ServiceContext][servicecontext]
-Gets relevant information about a service (identified by the given service ID) that is running in the network.
+Gets relevant information about a service (identified by the given service ID) that is running in the enclave.
 
 **Args**
 
@@ -103,7 +97,7 @@ Gets relevant information about a service (identified by the given service ID) t
 The [ServiceContext][servicecontext] representation of a service running in a Docker container.
 
 ### removeService(ServiceID serviceId, uint64 containerStopTimeoutSeconds)
-Stops the container with the given service ID and removes it from the network.
+Stops the container with the given service ID and removes it from the enclave.
 
 **Args**
 
@@ -111,13 +105,13 @@ Stops the container with the given service ID and removes it from the network.
 * `containerStopTimeoutSeconds`: The number of seconds to wait for the container to gracefully stop before hard-killing it.
 
 ### repartitionNetwork(Map\<PartitionID, Set\<ServiceID\>> partitionServices, Map\<PartitionID, Map\<PartitionID, [PartitionConnectionInfo][partitionconnectioninfo]\>> partitionConnections, [PartitionConnectionInfo][partitionconnectioninfo] defaultConnection)
-Repartitions the network so that the connections between services match the specified new state. All services currently in the network must be allocated to a new partition. 
+Repartitions the enclave so that the connections between services match the specified new state. All services currently in the enclave must be allocated to a new partition. 
 
 **NOTE: For this to work, partitioning must be turned on in the [Test.configure][test_configure] method.**
 
 **Args**
 
-* `partitionServices`: A definition of the new partitions in the network, and the services allocated to each partition. A service can only be allocated to a single partition.
+* `partitionServices`: A definition of the new partitions in the enclave, and the services allocated to each partition. A service can only be allocated to a single partition.
 * `partitionConnections`: Definitions of the connection state between the new partitions. If a connection between two partitions isn't defined in this map, the default connection will be used. Connections are not directional, so an error will be thrown if the same connection is defined twice (e.g. `Map[A][B] = someConnectionInfo`, and `Map[B][A] = otherConnectionInfo`).
 * `defaultConnection`: The network state between two partitions that will be used if the connection isn't defined in the partition connections map.
 
@@ -149,7 +143,7 @@ Waits until a service endpoint is available by making requests to the endpoint u
 * `bodyText`: If this value is non-empty, the endpoint will not be marked as available until this value is returned (e.g. `Hello World`). If this value is emptystring, no body text comparison will be done.
 
 ### getServices() -\> Set\<ServiceID\> serviceIDs
-Gets the IDs of the current services in the test network
+Gets the IDs of the current services in the enclave.
 
 **Returns**
 
@@ -185,7 +179,7 @@ The set of ports that the container will be listening on, in the format `NUM/PRO
 ### Map\<String, String\> filesArtifactMountpoints
 Sometimes a service needs files to be available before it starts, but creating those files manually is slow, difficult, or would require committing a very large artifact to the testsuite's Git repo (e.g. starting a service with a 5 GB Postgres database mounted). To ease this pain, Kurtosis allows you to specify URLs of gzipped TAR files that Kurtosis will download, uncompress, and mount inside your service containers. 
 
-This property is therefore a map of the file artifact ID -> path on the container where the uncompressed artifact contents should be mounted, with the file artifact IDs corresponding to the files artifacts registered via [NetworkContext.registerFilesArtifacts][networkcontext_registerfilesartifacts]. 
+This property is therefore a map of the file artifact ID -> path on the container where the uncompressed artifact contents should be mounted, with the file artifact IDs corresponding to the files artifacts registered via [EnclaveContext.registerFilesArtifacts][enclavecontext_registerfilesartifacts]. 
 
 E.g. if my test declares an artifact called `5gb-database` that lives at `https://my-site.com/test-artifacts/5gb-database.tgz`, I might return the following map from this function to mount the artifact at the `/database` path inside my container: `{"5gb-database": "/database"}`.
 
@@ -279,16 +273,13 @@ _Found a bug? File it on [the repo](https://github.com/kurtosis-tech/kurtosis-cl
 
 [containerconfigbuilder]: #containerconfigbuilder
 
-TODO MODIFY
 [modulecontext]: #modulecontext
 
-[network]: #network
-
-[networkcontext]: #networkcontext
-[networkcontext_registerfilesartifacts]: #registerfilesartifactsmapfilesartifactid-string-filesartifacturls
-[networkcontext_addservice]: #addserviceserviceid-serviceid--funcstring-ipaddr-sharedpath-shareddirectory---containerconfig-containerconfigsupplier---servicecontext-servicecontext-mapstring-portbinding-hostportbindings
-[networkcontext_addservicetopartition]: #addservicetopartitionserviceid-serviceid-partitionid-partitionid-funcstring-ipaddr-sharedpath-shareddirectory---containerconfig-containerconfigsupplier---servicecontext-servicecontext-mapstring-portbinding-hostportbindings
-[networkcontext_repartitionnetwork]: #repartitionnetworkmappartitionid-setserviceid-partitionservices-mappartitionid-mappartitionid-partitionconnectioninfo-partitionconnections-partitionconnectioninfo-defaultconnection
+[enclavecontext]: #enclavecontext
+[enclavecontext_registerfilesartifacts]: #registerfilesartifactsmapfilesartifactid-string-filesartifacturls
+[enclavecontext_addservice]: #addserviceserviceid-serviceid--funcstring-ipaddr-sharedpath-shareddirectory---containerconfig-containerconfigsupplier---servicecontext-servicecontext-mapstring-portbinding-hostportbindings
+[enclavecontext_addservicetopartition]: #addservicetopartitionserviceid-serviceid-partitionid-partitionid-funcstring-ipaddr-sharedpath-shareddirectory---containerconfig-containerconfigsupplier---servicecontext-servicecontext-mapstring-portbinding-hostportbindings
+[enclavecontext_repartitionnetwork]: #repartitionnetworkmappartitionid-setserviceid-partitionservices-mappartitionid-mappartitionid-partitionconnectioninfo-partitionconnections-partitionconnectioninfo-defaultconnection
 
 [partitionconnectioninfo]: #partitionconnectioninfo
 
@@ -300,7 +291,7 @@ TODO MODIFY
 
 [test]: ../kurtosis-testsuite-api-lib/lib-documentation#testn-extends-network
 [test_configure]: ../kurtosis-testsuite-api-lib/lib-documentation#configuretestconfigurationbuilder-builder
-[test_setup]: ../kurtosis-testsuite-api-lib/lib-documentation#setupnetworkcontext-networkcontext---n
+[test_setup]: ../kurtosis-testsuite-api-lib/lib-documentation#setupenclavecontext-enclavecontext---n
 [test_run]: ../kurtosis-testsuite-api-lib/lib-documentation#runn-network
 [test_gettestconfiguration]: ../kurtosis-testsuite-api-lib/lib-documentation#gettestconfiguration---testconfiguration
 
