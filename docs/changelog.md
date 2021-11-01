@@ -1,5 +1,9 @@
 # TBD
 
+# 0.21.1
+### Fixes
+* Exported the `KURTOSIS_API_VERSION` Typescript constant
+
 # 0.21.0
 ### Features
 * Added `EnclaveContext.getEnclaveId()`
