@@ -1,4 +1,6 @@
 # TBD
+### Fixes
+* Exported the `KURTOSIS_API_VERSION` Typescript constant
 
 # 0.21.0
 ### Features
