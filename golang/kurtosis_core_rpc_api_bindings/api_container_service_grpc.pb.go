@@ -43,7 +43,7 @@ type ApiContainerServiceClient interface {
 	GetServiceInfo(ctx context.Context, in *GetServiceInfoArgs, opts ...grpc.CallOption) (*GetServiceInfoResponse, error)
 	// Instructs the API container to remove the given service
 	RemoveService(ctx context.Context, in *RemoveServiceArgs, opts ...grpc.CallOption) (*emptypb.Empty, error)
-	// Instructs the API container to repartition the test network
+	// Instructs the API container to repartition the enclave
 	Repartition(ctx context.Context, in *RepartitionArgs, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	// Executes the given command inside a running container
 	ExecCommand(ctx context.Context, in *ExecCommandArgs, opts ...grpc.CallOption) (*ExecCommandResponse, error)
@@ -53,7 +53,7 @@ type ApiContainerServiceClient interface {
 	WaitForHttpPostEndpointAvailability(ctx context.Context, in *WaitForHttpPostEndpointAvailabilityArgs, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	// Executes multiple commands at once
 	ExecuteBulkCommands(ctx context.Context, in *ExecuteBulkCommandsArgs, opts ...grpc.CallOption) (*emptypb.Empty, error)
-	// Returns the IDs of the current services in the test network
+	// Returns the IDs of the current services in the enclave
 	GetServices(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*GetServicesResponse, error)
 	// Returns the IDs of the Kurtosis modules that have been loaded into the enclave
 	GetModules(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*GetModulesResponse, error)
@@ -257,7 +257,7 @@ type ApiContainerServiceServer interface {
 	GetServiceInfo(context.Context, *GetServiceInfoArgs) (*GetServiceInfoResponse, error)
 	// Instructs the API container to remove the given service
 	RemoveService(context.Context, *RemoveServiceArgs) (*emptypb.Empty, error)
-	// Instructs the API container to repartition the test network
+	// Instructs the API container to repartition the enclave
 	Repartition(context.Context, *RepartitionArgs) (*emptypb.Empty, error)
 	// Executes the given command inside a running container
 	ExecCommand(context.Context, *ExecCommandArgs) (*ExecCommandResponse, error)
@@ -267,7 +267,7 @@ type ApiContainerServiceServer interface {
 	WaitForHttpPostEndpointAvailability(context.Context, *WaitForHttpPostEndpointAvailabilityArgs) (*emptypb.Empty, error)
 	// Executes multiple commands at once
 	ExecuteBulkCommands(context.Context, *ExecuteBulkCommandsArgs) (*emptypb.Empty, error)
-	// Returns the IDs of the current services in the test network
+	// Returns the IDs of the current services in the enclave
 	GetServices(context.Context, *emptypb.Empty) (*GetServicesResponse, error)
 	// Returns the IDs of the Kurtosis modules that have been loaded into the enclave
 	GetModules(context.Context, *emptypb.Empty) (*GetModulesResponse, error)

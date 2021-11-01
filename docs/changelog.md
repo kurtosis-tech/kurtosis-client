@@ -1,4 +1,16 @@
 # TBD
+### Features
+* Added `EnclaveContext.getEnclaveId()`
+
+### Fixes
+* `stacktrace.Propagate` now panics on getting a `nil` error argument
+
+### Removals
+* Removed the `Network` interface, which adds additional complexity for little benefit
+
+### Breaking Changes
+* `NetworkContext` has been renamed to `EnclaveContext` to better reflect its purpose as a representation of a Kurtosis enclave.
+* Removed the `Network` interface
 
 # 0.20.0
 ### Changes

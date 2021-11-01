@@ -18,6 +18,6 @@
 package services
 
 /*
-The identifier used for services with the network.
+The identifier used for services within the enclave.
 */
 type ServiceID string
