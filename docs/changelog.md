@@ -1,4 +1,6 @@
 # TBD
+
+# 0.21.0
 ### Features
 * Added `EnclaveContext.getEnclaveId()`
 
