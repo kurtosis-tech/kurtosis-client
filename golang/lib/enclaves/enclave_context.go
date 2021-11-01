@@ -23,7 +23,7 @@ import (
 	"github.com/kurtosis-tech/kurtosis-client/golang/lib/binding_constructors"
 	"github.com/kurtosis-tech/kurtosis-client/golang/lib/modules"
 	"github.com/kurtosis-tech/kurtosis-client/golang/lib/services"
-	"github.com/palantir/stacktrace"
+	"github.com/kurtosis-tech/stacktrace"
 	"github.com/sirupsen/logrus"
 	"google.golang.org/protobuf/types/known/emptypb"
 	"path/filepath"

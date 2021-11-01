@@ -1,4 +1,7 @@
 # TBD
+### Fixes
+* `stacktrace.Propagate` now panics on getting a `nil` error argument
+
 ### Removals
 * Removed the `Network` interface, which adds additional complexity for little benefit
 
