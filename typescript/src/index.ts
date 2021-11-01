@@ -5,7 +5,7 @@ export { ServiceContext } from "./lib/services/service_context";
 export { SharedPath } from "./lib/services/shared_path"
 
 // Enclaves
-export { PartitionID, EnclaveContext } from "./lib/enclaves/enclave_context";
+export { EnclaveID, PartitionID, EnclaveContext } from "./lib/enclaves/enclave_context";
 
 // Modules
 export { ModuleContext, ModuleID } from "./lib/modules/module_context";

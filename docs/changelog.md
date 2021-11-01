@@ -1,4 +1,7 @@
 # TBD
+### Features
+* Added `EnclaveContext.getEnclaveId()`
+
 ### Fixes
 * `stacktrace.Propagate` now panics on getting a `nil` error argument
 

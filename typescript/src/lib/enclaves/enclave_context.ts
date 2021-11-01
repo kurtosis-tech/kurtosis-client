@@ -55,6 +55,8 @@ import * as path from "path"
 import * as google_protobuf_empty_pb from "google-protobuf/google/protobuf/empty_pb";
 import { ContainerConfig, FilesArtifactID } from "../services/container_config";
 
+export type EnclaveID = string;
+
 export type PartitionID = string;
 
 // This will always resolve to the default partition ID (regardless of whether such a partition exists in the enclave,
@@ -67,6 +69,8 @@ const SERVICE_ENCLAVE_DATA_DIR_MOUNTPOINT: string = "/kurtosis-enclave-data";
 // Docs available at https://docs.kurtosistech.com/kurtosis-client/lib-documentation
 export class EnclaveContext {
     private readonly client: ApiContainerServiceClient;
+
+    private readonly enclaveId: EnclaveID;
     
     // The location on the filesystem where this code is running where the enclave data dir exists
     private readonly enclaveDataDirpath: string;
@@ -74,9 +78,15 @@ export class EnclaveContext {
     /*
     Creates a new EnclaveContext object with the given parameters.
     */
-    constructor(client: ApiContainerServiceClient, enclaveDataDirpath: string) {
+    constructor(client: ApiContainerServiceClient, enclaveId: EnclaveID, enclaveDataDirpath: string) {
         this.client = client;
+        this.enclaveId = enclaveId;
         this.enclaveDataDirpath = enclaveDataDirpath;
+    }
+
+    // Docs available at https://docs.kurtosistech.com/kurtosis-client/lib-documentation
+    public getEnclaveId(): EnclaveID {
+        return this.enclaveId;
     }
 
     // Docs available at https://docs.kurtosistech.com/kurtosis-client/lib-documentation

@@ -29,6 +29,8 @@ import (
 	"path/filepath"
 )
 
+type EnclaveID string
+
 type PartitionID string
 
 const (
@@ -44,6 +46,8 @@ const (
 type EnclaveContext struct {
 	client kurtosis_core_rpc_api_bindings.ApiContainerServiceClient
 
+	enclaveId EnclaveID
+
 	// The location on the filesystem where this code is running where the enclave data dir exists
 	enclaveDataDirpath string
 }
@@ -53,12 +57,19 @@ Creates a new EnclaveContext object with the given parameters.
 */
 func NewEnclaveContext(
 	client kurtosis_core_rpc_api_bindings.ApiContainerServiceClient,
+	enclaveId EnclaveID,
 	enclaveDataDirpath string,
 ) *EnclaveContext {
 	return &EnclaveContext{
 		client:             client,
+		enclaveId:          enclaveId,
 		enclaveDataDirpath: enclaveDataDirpath,
 	}
+}
+
+// Docs available at https://docs.kurtosistech.com/kurtosis-client/lib-documentation
+func (enclaveCtx *EnclaveContext) GetEnclaveID() EnclaveID {
+	return enclaveCtx.enclaveId
 }
 
 // Docs available at https://docs.kurtosistech.com/kurtosis-client/lib-documentation

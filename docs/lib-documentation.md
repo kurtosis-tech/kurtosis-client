@@ -27,6 +27,9 @@ EnclaveContext
 --------------
 This Kurtosis-provided class is the lowest-level representation of a Kurtosis enclave, and provides methods for inspecting and manipulating the contents of the enclave. 
 
+### getEnclaveId() -\> EnclaveID
+Gets the ID of the enclave that this [EnclaveContext][enclavecontext] object represents.
+
 ### loadModule(String moduleId, String image, String serializedParams) -\> [ModuleContext][modulecontext] moduleContext
 Starts a new Kurtosis module (configured using the serialized params) inside the enclave, which makes it available for use.
 
