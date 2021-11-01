@@ -42,7 +42,7 @@ service ApiContainerService {
   // Instructs the API container to remove the given service
   rpc RemoveService(RemoveServiceArgs) returns (google.protobuf.Empty) {};
 
-  // Instructs the API container to repartition the test network
+  // Instructs the API container to repartition the enclave
   rpc Repartition(RepartitionArgs) returns (google.protobuf.Empty) {};
 
   // Executes the given command inside a running container
@@ -57,7 +57,7 @@ service ApiContainerService {
   // Executes multiple commands at once
   rpc ExecuteBulkCommands(ExecuteBulkCommandsArgs) returns (google.protobuf.Empty) {};
 
-  // Returns the IDs of the current services in the test network
+  // Returns the IDs of the current services in the enclave
   rpc GetServices(google.protobuf.Empty) returns (GetServicesResponse) {};
 
   // Returns the IDs of the Kurtosis modules that have been loaded into the enclave
@@ -83,7 +83,7 @@ message FinishExternalContainerRegistrationArgs {
   // The key that was returned from the call to start external container registration
   string registration_key = 1;
 
-  // The container ID of the container that is now inside the network
+  // The container ID of the container that is now inside the enclave
   string container_id = 2;
 }
 
@@ -333,7 +333,7 @@ message ExecuteBulkCommandsArgs {
 //                                          Get Services
 // ==============================================================================================
 message GetServicesResponse {
-  // "Set" of current service IDs in the test network
+  // "Set" of current service IDs in the enclave
   map<string, bool> service_ids = 1;
 }
 
@@ -341,6 +341,6 @@ message GetServicesResponse {
 //                                          Get Modules
 // ==============================================================================================
 message GetModulesResponse {
-  // "Set" of current Kurtosis module IDs loaded in the test network
+  // "Set" of current Kurtosis module IDs loaded in the enclave
   map<string, bool> module_ids = 1;
 }

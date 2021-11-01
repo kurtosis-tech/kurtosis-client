@@ -416,7 +416,7 @@ removeService: {
     responseSerialize: serialize_google_protobuf_Empty,
     responseDeserialize: deserialize_google_protobuf_Empty,
   },
-  // Instructs the API container to repartition the test network
+  // Instructs the API container to repartition the enclave
 repartition: {
     path: '/api_container_api.ApiContainerService/Repartition',
     requestStream: false,
@@ -476,7 +476,7 @@ executeBulkCommands: {
     responseSerialize: serialize_google_protobuf_Empty,
     responseDeserialize: deserialize_google_protobuf_Empty,
   },
-  // Returns the IDs of the current services in the test network
+  // Returns the IDs of the current services in the enclave
 getServices: {
     path: '/api_container_api.ApiContainerService/GetServices',
     requestStream: false,

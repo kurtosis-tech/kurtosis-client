@@ -1,5 +1,19 @@
 # TBD
 
+# 0.21.0
+### Features
+* Added `EnclaveContext.getEnclaveId()`
+
+### Fixes
+* `stacktrace.Propagate` now panics on getting a `nil` error argument
+
+### Removals
+* Removed the `Network` interface, which adds additional complexity for little benefit
+
+### Breaking Changes
+* `NetworkContext` has been renamed to `EnclaveContext` to better reflect its purpose as a representation of a Kurtosis enclave.
+* Removed the `Network` interface
+
 # 0.20.0
 ### Changes
 * Renamed several API variables to reflect the fact that enclave data is now stored on the host machine and bind-mounted in, rather than being a volume

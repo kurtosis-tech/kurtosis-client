@@ -18,7 +18,7 @@ import {
     GetModuleInfoArgs
 } from '../kurtosis_core_rpc_api_bindings/api_container_service_pb';
 import { ServiceID } from './services/service';
-import { PartitionID } from './networks/network_context';
+import { PartitionID } from './enclaves/enclave_context';
 import { ModuleID } from "./modules/module_context";
 import * as jspb from "google-protobuf";
 

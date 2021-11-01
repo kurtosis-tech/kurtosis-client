@@ -4,6 +4,6 @@
  */
 
 /*
-The identifier used for services with the network.
+The identifier used for services within the enclave.
 */
 export type ServiceID = string;
