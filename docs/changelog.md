@@ -1,4 +1,9 @@
 # TBD
+### Changes
+* Added deprecation notice to the README
+
+### Removals
+* Removed Typescript-publishing job as this is now handled by Kurt Core
 
 # 0.21.1
 ### Fixes
