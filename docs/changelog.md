@@ -1,4 +1,6 @@
 # TBD
+
+# 0.21.2
 ### Changes
 * Added deprecation notice to the README
 
