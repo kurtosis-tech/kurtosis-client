@@ -1,5 +1,12 @@
 # TBD
 
+# 0.21.2
+### Changes
+* Added deprecation notice to the README
+
+### Removals
+* Removed Typescript-publishing job as this is now handled by Kurt Core
+
 # 0.21.1
 ### Fixes
 * Exported the `KURTOSIS_API_VERSION` Typescript constant

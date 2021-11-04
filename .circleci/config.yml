@@ -40,16 +40,6 @@ jobs:
 
       - run: typescript/scripts/build.sh
 
-  publish_typescript:
-    docker:
-      - image: cimg/node:14.17.1
-    steps:
-      - checkout
-      - run: typescript/scripts/build.sh
-      - npm-publisher/publish-from-package-version:
-          package-path: typescript
-          publish-token-variable: NPMJS_AUTH_TOKEN
-
 workflows:
   build:
     jobs:
@@ -92,12 +82,4 @@ workflows:
       # -- End PR check jobs ---------------------------------------
 
       # -- Artifact-publishing jobs --------------------------------
-      - publish_typescript:
-          context:
-            - npmjs-user
-          filters:
-            branches:
-              ignore: /.*/
-            tags:
-              only: /^[0-9]+\.[0-9]+\.[0-9]+$/
       # -- End artifact-publishing jobs ----------------------------
